@@ -2,7 +2,7 @@ name: skip-core ci
 
 on:
   push:
-    branches: [ * ]
+    branches: '*'
   schedule:
     # run at 9AM & 9PM UTC
     - cron:  '0 9,21 * * *'
