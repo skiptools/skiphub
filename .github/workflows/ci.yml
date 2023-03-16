@@ -8,11 +8,12 @@ on:
     - cron:  '0 9,21 * * *'
 
 jobs:
-  tool:
+  skip-core-tests:
     # needs: https://github.com/actions/runner-images/issues/6426
     #runs-on: macos-13
     runs-on: macos-12
     steps:
+      - uses: actions/checkout@v3
       - name: Run Skip Tests
         run: |
           scripts/buildtest.sh
