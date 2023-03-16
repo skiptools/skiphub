@@ -1,0 +1,20 @@
+name: skip-core ci
+
+on:
+  push:
+    branches: [ * ]
+  schedule:
+    # run at 9AM & 9PM UTC
+    - cron:  '0 9,21 * * *'
+
+jobs:
+  tool:
+    # needs: https://github.com/actions/runner-images/issues/6426
+    #runs-on: macos-13
+    runs-on: macos-12
+    steps:
+      - name: Run Skip Tests
+        run: |
+          scripts/buildtest.sh
+
+
