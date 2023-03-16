@@ -1,0 +1,12 @@
+# skip.tools per-configuration file
+
+gradle:
+  # gradle rules for the local build
+  internal:
+    - build
+
+  # gradle rules to apply when this package is imported
+  export:
+    - build
+
+
