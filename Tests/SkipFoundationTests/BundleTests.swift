@@ -70,43 +70,45 @@ final class BundleTests: XCTestCase {
     }
 
 
-    @available(macOS 13, iOS 16, tvOS 16, watchOS 8, *) // SKIP INSERT: @Test
+    // SKIP INSERT: @Test
     func testLocalizedStrings() throws {
         #if !SKIP // TODO
-        let enlproj = try XCTUnwrap(Bundle.module.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "en"))
-        let frlproj = try XCTUnwrap(Bundle.module.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "fr"))
-        //let delproj = try XCTUnwrap(Bundle.module.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "de"))
+        if #available(macOS 13, iOS 16, tvOS 16, watchOS 8, *) {
+            let enlproj = try XCTUnwrap(Bundle.module.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "en"))
+            let frlproj = try XCTUnwrap(Bundle.module.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "fr"))
+            //let delproj = try XCTUnwrap(Bundle.module.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "de"))
 
-        XCTAssertNotEqual(enlproj, frlproj, "localized resources lookup should return different paths")
+            XCTAssertNotEqual(enlproj, frlproj, "localized resources lookup should return different paths")
 
-        var loc = LocalizedStringResource("Hello", bundle: Bundle.module.location)
-        //XCTAssertEqual("bonjour", NSLocalizedString("Hello", bundle: fr, comment: ""))
-
-
-        XCTAssertEqual("Hi", String(localized: loc))
-        loc.locale = Locale(identifier: "fr")
-        XCTAssertEqual("bonjour", String(localized: loc))
-        loc.locale = Locale(identifier: "UNKNOWN")
-        XCTAssertEqual("Hi", String(localized: loc))
+            var loc = LocalizedStringResource("Hello", bundle: Bundle.module.location)
+            //XCTAssertEqual("bonjour", NSLocalizedString("Hello", bundle: fr, comment: ""))
 
 
-        XCTAssertEqual("Hello", NSLocalizedString("Hello", comment: ""))
-        XCTAssertEqual("Hi", NSLocalizedString("Hello", bundle: Bundle.module, comment: ""))
-        XCTAssertEqual("Hi", NSLocalizedString("Hello", bundle: Bundle.module, comment: ""))
-        XCTAssertEqual("Hi", String(localized: "Hello", bundle: Bundle.module, locale: Locale(identifier: "en"), comment: "greetings"))
+            XCTAssertEqual("Hi", String(localized: loc))
+            loc.locale = Locale(identifier: "fr")
+            XCTAssertEqual("bonjour", String(localized: loc))
+            loc.locale = Locale(identifier: "UNKNOWN")
+            XCTAssertEqual("Hi", String(localized: loc))
 
-        let fr = try XCTUnwrap(Bundle(path: XCTUnwrap(Bundle.module.path(forResource: "fr", ofType: "lproj"))))
-        XCTAssertEqual("bonjour", NSLocalizedString("Hello", bundle: fr, comment: ""))
-        XCTAssertEqual("bonjour", String(localized: "Hello", bundle: fr, comment: "greetings"))
 
-        XCTAssertEqual("Hi", String(localized: LocalizedStringResource("Hello", bundle: .atURL(Bundle.module.bundleURL))))
-        XCTAssertEqual("Hi", String(localized: LocalizedStringResource("Hello", bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
-        XCTAssertEqual("Hi", String(localized: LocalizedStringResource("Hello", table: "Localizable", bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+            XCTAssertEqual("Hello", NSLocalizedString("Hello", comment: ""))
+            XCTAssertEqual("Hi", NSLocalizedString("Hello", bundle: Bundle.module, comment: ""))
+            XCTAssertEqual("Hi", NSLocalizedString("Hello", bundle: Bundle.module, comment: ""))
+            XCTAssertEqual("Hi", String(localized: "Hello", bundle: Bundle.module, locale: Locale(identifier: "en"), comment: "greetings"))
 
-        XCTAssertEqual("Hello", String(localized: LocalizedStringResource("Hello", table: "DOES_NOT_EXIST", bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+            let fr = try XCTUnwrap(Bundle(path: XCTUnwrap(Bundle.module.path(forResource: "fr", ofType: "lproj"))))
+            XCTAssertEqual("bonjour", NSLocalizedString("Hello", bundle: fr, comment: ""))
+            XCTAssertEqual("bonjour", String(localized: "Hello", bundle: fr, comment: "greetings"))
 
-        XCTAssertEqual("bonjour", String(localized: LocalizedStringResource("Hello", table: "Localizable", locale: Locale(identifier: "fr"), bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
-        XCTAssertEqual("bonjour", String(localized: LocalizedStringResource("Hello", locale: Locale(identifier: "fr"), bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+            XCTAssertEqual("Hi", String(localized: LocalizedStringResource("Hello", bundle: .atURL(Bundle.module.bundleURL))))
+            XCTAssertEqual("Hi", String(localized: LocalizedStringResource("Hello", bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+            XCTAssertEqual("Hi", String(localized: LocalizedStringResource("Hello", table: "Localizable", bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+
+            XCTAssertEqual("Hello", String(localized: LocalizedStringResource("Hello", table: "DOES_NOT_EXIST", bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+
+            XCTAssertEqual("bonjour", String(localized: LocalizedStringResource("Hello", table: "Localizable", locale: Locale(identifier: "fr"), bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+            XCTAssertEqual("bonjour", String(localized: LocalizedStringResource("Hello", locale: Locale(identifier: "fr"), bundle: .atURL(Bundle.module.bundleURL), comment: nil)))
+        }
         #endif
     }
 }
