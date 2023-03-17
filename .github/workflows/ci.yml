@@ -7,21 +7,30 @@ on:
     - cron:  '0 * * * *'
 
 jobs:
-  skip-core-tests:
+  skip-core-tests-external:
     # needs: https://github.com/actions/runner-images/issues/6426
     #runs-on: macos-13
     runs-on: macos-12
     steps:
-      - name: Install Tools
+      - name: Install tools
+        run: brew install tree
+      - name: Checkout skip-core
+        uses: actions/checkout@v3
+      - name: Check skiptool (external)
+        run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
+      - name: Run skip-core tests (external)
+        run: scripts/buildtest.sh
+
+  skip-core-tests-internal:
+    runs-on: macos-12
+    steps:
+      - name: Install tools
         run: brew install tree
       - name: Checkout skip-core
         uses: actions/checkout@v3
         with:
           path: skip-core
           repository: skiptools/skip-core
-      - name: Run skip-core tests (external)
-        run: scripts/buildtest.sh
-        working-directory: skip-core
       - name: Checkout skip
         uses: actions/checkout@v3
         with:
@@ -33,7 +42,12 @@ jobs:
           path: SkipSource
           repository: skiptools/SkipSource
           token: ${{ secrets.GH_TOKEN }}
-      - name: Run skip-core tests (local)
+      - name: Check skiptool
+        run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
+        working-directory: skip-core
+        env:
+          SKIP_LOCAL: ..
+      - name: Run skip-core tests
         run: scripts/buildtest.sh
         working-directory: skip-core
         env:
