@@ -12,21 +12,31 @@ jobs:
     #runs-on: macos-13
     runs-on: macos-12
     steps:
-      - run: brew install tree
-      - uses: actions/checkout@v3
+      - name: Install Tools
+        run: brew install tree
+      - name: Checkout skip-core
+        uses: actions/checkout@v3
         with:
           path: skip-core
           repository: skiptools/skip-core
-      - run: cd skip-core
-      - run: scripts/buildtest.sh
-      - uses: actions/checkout@v3
+      - name: Run skip-core tests (external)
+        run: scripts/buildtest.sh
+        working-directory: skip-core
+      - name: Checkout skip
+        uses: actions/checkout@v3
         with:
           path: skip
           repository: skiptools/skip
-      - uses: actions/checkout@v3
+      - name: Checkout SkipSource
+        uses: actions/checkout@v3
         with:
           path: SkipSource
           repository: skiptools/SkipSource
           token: ${{ secrets.GH_TOKEN }}
+      - name: Run skip-core tests (local)
+        run: scripts/buildtest.sh
+        working-directory: skip-core
+        env:
+          SKIP_LOCAL: ..
 
 
