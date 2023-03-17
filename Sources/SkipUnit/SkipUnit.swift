@@ -11,13 +11,18 @@ import SkipDriver
 open class JupiterTestCase: XCTestCase {
     public func testProjectGradle() async throws {
         // only run in subclasses, not in the base test
+        #if os(macOS) || os(Linux)
         if self.className == "SkipUnit.JupiterTestCase" {
             // TODO: add a general system gradle checkup test here
         } else {
             try await runGradleTests()
         }
+        #else
+        print("skipping testProjectGradle() for non-macOS target")
+        #endif
     }
 
+    #if os(macOS) || os(Linux)
     func runGradleTests() async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
@@ -85,6 +90,7 @@ open class JupiterTestCase: XCTestCase {
             XCTFail("gradle process unexpected exit: \(testProcessResult?.description ?? "")")
         }
     }
+    #endif
 }
 
 extension URL {
