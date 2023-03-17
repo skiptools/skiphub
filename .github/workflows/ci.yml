@@ -14,16 +14,19 @@ jobs:
     steps:
       - run: brew install tree
       - uses: actions/checkout@v3
-        path: skip-core
-        repository: http://github.com/skiptools/skip-core.git
+        with:
+          path: skip-core
+          repository: http://github.com/skiptools/skip-core.git
       - run: cd skip-core
       - run: scripts/buildtest.sh
       - uses: actions/checkout@v3
-        path: skip
-        repository: http://github.com/skiptools/skip.git
+        with:
+          path: skip
+          repository: http://github.com/skiptools/skip.git
       - uses: actions/checkout@v3
-        path: SkipSource
-        repository: http://github.com/skiptools/SkipSource.git
-        token: ${{ secrets.GH_TOKEN }}
+        with:
+          path: SkipSource
+          repository: http://github.com/skiptools/SkipSource.git
+          token: ${{ secrets.GH_TOKEN }}
 
 
