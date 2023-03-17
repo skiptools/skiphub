@@ -2,9 +2,9 @@
 set -o pipefail
 
 for TARGET in \
+    SkipLib \
     SkipFoundation \
     SkipUI \
-    SkipLib \
     ExampleLib \
     ExampleApp \
     ; do
@@ -12,6 +12,10 @@ for TARGET in \
     #rm -rf ~/Library/Developer/Xcode/DerivedData
 
     xcodebuild test -skipPackagePluginValidation -configuration Debug -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}Kotlin | grep -v '   export '
+
+    tree ~/Library/Developer/Xcode/DerivedData
+
+    date
 
     # get the most recent derived data folder
     DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
