@@ -11,7 +11,7 @@ for TARGET in \
     # start with a clean DD
     #rm -rf ~/Library/Developer/Xcode/DerivedData
 
-    xcodebuild test -skipPackagePluginValidation -configuration Debug -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}Kotlin | grep -v '   export '
+    xcodebuild test -skipPackagePluginValidation -configuration Debug -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}Kotlin | tee xcodebuild.log | xcpretty --report junit
 
     tree ~/Library/Developer/Xcode/DerivedData
 

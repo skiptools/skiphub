@@ -4,8 +4,7 @@ on:
   push:
     branches: '*'
   schedule:
-    # run at 9AM & 9PM UTC
-    - cron:  '0 9,21 * * *'
+    - cron:  '0 * * * *'
 
 jobs:
   skip-core-tests:
@@ -13,9 +12,18 @@ jobs:
     #runs-on: macos-13
     runs-on: macos-12
     steps:
+      - run: brew install tree
       - uses: actions/checkout@v3
-      - name: Run Skip Tests
-        run: |
-          scripts/buildtest.sh
+        path: skip-core
+        repository: http://github.com/skiptools/skip-core.git
+      - run: cd skip-core
+      - run: scripts/buildtest.sh
+      - uses: actions/checkout@v3
+        path: skip
+        repository: http://github.com/skiptools/skip.git
+      - uses: actions/checkout@v3
+        path: SkipSource
+        repository: http://github.com/skiptools/SkipSource.git
+        token: ${{ secrets.GH_TOKEN }}
 
 
