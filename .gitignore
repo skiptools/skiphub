@@ -5,6 +5,8 @@
 ## User settings
 xcuserdata/
 
+xcodebuild*.log
+
 .*.swp
 .DS_Store
 

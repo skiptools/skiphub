@@ -18,10 +18,21 @@ jobs:
         uses: actions/checkout@v3
       - name: Check skiptool (release)
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
-      - name: Run skip-core tests (debug)
-        run: scripts/buildtest.sh Debug
-      - name: Run skip-core tests (release)
-        run: scripts/buildtest.sh Release
+      - name: Run SkipLib tests (debug)
+        run: scripts/buildtest.sh Debug SkipLib
+        working-directory: skip-core
+      - name: Run SkipFoundation tests (debug)
+        run: scripts/buildtest.sh Debug SkipFoundation
+        working-directory: skip-core
+      - name: Run SkipUI tests (debug)
+        run: scripts/buildtest.sh Debug SkipUI
+        working-directory: skip-core
+      - name: Run ExampleLib tests (debug)
+        run: scripts/buildtest.sh Debug ExampleLib
+        working-directory: skip-core
+      - name: Run ExampleApp tests (debug)
+        run: scripts/buildtest.sh Debug ExampleApp
+        working-directory: skip-core
 
   skip-core-tests-internal:
     runs-on: macos-12
@@ -49,13 +60,28 @@ jobs:
         working-directory: skip-core
         env:
           SKIPLOCAL: ..
-      - name: Run skip-core tests (debug)
-        run: scripts/buildtest.sh Debug
+      - name: Run SkipLib tests (debug)
+        run: scripts/buildtest.sh Debug SkipLib
         working-directory: skip-core
         env:
           SKIPLOCAL: ..
-      - name: Run skip-core tests (release)
-        run: scripts/buildtest.sh Release
+      - name: Run SkipFoundation tests (debug)
+        run: scripts/buildtest.sh Debug SkipFoundation
+        working-directory: skip-core
+        env:
+          SKIPLOCAL: ..
+      - name: Run SkipUI tests (debug)
+        run: scripts/buildtest.sh Debug SkipUI
+        working-directory: skip-core
+        env:
+          SKIPLOCAL: ..
+      - name: Run ExampleLib tests (debug)
+        run: scripts/buildtest.sh Debug ExampleLib
+        working-directory: skip-core
+        env:
+          SKIPLOCAL: ..
+      - name: Run ExampleApp tests (debug)
+        run: scripts/buildtest.sh Debug ExampleApp
         working-directory: skip-core
         env:
           SKIPLOCAL: ..
