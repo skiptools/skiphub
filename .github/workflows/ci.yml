@@ -16,10 +16,12 @@ jobs:
         run: brew install tree
       - name: Checkout skip-core
         uses: actions/checkout@v3
-      - name: Check skiptool (external)
+      - name: Check skiptool (release)
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
-      - name: Run skip-core tests (external)
-        run: scripts/buildtest.sh
+      - name: Run skip-core tests (debug)
+        run: scripts/buildtest.sh Debug
+      - name: Run skip-core tests (release)
+        run: scripts/buildtest.sh Release
 
   skip-core-tests-internal:
     runs-on: macos-12
@@ -42,15 +44,20 @@ jobs:
           path: SkipSource
           repository: skiptools/SkipSource
           token: ${{ secrets.GH_TOKEN }}
-      - name: Check skiptool
+      - name: Check skiptool (debug)
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
         working-directory: skip-core
         env:
-          SKIP_LOCAL: ..
-      - name: Run skip-core tests
-        run: scripts/buildtest.sh
+          SKIPLOCAL: ..
+      - name: Run skip-core tests (debug)
+        run: scripts/buildtest.sh Debug
         working-directory: skip-core
         env:
-          SKIP_LOCAL: ..
+          SKIPLOCAL: ..
+      - name: Run skip-core tests (release)
+        run: scripts/buildtest.sh Release
+        working-directory: skip-core
+        env:
+          SKIPLOCAL: ..
 
 
