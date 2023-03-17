@@ -20,19 +20,14 @@ jobs:
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
-        working-directory: skip-core
       - name: Run SkipFoundation tests (debug)
         run: scripts/buildtest.sh Debug SkipFoundation
-        working-directory: skip-core
       - name: Run SkipUI tests (debug)
         run: scripts/buildtest.sh Debug SkipUI
-        working-directory: skip-core
       - name: Run ExampleLib tests (debug)
         run: scripts/buildtest.sh Debug ExampleLib
-        working-directory: skip-core
       - name: Run ExampleApp tests (debug)
         run: scripts/buildtest.sh Debug ExampleApp
-        working-directory: skip-core
 
   skip-core-tests-internal:
     runs-on: macos-12
