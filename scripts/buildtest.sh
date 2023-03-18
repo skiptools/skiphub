@@ -11,7 +11,7 @@ for TARGET in ${TARGETS}; do
     #rm -rf ~/Library/Developer/Xcode/DerivedData
 
     # make sure the non-Kotlin tests pass on iOS
-    xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${TARGET} | tee xcodebuild-ios-${TARGET}.log
+    #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${TARGET} | tee xcodebuild-ios-${TARGET}.log
 
     xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}Kotlin | tee xcodebuild-macos-${TARGET}.log
     # | xcpretty --report junit

@@ -5,7 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 
 // This file contains additional Swift that will be transpiled into Kotlin and made available to the transpiled sources
-public struct SkipLibKotlin {
+public struct SkipCoreKotlin {
     public private(set) var text = "Hello, SkipLib Kotlin!"
 
     public init() {
