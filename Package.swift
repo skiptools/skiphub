@@ -38,41 +38,41 @@ let package = Package(
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
         .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
-        .target(name: "SkipLib"),
-        .kotlin(name: "SkipLib"),
+        .target(name: "SkipLib", dependencies: ["SkipUnit"]),
+        .gradle(name: "SkipLib", dependencies: ["SkipUnit"]),
         .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
-        .testKotlin(name: "SkipLibTests", dependencies: ["SkipLib"]),
+        .testGradle(name: "SkipLibTests", dependencies: ["SkipLib"]),
 
         .target(name: "SkipFoundation", dependencies: ["SkipLib"]),
-        .kotlin(name: "SkipFoundation", dependencies: ["SkipLib"]),
+        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
-        .testKotlin(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
+        .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
 
         .target(name: "SkipUI", dependencies: ["SkipFoundation"]),
-        .kotlin(name: "SkipUI", dependencies: ["SkipFoundation"]),
+        .gradle(name: "SkipUI", dependencies: ["SkipFoundation"]),
         .testTarget(name: "SkipUITests", dependencies: ["SkipUI"]),
-        .testKotlin(name: "SkipUITests", dependencies: ["SkipUI"]),
+        .testGradle(name: "SkipUITests", dependencies: ["SkipUI"]),
 
         .target(name: "ExampleLib", dependencies: ["SkipFoundation"]),
-        .kotlin(name: "ExampleLib", dependencies: ["SkipFoundation"]),
+        .gradle(name: "ExampleLib", dependencies: ["SkipFoundation"]),
         .testTarget(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
-        .testKotlin(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
+        .testGradle(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
 
         .target(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
-        .kotlin(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
+        .gradle(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
         .testTarget(name: "ExampleAppTests", dependencies: ["ExampleApp"]),
-        .testKotlin(name: "ExampleAppTests", dependencies: ["ExampleApp"]),
+        .testGradle(name: "ExampleAppTests", dependencies: ["ExampleApp"]),
     ]
 )
 
 extension Target {
-    static func kotlin(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
+    static func gradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .target(name: "SkipLib", dependencies: ["SkipUnit"]),
         // becomes: .target(name: "SkipLibKotlin", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .target(name: name + "Kotlin", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 
-    static func testKotlin(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
+    static func testGradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
         // becomes: .testTarget(name: "SkipLibKotlinTests", dependencies: ["SkipLibKotlin", "SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: name.dropLast("Tests".count) + "KotlinTests", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
