@@ -6,10 +6,11 @@
 #if !SKIP
 @testable import ExampleApp
 #endif
+import XCTest
 import ExampleLib
 import SkipFoundation
 import SkipUI
-import SkipUnit
+
 
 final class ExampleAppTests: XCTestCase {
     // SKIP INSERT: @Test

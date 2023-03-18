@@ -4,7 +4,7 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-@_exported import XCTest
+import XCTest
 import SkipDriver
 
 /// A base test case for a JUnit 5 (Jupiter) test suite, which is expected to use skip-transpiled tests.
