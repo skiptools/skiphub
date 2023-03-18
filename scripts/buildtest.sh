@@ -14,6 +14,7 @@ for TARGET in ${TARGETS}; do
     #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${TARGET} | tee xcodebuild-ios-${TARGET}.log
 
     xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}Kotlin | tee xcodebuild-macos-${TARGET}.log
+
     # | xcpretty --report junit
     # -only-testing:${TARGET}Tests 
 

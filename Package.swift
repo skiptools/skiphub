@@ -38,8 +38,8 @@ let package = Package(
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
         .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
-        .target(name: "SkipLib", dependencies: ["SkipUnit"]),
-        .gradle(name: "SkipLib", dependencies: ["SkipUnit"]),
+        .target(name: "SkipLib"),
+        .gradle(name: "SkipLib"),
         .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
         .testGradle(name: "SkipLibTests", dependencies: ["SkipLib"]),
 
@@ -69,13 +69,13 @@ extension Target {
     static func gradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .target(name: "SkipLib", dependencies: ["SkipUnit"]),
         // becomes: .target(name: "SkipLibKotlin", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .target(name: name + "Kotlin", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+        .target(name: name + "Kotlin", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }), resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 
     static func testGradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
         // becomes: .testTarget(name: "SkipLibKotlinTests", dependencies: ["SkipLibKotlin", "SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: name.dropLast("Tests".count) + "KotlinTests", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+        .testTarget(name: name.dropLast("Tests".count) + "KotlinTests", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnit", "SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 }
 
