@@ -61,11 +61,12 @@ open class JupiterTestCase: XCTestCase {
         for testSuite in testSuites {
             for testCase in testSuite.testCases {
                 var msg = ""
+                msg += className + "."
                 // Jupiter test case names are like "testSystemRandomNumberGenerator$SkipFoundation()"
                 msg += testCase.name.split(separator: "$").first?.description ?? testCase.name
                 msg += " (" + testCase.time.formatted(.number) + ") " // add in the time for profiling
 
-                print("TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
+                print("GRADLE: TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
 
                 // add a failure for each reported failure
                 for failure in testCase.failures {
@@ -106,8 +107,6 @@ extension URL {
     private static func pluginOutputBaseFolder() -> URL {
         let env = ProcessInfo.processInfo.environment
 
-        #warning("FIXME: will not always be skip-core")
-        let moduleRootName = "skip-core"
 
         //for (key, value) in env {
         //    print("ENV: \(key) = \(value)")
@@ -122,11 +121,14 @@ extension URL {
                 .deletingLastPathComponent()
                 .deletingLastPathComponent()
             // turn "skip-core-acfwraikkessprdjxjsnylgamsnj" into "skip-core"
-            //let moduleRootName = buildBaseFolder.lastPathComponent.split(separator: "-").dropLast(1).joined(separator: "-").description
+            let moduleRootName = buildBaseFolder.lastPathComponent.split(separator: "-").dropLast(1).joined(separator: "-").description
             let xcodeFolder = buildBaseFolder
                 .appendingPathComponent("SourcePackages/plugins/\(moduleRootName).output", isDirectory: true)
             return xcodeFolder
         } else {
+            #warning("FIXME: will not always be skip-core")
+            let moduleRootName = "skip-core"
+
             let swiftBuildFolder = ".build/plugins/outputs/\(moduleRootName)"
             return URL(fileURLWithPath: swiftBuildFolder, isDirectory: true)
         }
