@@ -15,9 +15,6 @@ let package = Package(
         .library(name: "SkipUnit", targets: ["SkipUnit"]),
         .library(name: "SkipUnitKotlin", targets: ["SkipUnitKotlin"]),
 
-        .library(name: "SkipCore", targets: ["SkipCore"]),
-        .library(name: "SkipCoreKotlin", targets: ["SkipCoreKotlin"]),
-
         .library(name: "SkipLib", targets: ["SkipLib"]),
         .library(name: "SkipLibKotlin", targets: ["SkipLib"]),
 
@@ -37,18 +34,12 @@ let package = Package(
         .package(url: "https://github.com/skiptools/skip.git", branch: "main"),
     ],
     targets: [
-        .target(name: "SkipCore"),
-        .testTarget(name: "SkipCoreTests", dependencies: ["SkipCore"]),
-
-        .target(name: "SkipCoreKotlin", dependencies: ["SkipCore"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: "SkipCoreKotlinTests", dependencies: ["SkipCoreKotlin", "SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
-        .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit", "SkipCoreKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
-        .target(name: "SkipLib", dependencies: ["SkipUnit"]),
-        .kotlin(name: "SkipLib", dependencies: ["SkipUnit"]),
+        .target(name: "SkipLib"),
+        .kotlin(name: "SkipLib"),
         .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
         .testKotlin(name: "SkipLibTests", dependencies: ["SkipLib"]),
 
@@ -75,16 +66,16 @@ let package = Package(
 )
 
 extension Target {
-    static func kotlin(name: String, dependencies: [String], standardResources: Bool = true) -> Target {
+    static func kotlin(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .target(name: "SkipLib", dependencies: ["SkipUnit"]),
         // becomes: .target(name: "SkipLibKotlin", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .target(name: name + "Kotlin", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }), resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+        .target(name: name + "Kotlin", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 
-    static func testKotlin(name: String, dependencies: [String], standardResources: Bool = true) -> Target {
+    static func testKotlin(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
         // becomes: .testTarget(name: "SkipLibKotlinTests", dependencies: ["SkipLibKotlin", "SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: name.dropLast("Tests".count) + "KotlinTests", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }), resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+        .testTarget(name: name.dropLast("Tests".count) + "KotlinTests", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 }
 
