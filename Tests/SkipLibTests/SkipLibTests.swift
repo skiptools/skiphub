@@ -17,20 +17,6 @@ final class SkipLibTests: XCTestCase {
         XCTAssertEqual("SkipLib", SkipLibInternalModuleName())
         XCTAssertEqual("SkipLib", SkipLibPublicModuleName())
     }
-
-//    #if !SKIP
-//    func testSkipLibSymbols() async throws {
-//        let testModule = "SkipLibTests"
-//        let symbols = try await SkipSystem.extractSymbols(moduleNames: [testModule], accessLevel: "private")
-//        let symbolGraph = try XCTUnwrap(symbols)
-//        XCTAssertEqual(1, symbolGraph.count)
-//        let graph = try XCTUnwrap(symbolGraph.values.first)
-//
-//        let demoStruct = try XCTUnwrap(graph.symbols["s:12SkipLibTests10DemoStructV"])
-//        XCTAssertEqual(["DemoStruct"], demoStruct.pathComponents)
-//
-//    }
-//    #endif
 }
 
 #if !SKIP

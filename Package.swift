@@ -31,7 +31,7 @@ let package = Package(
         .library(name: "ExampleAppKotlin", targets: ["ExampleAppKotlin"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip.git", branch: "main"),
+        .package(url: "https://github.com/skiptools/skip.git", from: "0.0.0"),
     ],
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
