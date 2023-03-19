@@ -6,8 +6,6 @@
 import XCTest
 #if !SKIP
 @testable import SkipLib
-//import SkipBuild
-//import SymbolKit
 #endif
 
 final class SkipLibTests: XCTestCase {

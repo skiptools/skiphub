@@ -35,11 +35,7 @@ open class JupiterTestCase: XCTestCase {
         }
 
         let driver = try await GradleDriver()
-        print(#function, "gradleDriver", driver)
-
-        let dir = try URL.pluginOutputFolder(module: moduleName)
-
-        print(#function, "pluginOutputFolder", dir.path)
+        let dir = try pluginOutputFolder(module: moduleName)
 
         // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKotlinTests")
         let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
@@ -66,7 +62,7 @@ open class JupiterTestCase: XCTestCase {
                 msg += testCase.name.split(separator: "$").first?.description ?? testCase.name
                 msg += " (" + testCase.time.formatted(.number) + ") " // add in the time for profiling
 
-                print("GRADLE: TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
+                print("GRADLE TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
 
                 // add a failure for each reported failure
                 for failure in testCase.failures {
@@ -91,49 +87,45 @@ open class JupiterTestCase: XCTestCase {
             XCTFail("gradle process unexpected exit: \(testProcessResult?.description ?? "")")
         }
     }
-    #endif
-}
 
-extension URL {
-    // FIXME: reduntant with SkipAssemble
-    /// The folder where built modules will be placed.
-    ///
-    /// When running within Xcode, which will query the `__XCODE_BUILT_PRODUCTS_DIR_PATHS` environment.
-    /// Otherwise, it assumes SPM's standard ".build" folder relative to the working directory.
-    static func pluginOutputFolder(module moduleName: String) throws -> URL {
-        URL(fileURLWithPath: "\(moduleName)/SkipTranspilePlugIn/", isDirectory: true, relativeTo: pluginOutputBaseFolder())
-    }
-
-    private static func pluginOutputBaseFolder() -> URL {
+    func pluginOutputFolder(module moduleName: String) throws -> URL {
         let env = ProcessInfo.processInfo.environment
-
-
-        //for (key, value) in env {
-        //    print("ENV: \(key) = \(value)")
-        //}
 
         // if we are running tests from Xcode, this environment variable should be set; otherwise, assume the .build folder for an SPM build
         // also seems to be __XPC_DYLD_LIBRARY_PATH or __XPC_DYLD_FRAMEWORK_PATH;
-        // this will be something like ~/Library/Developer/Xcode/DerivedData/MODULENAME-bsjbchzxfwcrveckielnbyhybwdr/Build/Products/Debug
+        // this will be something like ~/Library/Developer/Xcode/DerivedData/PROJ-ABC/Build/Products/Debug
+        //
+        // so we build something like:
+        //
+        // ~/Library/Developer/Xcode/DerivedData/PROJ-ABC/Build/Products/Debug/../../../SourcePackages/plugins/skip-core.output/
+        //
         if let xcodeBuildFolder = env["__XCODE_BUILT_PRODUCTS_DIR_PATHS"] ?? env["BUILT_PRODUCTS_DIR"] {
             let buildBaseFolder = URL(fileURLWithPath: xcodeBuildFolder, isDirectory: true)
                 .deletingLastPathComponent()
                 .deletingLastPathComponent()
                 .deletingLastPathComponent()
-            // turn "skip-core-acfwraikkessprdjxjsnylgamsnj" into "skip-core"
-            let moduleRootName = buildBaseFolder.lastPathComponent.split(separator: "-").dropLast(1).joined(separator: "-").description
-            let xcodeFolder = buildBaseFolder
-                .appendingPathComponent("SourcePackages/plugins/\(moduleRootName).output", isDirectory: true)
-            return xcodeFolder
+            let xcodeFolder = buildBaseFolder.appendingPathComponent("SourcePackages/plugins", isDirectory: true)
+            return try findModuleFolder(in: xcodeFolder, extension: "output")
         } else {
-            #warning("FIXME: will not always be skip-core")
-            let moduleRootName = "skip-core"
+            // note that unlike Xcode, the local SPM outputs folder is just the package name without the ".output" suffix
+            return try findModuleFolder(in: URL(fileURLWithPath: ".build/plugins/outputs", isDirectory: true), extension: nil)
+        }
 
-            let swiftBuildFolder = ".build/plugins/outputs/\(moduleRootName)"
-            return URL(fileURLWithPath: swiftBuildFolder, isDirectory: true)
+        /// The only known way to figure out the package name asociated with the test's module is to brute-force search through the plugin output folders.
+        func findModuleFolder(in pluginOutputFolder: URL, extension pathExtension: String?) throws -> URL {
+            for outputFolder in try FileManager.default.contentsOfDirectory(at: pluginOutputFolder, includingPropertiesForKeys: [.isDirectoryKey]) {
+                if outputFolder.pathExtension != pathExtension {
+                    continue // only check known path extensions (e.g., ".output" or nil)
+                }
+                let pluginModuleOutputFolder = URL(fileURLWithPath: moduleName + "/SkipTranspilePlugIn/", isDirectory: true, relativeTo: outputFolder)
+                if (try? pluginModuleOutputFolder.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true {
+                    return pluginModuleOutputFolder
+                }
+            }
+            throw CocoaError(.fileNoSuchFile, userInfo: [NSFilePathErrorKey: pluginOutputFolder.path])
         }
     }
+    #endif
 }
 
 #endif
-
