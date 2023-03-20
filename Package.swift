@@ -36,7 +36,9 @@ let package = Package(
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
-        .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit", "SkipLibKotlin"],
+                resources: [.copy("skip")],
+                plugins: [.plugin(name: "transpile", package: "skip")]),
 
         .target(name: "SkipLib"),
         .gradle(name: "SkipLib"),

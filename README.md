@@ -3,6 +3,127 @@
 Modules that constitute the core libraries for Skip.
 
 
+
+Modules
+=======
+
+System
+  Crypto
+  SQLite
+  FileSystem
+  Localization
+
+Device
+  Network
+  NetInfo
+  Clipboard
+  Battery
+  Location
+  Brightness
+  AsyncStorage
+  BackgroundFetch
+  Notifications
+  SecureStore (Keychain + UserDefaults)
+  
+Periphireals
+  Camera
+  Print
+
+Sensors
+  Accelerometer
+  Barometer
+  Gyroscope
+  DeviceMotion
+  LightSensor
+  Magnetometer
+  Pedometer
+
+Services
+  Maps
+  Speech
+  Geocoding
+  Sharing
+  PlatformAuthentication
+  SMS
+  Cellular
+
+LocalInfobase
+  Calendar
+  Contacts
+  MediaLibrary
+
+Application
+Linking
+
+TaskManager
+
+AV
+Audio
+Video
+VideoThumbnails
+Asset
+AuthSession
+BarCodeScanner
+BuildProperties
+Constants
+ErrorRecovery
+FaceDetector
+FlashList
+Haptics
+IntentLauncher
+KeepAwake
+LocalAuthentication
+MailComposer
+Reanimated
+SafeAreaContext
+ScreenCapture
+ScreenOrientation
+Screens
+SharedElement
+Skia
+Stripe
+Svg
+SystemUI
+TrackingTransparency
+
+InAppPurchases
+Updates
+StoreReview
+
+Font
+Image
+
+Picker
+Slider
+Checkbox
+SegmentedControl
+
+NavigationBar
+ViewPager
+DocumentPicker
+
+BlurView
+MaskedView
+LinearGradient
+GestureHandler
+
+GLView
+WebView
+WebBrowser
+DateTimePicker
+ImageManipulator
+ImagePicker
+MapView
+SplashScreen
+StatusBar
+Lottie
+
+Excluded:
+
+Random
+
+
+
 SkipFoundation
 ===============
 

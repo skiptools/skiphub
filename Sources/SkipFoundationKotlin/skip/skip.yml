@@ -1,12 +1,8 @@
 # skip.tools per-configuration file
 
+# the blocks to add to the build.gradle.kts DSL that is assembled from all the Skip modules
 gradle:
-  # gradle rules for the local build
-  internal:
-    - build
-
-  # gradle rules to apply when this package is imported
-  export:
-    - build
-
-
+  contents:
+    - block: 'dependencies'
+      contents:
+        - 'api(project(":SkipLib"))'

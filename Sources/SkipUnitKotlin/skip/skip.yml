@@ -1,3 +1,14 @@
 # skip.tools per-configuration file
 
-# TODO: add in rules for importing tests and import statements to insert
+# the blocks to add to the build.gradle.kts DSL that is assembled from all the Skip modules
+gradle:
+  contents:
+    - block: 'dependencies'
+      contents:
+        - 'api("org.jetbrains.kotlin:kotlin-test-junit5")'
+        - 'implementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")'
+        - 'testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")'
+        - 'testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")'
+    - block: 'tasks.named<Test>("test")'
+      contents:
+        - 'useJUnitPlatform()'

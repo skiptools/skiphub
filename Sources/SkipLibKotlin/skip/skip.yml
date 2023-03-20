@@ -1,1 +1,15 @@
 # skip.tools per-configuration file
+
+# the blocks to add to the build.gradle.kts DSL that is assembled from all the Skip modules
+gradle:
+  contents:
+    - block: 'plugins'
+      contents:
+        - 'kotlin("jvm") version "1.8.10"'
+    - block: 'repositories'
+      contents:
+        - 'mavenCentral()'
+    - block: 'dependencies'
+      contents:
+        - 'implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")'
+        - 'testImplementation(project(":SkipUnit"))'
