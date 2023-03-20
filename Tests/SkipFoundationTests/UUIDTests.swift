@@ -3,20 +3,21 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-@testable import SkipFoundation
-#endif
+import Foundation
+import OSLog
 import XCTest
+#if !SKIP
+@testable import SkipFoundation // needed for UUID(mostSigBits:) extension
+#endif
 
 final class UUIDTests: XCTestCase {
-    //var logger = Logger(subsystem: "test", category: "UUIDTests")
+    var logger = Logger(subsystem: "test", category: "UUIDTests")
 
     // SKIP INSERT: @Test
     func testRandomUUID() throws {
         XCTAssertNotEqual(UUID(), UUID())
         XCTAssertNotEqual("", UUID().uuidString)
-        
-        //logger.log("UUID: \(UUID().uuidString)")
+        logger.log("UUID: \(UUID().uuidString)")
     }
 
     // SKIP INSERT: @Test

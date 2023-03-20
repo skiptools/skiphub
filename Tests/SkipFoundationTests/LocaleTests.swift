@@ -3,19 +3,18 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-@testable import SkipFoundation
-#endif
+import Foundation
+import OSLog
 import XCTest
 
 final class LocaleTests: XCTestCase {
-    //var logger = Logger(subsystem: "test", category: "LocaleTests")
+    var logger = Logger(subsystem: "test", category: "LocaleTests")
 
     // SKIP INSERT: @Test
     func testLanguageCodes() throws {
         let fr = Locale(identifier: "fr_FR")
         XCTAssertNotNil(fr)
-        //logger.info("fr_FR: \(fr.identifier)")
+        logger.info("fr_FR: \(fr.identifier)")
 
         #if SKIP
         XCTAssertEqual("fr_fr", fr.identifier)
@@ -30,7 +29,7 @@ final class LocaleTests: XCTestCase {
 //        XCTAssertEqual("chinois", fr.localizedString(forLanguageCode: "zh"))
 
         let zh = Locale(identifier: "zh_HK")
-        //logger.info("zh_HK: \(zh.identifier)")
+        logger.info("zh_HK: \(zh.identifier)")
         XCTAssertNotNil(zh)
 
         #if SKIP

@@ -63,7 +63,6 @@ open class JupiterTestCase: XCTestCase {
                 msg += " (" + testCase.time.formatted(.number) + ") " // add in the time for profiling
 
                 print("GRADLE TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
-
                 // add a failure for each reported failure
                 for failure in testCase.failures {
                     // TODO: extract the file path and report the failing file abd line to xcode
@@ -75,6 +74,16 @@ open class JupiterTestCase: XCTestCase {
                     msg += failure.contents ?? "empty" // add the stack trace; TODO: option for trimming
                     XCTFail(msg)
                 }
+            }
+
+            // all the stdout/stderr is batched together for all test tests, so output it all at the end
+            if let systemOut = testSuite.systemOut {
+                print("GRADLE TEST CASE stdout ================================================")
+                print(systemOut)
+            }
+            if let systemErr = testSuite.systemErr {
+                print("GRADLE TEST CASE stderr ================================================")
+                print(systemErr)
             }
         }
 

@@ -3,13 +3,15 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-@testable import SkipFoundation
-#endif
+import Foundation
+import OSLog
 import XCTest
+#if !SKIP
+@testable import struct SkipFoundation.PseudoRandomNumberGenerator
+#endif
 
 final class RandomTests: XCTestCase {
-    //var logger = Logger(subsystem: "test", category: "RandomNumberGeneratorTests")
+    var logger = Logger(subsystem: "test", category: "RandomNumberGeneratorTests")
 
     /// Verify that the system RNG is at least a little bit random.
     // SKIP INSERT: @Test
