@@ -22,6 +22,8 @@ jobs:
         run: scripts/buildtest.sh Debug SkipLib
       - name: Run SkipFoundation tests (debug)
         run: scripts/buildtest.sh Debug SkipFoundation
+      - name: Run SkipDevice tests (debug)
+        run: scripts/buildtest.sh Debug SkipDevice
       - name: Run SkipUI tests (debug)
         run: scripts/buildtest.sh Debug SkipUI
       - name: Run ExampleLib tests (debug)

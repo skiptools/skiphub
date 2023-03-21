@@ -77,13 +77,14 @@ open class JupiterTestCase: XCTestCase {
             }
 
             // all the stdout/stderr is batched together for all test tests, so output it all at the end
+            // and line up the spaced with the "GRADLE TEST CASE" line describing the test
             if let systemOut = testSuite.systemOut {
-                print("GRADLE TEST CASE stdout ================================================")
-                print(systemOut)
+                let prefix = "STDOUT> "
+                print(prefix + systemOut.split(separator: "\n").joined(separator: "\n" + prefix))
             }
             if let systemErr = testSuite.systemErr {
-                print("GRADLE TEST CASE stderr ================================================")
-                print(systemErr)
+                let prefix = "STDERR> "
+                print(prefix + systemErr.split(separator: "\n").joined(separator: "\n" + prefix))
             }
         }
 

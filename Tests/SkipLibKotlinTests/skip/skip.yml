@@ -1,7 +1,7 @@
 # skip.tools per-configuration file
 
 # the blocks to add to the build.gradle.kts DSL that is assembled from all the Skip modules
-#gradle:
+#build:
 #  contents:
 #    - block: 'dependencies'
 #      contents:

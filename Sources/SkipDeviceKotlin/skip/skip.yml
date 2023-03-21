@@ -2,5 +2,58 @@
 skip:
   package: 'skip.device'
 
-# TODO: add in Android jars
-#build:
+build:
+  contents:
+    - block: 'plugins'
+      contents:
+        #- 'id("com.android.application") version "7.4.2"'
+        - 'kotlin("android") version "1.8.10"'
+        - 'id("com.android.library") version "7.4.2"'
+        #- 'id("org.jetbrains.kotlin.android") version "1.5.31"'
+      # we need to replace the `kotlin-dsl` plugin or else we get the error:
+      # The 'java' plugin has been applied, but it is not compatible with the Android plugins.
+      remove:
+        - '`kotlin-dsl`'
+
+    - block: 'android'
+      contents:
+        - 'namespace = group as String'
+        - 'compileSdkVersion(31)'
+        - block: 'defaultConfig'
+          contents:
+            - 'minSdkVersion(23)'
+            - 'targetSdkVersion(31)'
+            - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
+        - block: 'compileOptions'
+          contents:
+            - 'sourceCompatibility = JavaVersion.VERSION_11'
+            - 'targetCompatibility = JavaVersion.VERSION_11'
+        - block: 'kotlinOptions'
+          contents:
+            - 'jvmTarget = "11"'
+
+    - block: 'dependencies'
+      contents:
+        - 'testImplementation("org.robolectric:robolectric:4.10-alpha-1")'
+
+# we might want this for test logging:
+#tasks.withType<Test>().configureEach {
+#    systemProperties.put("robolectric.logging", "stdout")
+#    testLogging {
+#        this.showStandardStreams = true
+#    }
+#}
+
+settings:
+  contents:
+    - block: 'pluginManagement'
+      contents:
+        - block: 'repositories'
+          contents:
+            - 'google()'
+
+    - block: 'dependencyResolutionManagement'
+      contents:
+        - block: 'repositories'
+          contents:
+            - 'google()'

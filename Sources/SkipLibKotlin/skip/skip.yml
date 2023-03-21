@@ -7,7 +7,6 @@ build:
   contents:
     - block: 'plugins'
       contents:
-        #- '`java-library`'
         - '`kotlin-dsl`'
         # or:
         #- 'kotlin("jvm") version "1.8.10"'
@@ -31,6 +30,7 @@ settings:
         - block: 'repositories'
           contents:
             - 'gradlePluginPortal()'
+            - 'mavenCentral()'
 
     - block: 'dependencyResolutionManagement'
       contents:
