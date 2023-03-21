@@ -21,6 +21,9 @@ let package = Package(
         .library(name: "SkipFoundation", targets: ["SkipFoundation"]),
         .library(name: "SkipFoundationKotlin", targets: ["SkipFoundationKotlin"]),
 
+        .library(name: "SkipDevice", targets: ["SkipDevice"]),
+        .library(name: "SkipDeviceKotlin", targets: ["SkipDeviceKotlin"]),
+
         .library(name: "SkipUI", targets: ["SkipUI"]),
         .library(name: "SkipUIKotlin", targets: ["SkipUIKotlin"]),
 
@@ -49,6 +52,11 @@ let package = Package(
         .gradle(name: "SkipFoundation", dependencies: ["SkipLib"]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
         .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
+
+        .target(name: "SkipDevice", dependencies: ["SkipFoundation"]),
+        .gradle(name: "SkipDevice", dependencies: ["SkipFoundation"]),
+        .testTarget(name: "SkipDeviceTests", dependencies: ["SkipDevice"]),
+        .testGradle(name: "SkipDeviceTests", dependencies: ["SkipDevice"]),
 
         .target(name: "SkipUI", dependencies: ["SkipFoundation"]),
         .gradle(name: "SkipUI", dependencies: ["SkipFoundation"]),

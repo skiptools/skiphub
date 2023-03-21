@@ -1,15 +1,40 @@
 # skip.tools per-configuration file
+skip:
+  package: 'skip.lib'
 
 # the blocks to add to the build.gradle.kts DSL that is assembled from all the Skip modules
-gradle:
+build:
   contents:
     - block: 'plugins'
       contents:
-        - 'kotlin("jvm") version "1.8.10"'
-    - block: 'repositories'
-      contents:
-        - 'mavenCentral()'
+        #- '`java-library`'
+        - '`kotlin-dsl`'
+        # or:
+        #- 'kotlin("jvm") version "1.8.10"'
+
+    #- block: 'repositories'
+    #  contents:
+    #    - 'mavenCentral()'
+
+    # note: this might be unnecessary with the `kotlin-dsl` plugin
+    # see: https://docs.gradle.org/current/userguide/kotlin_dsl.html#sec:kotlin-dsl_plugin
     - block: 'dependencies'
+      export: false
       contents:
-        - 'implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")'
-        - 'testImplementation(project(":SkipUnit"))'
+        - 'implementation("org.jetbrains.kotlin:kotlin-reflect")'
+
+# the blocks to add to the settings.gradle.kts DSL that is assembled from all the Skip modules
+settings:
+  contents:
+    - block: 'pluginManagement'
+      contents:
+        - block: 'repositories'
+          contents:
+            - 'gradlePluginPortal()'
+
+    - block: 'dependencyResolutionManagement'
+      contents:
+        - 'repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)'
+        - block: 'repositories'
+          contents:
+            - 'mavenCentral()'

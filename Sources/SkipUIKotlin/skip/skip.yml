@@ -1,4 +1,7 @@
 ## skip.tools per-configuration file
+skip:
+  package: 'skip.ui'
+
 #skip-ui:
 #    rename: XXX.swift YYY.kt
 #    regex: s/FOO/BAR/g
