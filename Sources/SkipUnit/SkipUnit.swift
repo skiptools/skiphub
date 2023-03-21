@@ -50,7 +50,7 @@ open class JupiterTestCase: XCTestCase {
             print("GRADLE>", line)
         }
 
-        let testSuites = try await parseResults()
+        let testSuites = try parseResults()
 
         XCTAssertNotEqual(0, testSuites.count, "no tests were run")
 

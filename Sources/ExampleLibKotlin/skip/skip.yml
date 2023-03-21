@@ -1,3 +1,4 @@
 # skip.tools per-configuration file
-skip:
-  package: 'example.lib'
+
+#skip:
+#  package: 'example.lib'

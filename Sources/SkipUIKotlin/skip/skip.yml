@@ -1,3 +1,4 @@
 ## skip.tools per-configuration file
-skip:
-  package: 'skip.ui'
+
+#skip:
+#  package: 'skip.ui'

@@ -1,2 +1,5 @@
-#
+# skip.tools per-configuration file
+
+#skip:
+#  package: 'skip.device'
 

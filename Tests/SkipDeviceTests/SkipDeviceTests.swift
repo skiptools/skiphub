@@ -26,6 +26,244 @@ final class SkipDeviceTests: XCTestCase {
 
         // load some interesting Android classes that are available via robolectric…
         #if SKIP
+
+        // get an application context from the current environment
+        let context: android.content.Context = androidx.test.core.app.ApplicationProvider.getApplicationContext()
+
+        do { // test SQLite
+            let db = context.openOrCreateDatabase("mydb", 0, null, null)
+            defer { db.close() }
+            XCTAssertEqual(3, db.compileStatement("SELECT 1 + 2").simpleQueryForLong().toInt())
+        }
+
+        do {
+            // show the various services
+            /* Added in API level 1 */
+            logger.info("ACTIVITY_SERVICE: \(context.getSystemService(android.content.Context.ACTIVITY_SERVICE))") // android.app.ActivityManager
+            logger.info("ALARM_SERVICE: \(context.getSystemService(android.content.Context.ALARM_SERVICE))") // android.app.AlarmManager
+            logger.info("AUDIO_SERVICE: \(context.getSystemService(android.content.Context.AUDIO_SERVICE))") // android.media.AudioManager
+            logger.info("CLIPBOARD_SERVICE: \(context.getSystemService(android.content.Context.CLIPBOARD_SERVICE))") // android.content.ClipboardManager
+            logger.info("CONNECTIVITY_SERVICE: \(context.getSystemService(android.content.Context.CONNECTIVITY_SERVICE))") // android.net.ConnectivityManager
+            logger.info("KEYGUARD_SERVICE: \(context.getSystemService(android.content.Context.KEYGUARD_SERVICE))") // android.app.KeyguardManager
+            logger.info("LAYOUT_INFLATER_SERVICE: \(context.getSystemService(android.content.Context.LAYOUT_INFLATER_SERVICE))") // com.android.internal.policy.impl.PhoneLayoutInflater
+            logger.info("LOCATION_SERVICE: \(context.getSystemService(android.content.Context.LOCATION_SERVICE))") // android.location.LocationManager
+            logger.info("NOTIFICATION_SERVICE: \(context.getSystemService(android.content.Context.NOTIFICATION_SERVICE))") // android.app.NotificationManager
+            logger.info("POWER_SERVICE: \(context.getSystemService(android.content.Context.POWER_SERVICE))") // android.os.PowerManager
+            logger.info("SEARCH_SERVICE: \(context.getSystemService(android.content.Context.SEARCH_SERVICE))") // android.app.SearchManager
+            logger.info("SENSOR_SERVICE: \(context.getSystemService(android.content.Context.SENSOR_SERVICE))") // android.hardware.SystemSensorManager
+            logger.info("TELEPHONY_SERVICE: \(context.getSystemService(android.content.Context.TELEPHONY_SERVICE))") // android.telephony.TelephonyManager
+            //logger.info("VIBRATOR_SERVICE: \(context.getSystemService(android.content.Context.VIBRATOR_SERVICE))") // deprecated
+            logger.info("WALLPAPER_SERVICE: \(context.getSystemService(android.content.Context.WALLPAPER_SERVICE))") // android.app.WallpaperManager
+            logger.info("WIFI_SERVICE: \(context.getSystemService(android.content.Context.WIFI_SERVICE))") // android.net.wifi.WifiManager
+            logger.info("WINDOW_SERVICE: \(context.getSystemService(android.content.Context.WINDOW_SERVICE))") // android.view.WindowManagerImpl$CompatModeWrapper
+
+            /* Added in API level 3 */
+            logger.info("INPUT_METHOD_SERVICE: \(context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE))") // android.view.inputmethod.InputMethodManager
+
+            /* Added in API level 4 */
+            logger.info("ACCESSIBILITY_SERVICE: \(context.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE))") // android.view.accessibility.AccessibilityManager
+
+            /* Added in API level 5 */
+            logger.info("ACCOUNT_SERVICE: \(context.getSystemService(android.content.Context.ACCOUNT_SERVICE))") // android.accounts.AccountManager
+
+            /* Added in API level 8 */
+            logger.info("DEVICE_POLICY_SERVICE: \(context.getSystemService(android.content.Context.DEVICE_POLICY_SERVICE))") // android.app.admin.DevicePolicyManager
+            logger.info("DROPBOX_SERVICE: \(context.getSystemService(android.content.Context.DROPBOX_SERVICE))") // android.os.DropBoxManager
+            logger.info("UI_MODE_SERVICE: \(context.getSystemService(android.content.Context.UI_MODE_SERVICE))") // android.app.UiModeManager
+
+            /* Added in API level 9 */
+            logger.info("DOWNLOAD_SERVICE: \(context.getSystemService(android.content.Context.DOWNLOAD_SERVICE))") // android.app.DownloadManager
+            logger.info("STORAGE_SERVICE: \(context.getSystemService(android.content.Context.STORAGE_SERVICE))") // android.os.storage.StorageManager
+
+            /* Added in API level 10 */
+            logger.info("NFC_SERVICE: \(context.getSystemService(android.content.Context.NFC_SERVICE))") // android.nfc.NfcManager
+
+            /* Added in API level 12 */
+            logger.info("USB_SERVICE: \(context.getSystemService(android.content.Context.USB_SERVICE))") // android.hardware.usb.UsbManager
+
+            /* Added in API level 14 */
+            logger.info("TEXT_SERVICES_MANAGER_SERVICE: \(context.getSystemService(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE))") // android.view.textservice.TextServicesManager
+            logger.info("WIFI_P2P_SERVICE: \(context.getSystemService(android.content.Context.WIFI_P2P_SERVICE))") // android.net.wifi.p2p.WifiP2pManager
+
+            /* Added in API level 16 */
+            logger.info("INPUT_SERVICE: \(context.getSystemService(android.content.Context.INPUT_SERVICE))") // android.hardware.input.InputManager
+            logger.info("MEDIA_ROUTER_SERVICE: \(context.getSystemService(android.content.Context.MEDIA_ROUTER_SERVICE))") // android.media.MediaRouter
+            logger.info("NSD_SERVICE: \(context.getSystemService(android.content.Context.NSD_SERVICE))") // android.net.nsd.NsdManager
+
+            /* Added in API level 17 */
+            logger.info("DISPLAY_SERVICE: \(context.getSystemService(android.content.Context.DISPLAY_SERVICE))") // Robolectric: null
+            logger.info("USER_SERVICE: \(context.getSystemService(android.content.Context.USER_SERVICE))") // Robolectric: null
+
+            /* Added in API level 18 */
+            logger.info("BLUETOOTH_SERVICE: \(context.getSystemService(android.content.Context.BLUETOOTH_SERVICE))") // Robolectric: null
+
+            /* Added in API level 19 */
+            logger.info("APP_OPS_SERVICE: \(context.getSystemService(android.content.Context.APP_OPS_SERVICE))") // Robolectric: null
+            logger.info("CAPTIONING_SERVICE: \(context.getSystemService(android.content.Context.CAPTIONING_SERVICE))") // Robolectric: null
+            logger.info("CONSUMER_IR_SERVICE: \(context.getSystemService(android.content.Context.CONSUMER_IR_SERVICE))") // Robolectric: null
+            logger.info("PRINT_SERVICE: \(context.getSystemService(android.content.Context.PRINT_SERVICE))") // Robolectric: null
+
+            /* Added in API level 21 */
+            logger.info("APPWIDGET_SERVICE: \(context.getSystemService(android.content.Context.APPWIDGET_SERVICE))") // Robolectric: null
+            logger.info("BATTERY_SERVICE: \(context.getSystemService(android.content.Context.BATTERY_SERVICE))") // Robolectric: null
+            logger.info("CAMERA_SERVICE: \(context.getSystemService(android.content.Context.CAMERA_SERVICE))") // Robolectric: null
+            logger.info("JOB_SCHEDULER_SERVICE: \(context.getSystemService(android.content.Context.JOB_SCHEDULER_SERVICE))") // Robolectric: null
+            logger.info("LAUNCHER_APPS_SERVICE: \(context.getSystemService(android.content.Context.LAUNCHER_APPS_SERVICE))") // Robolectric: null
+            logger.info("MEDIA_PROJECTION_SERVICE: \(context.getSystemService(android.content.Context.MEDIA_PROJECTION_SERVICE))") // Robolectric: null
+            logger.info("MEDIA_SESSION_SERVICE: \(context.getSystemService(android.content.Context.MEDIA_SESSION_SERVICE))") // Robolectric: null
+            logger.info("RESTRICTIONS_SERVICE: \(context.getSystemService(android.content.Context.RESTRICTIONS_SERVICE))") // Robolectric: null
+            logger.info("TELECOM_SERVICE: \(context.getSystemService(android.content.Context.TELECOM_SERVICE))") // Robolectric: null
+            logger.info("TV_INPUT_SERVICE: \(context.getSystemService(android.content.Context.TV_INPUT_SERVICE))") // Robolectric: null
+
+            /* Added in API level 22 */
+            logger.info("TELEPHONY_SUBSCRIPTION_SERVICE: \(context.getSystemService(android.content.Context.TELEPHONY_SUBSCRIPTION_SERVICE))") // Robolectric: null
+            logger.info("USAGE_STATS_SERVICE: \(context.getSystemService(android.content.Context.USAGE_STATS_SERVICE))") // Robolectric: null
+
+            /* Added in API level 23 */
+            logger.info("CARRIER_CONFIG_SERVICE: \(context.getSystemService(android.content.Context.CARRIER_CONFIG_SERVICE))") // Robolectric: null
+            logger.info("FINGERPRINT_SERVICE: \(context.getSystemService(android.content.Context.FINGERPRINT_SERVICE))") // Robolectric: null
+            logger.info("MIDI_SERVICE: \(context.getSystemService(android.content.Context.MIDI_SERVICE))") // Robolectric: null
+            logger.info("NETWORK_STATS_SERVICE: \(context.getSystemService(android.content.Context.NETWORK_STATS_SERVICE))") // Robolectric: null
+
+            /* Added in API level 24 */
+            logger.info("HARDWARE_PROPERTIES_SERVICE: \(context.getSystemService(android.content.Context.HARDWARE_PROPERTIES_SERVICE))") // Robolectric: null
+            logger.info("SYSTEM_HEALTH_SERVICE: \(context.getSystemService(android.content.Context.SYSTEM_HEALTH_SERVICE))") // Robolectric: null
+
+            /* Added in API level 25 */
+            logger.info("SHORTCUT_SERVICE: \(context.getSystemService(android.content.Context.SHORTCUT_SERVICE))") // Robolectric: null
+
+            /* Added in API level 26 */
+            logger.info("COMPANION_DEVICE_SERVICE: \(context.getSystemService(android.content.Context.COMPANION_DEVICE_SERVICE))") // Robolectric: null
+            logger.info("STORAGE_STATS_SERVICE: \(context.getSystemService(android.content.Context.STORAGE_STATS_SERVICE))") // Robolectric: null
+            logger.info("TEXT_CLASSIFICATION_SERVICE: \(context.getSystemService(android.content.Context.TEXT_CLASSIFICATION_SERVICE))") // Robolectric: null
+            logger.info("WIFI_AWARE_SERVICE: \(context.getSystemService(android.content.Context.WIFI_AWARE_SERVICE))") // Robolectric: null
+
+            /* Added in API level 28 */
+            logger.info("CROSS_PROFILE_APPS_SERVICE: \(context.getSystemService(android.content.Context.CROSS_PROFILE_APPS_SERVICE))") // Robolectric: null
+            logger.info("EUICC_SERVICE: \(context.getSystemService(android.content.Context.EUICC_SERVICE))") // Robolectric: null
+            logger.info("IPSEC_SERVICE: \(context.getSystemService(android.content.Context.IPSEC_SERVICE))") // Robolectric: null
+            logger.info("WIFI_RTT_RANGING_SERVICE: \(context.getSystemService(android.content.Context.WIFI_RTT_RANGING_SERVICE))") // Robolectric: null
+
+            /* Added in API level 29 */
+            logger.info("BIOMETRIC_SERVICE: \(context.getSystemService(android.content.Context.BIOMETRIC_SERVICE))") // Robolectric: null
+            logger.info("ROLE_SERVICE: \(context.getSystemService(android.content.Context.ROLE_SERVICE))") // Robolectric: null
+
+            /* Added in API level 30 */
+            logger.info("BLOB_STORE_SERVICE: \(context.getSystemService(android.content.Context.BLOB_STORE_SERVICE))") // Robolectric: null
+            logger.info("CONNECTIVITY_DIAGNOSTICS_SERVICE: \(context.getSystemService(android.content.Context.CONNECTIVITY_DIAGNOSTICS_SERVICE))") // Robolectric: null
+            logger.info("FILE_INTEGRITY_SERVICE: \(context.getSystemService(android.content.Context.FILE_INTEGRITY_SERVICE))") // Robolectric: null
+            logger.info("TELEPHONY_IMS_SERVICE: \(context.getSystemService(android.content.Context.TELEPHONY_IMS_SERVICE))") // Robolectric: null
+            logger.info("VPN_MANAGEMENT_SERVICE: \(context.getSystemService(android.content.Context.VPN_MANAGEMENT_SERVICE))") // Robolectric: null
+
+            /* Added in API level 31 */
+            logger.info("APP_SEARCH_SERVICE: \(context.getSystemService(android.content.Context.APP_SEARCH_SERVICE))") // Robolectric: null
+            logger.info("BUGREPORT_SERVICE: \(context.getSystemService(android.content.Context.BUGREPORT_SERVICE))") // Robolectric: null
+            logger.info("DISPLAY_HASH_SERVICE: \(context.getSystemService(android.content.Context.DISPLAY_HASH_SERVICE))") // Robolectric: null
+            logger.info("DOMAIN_VERIFICATION_SERVICE: \(context.getSystemService(android.content.Context.DOMAIN_VERIFICATION_SERVICE))") // Robolectric: null
+            logger.info("GAME_SERVICE: \(context.getSystemService(android.content.Context.GAME_SERVICE))") // Robolectric: null
+            logger.info("MEDIA_COMMUNICATION_SERVICE: \(context.getSystemService(android.content.Context.MEDIA_COMMUNICATION_SERVICE))") // Robolectric: null
+            logger.info("MEDIA_METRICS_SERVICE: \(context.getSystemService(android.content.Context.MEDIA_METRICS_SERVICE))") // Robolectric: null
+            logger.info("PEOPLE_SERVICE: \(context.getSystemService(android.content.Context.PEOPLE_SERVICE))") // Robolectric: null
+            logger.info("PERFORMANCE_HINT_SERVICE: \(context.getSystemService(android.content.Context.PERFORMANCE_HINT_SERVICE))") // Robolectric: null
+            logger.info("VIBRATOR_MANAGER_SERVICE: \(context.getSystemService(android.content.Context.VIBRATOR_MANAGER_SERVICE))") // Robolectric: null
+
+            /* Added in API level 33 */
+            //logger.info("LOCALE_SERVICE: \(context.getSystemService(android.content.Context.LOCALE_SERVICE))")
+            //logger.info("STATUS_BAR_SERVICE: \(context.getSystemService(android.content.Context.STATUS_BAR_SERVICE))")
+            //logger.info("TV_INTERACTIVE_APP_SERVICE: \(context.getSystemService(android.content.Context.TV_INTERACTIVE_APP_SERVICE))")
+
+            /*
+             ACTIVITY_SERVICE: android.app.ActivityManager@7e4bb935
+             ALARM_SERVICE: android.app.AlarmManager@5e7a796
+             AUDIO_SERVICE: android.media.AudioManager@6725023b
+             CLIPBOARD_SERVICE: android.content.ClipboardManager@3ea42c29
+             CONNECTIVITY_SERVICE: android.net.ConnectivityManager@53814057
+             KEYGUARD_SERVICE: android.app.KeyguardManager@3c4fca28
+             LAYOUT_INFLATER_SERVICE: com.android.internal.policy.impl.PhoneLayoutInflater@7ae42749
+             LOCATION_SERVICE: android.location.LocationManager@6b04a1b7
+             NOTIFICATION_SERVICE: android.app.NotificationManager@66dcb48c
+             POWER_SERVICE: android.os.PowerManager@21df49eb
+             SEARCH_SERVICE: android.app.SearchManager@48a9678
+             SENSOR_SERVICE: android.hardware.SystemSensorManager@10aee086
+             TELEPHONY_SERVICE: android.telephony.TelephonyManager@651742c5
+             WALLPAPER_SERVICE: android.app.WallpaperManager@50396aae
+             WIFI_SERVICE: android.net.wifi.WifiManager@682243ab
+             WINDOW_SERVICE: android.view.WindowManagerImpl$CompatModeWrapper@32f55e9c
+             INPUT_METHOD_SERVICE: android.view.inputmethod.InputMethodManager@73b562e9
+             ACCESSIBILITY_SERVICE: android.view.accessibility.AccessibilityManager@60a7d02b
+             ACCOUNT_SERVICE: android.accounts.AccountManager@740d422a
+             DEVICE_POLICY_SERVICE: android.app.admin.DevicePolicyManager@56d2c694
+             DROPBOX_SERVICE: android.os.DropBoxManager@568b5371
+             UI_MODE_SERVICE: android.app.UiModeManager@2fdb1a01
+             DOWNLOAD_SERVICE: android.app.DownloadManager@2f4eb8cb
+             STORAGE_SERVICE: android.os.storage.StorageManager@6e3a8d55
+             NFC_SERVICE: android.nfc.NfcManager@14faf818
+             USB_SERVICE: android.hardware.usb.UsbManager@305e9970
+             TEXT_SERVICES_MANAGER_SERVICE: android.view.textservice.TextServicesManager@588d0c9d
+             WIFI_P2P_SERVICE: android.net.wifi.p2p.WifiP2pManager@56baf47a
+             INPUT_SERVICE: android.hardware.input.InputManager@3ed04942
+             MEDIA_ROUTER_SERVICE: android.media.MediaRouter@22512c0d
+             NSD_SERVICE: android.net.nsd.NsdManager@44514c65
+             DISPLAY_SERVICE: null
+             USER_SERVICE: null
+             BLUETOOTH_SERVICE: null
+             APP_OPS_SERVICE: null
+             CAPTIONING_SERVICE: null
+             CONSUMER_IR_SERVICE: null
+             PRINT_SERVICE: null
+             APPWIDGET_SERVICE: null
+             BATTERY_SERVICE: null
+             CAMERA_SERVICE: null
+             JOB_SCHEDULER_SERVICE: null
+             LAUNCHER_APPS_SERVICE: null
+             MEDIA_PROJECTION_SERVICE: null
+             MEDIA_SESSION_SERVICE: null
+             RESTRICTIONS_SERVICE: null
+             TELECOM_SERVICE: null
+             TV_INPUT_SERVICE: null
+             TELEPHONY_SUBSCRIPTION_SERVICE: null
+             USAGE_STATS_SERVICE: null
+             CARRIER_CONFIG_SERVICE: null
+             FINGERPRINT_SERVICE: null
+             MIDI_SERVICE: null
+             NETWORK_STATS_SERVICE: null
+             HARDWARE_PROPERTIES_SERVICE: null
+             SYSTEM_HEALTH_SERVICE: null
+             SHORTCUT_SERVICE: null
+             COMPANION_DEVICE_SERVICE: null
+             STORAGE_STATS_SERVICE: null
+             TEXT_CLASSIFICATION_SERVICE: null
+             WIFI_AWARE_SERVICE: null
+             CROSS_PROFILE_APPS_SERVICE: null
+             EUICC_SERVICE: null
+             IPSEC_SERVICE: null
+             WIFI_RTT_RANGING_SERVICE: null
+             BIOMETRIC_SERVICE: null
+             ROLE_SERVICE: null
+             BLOB_STORE_SERVICE: null
+             CONNECTIVITY_DIAGNOSTICS_SERVICE: null
+             FILE_INTEGRITY_SERVICE: null
+             TELEPHONY_IMS_SERVICE: null
+             VPN_MANAGEMENT_SERVICE: null
+             APP_SEARCH_SERVICE: null
+             BUGREPORT_SERVICE: null
+             DISPLAY_HASH_SERVICE: null
+             DOMAIN_VERIFICATION_SERVICE: null
+             GAME_SERVICE: null
+             MEDIA_COMMUNICATION_SERVICE: null
+             MEDIA_METRICS_SERVICE: null
+             PEOPLE_SERVICE: null
+             PERFORMANCE_HINT_SERVICE: null
+             VIBRATOR_MANAGER_SERVICE: null
+             */
+        }
+
+        do { // get location manager
+            let locationManager = context.getSystemService(android.content.Context.LOCATION_SERVICE) as android.location.LocationManager
+            XCTAssertNotNil(locationManager, "locationManager was null")
+        }
+
+
         Class.forName("android.Manifest")
 
         Class.forName("android.animation.Animator")

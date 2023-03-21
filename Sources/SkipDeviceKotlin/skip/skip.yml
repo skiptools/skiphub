@@ -1,7 +1,9 @@
 # skip.tools per-configuration file
-skip:
-  package: 'skip.device'
 
+#skip:
+#  package: 'skip.device'
+
+# the blocks to add to the build.gradle.kts
 build:
   contents:
     - block: 'plugins'
@@ -10,8 +12,9 @@ build:
         - 'kotlin("android") version "1.8.10"'
         - 'id("com.android.library") version "7.4.2"'
         #- 'id("org.jetbrains.kotlin.android") version "1.5.31"'
-      # we need to replace the `kotlin-dsl` plugin or else we get the error:
-      # The 'java' plugin has been applied, but it is not compatible with the Android plugins.
+
+      # we need to replace the `kotlin-dsl` plugin or else
+      # error: “The 'java' plugin has been applied, but it is not compatible with the Android plugins.”
       remove:
         - '`kotlin-dsl`'
 
@@ -35,6 +38,7 @@ build:
     - block: 'dependencies'
       contents:
         - 'testImplementation("org.robolectric:robolectric:4.10-alpha-1")'
+        - 'testImplementation("androidx.test:core:1.5.0")'
 
 # we might want this for test logging:
 #tasks.withType<Test>().configureEach {
@@ -44,6 +48,7 @@ build:
 #    }
 #}
 
+# the blocks to add to the settings.gradle.kts
 settings:
   contents:
     - block: 'pluginManagement'

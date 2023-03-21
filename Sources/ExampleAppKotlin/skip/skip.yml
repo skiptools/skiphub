@@ -1,4 +1,4 @@
 # skip.tools per-configuration file
-skip:
-  package: 'example.app'
+#skip:
+#  package: 'example.app'
 

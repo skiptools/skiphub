@@ -1,28 +1,26 @@
 # skip.tools per-configuration file
-skip:
-  package: 'skip.lib'
 
-# the blocks to add to the build.gradle.kts DSL that is assembled from all the Skip modules
+skip:
+  plugins:
+    - plugin: import-map
+      package: 'skip.lib'
+      add:
+        - 'java.lang.reflect.*'
+    - plugin: test-annotate
+      with: '@RobolectricTest'
+
+# the blocks to add to the build.gradle.kts
 build:
   contents:
     - block: 'plugins'
       contents:
         - '`kotlin-dsl`'
-        # or:
-        #- 'kotlin("jvm") version "1.8.10"'
-
-    #- block: 'repositories'
-    #  contents:
-    #    - 'mavenCentral()'
-
-    # note: this might be unnecessary with the `kotlin-dsl` plugin
-    # see: https://docs.gradle.org/current/userguide/kotlin_dsl.html#sec:kotlin-dsl_plugin
     - block: 'dependencies'
       export: false
       contents:
         - 'implementation("org.jetbrains.kotlin:kotlin-reflect")'
 
-# the blocks to add to the settings.gradle.kts DSL that is assembled from all the Skip modules
+# the blocks to add to the settings.gradle.kts
 settings:
   contents:
     - block: 'pluginManagement'
