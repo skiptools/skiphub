@@ -62,3 +62,12 @@ settings:
         - block: 'repositories'
           contents:
             - 'google()'
+
+#settings:
+#  - pluginManagement:
+#    - repositories
+#      - 'google()'
+#
+#  - dependencyResolutionManagement:
+#    - repositories
+#      - 'google()'

@@ -25,7 +25,7 @@ final class SkipDeviceTests: XCTestCase {
     }
 
     #if SKIP
-    // get an Android context from the current environment
+    // get an Android context from the current test environment
     let context: android.content.Context = androidx.test.core.app.ApplicationProvider.getApplicationContext()
 
     // SKIP INSERT: @Test
@@ -51,6 +51,34 @@ final class SkipDeviceTests: XCTestCase {
         let db = context.openOrCreateDatabase("mydb", 0, null, null)
         defer { db.close() }
         XCTAssertEqual(3, db.compileStatement("SELECT 1 + 2").simpleQueryForLong().toInt())
+    }
+
+    // SKIP INSERT: @Test
+    func testCanvas() throws {
+        var width = 500
+        var height = 500
+
+        // Create a Bitmap object with the desired width and height
+        let bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+
+        // Create a Canvas object with the Bitmap object as its parameter
+        let canvas = android.graphics.Canvas(bitmap)
+
+        // Draw on the canvas using the draw methods
+        canvas.drawColor(android.graphics.Color.WHITE)
+        canvas.drawText("Hello, World!", 100.toFloat(), 100.toFloat(), android.graphics.Paint())
+
+        // Compress the Bitmap object to a byte array
+        let outputStream = java.io.ByteArrayOutputStream()
+        bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, outputStream)
+        let byteArray = outputStream.toByteArray()
+
+        XCTAssertLessThan(100 * 1024, byteArray.size, "PNG \(width)x\(height) unexpected size: \(byteArray.size)")
+        XCTAssertGreaterThan(2 * 1024 * 1024, byteArray.size, "PNG \(width)x\(height) unexpected size: \(byteArray.size)")
+
+        // Convert the byte array to a Bitmap object if needed
+        let generatedBitmap = android.graphics.BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        XCTAssertNotNil(generatedBitmap, "bitmap was null")
     }
 
     // SKIP INSERT: @Test

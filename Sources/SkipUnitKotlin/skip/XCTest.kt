@@ -33,6 +33,16 @@ interface XCTestCase {
     fun XCTAssertNotEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertNotEquals(b, a)
     fun XCTAssertNotEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertNotEquals(msg, b, a)
 
+    fun <T: Number> XCTAssertGreaterThan(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !> ${b}", a.toDouble().compareTo(b.toDouble()) > 0)
+    fun <T: Number> XCTAssertGreaterThan(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a.toDouble().compareTo(b.toDouble()) > 0)
+    fun <T: Number> XCTAssertGreaterThanOrEqual(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !>= ${b}", a.toDouble().compareTo(b.toDouble()) >= 0)
+    fun <T: Number> XCTAssertGreaterThanOrEqual(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a.toDouble().compareTo(b.toDouble()) >= 0)
+
+    fun <T: Number> XCTAssertLessThan(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !< ${b}", a.toDouble().compareTo(b.toDouble()) < 0)
+    fun <T: Number> XCTAssertLessThan(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a.toDouble().compareTo(b.toDouble()) < 0)
+    fun <T: Number> XCTAssertLessThanOrEqual(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !<= ${b}", a.toDouble().compareTo(b.toDouble()) <= 0)
+    fun <T: Number> XCTAssertLessThanOrEqual(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a.toDouble().compareTo(b.toDouble()) <= 0)
+
     // additional overloads needed for XCTAssert*() which have different signatures on Linux (@autoclosures) than on Darwin platforms (direct values)
 
     fun XCTUnwrap(ob: () -> Any?) = { val x = ob(); org.junit.Assert.assertNotNull(x); x }

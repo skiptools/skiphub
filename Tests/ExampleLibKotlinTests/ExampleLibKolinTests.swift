@@ -5,6 +5,6 @@
 // as published by the Free Software Foundation https://fsf.org
 import SkipUnit
 
-/// This test case will run the transpiled tests for the module, as implemented by `JupiterTestCase.testProjectGradle()`
-final class KotlinProjectTestCase: JupiterTestCase {
+/// This test case will run the transpiled tests for the module, as implemented by `JUnitTestCase.testProjectGradle()`
+final class KotlinProjectTestCase: JUnitTestCase {
 }

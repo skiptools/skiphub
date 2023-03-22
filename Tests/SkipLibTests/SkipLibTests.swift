@@ -15,6 +15,28 @@ final class SkipLibTests: XCTestCase {
         XCTAssertEqual("SkipLib", SkipLibInternalModuleName())
         XCTAssertEqual("SkipLib", SkipLibPublicModuleName())
     }
+
+    // SKIP INSERT: @Test
+    func testUnitTests() throws {
+        // test the various test assertions and ensure the JUnit implementations match the XCUnit ones
+        XCTAssertEqual(1, 1)
+        XCTAssertEqual(1, 1, "one == one")
+
+        XCTAssertNotEqual(1, 2)
+        XCTAssertNotEqual(1, 2, "one != two")
+
+        XCTAssertGreaterThanOrEqual(1, 1)
+        XCTAssertGreaterThanOrEqual(1, 1, "one >= one")
+
+        XCTAssertGreaterThan(2, 1)
+        XCTAssertGreaterThan(2, 1, "two > one")
+
+        XCTAssertLessThanOrEqual(1, 1)
+        XCTAssertLessThanOrEqual(1, 1, "one <= one")
+
+        XCTAssertLessThan(1, 2)
+        XCTAssertLessThan(1, 2, "one < two")
+    }
 }
 
 #if !SKIP
