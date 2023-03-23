@@ -41,7 +41,10 @@ jobs:
       # @_exported import XCTest
 
       - name: Pre-cache Swift modules
-        run: for module in SkipLib SkipFoundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+        run: |
+          mkdir ${TMPDIR}/symbolgraph-extract
+          for module in SkipLib SkipFoundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+          ls -la ${TMPDIR}/symbolgraph-extract
 
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
