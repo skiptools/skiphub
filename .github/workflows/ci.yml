@@ -27,16 +27,13 @@ jobs:
     steps:
       - name: Checkout skip-core
         uses: actions/checkout@v3
+        with:
+          path: skip-core
+          repository: skiptools/skip-core
 
       - name: Check skiptool (external)
         working-directory: skip-core
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
-
-      - name: Checkout skip-core
-        uses: actions/checkout@v3
-        with:
-          path: skip-core
-          repository: skiptools/skip-core
 
       - name: Checkout skip
         uses: actions/checkout@v3
