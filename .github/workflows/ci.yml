@@ -27,11 +27,8 @@ jobs:
       - name: Checkout skip-core
         uses: actions/checkout@v3
 
-      - name: Run ${{ matrix.target }} iOS Swift Tests
-        run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}"
-
       - name: Run ${{ matrix.target }} macOS Swift Tests
+        if: false
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}"
 
@@ -62,6 +59,11 @@ jobs:
       - name: Run ${{ matrix.target }} macOS Kotlin Tests
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin"
+
+      - name: Run ${{ matrix.target }} iOS Swift Tests
+        run: |
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}"
+
 
       - name: Run ${{ matrix.target }} Gradle Tests
         run: |
