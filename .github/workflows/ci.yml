@@ -2,7 +2,7 @@ name: skip-core ci
 
 on:
   push:
-    branches: '*'
+    branches: 'main'
   schedule:
     - cron:  '0,6,12,18 * * * *'
 
@@ -10,7 +10,7 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
 
 jobs:
-  example_matrix:
+  skip-core-modules:
     strategy:
       fail-fast: false
       matrix:
@@ -28,10 +28,38 @@ jobs:
       - name: Checkout skip-core
         uses: actions/checkout@v3
 
+      - name: Check skiptool (external)
+        working-directory: skip-core
+        run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
+
+      - name: Checkout skip-core
+        uses: actions/checkout@v3
+        with:
+          path: skip-core
+          repository: skiptools/skip-core
+
+      - name: Checkout skip
+        uses: actions/checkout@v3
+        with:
+          path: skip
+          repository: skiptools/skip
+
+      - name: Checkout SkipSource
+        uses: actions/checkout@v3
+        with:
+          path: SkipSource
+          repository: skiptools/SkipSource
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Check skiptool (local)
+        working-directory: skip-core
+        run: SKIPLOCAL=.. swift package --disable-sandbox --allow-writing-to-package-directory skip info
+
       - name: Run ${{ matrix.target }} macOS Swift Tests
         if: false
+        working-directory: skip-core
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}"
+          SKIPLOCAL=.. xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}"
 
       # symbolgraph-extract needs to be manually run not because we use the symbols,
       # but because it pre-caches SwiftShims.swiftmodule and other modules into a
@@ -52,21 +80,24 @@ jobs:
       # @_exported import XCTest
 
       - name: Cache Swift modules
+        working-directory: skip-core
         run: |
           mkdir ${TMPDIR}/symbolgraph-extract
           for module in SwiftShims Foundation Darwin XCTest OSLog os CoreTransferable SwiftUI ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
           ls -lah ${TMPDIR}/symbolgraph-extract
 
       - name: Run ${{ matrix.target }} macOS Kotlin Tests
+        working-directory: skip-core
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin"
+          SKIPLOCAL=.. xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin"
 
       - name: Run ${{ matrix.target }} iOS Swift Tests
+        working-directory: skip-core
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}"
-
+          SKIPLOCAL=.. xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}"
 
       - name: Run ${{ matrix.target }} Gradle Tests
+        working-directory: skip-core
         run: |
           # get the most recent derived data folder
           DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
