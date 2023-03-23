@@ -29,15 +29,39 @@ jobs:
 
       - name: Run ${{ matrix.target }} iOS Swift Tests
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${{ matrix.target }}
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}"
 
       - name: Run ${{ matrix.target }} macOS Swift Tests
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ matrix.target }}
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}"
+
+      # symbolgraph-extract needs to be manually run not because we use the symbols,
+      # but because it pre-caches SwiftShims.swiftmodule and other modules into a
+      # temporary folders that the transpiler build plug-in does not have write access to
+
+      # this shows up as an error on the GH runners like:
+      #
+      # Error: terminated(1): /usr/bin/xcrun swift symbolgraph-extract -module-name SkipUnit -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/7D655714-40E7-4E36-B322-774B8ACBE4FB -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I /Users/runner/Library/Developer/Xcode/DerivedData/skip-core-cpmrmpnysoyybacpdfaabaxuqhex/Build/Products/Debug output:
+      #
+      # <unknown>:0: error: unable to open output file '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/C/clang/ModuleCache/1CUWPUEC7D78B/Darwin-1IPQPNED63C6S.pcm': 'Operation not permitted'
+      #
+      # <unknown>:0: error: could not build Objective-C module 'Darwin'
+      #
+      # <unknown>:0: error: unable to open output file '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/C/clang/ModuleCache/28ISCAFRG14KL/XCTest-3BBK7W05KE09V.pcm': 'Operation not permitted'
+      #
+      # /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/XCTest.swiftmodule/x86_64-apple-macos.swiftinterface:7:19: error: could not build Objective-C module 'XCTest'
+      #
+      # @_exported import XCTest
+
+      - name: Cache Swift modules
+        run: |
+          mkdir ${TMPDIR}/symbolgraph-extract
+          for module in SwiftShims Foundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+          ls -lah ${TMPDIR}/symbolgraph-extract
 
       - name: Run ${{ matrix.target }} macOS Kotlin Tests
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ matrix.target }}Kotlin
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin"
 
       - name: Run ${{ matrix.target }} Gradle Tests
         run: |
@@ -66,28 +90,10 @@ jobs:
       - name: Build skip-core
         run: swift build
 
-      # symbolgraph-extract needs to be manually run not because we use the symbols,
-      # but because it pre-caches SwiftShims.swiftmodule and other modules into a
-      # temporary folders that the transpiler build plug-in does not have write access to
-
-      # this shows up as an error on the GH runners like:
-      #
-      # Error: terminated(1): /usr/bin/xcrun swift symbolgraph-extract -module-name SkipUnit -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/7D655714-40E7-4E36-B322-774B8ACBE4FB -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I /Users/runner/Library/Developer/Xcode/DerivedData/skip-core-cpmrmpnysoyybacpdfaabaxuqhex/Build/Products/Debug output:
-      #
-      # <unknown>:0: error: unable to open output file '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/C/clang/ModuleCache/1CUWPUEC7D78B/Darwin-1IPQPNED63C6S.pcm': 'Operation not permitted'
-      #
-      # <unknown>:0: error: could not build Objective-C module 'Darwin'
-      #
-      # <unknown>:0: error: unable to open output file '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/C/clang/ModuleCache/28ISCAFRG14KL/XCTest-3BBK7W05KE09V.pcm': 'Operation not permitted'
-      #
-      # /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/XCTest.swiftmodule/x86_64-apple-macos.swiftinterface:7:19: error: could not build Objective-C module 'XCTest'
-      #
-      # @_exported import XCTest
-
       - name: Pre-cache Swift modules
         run: |
           mkdir ${TMPDIR}/symbolgraph-extract
-          for module in SkipLib SkipFoundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+          for module in SkipLib SkipFoundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
           ls -la ${TMPDIR}/symbolgraph-extract
 
       - name: Run SkipLib tests (debug)
