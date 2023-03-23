@@ -18,6 +18,11 @@ jobs:
         target: ['SkipLib', 'SkipFoundation', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp' ]
 
     runs-on: ${{ matrix.os }}
+
+    env:
+      CONFIG: 'Debug'
+      TARGET: ${{ matrix.target }}
+
     steps:
       - name: Checkout skip-core
         uses: actions/checkout@v3
