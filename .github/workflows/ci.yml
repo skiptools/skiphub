@@ -4,7 +4,7 @@ on:
   push:
     branches: '*'
   schedule:
-    - cron:  '0 * * * *'
+    - cron:  '0,6,12,18 * * * *'
 
 jobs:
   skip-core-tests-external:
@@ -40,12 +40,9 @@ jobs:
       #
       # @_exported import XCTest
 
-      - name: Pre-cache SkipLib symbols
-        run: /usr/bin/xcrun swift symbolgraph-extract -module-name SkipLib -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/
-
-      - name: Pre-cache XCTest symbols
-        run: /usr/bin/xcrun swift symbolgraph-extract -module-name XCTest -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/
-
+      - name: Pre-cache Swift modules
+        run: for module in Darwin os XCTest ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+          
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
 
