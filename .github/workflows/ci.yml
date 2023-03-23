@@ -26,6 +26,20 @@ jobs:
       # but because it pre-caches SwiftShims.swiftmodule and other modules into a
       # temporary folders that the transpiler build plug-in does not have write access to
 
+      # this shows up as an error on the GH runners like:
+      #
+      # Error: terminated(1): /usr/bin/xcrun swift symbolgraph-extract -module-name SkipUnit -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/7D655714-40E7-4E36-B322-774B8ACBE4FB -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I /Users/runner/Library/Developer/Xcode/DerivedData/skip-core-cpmrmpnysoyybacpdfaabaxuqhex/Build/Products/Debug output:
+      #
+      # <unknown>:0: error: unable to open output file '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/C/clang/ModuleCache/1CUWPUEC7D78B/Darwin-1IPQPNED63C6S.pcm': 'Operation not permitted'
+      #
+      # <unknown>:0: error: could not build Objective-C module 'Darwin'
+      #
+      # <unknown>:0: error: unable to open output file '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/C/clang/ModuleCache/28ISCAFRG14KL/XCTest-3BBK7W05KE09V.pcm': 'Operation not permitted'
+      #
+      # /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/XCTest.swiftmodule/x86_64-apple-macos.swiftinterface:7:19: error: could not build Objective-C module 'XCTest'
+      #
+      # @_exported import XCTest
+
       - name: Pre-cache SkipLib symbols
         run: /usr/bin/xcrun swift symbolgraph-extract -module-name SkipLib -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/
 
@@ -36,23 +50,23 @@ jobs:
         run: scripts/buildtest.sh Debug SkipLib
 
       - name: Run SkipFoundation tests (debug)
-        if: false
         run: scripts/buildtest.sh Debug SkipFoundation
+
       - name: Run SkipDevice tests (debug)
-        if: false
         run: scripts/buildtest.sh Debug SkipDevice
+
       - name: Run SkipSQL tests (debug)
-        if: false
         run: scripts/buildtest.sh Debug SkipSQL
+
       - name: Run SkipUI tests (debug)
-        if: false
         run: scripts/buildtest.sh Debug SkipUI
+
       - name: Run ExampleLib tests (debug)
-        if: false
         run: scripts/buildtest.sh Debug ExampleLib
+
       - name: Run ExampleApp tests (debug)
-        if: false
         run: scripts/buildtest.sh Debug ExampleApp
+
 
   skip-core-tests-internal:
     if: false
