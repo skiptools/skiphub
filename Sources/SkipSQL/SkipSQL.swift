@@ -6,9 +6,6 @@
 import SkipFoundation
 
 #if SKIP
-// SKIP INSERT: import android.database.*
-// SKIP INSERT: import android.database.sqlite.*
-// SKIP INSERT: import CrossFoundation.*
 #else
 #if os(Linux)
 import CSQLite
@@ -17,10 +14,14 @@ import SQLite3
 #endif
 #endif
 
+// SKIP INSERT: import android.database.sqlite.SQLiteDatabase
+// SKIP INSERT: import android.database.*
+// SKIP INSERT: import android.database.sqlite.*
+
 /// A connection to SQLite.
 public final class Connection {
     #if SKIP
-    public let db: android.database.sqlite.SQLiteDatabase
+    public let db: SQLiteDatabase
     #else
     public typealias Handle = OpaquePointer
     fileprivate var _handle: Handle?
@@ -37,7 +38,9 @@ public final class Connection {
 
     public init(_ filename: String, readonly: Bool = false) throws {
         #if SKIP
-        self.db = SQLiteDatabase.openDatabase(filename, null, readonly ? SQLiteDatabase.OPEN_READONLY : (SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE))
+        // self.db = SQLiteDatabase.openDatabase(filename, null, readonly ? SQLiteDatabase.OPEN_READONLY : (SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE))
+        
+        self.db = SQLiteDatabase.openDatabase(filename, null, SQLiteDatabase.CREATE_IF_NECESSARY)
         #else
         let flags = readonly ? SQLITE_OPEN_READONLY : (SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE)
         try check(resultOf: sqlite3_open_v2(filename, &_handle, flags | SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_URI, nil))
@@ -68,7 +71,9 @@ public final class Connection {
     /// Executes a single SQL statement.
     public func execute(sql: String, params: [SQLValue] = []) throws {
         #if SKIP
+        // SKIP REPLACE: error("SKIP")
         let bindArgs = params.map { $0.toBindArg() }
+        // SKIP REPLACE: error("SKIP")
         db.execSQL(sql, bindArgs.toTypedArray())
         #else
         if params.isEmpty {
@@ -132,27 +137,27 @@ public final class Connection {
 }
 
 
-#if SKIP
-
-#else
+#if !SKIP
 // let SQLITE_STATIC = unsafeBitCast(0, sqlite3_destructor_type.self)
 let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 #endif
 
 public enum SQLValue {
-    // we would rather call this "null", but the transplier then turns it into "class null", which is illegal in Kotlin
+    // we would rather call this "null", but the transplier objects to the name
     case nul
     case text(_ string: String)
     case integer(_ int: Int64)
     case float(_ double: Double)
     case blob(_ data: Data)
 
+    // SKIP REPLACE: internal val columnType: ColumnType get() { error("SKIP") }
     var columnType: ColumnType {
-        // warnings about let pattern with no effect and default bot needed works around Grphyon translation mixed associated type w/ empty enum
         switch self {
         case .nul:
-            return ColumnType.null
+            return ColumnType.nul
         case .text(string: _):
+            // binding should be unnecessary, but prevents transpiled error:
+            // SkipSQL.kt:82:26 Function invocation 'text(...)' expected
             return ColumnType.text
         case .integer(int: _):
             return ColumnType.integer
@@ -160,9 +165,14 @@ public enum SQLValue {
             return ColumnType.float
         case .blob(data: _):
             return ColumnType.blob
+        default:
+            // should be unnecessary, but works around transpiled code error:
+            // SkipSQL.kt:79:13 'when' expression must be exhaustive, add necessary 'is blobcase', 'is floatcase', 'is integercase', 'is nulcase', 'is textcase' branches or 'else' branch instead
+            return ColumnType.nul
         }
     }
 
+    // SKIP REPLACE: internal fun toBindArg(): Any? { error("SKIP") }
     func toBindArg() -> Any? {
         switch self {
         case .nul:
@@ -178,6 +188,7 @@ public enum SQLValue {
         }
     }
 
+    // SKIP REPLACE: internal fun toBindString(): String? { error("SKIP") }
     func toBindString() -> String? {
         switch self {
         case .nul:
@@ -194,6 +205,7 @@ public enum SQLValue {
     }
 
     /// If this is a `text` value, then return the underlying string
+    // SKIP REPLACE: internal val textValue: String? get() { error("SKIP") }
     var textValue: String? {
         switch self {
         case let .text(string: str): return str
@@ -202,6 +214,7 @@ public enum SQLValue {
     }
 
     /// If this is a `integer` value, then return the underlying integer
+    // SKIP REPLACE: internal val integerValue: Long? get() { error("SKIP") }
     var integerValue: Int64? {
         switch self {
         case let .integer(int: num): return num
@@ -210,6 +223,7 @@ public enum SQLValue {
     }
 
     /// If this is a `float` value, then return the underlying double
+    // SKIP REPLACE: internal val floatValue: Double? get() { return null }
     var floatValue: Double? {
         switch self {
         case let .float(double: dbl): return dbl
@@ -218,6 +232,7 @@ public enum SQLValue {
     }
 
     /// If this is a `blob` value, then return the underlying data
+    // SKIP REPLACE: internal val blobValue: Data? get() { error("SKIP") }
     var blobValue: Data? {
         switch self {
         case let .blob(data: dat): return dat
@@ -237,7 +252,7 @@ public enum SQLValue {
 ///  - NULL
 public enum ColumnType : Int32 {
     /// `SQLITE_NULL`
-    case null = 0
+    case nul = 0
     /// `SQLITE_INTEGER`, a 64-bit signed integer
     case integer = 1
     /// `SQLITE_FLOAT`, a 64-bit IEEE floating point number
@@ -275,8 +290,9 @@ public final class Cursor {
         self.connection = connection
 
         #if SKIP
-        let bindArgs: [String?] = params.map { $0.toBindString() }
-        self.cursor = connection.db.rawQuery(SQL, bindArgs.toTypedArray())
+//        let bindArgs: [String?] = params.map { $0.toBindString() }
+//        self.cursor = connection.db.rawQuery(SQL, bindArgs.toTypedArray())
+        self.cursor = connection.db.rawQuery(SQL, null) // TODO: re-implement args array
         #else
         try connection.check(resultOf: sqlite3_prepare_v2(connection.handle, SQL, -1, &handle, nil))
         for (index, param) in params.enumerated() {
@@ -285,6 +301,7 @@ public final class Cursor {
         #endif
     }
 
+    // SKIP REPLACE: internal val columnCount: Int get() { return 0 }
     var columnCount: Int32 {
         #if SKIP
         self.cursor.getColumnCount()
@@ -315,8 +332,8 @@ public final class Cursor {
         //return ColumnType(rawValue: getTypeConstant(column: column))
 
         switch getTypeConstant(column: column) {
-        case ColumnType.null.rawValue:
-            return .null
+        case ColumnType.nul.rawValue:
+            return .nul
         case ColumnType.integer.rawValue:
             return .integer
         case ColumnType.float.rawValue:
@@ -327,7 +344,7 @@ public final class Cursor {
             return .blob
         //case let type: // “error: Unsupported switch case item (failed to translate SwiftSyntax node)”
         default:
-            return .null
+            return .nul
             //fatalError("unsupported column type")
         }
     }
@@ -335,7 +352,7 @@ public final class Cursor {
     /// Returns the value contained in the given column, coerced to the expected type based on the column definition.
     public func getValue(column: Int32) -> SQLValue {
         switch getColumnType(column: column) {
-        case .null:
+        case .nul:
             return .nul
         case .text:
             return .text(getString(column: column))
@@ -344,11 +361,12 @@ public final class Cursor {
         case .float:
             return .float(getDouble(column: column))
         case .blob:
-            return .nul // .blob(data: getBlob(column: column))
+            return .nul // .blob(data: getBlob(column: column)) // TODO: SKIP
         }
     }
 
     /// Returns the values of the current row as an array
+    // SKIP REPLACE: fun getRow(): Array<SQLValue> { error("SKIP") }
     public func getRow() -> [SQLValue] {
         return (0..<columnCount).map { column in
             getValue(column: column)
@@ -356,6 +374,7 @@ public final class Cursor {
     }
 
     /// Returns a textual description of the row's values in a format suitable for printing to a console
+    // SKIP REPLACE: fun rowText(header: Boolean = false, values: Boolean = false, width: Int = 80): String { error("SKIP") }
     public func rowText(header: Bool = false, values: Bool = false, width: Int = 80) -> String {
         var str = ""
         let sep = header == false && values == false ? "+" : "|"
@@ -392,6 +411,7 @@ public final class Cursor {
     }
 
     /// Returns a single value from the query, closing the result set afterwards
+    // SKIP REPLACE: fun singleValue(): SQLValue? { error("SKIP") }
     public func singleValue() throws -> SQLValue? {
         try nextRow(close: true)?.first
     }
@@ -484,7 +504,9 @@ public final class Cursor {
     #endif
 }
 
+#if !SKIP
 extension String {
+    // SKIP REPLACE: internal fun String.pad(to: Int, with: String, rightAlign: Boolean): String { error("SKIP") }
     func pad(to width: Int, with padding: String, rightAlign: Bool) -> String {
         var str = self
         while str.count < width {
@@ -496,3 +518,4 @@ extension String {
         return str
     }
 }
+#endif

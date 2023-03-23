@@ -244,7 +244,6 @@ open class JUnitTestCase: XCTestCase {
                     if let swiftLocation = swiftLocation {
                         let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
                         record(issue)
-
                     }
                 }
             }
