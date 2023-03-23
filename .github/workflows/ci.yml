@@ -6,7 +6,46 @@ on:
   schedule:
     - cron:  '0,6,12,18 * * * *'
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+
 jobs:
+  example_matrix:
+    strategy:
+      matrix:
+        os: ['macos-12']
+        #os: ['macos-12', 'macos-13']
+        target: ['SkipLib', 'SkipFoundation', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp' ]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout skip-core
+        uses: actions/checkout@v3
+
+      - name: Run ${{ target }} iOS Swift Tests
+        run: |
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${{ target }}
+
+      - name: Run ${{ target }} macOS Swift Tests
+        run: |
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ target }}
+
+      - name: Run ${{ target }} macOS Kotlin Tests
+        run: |
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ target }}Kotlin
+
+      - name: Run ${{ target }} Gradle Tests
+        run: |
+          # get the most recent derived data folder
+          DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
+
+          #tree -lh -I build ${DER}/${{ target }}KotlinTests/SkipTranspilePlugIn/
+
+          # run the tests for the target
+          # cd ${DER}/${{ target }}KotlinTests/SkipTranspilePlugIn
+          gradle --project-dir ${DER}/${{ target }}KotlinTests/SkipTranspilePlugIn check
+
+
   skip-core-tests-external:
     # needs: https://github.com/actions/runner-images/issues/6426
     #runs-on: macos-13
@@ -45,28 +84,6 @@ jobs:
           mkdir ${TMPDIR}/symbolgraph-extract
           for module in SkipLib SkipFoundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
           ls -la ${TMPDIR}/symbolgraph-extract
-
-      - name: Run SkipLib tests (manual)
-        run: |
-          TARGET=SkipLib
-
-          # make sure the non-Kotlin tests pass on iOS
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${TARGET} | tee xcodebuild-ios-${TARGET}.log
-
-          # Now run the Swift tests
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}
-
-          # Now build the Kotlin tests
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${TARGET}Kotlin
-
-          # get the most recent derived data folder
-          DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
-
-          tree -lh -I build ${DER}/${TARGET}KotlinTests/SkipTranspilePlugIn/
-
-          # run the tests for the target
-          # cd ${DER}/${TARGET}KotlinTests/SkipTranspilePlugIn
-          gradle --project-dir ${DER}/${TARGET}KotlinTests/SkipTranspilePlugIn check
 
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
