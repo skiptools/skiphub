@@ -22,8 +22,11 @@ jobs:
       - name: Build SkipLib
         run: swift build
 
+      # symbolgraph-extract needs to be manually run not because we use the symbols,
+      # but because it pre-caches SwiftShims.swiftmodule and other modules into a
+      # temporary folders that the transpiler build plug-in does not have write access to
       - name: Pre-cache SkipLib symbols
-        run: /usr/bin/xcrun swift symbolgraph-extract -module-name SkipLib -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I /Users/runner/Library/Developer/Xcode/DerivedData/skip-core-cpmrmpnysoyybacpdfaabaxuqhex/Build/Products/Debug
+        run: /usr/bin/xcrun swift symbolgraph-extract -module-name SkipLib -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/
 
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
