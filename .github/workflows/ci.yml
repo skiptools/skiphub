@@ -22,28 +22,28 @@ jobs:
       - name: Checkout skip-core
         uses: actions/checkout@v3
 
-      - name: Run ${{ target }} iOS Swift Tests
+      - name: Run ${{ matrix.target }} iOS Swift Tests
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${{ target }}
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme ${{ matrix.target }}
 
-      - name: Run ${{ target }} macOS Swift Tests
+      - name: Run ${{ matrix.target }} macOS Swift Tests
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ target }}
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ matrix.target }}
 
-      - name: Run ${{ target }} macOS Kotlin Tests
+      - name: Run ${{ matrix.target }} macOS Kotlin Tests
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ target }}Kotlin
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme ${{ matrix.target }}Kotlin
 
-      - name: Run ${{ target }} Gradle Tests
+      - name: Run ${{ matrix.target }} Gradle Tests
         run: |
           # get the most recent derived data folder
           DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
 
-          #tree -lh -I build ${DER}/${{ target }}KotlinTests/SkipTranspilePlugIn/
+          #tree -lh -I build ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn/
 
           # run the tests for the target
-          # cd ${DER}/${{ target }}KotlinTests/SkipTranspilePlugIn
-          gradle --project-dir ${DER}/${{ target }}KotlinTests/SkipTranspilePlugIn check
+          # cd ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn
+          gradle --project-dir ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn check
 
 
   skip-core-tests-external:
