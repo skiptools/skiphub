@@ -19,7 +19,7 @@ jobs:
       - name: Check skiptool (release)
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-      - name: Build SkipLib
+      - name: Build skip-core
         run: swift build
 
       # symbolgraph-extract needs to be manually run not because we use the symbols,
@@ -41,7 +41,7 @@ jobs:
       # @_exported import XCTest
 
       - name: Pre-cache Swift modules
-        run: for module in Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+        run: for module in SkipLib SkipFoundation Darwin XCTest OSLog os ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
 
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
