@@ -27,6 +27,9 @@ let package = Package(
         .library(name: "SkipUI", targets: ["SkipUI"]),
         .library(name: "SkipUIKotlin", targets: ["SkipUIKotlin"]),
 
+        .library(name: "SkipSQL", targets: ["SkipSQL"]),
+        .library(name: "SkipSQLKotlin", targets: ["SkipSQLKotlin"]),
+
         .library(name: "ExampleLib", targets: ["ExampleLib"]),
         .library(name: "ExampleLibKotlin", targets: ["ExampleLibKotlin"]),
 
@@ -43,31 +46,43 @@ let package = Package(
                 resources: [.copy("skip")],
                 plugins: [.plugin(name: "transpile", package: "skip")]),
 
+        // Standard library types: Array, Dictionary, Set, etc.
         .target(name: "SkipLib"),
         .gradle(name: "SkipLib"),
         .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
         .testGradle(name: "SkipLibTests", dependencies: ["SkipLib"]),
 
+        // Foundation types: URL, Data, Date, etc.
         .target(name: "SkipFoundation", dependencies: ["SkipLib"]),
         .gradle(name: "SkipFoundation", dependencies: ["SkipLib"]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
         .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
 
+        // Device-specific services: UserDefaults, Logging, etc.
         .target(name: "SkipDevice", dependencies: ["SkipFoundation"]),
         .gradle(name: "SkipDevice", dependencies: ["SkipFoundation"]),
         .testTarget(name: "SkipDeviceTests", dependencies: ["SkipDevice"]),
         .testGradle(name: "SkipDeviceTests", dependencies: ["SkipDevice"]),
 
+        // SQLite Database
+        .target(name: "SkipSQL", dependencies: ["SkipDevice"]),
+        .gradle(name: "SkipSQL", dependencies: ["SkipDevice"]),
+        .testTarget(name: "SkipSQLTests", dependencies: ["SkipSQL"]),
+        .testGradle(name: "SkipSQLTests", dependencies: ["SkipSQL"]),
+
+        // UI
         .target(name: "SkipUI", dependencies: ["SkipFoundation"]),
         .gradle(name: "SkipUI", dependencies: ["SkipFoundation"]),
         .testTarget(name: "SkipUITests", dependencies: ["SkipUI"]),
         .testGradle(name: "SkipUITests", dependencies: ["SkipUI"]),
 
+        // Example library
         .target(name: "ExampleLib", dependencies: ["SkipFoundation"]),
         .gradle(name: "ExampleLib", dependencies: ["SkipFoundation"]),
         .testTarget(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
         .testGradle(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
 
+        // Example app
         .target(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
         .gradle(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
         .testTarget(name: "ExampleAppTests", dependencies: ["ExampleApp"]),

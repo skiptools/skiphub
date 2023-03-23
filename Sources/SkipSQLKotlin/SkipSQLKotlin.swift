@@ -5,5 +5,5 @@
 // as published by the Free Software Foundation https://fsf.org
 import class Foundation.Bundle
 public extension Bundle {
-    static let SkipUIKotlin = Bundle.module
+    static let SkipSQLKotlin = Bundle.module
 }

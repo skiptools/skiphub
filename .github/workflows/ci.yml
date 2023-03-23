@@ -24,6 +24,8 @@ jobs:
         run: scripts/buildtest.sh Debug SkipFoundation
       - name: Run SkipDevice tests (debug)
         run: scripts/buildtest.sh Debug SkipDevice
+      #- name: Run SkipSQL tests (debug)
+        #run: scripts/buildtest.sh Debug SkipSQL
       - name: Run SkipUI tests (debug)
         run: scripts/buildtest.sh Debug SkipUI
       - name: Run ExampleLib tests (debug)
@@ -67,6 +69,16 @@ jobs:
         working-directory: skip-core
         env:
           SKIPLOCAL: ..
+      - name: Run SkipDevice tests (debug)
+        run: scripts/buildtest.sh Debug SkipDevice
+        working-directory: skip-core
+        env:
+          SKIPLOCAL: ..
+      #- name: Run SkipSQL tests (debug)
+        #run: scripts/buildtest.sh Debug SkipSQL
+        #working-directory: skip-core
+        #env:
+        #SKIPLOCAL: ..
       - name: Run SkipUI tests (debug)
         run: scripts/buildtest.sh Debug SkipUI
         working-directory: skip-core
