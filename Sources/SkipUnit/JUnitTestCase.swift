@@ -47,6 +47,7 @@ open class JUnitTestCase: XCTestCase {
 
         for try await line in output {
             print("GRADLE>", line)
+            checkOutputForIssue(line: line)
         }
 
         let testSuites = try parseResults()
@@ -148,7 +149,7 @@ open class JUnitTestCase: XCTestCase {
             guard parts.count == 2,
                   let fileName = parts.first,
                   let fileLine = parts.last,
-                  let fileLineNumebr = Int(fileLine),
+                  let fileLineNumber = Int(fileLine),
                   fileName.hasSuffix(".kt") else {
                 continue
             }
@@ -161,6 +162,8 @@ open class JUnitTestCase: XCTestCase {
             // also handle Kotlin/Gradle/Android appending of _debug or _release to the module name:
             // "skip.device.SkipDeviceTests.testCanvas$SkipDevice_debug" should turn into "SkipDevice"
             // this will break of the package/module name has an underscore in it.
+
+            // FIXME: only test cases seems to be appended with the "$Module_debug" suffix; non-test stack do not have it, so we'll need to try to figure out the module name for the code if we want to handle jumping to non-test locations
             guard let moduleElements = packageElements.last?.split(separator: "$"),
                   moduleElements.count == 2,
                   let moduleName = moduleElements.last?.split(separator: "_").first else {
@@ -194,7 +197,7 @@ open class JUnitTestCase: XCTestCase {
 
                 // check whether the file exists; if not, it may be in another of the root folders
                 if FileManager.default.fileExists(atPath: filePath.path) {
-                    let kotlinLocation = XCTSourceCodeLocation(fileURL: filePath, lineNumber: fileLineNumebr)
+                    let kotlinLocation = XCTSourceCodeLocation(fileURL: filePath, lineNumber: fileLineNumber)
                     let swiftLocation = try? kotlinLocation.findSourceMapLine()
                     return (kotlinLocation, swiftLocation)
                 }
@@ -202,6 +205,47 @@ open class JUnitTestCase: XCTestCase {
         }
 
         return (nil, nil)
+    }
+
+    /// Parse the line looking for compile errors like:
+    ///
+    /// ```
+    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skip-core.output/SkipSQLKotlinTests/SkipTranspilePlugIn/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
+    /// ```
+    private func checkOutputForIssue(line: String) {
+        if line.hasPrefix("e: file://") || line.hasPrefix("w: file://") {
+            let isWarning = line.hasPrefix("w: file://")
+
+            let trimmedLine = line.dropFirst("w: file://".count)
+            let lineComponents = trimmedLine.split(separator: ":", maxSplits: 3, omittingEmptySubsequences: false)
+            guard let fileURLString = lineComponents.first,
+                  let fileURL = URL(string: String("file://" + fileURLString)) else {
+                return
+            }
+
+            guard let lineNumberString = lineComponents.dropFirst().first,
+                  let lineNumber = Int(lineNumberString) else {
+                return
+            }
+
+            if !isWarning {
+                print("reporing error in file:", fileURLString, "line:", lineNumber)
+                let kotlinLocation = XCTSourceCodeLocation(fileURL: fileURL, lineNumber: lineNumber)
+
+                // report the Kotlin error
+                do {
+                    let issue = XCTIssue(type: .system, compactDescription: lineComponents.last?.description ?? String(trimmedLine), detailedDescription: nil, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
+                    record(issue)
+                }
+
+                // also look up in the Swift location
+                if let swiftLocation = try? kotlinLocation.findSourceMapLine() {
+                    let issue = XCTIssue(type: .system, compactDescription: lineComponents.last?.description ?? String(trimmedLine), detailedDescription: nil, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
+                    record(issue)
+                }
+            }
+
+        }
     }
 
     private func reportTestResults(_ testSuites: [GradleDriver.TestSuite], _ dir: URL) {
@@ -237,8 +281,11 @@ open class JUnitTestCase: XCTestCase {
 
                     let (kotlinLocation, swiftLocation) = extractSourceLocation(dir: dir, failure: failure)
 
-                    let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
-                    record(issue)
+                    // report the Kotlin error
+                    do {
+                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
+                        record(issue)
+                    }
 
                     // we also managed to link up the Kotlin line with the Swift source file, so add a second issue for the swift location
                     if let swiftLocation = swiftLocation {

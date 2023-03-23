@@ -129,7 +129,7 @@ public final class Connection {
             try self.check(resultOf: sqlite3_bind_zeroblob(handle, index, 0))
         case let .blob(data: bytes):
             _ = try bytes.withUnsafeBytes { ptr in
-                try self.check(resultOf: sqlite3_bind_blob(handle, index, ptr, Int32(bytes.count), SQLITE_TRANSIENT))
+                try self.check(resultOf: sqlite3_bind_blob(handle, index, ptr.baseAddress.unsafelyUnwrapped, Int32(bytes.count), SQLITE_TRANSIENT))
             }
        }
     }
@@ -153,37 +153,37 @@ public enum SQLValue {
     // SKIP REPLACE: internal val columnType: ColumnType get() { error("SKIP") }
     var columnType: ColumnType {
         switch self {
-        case .nul:
+        case SQLValue.nul:
             return ColumnType.nul
-        case .text(string: _):
+        case SQLValue.text(string: _):
             // binding should be unnecessary, but prevents transpiled error:
             // SkipSQL.kt:82:26 Function invocation 'text(...)' expected
             return ColumnType.text
-        case .integer(int: _):
+        case SQLValue.integer(int: _):
             return ColumnType.integer
-        case .float(double: _):
+        case SQLValue.float(double: _):
             return ColumnType.float
-        case .blob(data: _):
+        case SQLValue.blob(data: _):
             return ColumnType.blob
-        default:
-            // should be unnecessary, but works around transpiled code error:
-            // SkipSQL.kt:79:13 'when' expression must be exhaustive, add necessary 'is blobcase', 'is floatcase', 'is integercase', 'is nulcase', 'is textcase' branches or 'else' branch instead
-            return ColumnType.nul
+//        default:
+//            // should be unnecessary, but works around transpiled code error:
+//            // SkipSQL.kt:79:13 'when' expression must be exhaustive, add necessary 'is blobcase', 'is floatcase', 'is integercase', 'is nulcase', 'is textcase' branches or 'else' branch instead
+//            return ColumnType.nul
         }
     }
 
     // SKIP REPLACE: internal fun toBindArg(): Any? { error("SKIP") }
     func toBindArg() -> Any? {
         switch self {
-        case .nul:
+        case SQLValue.nul:
             return nil
-        case let .text(string: str):
+        case let SQLValue.text(string: str):
             return str
-        case let .integer(int: num):
+        case let SQLValue.integer(int: num):
             return num
-        case let .float(double: dbl):
+        case let SQLValue.float(double: dbl):
             return dbl
-        case let .blob(data: bytes):
+        case let SQLValue.blob(data: bytes):
             return bytes
         }
     }
@@ -191,15 +191,15 @@ public enum SQLValue {
     // SKIP REPLACE: internal fun toBindString(): String? { error("SKIP") }
     func toBindString() -> String? {
         switch self {
-        case .nul:
+        case SQLValue.nul:
             return nil
-        case let .text(string: str):
+        case let SQLValue.text(string: str):
             return str
-        case let .integer(int: num):
+        case let SQLValue.integer(int: num):
             return num.description
-        case let .float(double: dbl):
+        case let SQLValue.float(double: dbl):
             return dbl.description
-        case .blob(data: _):
+        case SQLValue.blob(data: _):
             return nil // bytes.description // mis-transpiles
         }
     }
@@ -208,7 +208,7 @@ public enum SQLValue {
     // SKIP REPLACE: internal val textValue: String? get() { error("SKIP") }
     var textValue: String? {
         switch self {
-        case let .text(string: str): return str
+        case let SQLValue.text(string: str): return str
         default: return nil
         }
     }
@@ -217,7 +217,7 @@ public enum SQLValue {
     // SKIP REPLACE: internal val integerValue: Long? get() { error("SKIP") }
     var integerValue: Int64? {
         switch self {
-        case let .integer(int: num): return num
+        case let SQLValue.integer(int: num): return num
         default: return nil
         }
     }
@@ -226,16 +226,16 @@ public enum SQLValue {
     // SKIP REPLACE: internal val floatValue: Double? get() { return null }
     var floatValue: Double? {
         switch self {
-        case let .float(double: dbl): return dbl
+        case let SQLValue.float(double: dbl): return dbl
         default: return nil
         }
     }
 
     /// If this is a `blob` value, then return the underlying data
-    // SKIP REPLACE: internal val blobValue: Data? get() { error("SKIP") }
+    // SKIP REPLACE: internal val blobValue: Data? get() { return null }
     var blobValue: Data? {
         switch self {
-        case let .blob(data: dat): return dat
+        case SQLValue.blob(let dat): return dat
         default: return nil
         }
     }

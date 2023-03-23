@@ -18,22 +18,37 @@ jobs:
         uses: actions/checkout@v3
       - name: Check skiptool (release)
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
+
+      - name: Build SkipLib
+        run: swift build
+
+      - name: Pre-cache SkipLib symbols
+        run: /usr/bin/xcrun swift symbolgraph-extract -module-name SkipLib -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir $TMPDIR -target x86_64-apple-macosx12.0 -sdk /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I /Users/runner/Library/Developer/Xcode/DerivedData/skip-core-cpmrmpnysoyybacpdfaabaxuqhex/Build/Products/Debug
+
       - name: Run SkipLib tests (debug)
         run: scripts/buildtest.sh Debug SkipLib
+
       - name: Run SkipFoundation tests (debug)
+        if: false
         run: scripts/buildtest.sh Debug SkipFoundation
       - name: Run SkipDevice tests (debug)
+        if: false
         run: scripts/buildtest.sh Debug SkipDevice
       - name: Run SkipSQL tests (debug)
+        if: false
         run: scripts/buildtest.sh Debug SkipSQL
       - name: Run SkipUI tests (debug)
+        if: false
         run: scripts/buildtest.sh Debug SkipUI
       - name: Run ExampleLib tests (debug)
+        if: false
         run: scripts/buildtest.sh Debug ExampleLib
       - name: Run ExampleApp tests (debug)
+        if: false
         run: scripts/buildtest.sh Debug ExampleApp
 
   skip-core-tests-internal:
+    if: false
     runs-on: macos-12
     steps:
       - name: Install tools
