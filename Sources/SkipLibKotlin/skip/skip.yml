@@ -1,13 +1,6 @@
 # skip.tools per-configuration file
-
 skip:
-  plugins:
-    - plugin: import-map
-      package: 'skip.lib'
-      add:
-        - 'java.lang.reflect.*'
-    - plugin: test-annotate
-      with: '@RobolectricTest'
+  package: 'skip.lib'
 
 # the blocks to add to the build.gradle.kts
 build:
@@ -15,6 +8,9 @@ build:
     - block: 'plugins'
       contents:
         - '`kotlin-dsl`'
+#    - block: 'kotlin'
+#      contents:
+#        - 'jvmTarget = "11"'
     - block: 'dependencies'
       export: false
       contents:
