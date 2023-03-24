@@ -96,7 +96,7 @@ jobs:
         working-directory: skip-core
         run: |
           mkdir ${TMPDIR}/symbolgraph-extract
-          for module in SwiftShims Foundation Darwin XCTest OSLog os CoreTransferable SwiftUI ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
+          for module in SwiftShims Foundation Darwin XCTest SQLite3 OSLog os CoreTransferable SwiftUI ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
           ls -lah ${TMPDIR}/symbolgraph-extract
 
       - name: Run ${{ matrix.target }} macOS Kotlin Tests
