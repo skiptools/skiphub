@@ -37,21 +37,21 @@ jobs:
         working-directory: skip-core
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-      - name: Set SKIPLOCAL
+      - name: Configure Debug Flags
         # when in Debug mode, we run against a local build of the toolchain
         if: ${{ matrix.mode == 'Debug' }}
         run: |
           echo "SKIPLOCAL=.." >> $GITHUB_ENV
 
       - name: Checkout skip
-        if: ${{ matrix.local == true }}
+        if: ${{ matrix.mode == 'Debug' }}
         uses: actions/checkout@v3
         with:
           path: skip
           repository: skiptools/skip
 
       - name: Checkout SkipSource
-        if: ${{ matrix.local == true }}
+        if: ${{ matrix.mode == 'Debug' }}
         uses: actions/checkout@v3
         with:
           path: SkipSource
