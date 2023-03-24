@@ -14,8 +14,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ['SkipLib', 'SkipFoundation', 'ExampleLib' ]
-        #target: ['SkipLib', 'SkipFoundation', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp' ]
+        #target: ['SkipLib', 'SkipFoundation', 'ExampleLib' ]
+        target: ['SkipLib', 'SkipFoundation', 'SkipUI', 'SkipDevice', 'SkipSQL']
+        #target: ['SkipLib', 'SkipFoundation', 'SkipUI', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp']
         mode: ['Debug', 'Release']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
@@ -94,8 +95,9 @@ jobs:
 
       - name: Run ${{ matrix.target }} macOS Kotlin Tests
         working-directory: skip-core
+        # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin" ENABLE_TESTABILITY=YES
 
       - name: Run ${{ matrix.target }} iOS Swift Tests
         working-directory: skip-core
@@ -108,9 +110,11 @@ jobs:
           # get the most recent derived data folder
           DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
 
-          #tree -lh -I build ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn/
+          cd ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn
+          #tree -lh -I build .
 
-          # run the tests for the target
-          # cd ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn
-          gradle --project-dir ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn check
+          gradle check
+
+          #gradle "connected${{ matrix.mode }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
+
 
