@@ -10,7 +10,9 @@ build:
       contents:
         #- 'id("com.android.application") version "7.4.2"'
         - 'kotlin("android") version "1.8.10"'
-        - 'id("com.android.library") version "7.4.2"'
+        # currently matches "8.1.0-alpha10"
+        - 'id("com.android.library") version "8.1.+"'
+        #- 'id("com.android.library") version "7.4.2"'
         #- 'id("org.jetbrains.kotlin.android") version "1.5.31"'
 
       # we need to replace the `kotlin-dsl` plugin or else
