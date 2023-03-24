@@ -105,7 +105,7 @@ open class JUnitTestCase: XCTestCase {
 
     /// The contents typically contain a stack trace, which we need to parse in order to try to figure out the source code and line of the failure:
     /// ```
-    ///  org.junit.ComparisonFailure: expected:&lt;SkipLib[]&gt; but was:&lt;SkipLib[XXX]&gt;
+    ///  org.junit.ComparisonFailure: expected:<ABC[]> but was:<ABC[DEF]>
     ///      at org.junit.Assert.assertEquals(Assert.java:117)
     ///      at org.junit.Assert.assertEquals(Assert.java:146)
     ///      at skip.unit.XCTestCase.XCTAssertEqual(XCTest.kt:31)
@@ -244,7 +244,6 @@ open class JUnitTestCase: XCTestCase {
                     record(issue)
                 }
             }
-
         }
     }
 

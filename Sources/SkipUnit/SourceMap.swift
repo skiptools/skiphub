@@ -18,30 +18,30 @@ extension SourceCodeLocation {
     func findSourceMapLine() throws -> Self? {
         // turn SourceFile.kt into SourceFile.sourcemap
         let path = fileURL.deletingPathExtension().appendingPathExtension("sourcemap")
-        if FileManager.default.isReadableFile(atPath: path.path) {
-            let sourceMap = try JSONDecoder().decode(SourceMap.self, from: Data(contentsOf: path))
-            var lineRanges: [ClosedRange<Int>: Self] = [:]
-
-            for entry in sourceMap.entries {
-                if let sourceRange = entry.sourceRange {
-                    let sourceLines = entry.range.start.line...entry.range.end.line
-                    if sourceLines.contains(self.lineNumber) {
-                        let sourceFile = URL(fileURLWithPath: entry.sourceFile.path)
-                        // remember all the matched ranges because we'll want to use the smallest possible match the get the best estimate of the corresponding source line number
-                        lineRanges[sourceLines] = Self(fileURL: sourceFile, lineNumber: sourceRange.start.line)
-                    }
-                }
-            }
-
-            // find the narrowest range that includes the source line
-            let minKeyValue = lineRanges.min(by: {
-                $0.key.count < $1.key.count
-            })
-
-            return minKeyValue?.value
-        } else {
+        guard FileManager.default.isReadableFile(atPath: path.path) else {
             return nil
         }
+
+        let sourceMap = try JSONDecoder().decode(SourceMap.self, from: Data(contentsOf: path))
+        var lineRanges: [ClosedRange<Int>: Self] = [:]
+
+        for entry in sourceMap.entries {
+            if let sourceRange = entry.sourceRange {
+                let sourceLines = entry.range.start.line...entry.range.end.line
+                if sourceLines.contains(self.lineNumber) {
+                    let sourceFile = URL(fileURLWithPath: entry.sourceFile.path)
+                    // remember all the matched ranges because we'll want to use the smallest possible match the get the best estimate of the corresponding source line number
+                    lineRanges[sourceLines] = Self(fileURL: sourceFile, lineNumber: sourceRange.start.line)
+                }
+            }
+        }
+
+        // find the narrowest range that includes the source line
+        let minKeyValue = lineRanges.min(by: {
+            $0.key.count < $1.key.count
+        })
+
+        return minKeyValue?.value
     }
 }
 

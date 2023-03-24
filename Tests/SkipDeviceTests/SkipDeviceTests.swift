@@ -13,11 +13,12 @@ import SkipFoundation
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 final class SkipDeviceTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "BundleTests")
+    
     // SKIP INSERT: @Test
     func testSkipDevice() throws {
         print("Running: testSkipDevice…")
         logger.log("running testSkipDevice")
-        
+
         XCTAssertEqual(3.0 + 1.5, 9.0/2)
         XCTAssertEqual("SkipDevice", SkipDeviceInternalModuleName())
         XCTAssertEqual("SkipDevice", SkipDevicePublicModuleName())

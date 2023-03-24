@@ -38,6 +38,12 @@ jobs:
         working-directory: skip-core
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Configure Debug Flags
         # when in Debug mode, we run against a local build of the toolchain
         if: ${{ matrix.mode == 'Debug' }}
