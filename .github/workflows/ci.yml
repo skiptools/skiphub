@@ -4,7 +4,7 @@ on:
   push:
     branches: 'main'
   schedule:
-    - cron:  '* 0,6,12,18 * * *'
+    - cron:  '0 0,6,12,18 * * *'
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
@@ -65,7 +65,7 @@ jobs:
       - name: Run ${{ matrix.target }} macOS Swift Tests
         working-directory: skip-core
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}"
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
       # symbolgraph-extract needs to be manually run not because we use the symbols,
       # but because it pre-caches SwiftShims.swiftmodule and other modules into a
@@ -95,12 +95,12 @@ jobs:
       - name: Run ${{ matrix.target }} macOS Kotlin Tests
         working-directory: skip-core
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin"
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]
 
       - name: Run ${{ matrix.target }} iOS Swift Tests
         working-directory: skip-core
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}"
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]
 
       - name: Run ${{ matrix.target }} Gradle Tests
         working-directory: skip-core
