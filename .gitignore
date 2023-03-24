@@ -7,6 +7,8 @@ xcuserdata/
 
 xcodebuild*.log
 
+java_pid*.hprof
+
 .*.swp
 .DS_Store
 
