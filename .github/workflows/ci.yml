@@ -34,7 +34,7 @@ jobs:
           path: skip-core
           repository: skiptools/skip-core
 
-      - name: Check skiptool (external)
+      - name: Check skiptool (Release)
         working-directory: skip-core
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
@@ -65,7 +65,8 @@ jobs:
           repository: skiptools/SkipSource
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Check skiptool (local)
+      - name: Check skiptool (Debug)
+        if: ${{ matrix.mode == 'Debug' }}
         working-directory: skip-core
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
@@ -119,7 +120,7 @@ jobs:
           cd ${DER}/${{ matrix.target }}KotlinTests/SkipTranspilePlugIn
           #tree -lh -I build .
 
-          gradle check
+          gradle check -Pandroid.useAndroidX=true --console=plain --no-daemon
 
           #gradle "connected${{ matrix.mode }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
 
