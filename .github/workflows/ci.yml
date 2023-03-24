@@ -10,14 +10,15 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
 
 jobs:
-  skip-core-modules:
+  ci:
     strategy:
       fail-fast: false
       matrix:
+        target: ['SkipLib', 'SkipFoundation', 'ExampleLib' ]
+        #target: ['SkipLib', 'SkipFoundation', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp' ]
+        local: [false, true]
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
-        target: ['SkipLib', 'SkipFoundation', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib' ]
-        local: [false, true]
 
     runs-on: ${{ matrix.os }}
 
