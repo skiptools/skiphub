@@ -16,14 +16,14 @@ jobs:
       matrix:
         target: ['SkipLib', 'SkipFoundation', 'ExampleLib' ]
         #target: ['SkipLib', 'SkipFoundation', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp' ]
-        local: [false, true]
+        mode: ['Debug', 'Release']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
 
     runs-on: ${{ matrix.os }}
 
     env:
-      CONFIG: 'Debug'
+      CONFIG: ${{ matrix.mode }}
       TARGET: ${{ matrix.target }}
 
     steps:
@@ -38,7 +38,8 @@ jobs:
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
       - name: Set SKIPLOCAL
-        if: ${{ matrix.local == true }}
+        # when in Debug mode, we run against a local build of the toolchain
+        if: ${{ matrix.mode == 'Debug' }}
         run: |
           echo "SKIPLOCAL=.." >> $GITHUB_ENV
 
