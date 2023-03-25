@@ -148,39 +148,24 @@ final class SkipDeviceTests: XCTestCase {
     func testSENSOR_SERVICE() {
         let service = context.getSystemService(android.content.Context.SENSOR_SERVICE) as android.hardware.SensorManager // as android.hardware.SystemSensorManager
         XCTAssertNotNil(service)
-//        sensorManager.registerListener(
-//            object : SensorEventListener {
-//                override fun onSensorChanged(event: SensorEvent) {
-//                    // Handle sensor data here
-//                }
-//
-//                override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-//                    // Handle accuracy changes here
-//                }
-//            },
-//            accelerometerSensor,
-//            SensorManager.SENSOR_DELAY_NORMAL
-//        )
-//        sensorManager.unregisterListener(sensorEventListener)
-
     }
 
     // SKIP INSERT: @Test
     func testTELEPHONY_SERVICE() {
-        let service = context.getSystemService(android.content.Context.TELEPHONY_SERVICE) as android.telephony.TelephonyManager
-        XCTAssertNotNil(service)
+        let telephonyManager = context.getSystemService(android.content.Context.TELEPHONY_SERVICE) as android.telephony.TelephonyManager
+        XCTAssertNotNil(telephonyManager)
     }
 
     // SKIP INSERT: @Test
     func testWALLPAPER_SERVICE() {
-        let service = context.getSystemService(android.content.Context.WALLPAPER_SERVICE) as android.app.WallpaperManager
-        XCTAssertNotNil(service)
+        let wallpaperManager = context.getSystemService(android.content.Context.WALLPAPER_SERVICE) as android.app.WallpaperManager
+        XCTAssertNotNil(wallpaperManager)
     }
 
     // SKIP INSERT: @Test
     func testWIFI_SERVICE() {
-        let service = context.getSystemService(android.content.Context.WIFI_SERVICE) as android.net.wifi.WifiManager
-        XCTAssertNotNil(service)
+        let wifiManager = context.getSystemService(android.content.Context.WIFI_SERVICE) as android.net.wifi.WifiManager
+        XCTAssertNotNil(wifiManager)
     }
 
     // SKIP INSERT: @Test
@@ -191,92 +176,115 @@ final class SkipDeviceTests: XCTestCase {
 
     // SKIP INSERT: @Test
     func testINPUT_METHOD_SERVICE() {
-        let service = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        XCTAssertNotNil(service)
+        let inputMethodManager = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        XCTAssertNotNil(inputMethodManager)
     }
 
     // SKIP INSERT: @Test
     func testACCESSIBILITY_SERVICE() {
-        let service = context.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
-        XCTAssertNotNil(service)
+        let accessibilityManager = context.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
+        XCTAssertNotNil(accessibilityManager)
     }
 
     // SKIP INSERT: @Test
     func testACCOUNT_SERVICE() {
-        let service = context.getSystemService(android.content.Context.ACCOUNT_SERVICE) as android.accounts.AccountManager
-        XCTAssertNotNil(service)
+        let accountManager = context.getSystemService(android.content.Context.ACCOUNT_SERVICE) as android.accounts.AccountManager
+        XCTAssertNotNil(accountManager)
     }
 
     // SKIP INSERT: @Test
     func testDEVICE_POLICY_SERVICE() {
-        let service = context.getSystemService(android.content.Context.DEVICE_POLICY_SERVICE) as android.app.admin.DevicePolicyManager
-        XCTAssertNotNil(service)
+        let devicePolicyManager = context.getSystemService(android.content.Context.DEVICE_POLICY_SERVICE) as android.app.admin.DevicePolicyManager
+        XCTAssertNotNil(devicePolicyManager)
     }
 
     // SKIP INSERT: @Test
     func testDROPBOX_SERVICE() {
-        let service = context.getSystemService(android.content.Context.DROPBOX_SERVICE) as android.os.DropBoxManager
-        XCTAssertNotNil(service)
+        // The android.os.DropBoxManager class is used for writing diagnostic logs to the system dropbox. This can be useful for debugging purposes, as it allows you to collect and analyze diagnostic information from your application.
+        let dropBoxManager = context.getSystemService(android.content.Context.DROPBOX_SERVICE) as android.os.DropBoxManager
+        XCTAssertNotNil(dropBoxManager)
     }
 
     // SKIP INSERT: @Test
     func testUI_MODE_SERVICE() {
-        let service = context.getSystemService(android.content.Context.UI_MODE_SERVICE) as android.app.UiModeManager
-        XCTAssertNotNil(service)
+        let uiModeManager = context.getSystemService(android.content.Context.UI_MODE_SERVICE) as android.app.UiModeManager
+        XCTAssertNotNil(uiModeManager)
     }
 
     // SKIP INSERT: @Test
     func testDOWNLOAD_SERVICE() {
-        let service = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
-        XCTAssertNotNil(service)
+        let downloadManager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+        XCTAssertNotNil(downloadManager)
+
+        let request = android.app.DownloadManager.Request(android.net.Uri.parse("http://example.com/file.mp3"))
+            .setTitle("My Download")
+            .setDescription("Downloading a file")
+            .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, "file.mp3")
+
+        let downloadId = downloadManager.enqueue(request)
+
     }
 
     // SKIP INSERT: @Test
     func testSTORAGE_SERVICE() {
-        let service = context.getSystemService(android.content.Context.STORAGE_SERVICE) as android.os.storage.StorageManager
-        XCTAssertNotNil(service)
+        // The android.os.storage.StorageManager class provides methods for interacting with the device's storage subsystem, such as mounting and unmounting volumes, querying for storage details, and getting a list of available storage volumes.
+        let storageManager = context.getSystemService(android.content.Context.STORAGE_SERVICE) as android.os.storage.StorageManager
+        XCTAssertNotNil(storageManager)
+        //let storageVolumes = storageManager.storageVolumes
+        //let storageVolume = storageVolumes.firstOrNull()
+        //let uuid = storageVolume?.uuid
+        //let path = storageVolume?.getPath()
+        //let isRemovable = storageVolume?.isRemovable
+        //let state = storageManager.getVolumeState(storageVolume?.getUuid())
     }
 
     // SKIP INSERT: @Test
     func testNFC_SERVICE() {
-        let service = context.getSystemService(android.content.Context.NFC_SERVICE) as android.nfc.NfcManager
-        XCTAssertNotNil(service)
+        let nfcManager = context.getSystemService(android.content.Context.NFC_SERVICE) as android.nfc.NfcManager
+        XCTAssertNotNil(nfcManager)
     }
 
     // SKIP INSERT: @Test
     func testUSB_SERVICE() {
-        let service = context.getSystemService(android.content.Context.USB_SERVICE) as android.hardware.usb.UsbManager
-        XCTAssertNotNil(service)
+        let usbManager = context.getSystemService(android.content.Context.USB_SERVICE) as android.hardware.usb.UsbManager
+        XCTAssertNotNil(usbManager)
+        let deviceList = usbManager.deviceList
+        let device = deviceList.values.firstOrNull()
+        let intent = android.content.Intent("com.android.example.USB_PERMISSION")
+        //let pendingIntent = android.app.PendingIntent.getBroadcast(self, 0, intent, 0)
+        //usbManager.requestPermission(device, pendingIntent)
+        //let connection = usbManager.openDevice(device)
     }
 
     // SKIP INSERT: @Test
     func testTEXT_SERVICES_MANAGER_SERVICE() {
-        let service = context.getSystemService(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE) as android.view.textservice.TextServicesManager
-        XCTAssertNotNil(service)
+        let textServicesManager = context.getSystemService(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE) as android.view.textservice.TextServicesManager
+        XCTAssertNotNil(textServicesManager)
     }
 
     // SKIP INSERT: @Test
     func testWIFI_P2P_SERVICE() {
-        let service = context.getSystemService(android.content.Context.WIFI_P2P_SERVICE) as android.net.wifi.p2p.WifiP2pManager
-        XCTAssertNotNil(service)
+        let wifiP2pManager = context.getSystemService(android.content.Context.WIFI_P2P_SERVICE) as android.net.wifi.p2p.WifiP2pManager
+        XCTAssertNotNil(wifiP2pManager)
     }
 
     // SKIP INSERT: @Test
     func testINPUT_SERVICE() {
-        let service = context.getSystemService(android.content.Context.INPUT_SERVICE) as android.hardware.input.InputManager
-        XCTAssertNotNil(service)
+        let inputManager = context.getSystemService(android.content.Context.INPUT_SERVICE) as android.hardware.input.InputManager
+        XCTAssertNotNil(inputManager)
     }
 
     // SKIP INSERT: @Test
     func testMEDIA_ROUTER_SERVICE() {
-        let service = context.getSystemService(android.content.Context.MEDIA_ROUTER_SERVICE) as android.media.MediaRouter
-        XCTAssertNotNil(service)
+        let mediaRouter = context.getSystemService(android.content.Context.MEDIA_ROUTER_SERVICE) as android.media.MediaRouter
+        XCTAssertNotNil(mediaRouter)
     }
 
     // SKIP INSERT: @Test
     func testNSD_SERVICE() {
-        let service = context.getSystemService(android.content.Context.NSD_SERVICE) as android.net.nsd.NsdManager
-        XCTAssertNotNil(service)
+        let nsdManager = context.getSystemService(android.content.Context.NSD_SERVICE) as android.net.nsd.NsdManager
+        XCTAssertNotNil(nsdManager)
     }
 
     // SKIP INSERT: @Test
