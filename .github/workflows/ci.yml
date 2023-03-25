@@ -70,7 +70,7 @@ jobs:
         working-directory: skip-core
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-      - name: Run ${{ matrix.target }} macOS Swift Tests
+      - name: Run ${{ matrix.target }} Swift Tests (macOS)
         working-directory: skip-core
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
@@ -100,18 +100,18 @@ jobs:
           for module in SwiftShims Foundation Darwin XCTest SQLite3 OSLog os CoreTransferable SwiftUI ; do /usr/bin/xcrun swift symbolgraph-extract -module-name ${module} -include-spi-symbols -skip-inherited-docs -skip-synthesized-members -output-dir ${TMPDIR}/symbolgraph-extract -target x86_64-apple-macosx12.0 -sdk ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -F ${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/../../Library/Frameworks/ -minimum-access-level internal -I .build/debug/ ; done
           ls -lah ${TMPDIR}/symbolgraph-extract
 
-      - name: Run ${{ matrix.target }} macOS Kotlin Tests
+      - name: Run ${{ matrix.target }} Gradle Tests (Robolectric)
         working-directory: skip-core
         # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kotlin" ENABLE_TESTABILITY=YES
 
-      - name: Run ${{ matrix.target }} iOS Swift Tests
+      - name: Run ${{ matrix.target }} Swift Tests (iOS)
         working-directory: skip-core
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Run ${{ matrix.target }} Gradle Tests
+      - name: Run ${{ matrix.target }} Gradle Tests (Android)
         working-directory: skip-core
         run: |
           # get the most recent derived data folder
@@ -122,6 +122,7 @@ jobs:
 
           gradle check -Pandroid.useAndroidX=true --console=plain --no-daemon
 
+          # TODO:
           #gradle "connected${{ matrix.mode }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
 
 
