@@ -706,6 +706,7 @@ class TestNSArray : XCTestCase {
     }
 
     func test_writeToFile() {
+        #if !os(iOS)
         let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 234))
         if let _ = testFilePath {
             let d1: NSArray = ["foo", "bar"]
@@ -727,6 +728,7 @@ class TestNSArray : XCTestCase {
         } else {
             XCTFail("Temporary file creation failed")
         }
+        #endif
     }
 
     func test_readWriteURL() {

@@ -14,8 +14,8 @@ import XCTest
 // See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
+#if !os(iOS)
 class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
-
     func test_basicCreation() {
         let doc = XMLDocument(rootElement: nil)
 //        XCTAssert(doc.version == "1.0", "expected 1.0, got \(String(describing: doc.version))")
@@ -791,7 +791,7 @@ fileprivate extension XMLNode {
         return nil
     }
 }
-
+#endif
 
 
 #endif

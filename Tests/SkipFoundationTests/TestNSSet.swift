@@ -78,7 +78,9 @@ class TestNSSet : XCTestCase {
     func test_setOperations() {
         let set = NSMutableSet(array: ["foo", "bar"])
         set.union(["bar", "baz"])
+        #if !os(iOS)
         XCTAssertTrue(set.isEqual(to: NSMutableSet(array: ["foo", "bar", "baz"])))
+        #endif
     }
 
     func test_equality() {

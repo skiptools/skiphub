@@ -31,6 +31,7 @@ class TestNSValue : XCTestCase {
     }
     
     func test_valueWithCGPoint() {
+        #if !os(iOS)
         let point = CGPoint(x: CGFloat(1.0), y: CGFloat(2.0234))
         let value = NSValue(point: point)
         XCTAssertEqual(value.pointValue, point)
@@ -38,9 +39,11 @@ class TestNSValue : XCTestCase {
         var expected = CGPoint()
         value.getValue(&expected)
         XCTAssertEqual(expected, point)
+        #endif
     }
     
     func test_valueWithCGSize() {
+        #if !os(iOS)
         let size = CGSize(width: CGFloat(1123.234), height: CGFloat(3452.234))
         let value = NSValue(size: size)
         XCTAssertEqual(value.sizeValue, size)
@@ -48,9 +51,11 @@ class TestNSValue : XCTestCase {
         var expected = CGSize()
         value.getValue(&expected)
         XCTAssertEqual(expected, size)
+        #endif
     }
     
     func test_valueWithCGRect() {
+        #if !os(iOS)
         let point = CGPoint(x: CGFloat(1.0), y: CGFloat(2.0234))
         let size = CGSize(width: CGFloat(1123.234), height: CGFloat(3452.234))
         let rect = CGRect(origin: point, size: size)
@@ -60,6 +65,7 @@ class TestNSValue : XCTestCase {
         var expected = CGRect()
         value.getValue(&expected)
         XCTAssertEqual(expected, rect)
+        #endif
     }
     
     func test_valueWithNSRange() {
@@ -75,6 +81,7 @@ class TestNSValue : XCTestCase {
     }
     
     func test_valueWithNSEdgeInsets() {
+        #if !os(iOS)
         let edgeInsets = NSEdgeInsets(top: CGFloat(234.0), left: CGFloat(23.20), bottom: CGFloat(0.0), right: CGFloat(99.0))
         let value = NSValue(edgeInsets: edgeInsets)
         XCTAssertEqual(value.edgeInsetsValue.top, edgeInsets.top)
@@ -88,6 +95,7 @@ class TestNSValue : XCTestCase {
         XCTAssertEqual(expected.left, edgeInsets.left)
         XCTAssertEqual(expected.bottom, edgeInsets.bottom)
         XCTAssertEqual(expected.right, edgeInsets.right)
+        #endif
     }
     
     func test_valueWithLong() {

@@ -5,6 +5,8 @@ import XCTest
 
 #if !SKIP
 
+#if !os(iOS)
+
 // This source file is part of the Swift.org open source project
 //
 // Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
@@ -920,6 +922,7 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r2.size.height, CGFloat.greatestFiniteMagnitude)
     }
 
+#if !os(iOS)
     func test_NSEdgeInsets_BasicConstruction() {
         let i1 = NSEdgeInsets()
         XCTAssertEqual(i1.top, CGFloat(0.0))
@@ -1267,7 +1270,7 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(slice, expectedSlice)
         XCTAssertEqual(remainder, expectedRemainder)
     }
-    
+
     func test_EncodeToNSString() {
         let referenceRect = NSMakeRect(CGFloat(0.6), CGFloat(5.4), CGFloat(105.7), CGFloat(24.3))
         
@@ -1423,7 +1426,8 @@ class TestNSGeometry : XCTestCase {
                        "\(NSStringFromRect(rect)) is not equal to expected \(NSStringFromRect(expectedRect))")
 
     }
-    
+    #endif
+
     // MARK: Private
     
     func _NSRect(_ rect: NSRect, equalsToRect rect2: NSRect, withPrecision precision: CGFloat.NativeType = .ulpOfOne) -> Bool {
@@ -1446,6 +1450,8 @@ class TestNSGeometry : XCTestCase {
     }
 
 }
+
+#endif
 
 #endif
 

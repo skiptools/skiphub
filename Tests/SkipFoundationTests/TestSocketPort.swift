@@ -17,17 +17,17 @@ import XCTest
 import WinSDK
 #endif
 
-class TestPortDelegateWithBlock: NSObject, PortDelegate {
-    let block: (PortMessage) -> Void
-    
-    init(block: @escaping (PortMessage) -> Void) {
-        self.block = block
-    }
-    
-    func handle(_ message: PortMessage) {
-        block(message)
-    }
-}
+//class TestPortDelegateWithBlock: NSObject, PortDelegate {
+//    let block: (PortMessage) -> Void
+//    
+//    init(block: @escaping (PortMessage) -> Void) {
+//        self.block = block
+//    }
+//    
+//    func handle(_ message: PortMessage) {
+//        block(message)
+//    }
+//}
 
 class TestSocketPort : XCTestCase {
 

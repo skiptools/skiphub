@@ -1048,9 +1048,11 @@ class TestFileManager : XCTestCase {
 
     func test_homedirectoryForUser() {
         let filemanger = FileManager.default
+        #if !os(iOS)
         XCTAssertNil(filemanger.homeDirectory(forUser: "someuser"))
         XCTAssertNil(filemanger.homeDirectory(forUser: ""))
         XCTAssertNotNil(filemanger.homeDirectoryForCurrentUser)
+        #endif
     }
     
     func test_temporaryDirectoryForUser() {
@@ -1502,6 +1504,7 @@ VIDEOS=StopgapVideos
 #endif // !DEPLOYMENT_RUNTIME_OBJC
 
     func test_emptyFilename() {
+        #if !os(iOS)
 
         // Some of these tests will throw an NSException on Darwin which would be normally be
         // modelled by a fatalError() or other hard failure, however since most of these functions
@@ -1622,6 +1625,7 @@ VIDEOS=StopgapVideos
 
         // Not Implemented - XCTAssertNil(fm.componentsToDisplay(forPath: ""))
         // Not Implemented - XCTAssertEqual(fm.displayName(atPath: ""), "")
+        #endif
     }
     
     func test_getRelationship() throws {

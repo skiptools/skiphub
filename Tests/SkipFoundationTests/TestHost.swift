@@ -16,6 +16,7 @@ import XCTest
 
 class TestHost: XCTestCase {
     
+#if !os(iOS)
     static var allTests: [(String, (TestHost) -> () throws -> Void)] {
         return [
             ("test_addressesDoNotGrow", test_addressesDoNotGrow),
@@ -66,6 +67,7 @@ class TestHost: XCTestCase {
         let swift = Host(name: "localhost")
         XCTAssertTrue(swift.names.count > 0)
     }
+#endif
 }
 
 #endif

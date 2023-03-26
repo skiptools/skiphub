@@ -8,9 +8,6 @@ import XCTest
 extension NSCalendar { func _bridgeToSwift() -> Calendar { self as Calendar } }
 extension NSCharacterSet { func _bridgeToSwift() -> CharacterSet { self as CharacterSet } }
 extension NSIndexSet { func _bridgeToSwift() -> IndexSet { self as IndexSet } }
-extension NSAffineTransform { var affineTransform: AffineTransform { self as AffineTransform } }
-
-
 
 #endif
 
@@ -646,38 +643,38 @@ func testExpectedToFailWithCheck<T>(check: (String) -> Bool, _ test:  @escaping 
 }
 
 extension XCTest {
-    func assertCrashes(within block: () throws -> Void) rethrows {
-        let childProcessEnvVariable = "NS_FOUNDATION_TEST_PERFORM_ASSERT_CRASHES_BLOCKS"
-        let childProcessEnvVariableOnValue = "YES"
-        
-        let isChildProcess = ProcessInfo.processInfo.environment[childProcessEnvVariable] == childProcessEnvVariableOnValue
-        
-        if isChildProcess {
-            try block()
-        } else {
-            var arguments = ProcessInfo.processInfo.arguments
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: arguments[0])
-            
-            arguments.remove(at: 0)
-            arguments.removeAll(where: { $0.hasPrefix("TestFoundation.") })
-            arguments.append("TestFoundation." + self.name.replacingOccurrences(of: ".", with: "/"))
-            process.arguments = arguments
-            
-            var environment = ProcessInfo.processInfo.environment
-            environment[childProcessEnvVariable] = childProcessEnvVariableOnValue
-            process.environment = environment
-            
-            do {
-                try process.run()
-                process.waitUntilExit()
-                XCTAssertEqual(process.terminationReason, .uncaughtSignal, "Child process should have crashed: \(process)")
-            } catch {
-                XCTFail("Couldn't start child process for testing crash: \(process) - \(error)")
-            }
-            
-        }
-    }
+//    func assertCrashes(within block: () throws -> Void) rethrows {
+//        let childProcessEnvVariable = "NS_FOUNDATION_TEST_PERFORM_ASSERT_CRASHES_BLOCKS"
+//        let childProcessEnvVariableOnValue = "YES"
+//
+//        let isChildProcess = ProcessInfo.processInfo.environment[childProcessEnvVariable] == childProcessEnvVariableOnValue
+//
+//        if isChildProcess {
+//            try block()
+//        } else {
+//            var arguments = ProcessInfo.processInfo.arguments
+//            let process = Process()
+//            process.executableURL = URL(fileURLWithPath: arguments[0])
+//
+//            arguments.remove(at: 0)
+//            arguments.removeAll(where: { $0.hasPrefix("TestFoundation.") })
+//            arguments.append("TestFoundation." + self.name.replacingOccurrences(of: ".", with: "/"))
+//            process.arguments = arguments
+//
+//            var environment = ProcessInfo.processInfo.environment
+//            environment[childProcessEnvVariable] = childProcessEnvVariableOnValue
+//            process.environment = environment
+//
+//            do {
+//                try process.run()
+//                process.waitUntilExit()
+//                XCTAssertEqual(process.terminationReason, .uncaughtSignal, "Child process should have crashed: \(process)")
+//            } catch {
+//                XCTFail("Couldn't start child process for testing crash: \(process) - \(error)")
+//            }
+//
+//        }
+//    }
 }
 
 extension String {

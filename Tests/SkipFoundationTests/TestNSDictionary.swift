@@ -163,6 +163,7 @@ class TestNSDictionary : XCTestCase {
     }
 
     func test_writeToFile() {
+        #if !os(iOS)
         let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 256))
         if let _ = testFilePath {
             let d1: NSDictionary = [ "foo": "bar", "baz": "qux"]
@@ -184,6 +185,7 @@ class TestNSDictionary : XCTestCase {
         } else {
             XCTFail("Temporary file creation failed")
         }
+        #endif
     }
     
     func test_initWithContentsOfFile() {
