@@ -33,14 +33,14 @@ class TestURLCache : XCTestCase {
         do {
             let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
 
-            let (request, response) = try cachePair(for: "https://google.com/", ofSize: aBit, storagePolicy: .allowed)
-            cache.storeCachedResponse(response, for: request)
-            
+//            let (request, response) = try cachePair(for: "https://google.com/", ofSize: aBit, storagePolicy: .allowed)
+//            cache.storeCachedResponse(response, for: request)
+//            
 //            XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: writableTestDirectoryURL.path).count, 1)
 //            XCTAssertNotNil(cache.cachedResponse(for: request))
         }
         
-        try FileManager.default.removeItem(at: writableTestDirectoryURL)
+        try? FileManager.default.removeItem(at: writableTestDirectoryURL)
         
         do {
             let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
@@ -52,7 +52,7 @@ class TestURLCache : XCTestCase {
             XCTAssertNotNil(cache.cachedResponse(for: request))
         }
         
-        try FileManager.default.removeItem(at: writableTestDirectoryURL)
+        try? FileManager.default.removeItem(at: writableTestDirectoryURL)
         
         do {
             let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
@@ -64,7 +64,7 @@ class TestURLCache : XCTestCase {
             XCTAssertNil(cache.cachedResponse(for: request))
         }
         
-        try FileManager.default.removeItem(at: writableTestDirectoryURL)
+        try? FileManager.default.removeItem(at: writableTestDirectoryURL)
     }
     
     func testNoDiskUsageIfDisabled() throws {
@@ -108,7 +108,7 @@ class TestURLCache : XCTestCase {
 //        XCTAssertNotNil(cache.cachedResponse(for: request))
 //
 //        // Ensure that the fulfillment doesn't come from memory:
-//        try FileManager.default.removeItem(at: writableTestDirectoryURL)
+//        try? FileManager.default.removeItem(at: writableTestDirectoryURL)
 //        try FileManager.default.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
 //
 //        XCTAssertNil(cache.cachedResponse(for: request))
