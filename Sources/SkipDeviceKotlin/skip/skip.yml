@@ -26,7 +26,7 @@ build:
         - 'compileSdkVersion(31)'
         - block: 'defaultConfig'
           contents:
-            - 'minSdkVersion(26)'
+            - 'minSdkVersion(31)'
             - 'targetSdkVersion(31)'
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
