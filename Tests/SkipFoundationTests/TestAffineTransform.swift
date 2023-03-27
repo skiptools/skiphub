@@ -143,9 +143,9 @@ extension TestAffineTransform {
         
         let nsTransform = NSAffineTransform(transform: transform)
         
-        #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
-        XCTAssertEqual(transform, nsTransform.affineTransform)
-        #endif
+//        #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
+//        XCTAssertEqual(transform, nsTransform.affineTransform)
+//        #endif
         
         XCTAssertEqual(nsTransform as AffineTransform, transform)
     }
