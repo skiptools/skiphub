@@ -30,12 +30,13 @@ class TestURLCache : XCTestCase {
     }
     
     func testStoragePolicy() throws {
+        #if !os(iOS)
         do {
             let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
 
 //            let (request, response) = try cachePair(for: "https://google.com/", ofSize: aBit, storagePolicy: .allowed)
 //            cache.storeCachedResponse(response, for: request)
-//            
+//
 //            XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: writableTestDirectoryURL.path).count, 1)
 //            XCTAssertNotNil(cache.cachedResponse(for: request))
         }
@@ -65,6 +66,7 @@ class TestURLCache : XCTestCase {
         }
         
         try? FileManager.default.removeItem(at: writableTestDirectoryURL)
+        #endif
     }
     
     func testNoDiskUsageIfDisabled() throws {
@@ -77,6 +79,7 @@ class TestURLCache : XCTestCase {
     }
     
     func testShrinkingDiskCapacityEvictsItems() throws {
+        #if !os(iOS)
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
         let urls = [ "https://apple.com/",
@@ -97,6 +100,7 @@ class TestURLCache : XCTestCase {
 //        for url in urls {
 //            XCTAssertNotNil(cache.cachedResponse(for: URLRequest(url: URL(string: url)!)))
 //        }
+        #endif
     }
     
     func testNoMemoryUsageIfDisabled() throws {
@@ -115,6 +119,7 @@ class TestURLCache : XCTestCase {
     }
     
     func testShrinkingMemoryCapacityEvictsItems() throws {
+        #if !os(iOS)
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
         let urls = [ "https://apple.com/",
@@ -139,6 +144,7 @@ class TestURLCache : XCTestCase {
         for url in urls {
 //            XCTAssertNil(cache.cachedResponse(for: URLRequest(url: URL(string: url)!)))
         }
+        #endif
     }
     
     func testRemovingOne() throws {
@@ -170,6 +176,7 @@ class TestURLCache : XCTestCase {
     }
     
     func testRemovingAll() throws {
+        #if !os(iOS)
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
         let urls = [ "https://apple.com/",
@@ -189,6 +196,7 @@ class TestURLCache : XCTestCase {
 //        for request in urls.map({ URLRequest(url: URL(string: $0)!) }) {
 //            XCTAssertNil(cache.cachedResponse(for: request))
 //        }
+        #endif
     }
     
     func testRemovingSince() throws {

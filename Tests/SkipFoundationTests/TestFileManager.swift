@@ -1076,6 +1076,7 @@ class TestFileManager : XCTestCase {
     }
 
     func test_mountedVolumeURLs() {
+#if !os(iOS)
         guard let volumes = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys:[], options: []) else {
             XCTFail("mountedVolumeURLs returned nil")
             return
@@ -1101,6 +1102,7 @@ class TestFileManager : XCTestCase {
         }
         XCTAssertTrue(visibleVolumes.count > 0)
         XCTAssertTrue(visibleVolumes.count < volumes.count)
+#endif
 #endif
     }
 

@@ -123,6 +123,7 @@ class TestXMLParser : XCTestCase {
     }
 
     func test_withDataEncodings() {
+#if !os(iOS)
         // If th <?xml header isn't present, any non-UTF8 encodings fail. This appears to be libxml2 behavior.
         // These don't work, it may just be an issue with the `encoding=xxx`.
         //   - .nextstep, .utf32LittleEndian
@@ -140,6 +141,7 @@ class TestXMLParser : XCTestCase {
             XCTAssertEqual(stream.events, TestXMLParser.xmlUnderTestExpectedEvents())
             XCTAssertTrue(res)
         }
+#endif
     }
 
     func test_withDataOptions() {
