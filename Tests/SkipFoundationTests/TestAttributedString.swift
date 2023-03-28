@@ -713,6 +713,7 @@ final class TestAttributedString: XCTestCase {
         var prev: AttributedString.Runs.Run?
         for run in str.runs {
             if let prev = prev {
+                _ = prev
 //                XCTAssertNotEqual(prev._attributes, run._attributes)
             }
             prev = run
@@ -993,6 +994,7 @@ E {
     func testSubstringEquality() {
         let str = AttributedString("")
         let range = str.startIndex ..< str.endIndex
+        _ = range
 //        XCTAssertEqual(str[range], str[range])
 //        
 //        let str2 = "A" + AttributedString("A", attributes: .init().testInt(2))
@@ -1497,6 +1499,7 @@ E {
         ]
         XCTAssertEqual(dictionary.keys, expected.keys)
         for key in expected.keys {
+            _ = key
             //XCTAssertTrue(__equalAttributes(dictionary[key], expected[key]))
         }
         
@@ -1540,6 +1543,8 @@ E {
             let nsStr = NSAttributedString(string: str, attributes: [.testInt: 2])
 
             let convertedAttrStr = try AttributedString(nsStr, including: AttributeScopes.TestAttributes.self)
+            _ = attrStr
+            _ = convertedAttrStr
 //            XCTAssertEqual(str.utf8.count, convertedAttrStr._guts.runs[0].length)
 //            XCTAssertEqual(attrStr, convertedAttrStr)
 //
@@ -1572,6 +1577,8 @@ E {
             #else
             let attributeName = "UIAccessibilitySpeechAttributeIPANotation"
             #endif
+            _ = attributedString
+            _ = attributeName
 //            attributedString._guts.runs[0].attributes.contents[attributeName] = "abc"
 //            let nsAttributedString = NSAttributedString(attributedString)
 //            XCTAssertEqual(nsAttributedString, NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key(attributeName) : "abc"]))
@@ -1589,6 +1596,7 @@ E {
 //            XCTAssertEqual(nsStr3, NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key("NSKern") : CGFloat(2.3)]))
 //            let attrStr3Reverse = AttributedString(nsStr3)
 //            XCTAssertEqual(attrStr3Reverse, attrStr3)
+            _ = attrStr3
             dlclose(handle)
         }
         #endif
@@ -1607,6 +1615,7 @@ E {
 //            XCTAssertEqual(nsStr4, NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key("NSKern") : CGFloat(2.3)]))
 //            let attrStr4Reverse = AttributedString(nsStr4)
 //            XCTAssertEqual(attrStr4Reverse, attrStr4)
+            _ = attrStr4
             dlclose(loadedHandle)
         }
         #endif
@@ -1619,6 +1628,7 @@ E {
 //            XCTAssertEqual(nsStr5, NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key("SwiftUI.Kern") : CGFloat(2.3)]))
 //            let attrStr5Reverse = AttributedString(nsStr5)
 //            XCTAssertEqual(attrStr5Reverse, attrStr5)
+            _ = attrStr5
             dlclose(handle)
         }
         
@@ -1646,6 +1656,7 @@ E {
         container.testInt = 2
         container[Attribute.self] = 3
         let str = AttributedString("Hello", attributes: container)
+        _ = str
 //        let result = try? NSAttributedString(str, scope: Scope.self, options: .dropThrowingAttributes) // The same call that the no-scope initializer will make
 //        XCTAssertEqual(result, NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key("TestInt") : 2]))
     }

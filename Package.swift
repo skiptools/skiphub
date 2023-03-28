@@ -47,60 +47,58 @@ let package = Package(
                 plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Standard library types: Array, Dictionary, Set, etc.
-        .target(name: "SkipLib"),
-        .gradle(name: "SkipLib"),
-        .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
-        .testGradle(name: "SkipLibTests", dependencies: ["SkipLib"]),
+        .target(name: "SkipLib", plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "SkipLib", plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "SkipLibTests", dependencies: ["SkipLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Foundation types: URL, Data, Date, etc.
-        .target(name: "SkipFoundation", dependencies: ["SkipLib"]),
-        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"]), // i.e.: .target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")]),
-        .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
+        .target(name: "SkipFoundation", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"], plugins: [.plugin(name: "transpile", package: "skip")]), // i.e.: .target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Device-specific services: UserDefaults, Logging, etc.
-        .target(name: "SkipDevice", dependencies: ["SkipFoundation"]),
-        .gradle(name: "SkipDevice", dependencies: ["SkipFoundation"]),
-        .testTarget(name: "SkipDeviceTests", dependencies: ["SkipDevice"]),
-        .testGradle(name: "SkipDeviceTests", dependencies: ["SkipDevice"]),
+        .target(name: "SkipDevice", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "SkipDevice", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipDeviceTests", dependencies: ["SkipDevice"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "SkipDeviceTests", dependencies: ["SkipDevice"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // SQLite Database
-        .target(name: "SkipSQL", dependencies: ["SkipDevice"]),
-        .gradle(name: "SkipSQL", dependencies: ["SkipDevice"]),
-        .testTarget(name: "SkipSQLTests", dependencies: ["SkipSQL"]),
-        .testGradle(name: "SkipSQLTests", dependencies: ["SkipSQL"]),
+        .target(name: "SkipSQL", dependencies: ["SkipDevice"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "SkipSQL", dependencies: ["SkipDevice"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipSQLTests", dependencies: ["SkipSQL"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "SkipSQLTests", dependencies: ["SkipSQL"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // UI
-        .target(name: "SkipUI", dependencies: ["SkipFoundation"]),
-        .gradle(name: "SkipUI", dependencies: ["SkipFoundation"]),
-        .testTarget(name: "SkipUITests", dependencies: ["SkipUI"]),
-        .testGradle(name: "SkipUITests", dependencies: ["SkipUI"]),
+        .target(name: "SkipUI", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "SkipUI", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipUITests", dependencies: ["SkipUI"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "SkipUITests", dependencies: ["SkipUI"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Example library
-        .target(name: "ExampleLib", dependencies: ["SkipFoundation"]),
-        .gradle(name: "ExampleLib", dependencies: ["SkipFoundation"]),
-        .testTarget(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
-        .testGradle(name: "ExampleLibTests", dependencies: ["ExampleLib"]),
+        .target(name: "ExampleLib", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "ExampleLib", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "ExampleLibTests", dependencies: ["ExampleLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "ExampleLibTests", dependencies: ["ExampleLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Example app
-        .target(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
-        .gradle(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"]),
-        .testTarget(name: "ExampleAppTests", dependencies: ["ExampleApp"]),
-        .testGradle(name: "ExampleAppTests", dependencies: ["ExampleApp"]),
+        .target(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "ExampleApp", dependencies: ["SkipUI", "ExampleLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "ExampleAppTests", dependencies: ["ExampleApp"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .testGradle(name: "ExampleAppTests", dependencies: ["ExampleApp"], plugins: [.plugin(name: "transpile", package: "skip")]),
     ]
 )
 
 extension Target {
-    static func gradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
-        // this: .target(name: "SkipLib", dependencies: ["SkipUnit"]),
-        // becomes: .target(name: "SkipLibKt", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .target(name: name + "Kt", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnit"], resources: [.process("Resources"), .copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+    /// Helper function to create a `target` for a `Kt` framework peer of a Swift target.
+    static func gradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?) -> Target {
+        .target(name: name + "Kt", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnit"], resources: [.copy("skip")], plugins: plugins)
     }
 
-    static func testGradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
-        // this: .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
-        // becomes: .testTarget(name: "SkipLibKtTests", dependencies: ["SkipLibKt", "SkipUnitKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+    /// Helper function to create a `testTarget` for a `Kt` framework peer of a Swift target.
+    static func testGradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?) -> Target {
+        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"], resources: [.copy("skip")], plugins: plugins)
     }
 }
 

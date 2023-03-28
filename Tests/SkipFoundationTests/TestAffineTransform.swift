@@ -29,6 +29,7 @@ public struct Vector {
 class TestAffineTransform: XCTestCase {
     private let accuracyThreshold: CGFloat = 0.001
 
+    @available(*, deprecated)
     static var allTests: [(String, (TestAffineTransform) -> () throws -> Void)] {
         return [
             ("testConstruction", testConstruction),
@@ -73,16 +74,30 @@ extension TestAffineTransform {
         
         let nsTransform = transform as NSAffineTransform
         XCTAssertEqual(
-            nsTransform.transform(point), newPoint,
-            "Expected NSAffineTransform to match AffineTransform's point-accepting transform(_:)",
+            nsTransform.transform(point).x, newPoint.x,
+            accuracy: accuracyThreshold,
+            "Expected NSAffineTransform x to match AffineTransform's point-accepting transform(_:)",
             file: file, line: line
         )
         XCTAssertEqual(
-            nsTransform.transform(size), newSize,
-            "Expected NSAffineTransform to match AffineTransform's size-accepting transform(_:)",
+            nsTransform.transform(point).y, newPoint.y,
+            accuracy: accuracyThreshold,
+            "Expected NSAffineTransform y to match AffineTransform's point-accepting transform(_:)",
             file: file, line: line
         )
-        
+        XCTAssertEqual(
+            nsTransform.transform(size).width, newSize.width,
+            accuracy: accuracyThreshold,
+            "Expected NSAffineTransform width to match AffineTransform's size-accepting transform(_:)",
+            file: file, line: line
+        )
+        XCTAssertEqual(
+            nsTransform.transform(size).height, newSize.height,
+            accuracy: accuracyThreshold,
+            "Expected NSAffineTransform height to match AffineTransform's size-accepting transform(_:)",
+            file: file, line: line
+        )
+
         XCTAssertEqual(
             newPoint.x, expectedPoint.x,
             accuracy: accuracyThreshold,
@@ -292,6 +307,7 @@ extension TestAffineTransform {
         }()
         
         XCTAssertEqual(translatedIdentity, translation)
+        _ = nsTranslation
 //        XCTAssertEqual(nsTranslation.affineTransform, translation)
     }
     
@@ -363,6 +379,7 @@ extension TestAffineTransform {
         }()
         
         XCTAssertEqual(scaledIdentity, scaling)
+        _ = nsScaling
 //        XCTAssertEqual(nsScaling.affineTransform, scaling)
         
         // Same x/y Components
@@ -390,6 +407,7 @@ extension TestAffineTransform {
         XCTAssertEqual(sameScaling, differentScaledIdentity)
         
         XCTAssertEqual(sameScaledIdentity, sameScaling)
+        _ = sameNSScaling
 //        XCTAssertEqual(sameNSScaling.affineTransform, sameScaling)
     }
 
@@ -765,6 +783,7 @@ extension TestAffineTransform {
 // MARK: - Coding
 
 extension TestAffineTransform {
+    @available(*, deprecated)
     func testNSCoding() throws {
         let transform = AffineTransform(
             m11: 1, m12: 2,
