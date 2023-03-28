@@ -5,4 +5,4 @@
 #  contents:
 #    - block: 'dependencies'
 #      contents:
-#        - '// no new dependencies in SkipFoundationKotlinTests'
+#        - '// no new dependencies in SkipFoundationTestsKt'

@@ -13,28 +13,28 @@ let package = Package(
     ],
     products: [
         .library(name: "SkipUnit", targets: ["SkipUnit"]),
-        .library(name: "SkipUnitKotlin", targets: ["SkipUnitKotlin"]),
+        .library(name: "SkipUnitKt", targets: ["SkipUnitKt"]),
 
         .library(name: "SkipLib", targets: ["SkipLib"]),
-        .library(name: "SkipLibKotlin", targets: ["SkipLib"]),
+        .library(name: "SkipLibKt", targets: ["SkipLib"]),
 
         .library(name: "SkipFoundation", targets: ["SkipFoundation"]),
-        .library(name: "SkipFoundationKotlin", targets: ["SkipFoundationKotlin"]),
+        .library(name: "SkipFoundationKt", targets: ["SkipFoundationKt"]),
 
         .library(name: "SkipDevice", targets: ["SkipDevice"]),
-        .library(name: "SkipDeviceKotlin", targets: ["SkipDeviceKotlin"]),
+        .library(name: "SkipDeviceKt", targets: ["SkipDeviceKt"]),
 
         .library(name: "SkipUI", targets: ["SkipUI"]),
-        .library(name: "SkipUIKotlin", targets: ["SkipUIKotlin"]),
+        .library(name: "SkipUIKt", targets: ["SkipUIKt"]),
 
         .library(name: "SkipSQL", targets: ["SkipSQL"]),
-        .library(name: "SkipSQLKotlin", targets: ["SkipSQLKotlin"]),
+        .library(name: "SkipSQLKt", targets: ["SkipSQLKt"]),
 
         .library(name: "ExampleLib", targets: ["ExampleLib"]),
-        .library(name: "ExampleLibKotlin", targets: ["ExampleLibKotlin"]),
+        .library(name: "ExampleLibKt", targets: ["ExampleLibKt"]),
 
         .library(name: "ExampleApp", targets: ["ExampleApp"]),
-        .library(name: "ExampleAppKotlin", targets: ["ExampleAppKotlin"]),
+        .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
         .package(url: "https://github.com/skiptools/skip.git", from: "0.0.0"),
@@ -42,7 +42,7 @@ let package = Package(
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
-        .target(name: "SkipUnitKotlin", dependencies: ["SkipUnit", "SkipLibKotlin"],
+        .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"],
                 resources: [.copy("skip")],
                 plugins: [.plugin(name: "transpile", package: "skip")]),
 
@@ -54,7 +54,7 @@ let package = Package(
 
         // Foundation types: URL, Data, Date, etc.
         .target(name: "SkipFoundation", dependencies: ["SkipLib"]),
-        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"]),
+        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"]), // i.e.: .target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")]),
         .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"]),
 
@@ -93,30 +93,30 @@ let package = Package(
 extension Target {
     static func gradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .target(name: "SkipLib", dependencies: ["SkipUnit"]),
-        // becomes: .target(name: "SkipLibKotlin", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .target(name: name + "Kotlin", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnit"], resources: [.process("Resources"), .copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+        // becomes: .target(name: "SkipLibKt", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: name + "Kt", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnit"], resources: [.process("Resources"), .copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 
     static func testGradle(name: String, dependencies: [String] = [], standardResources: Bool = true) -> Target {
         // this: .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
-        // becomes: .testTarget(name: "SkipLibKotlinTests", dependencies: ["SkipLibKotlin", "SkipUnitKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: name.dropLast("Tests".count) + "KotlinTests", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kotlin") }) + ["SkipUnitKotlin"], resources: [.process("Resources"), .copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
+        // becomes: .testTarget(name: "SkipLibKtTests", dependencies: ["SkipLibKt", "SkipUnitKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")])
     }
 }
 
-// Instead of these .kotlin shortcuts, the targets can be written out manually like so:
+// Instead of these .gradle shortcuts, the targets could be written out manually like so:
 
 //.target(name: "SkipLib", dependencies: ["SkipUnit"]),
 //.testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
 //
-//.target(name: "SkipLibKotlin", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-//.testTarget(name: "SkipLibKotlinTests", dependencies: ["SkipLibKotlin", "SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+//.target(name: "SkipLibKt", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+//.testTarget(name: "SkipLibKtTests", dependencies: ["SkipLibKt", "SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 //
 //.target(name: "SkipFoundation", dependencies: ["SkipLib"], resources: [.process("Resources")]),
 //.testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")]),
 //
-//.target(name: "SkipFoundationKotlin", dependencies: ["SkipFoundation", "SkipLibKotlin"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-//.testTarget(name: "SkipFoundationKotlinTests", dependencies: ["SkipFoundationKotlin", "SkipUnit"], plugins: [.plugin(name: "transpile", package: "skip")]),
+//.target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+//.testTarget(name: "SkipFoundationKtTests", dependencies: ["SkipFoundationKt", "SkipUnit"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
 
 import class Foundation.ProcessInfo

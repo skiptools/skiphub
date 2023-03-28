@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipDeviceKotlin"
-               BuildableName = "SkipDeviceKotlin"
-               BlueprintName = "SkipDeviceKotlin"
+               BlueprintIdentifier = "SkipLibKt"
+               BuildableName = "SkipLibKt"
+               BlueprintName = "SkipLibKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipDeviceTests"
-               BuildableName = "SkipDeviceTests"
-               BlueprintName = "SkipDeviceTests"
+               BlueprintIdentifier = "SkipLibTests"
+               BuildableName = "SkipLibTests"
+               BlueprintName = "SkipLibTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -42,9 +42,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipDeviceKotlinTests"
-               BuildableName = "SkipDeviceKotlinTests"
-               BlueprintName = "SkipDeviceKotlinTests"
+               BlueprintIdentifier = "SkipLibTestsKt"
+               BuildableName = "SkipLibTestsKt"
+               BlueprintName = "SkipLibTestsKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -70,9 +70,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SkipDeviceKotlin"
-            BuildableName = "SkipDeviceKotlin"
-            BlueprintName = "SkipDeviceKotlin"
+            BlueprintIdentifier = "SkipLibKt"
+            BuildableName = "SkipLibKt"
+            BlueprintName = "SkipLibKt"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

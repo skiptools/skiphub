@@ -25,7 +25,7 @@ open class JUnitTestCase: XCTestCase {
     func runGradleTests() async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
-        let moduleSuffix = "KotlinTests"
+        let moduleSuffix = "TestsKt"
         if !moduleName.hasSuffix(moduleSuffix) {
             struct InvalidModuleNameError : LocalizedError {
                 var errorDescription: String?
@@ -36,7 +36,7 @@ open class JUnitTestCase: XCTestCase {
         let driver = try await GradleDriver()
         let dir = try pluginOutputFolder(module: moduleName)
 
-        // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKotlinTests")
+        // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibTestsKt")
         let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
 
         var testProcessResult: ProcessResult? = nil
@@ -210,7 +210,7 @@ open class JUnitTestCase: XCTestCase {
     /// Parse the line looking for compile errors like:
     ///
     /// ```
-    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skip-core.output/SkipSQLKotlinTests/SkipTranspilePlugIn/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
+    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skip-core.output/SkipSQLTestsKt/SkipTranspilePlugIn/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
     /// ```
     private func checkOutputForIssue(line: String) {
         if line.hasPrefix("e: file://") || line.hasPrefix("w: file://") {

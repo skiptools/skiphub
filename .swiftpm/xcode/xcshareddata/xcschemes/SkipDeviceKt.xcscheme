@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipUI"
-               BuildableName = "SkipUI"
-               BlueprintName = "SkipUI"
+               BlueprintIdentifier = "SkipDeviceKt"
+               BuildableName = "SkipDeviceKt"
+               BlueprintName = "SkipDeviceKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipUITests"
-               BuildableName = "SkipUITests"
-               BlueprintName = "SkipUITests"
+               BlueprintIdentifier = "SkipDeviceTests"
+               BuildableName = "SkipDeviceTests"
+               BlueprintName = "SkipDeviceTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SkipDeviceTestsKt"
+               BuildableName = "SkipDeviceTestsKt"
+               BlueprintName = "SkipDeviceTestsKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -60,9 +70,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SkipUI"
-            BuildableName = "SkipUI"
-            BlueprintName = "SkipUI"
+            BlueprintIdentifier = "SkipDeviceKt"
+            BuildableName = "SkipDeviceKt"
+            BlueprintName = "SkipDeviceKt"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

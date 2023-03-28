@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ExampleApp"
-               BuildableName = "ExampleApp"
-               BlueprintName = "ExampleApp"
+               BlueprintIdentifier = "ExampleLibKt"
+               BuildableName = "ExampleLibKt"
+               BlueprintName = "ExampleLibKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ExampleAppTests"
-               BuildableName = "ExampleAppTests"
-               BlueprintName = "ExampleAppTests"
+               BlueprintIdentifier = "ExampleLibTests"
+               BuildableName = "ExampleLibTests"
+               BlueprintName = "ExampleLibTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ExampleLibTestsKt"
+               BuildableName = "ExampleLibTestsKt"
+               BlueprintName = "ExampleLibTestsKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -60,9 +70,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ExampleApp"
-            BuildableName = "ExampleApp"
-            BlueprintName = "ExampleApp"
+            BlueprintIdentifier = "ExampleLibKt"
+            BuildableName = "ExampleLibKt"
+            BlueprintName = "ExampleLibKt"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

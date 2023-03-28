@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipUnitKotlin"
-               BuildableName = "SkipUnitKotlin"
-               BlueprintName = "SkipUnitKotlin"
+               BlueprintIdentifier = "SkipUIKt"
+               BuildableName = "SkipUIKt"
+               BlueprintName = "SkipUIKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SkipUnitTests"
-               BuildableName = "SkipUnitTests"
-               BlueprintName = "SkipUnitTests"
+               BlueprintIdentifier = "SkipUITests"
+               BuildableName = "SkipUITests"
+               BlueprintName = "SkipUITests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SkipUITestsKt"
+               BuildableName = "SkipUITestsKt"
+               BlueprintName = "SkipUITestsKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -60,9 +70,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SkipUnitKotlin"
-            BuildableName = "SkipUnitKotlin"
-            BlueprintName = "SkipUnitKotlin"
+            BlueprintIdentifier = "SkipUIKt"
+            BuildableName = "SkipUIKt"
+            BlueprintName = "SkipUIKt"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

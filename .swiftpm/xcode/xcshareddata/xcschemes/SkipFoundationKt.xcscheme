@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ExampleLibKotlin"
-               BuildableName = "ExampleLibKotlin"
-               BlueprintName = "ExampleLibKotlin"
+               BlueprintIdentifier = "SkipFoundationKt"
+               BuildableName = "SkipFoundationKt"
+               BlueprintName = "SkipFoundationKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ExampleLibTests"
-               BuildableName = "ExampleLibTests"
-               BlueprintName = "ExampleLibTests"
+               BlueprintIdentifier = "SkipFoundationTests"
+               BuildableName = "SkipFoundationTests"
+               BlueprintName = "SkipFoundationTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -42,9 +42,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ExampleLibKotlinTests"
-               BuildableName = "ExampleLibKotlinTests"
-               BlueprintName = "ExampleLibKotlinTests"
+               BlueprintIdentifier = "SkipFoundationTestsKt"
+               BuildableName = "SkipFoundationTestsKt"
+               BlueprintName = "SkipFoundationTestsKt"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -70,9 +70,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ExampleLibKotlin"
-            BuildableName = "ExampleLibKotlin"
-            BlueprintName = "ExampleLibKotlin"
+            BlueprintIdentifier = "SkipFoundationKt"
+            BuildableName = "SkipFoundationKt"
+            BlueprintName = "SkipFoundationKt"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
