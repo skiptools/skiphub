@@ -7,4 +7,8 @@ import SkipUnit
 
 /// This test case will run the transpiled tests for the module, as implemented by `JUnitTestCase.testProjectGradle()`
 final class KotlinProjectTestCase: JUnitTestCase {
+    override var maxTestMemory: UInt64? {
+        1024 * 1024 * 1024 // 1 gig should be sufficient for these tests
+    }
+    
 }

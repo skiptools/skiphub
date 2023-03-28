@@ -9,6 +9,13 @@ import SkipDriver
 
 /// A base test case for a JUnit test suite which will run the skip-transpiled test cases
 open class JUnitTestCase: XCTestCase {
+    /// The default maximum memory used by this test; defaults to `ProcessInfo.processInfo.physicalMemory` but can be overridden for individual tests
+    ///
+    /// Returning `.none` from this will have the effect of reverting to gradle's default behavior, which is to fork a daemon JVM and start with the amount of memory configured for the project, such as in the `gradle.properties` file.
+    open var maxTestMemory: UInt64? {
+        ProcessInfo.processInfo.physicalMemory
+    }
+
     public func testProjectGradle() async throws {
         // only run in subclasses, not in the base test
         #if os(macOS) || os(Linux)
@@ -40,7 +47,7 @@ open class JUnitTestCase: XCTestCase {
         let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
 
         var testProcessResult: ProcessResult? = nil
-        let (output, parseResults) = try await driver.runTests(in: dir, module: baseModuleName, exitHandler: { result in
+        let (output, parseResults) = try await driver.runTests(in: dir, module: baseModuleName, maxTestMemory: maxTestMemory, exitHandler: { result in
             // do not fail on non-zero exit code because we want to be able to parse the test results first
             testProcessResult = result
         })
