@@ -21,6 +21,7 @@ final class ExampleLibTests: XCTestCase {
         XCTAssertEqual(1, f(f(f(f(f(name))))))
     }
 
+    
     private func f(_ string: String) -> Int {
         #if SKIP
         return string.length
