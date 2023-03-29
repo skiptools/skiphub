@@ -7,7 +7,7 @@
 @testable import ExampleLib
 #endif
 import XCTest
-import SkipFoundation
+import SkipLib
 
 final class ExampleLibTests: XCTestCase {
     // SKIP INSERT: @Test
@@ -15,6 +15,21 @@ final class ExampleLibTests: XCTestCase {
         XCTAssertEqual(3.0 + 1.5, 9.0/2)
         XCTAssertEqual("ExampleLib", ExampleLibInternalModuleName())
         XCTAssertEqual("ExampleLib", ExampleLibPublicModuleName())
-        XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
+        XCTAssertEqual("SkipLib", SkipLibPublicModuleName())
+
+        let name = SkipLibPublicModuleName()
+        XCTAssertEqual(1, f(f(f(f(f(name))))))
+    }
+
+    private func f(_ string: String) -> Int {
+        #if SKIP
+        return string.length
+        #else
+        return string.count
+        #endif
+    }
+
+    private func f(_ number: Int) -> String {
+        return "\(number)"
     }
 }

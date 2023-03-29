@@ -64,6 +64,8 @@ jobs:
           path: SkipSource
           repository: skiptools/SkipSource
           token: ${{ secrets.GH_TOKEN }}
+          # temporary: testing symbols
+          branch: marcprux/symbol-replacement
 
       - name: Check skiptool (Debug)
         if: ${{ matrix.mode == 'Debug' }}

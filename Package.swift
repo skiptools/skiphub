@@ -54,7 +54,7 @@ let package = Package(
 
         // Foundation types: URL, Data, Date, etc.
         .target(name: "SkipFoundation", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
-        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"], plugins: [.plugin(name: "transpile", package: "skip")]), // i.e.: .target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .gradle(name: "SkipFoundation", dependencies: ["SkipLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testGradle(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
@@ -77,8 +77,8 @@ let package = Package(
         .testGradle(name: "SkipUITests", dependencies: ["SkipUI"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Example library
-        .target(name: "ExampleLib", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "preflight", package: "skip")]),
-        .gradle(name: "ExampleLib", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "ExampleLib", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "ExampleLib", dependencies: ["SkipLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "ExampleLibTests", dependencies: ["ExampleLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testGradle(name: "ExampleLibTests", dependencies: ["ExampleLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
@@ -93,7 +93,7 @@ let package = Package(
 extension Target {
     /// Helper function to create a `target` for a `Kt` framework peer of a Swift target.
     static func gradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?) -> Target {
-        .target(name: name + "Kt", dependencies: [Dependency(stringLiteral: name)] + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnit"], resources: [.copy("skip")], plugins: plugins)
+        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }), resources: [.copy("skip")], plugins: plugins)
     }
 
     /// Helper function to create a `testTarget` for a `Kt` framework peer of a Swift target.
