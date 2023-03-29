@@ -80,7 +80,7 @@ open class JUnitTestCase: XCTestCase {
         //
         // so we build something like:
         //
-        // ~/Library/Developer/Xcode/DerivedData/PROJ-ABC/Build/Products/Debug/../../../SourcePackages/plugins/skip-core.output/
+        // ~/Library/Developer/Xcode/DerivedData/PROJ-ABC/Build/Products/Debug/../../../SourcePackages/plugins/skiphub.output/
         //
         if let xcodeBuildFolder = env["__XCODE_BUILT_PRODUCTS_DIR_PATHS"] ?? env["BUILT_PRODUCTS_DIR"] {
             let buildBaseFolder = URL(fileURLWithPath: xcodeBuildFolder, isDirectory: true)
@@ -217,7 +217,7 @@ open class JUnitTestCase: XCTestCase {
     /// Parse the line looking for compile errors like:
     ///
     /// ```
-    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skip-core.output/SkipSQLTestsKt/SkipTranspilePlugIn/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
+    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skiphub.output/SkipSQLTestsKt/SkipTranspilePlugIn/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
     /// ```
     private func checkOutputForIssue(line: String) {
         if line.hasPrefix("e: file://") || line.hasPrefix("w: file://") {

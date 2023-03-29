@@ -360,7 +360,7 @@ class TestBundle : XCTestCase {
         XCTAssertEqual(bundle.bundleURL.path, bundle.bundlePath)
         let path = bundle.bundlePath
 
-//        // /opt/src/github/skiptools/skip-core/Tests/SkipFoundationTests/TestBundle.swift:365: error: -[SkipFoundationTests.TestBundle test_paths] : XCTAssertEqual failed: ("Optional("/opt/src/github/skiptools/skip-core/.build/arm64-apple-macosx/debug/skip-core_SkipFoundationTests.bundle/Contents/Resources")") is not equal to ("Optional("/opt/src/github/skiptools/skip-core/.build/arm64-apple-macosx/debug/skip-core_SkipFoundationTests.bundle")")
+//        // /opt/src/github/skiptools/skiphub/Tests/SkipFoundationTests/TestBundle.swift:365: error: -[SkipFoundationTests.TestBundle test_paths] : XCTAssertEqual failed: ("Optional("/opt/src/github/skiptools/skiphub/.build/arm64-apple-macosx/debug/skiphub_SkipFoundationTests.bundle/Contents/Resources")") is not equal to ("Optional("/opt/src/github/skiptools/skiphub/.build/arm64-apple-macosx/debug/skiphub_SkipFoundationTests.bundle")")
 //
 //        // etc
 //        #if os(macOS)

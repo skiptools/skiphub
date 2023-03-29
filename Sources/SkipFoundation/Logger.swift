@@ -100,7 +100,7 @@ extension Logger {
 public typealias OSLogMessage = String
 
 public extension Logger {
-    // error: /opt/src/github/skiptools/skip-core/Sources/SkipFoundation/Logger.swift:105:5 Cannot use an extension to add additional constructors to a Kotlin type defined outside of this module
+    // error: /opt/src/github/skiptools/skiphub/Sources/SkipFoundation/Logger.swift:105:5 Cannot use an extension to add additional constructors to a Kotlin type defined outside of this module
     //public init(subsystem: String, category: String) {
     //    self = Logger.getLogger(subsystem + "/" + category)
     //}

@@ -618,7 +618,7 @@ class TestFileHandle : XCTestCase {
 //#if os(Windows)
 //        let fh = try XCTUnwrap(FileHandle(forWritingAtPath: "CON"))
 //#else
-//        // /opt/src/github/skiptools/skip-core/Tests/SkipFoundationTests/TestFileHandle.swift:623: error: -[SkipFoundationTests.TestFileHandle testSynchronizeOnSpecialFile] : XCTAssertNoThrow failed: threw error "Error Domain=NSCocoaErrorDomain Code=512 "The file couldn’t be saved." UserInfo={NSUnderlyingError=0x152e0bb10 {Error Domain=NSPOSIXErrorDomain Code=45 "Operation not supported"}}"
+//        // /opt/src/github/skiptools/skiphub/Tests/SkipFoundationTests/TestFileHandle.swift:623: error: -[SkipFoundationTests.TestFileHandle testSynchronizeOnSpecialFile] : XCTAssertNoThrow failed: threw error "Error Domain=NSCocoaErrorDomain Code=512 "The file couldn’t be saved." UserInfo={NSUnderlyingError=0x152e0bb10 {Error Domain=NSPOSIXErrorDomain Code=45 "Operation not supported"}}"
 //
 //        let fh = try XCTUnwrap(FileHandle(forWritingAtPath: "/dev/stdout"))
 //#endif

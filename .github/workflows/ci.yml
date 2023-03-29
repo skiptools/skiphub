@@ -1,4 +1,4 @@
-name: skip-core ci
+name: skiphub ci
 
 on:
   push:
@@ -29,14 +29,14 @@ jobs:
       TARGET: ${{ matrix.target }}
 
     steps:
-      - name: Checkout skip-core
+      - name: Checkout skiphub
         uses: actions/checkout@v3
         with:
-          path: skip-core
-          repository: skiptools/skip-core
+          path: skiphub
+          repository: skiptools/skiphub
 
       - name: Check skiptool (Release)
-        working-directory: skip-core
+        working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
       - name: Setup Java
@@ -68,30 +68,30 @@ jobs:
 
       - name: Check skiptool (Debug)
         if: ${{ matrix.mode == 'Debug' }}
-        working-directory: skip-core
+        working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
       - name: Run ${{ matrix.target }} Swift Tests (macOS)
-        working-directory: skip-core
+        working-directory: skiphub
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Run ${{ matrix.target }} Kotlin Tests (macOS)
-        working-directory: skip-core
+        working-directory: skiphub
         # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
 
       - name: Run ${{ matrix.target }} Swift Tests (iOS)
-        working-directory: skip-core
+        working-directory: skiphub
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Run ${{ matrix.target }} Kotlin Tests (Android)
-        working-directory: skip-core
+        working-directory: skiphub
         run: |
           # get the most recent derived data folder
-          DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
+          DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
 
           cd ${DER}/${{ matrix.target }}TestsKt/SkipTranspilePlugIn
 

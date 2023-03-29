@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "skip-core",
+    name: "skiphub",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v15),

@@ -628,7 +628,7 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
 //#if os(Windows)
 //        let url = URL(fileURLWithPath: "CON")
 //#else
-//        // /opt/src/github/skiptools/skip-core/Tests/SkipFoundationTests/TestNSData.swift:633: error: -[SkipFoundationTests.TestNSData test_writeToURLSpecialFile] : XCTAssertNoThrow failed: threw error "Error Domain=NSCocoaErrorDomain Code=512 "The file “stdout” couldn’t be saved in the folder “dev”." UserInfo={NSFilePath=/dev/stdout, NSUnderlyingError=0x155345f40 {Error Domain=NSPOSIXErrorDomain Code=45 "Operation not supported"}}"
+//        // /opt/src/github/skiptools/skiphub/Tests/SkipFoundationTests/TestNSData.swift:633: error: -[SkipFoundationTests.TestNSData test_writeToURLSpecialFile] : XCTAssertNoThrow failed: threw error "Error Domain=NSCocoaErrorDomain Code=512 "The file “stdout” couldn’t be saved in the folder “dev”." UserInfo={NSFilePath=/dev/stdout, NSUnderlyingError=0x155345f40 {Error Domain=NSPOSIXErrorDomain Code=45 "Operation not supported"}}"
 //
 //        let url = URL(fileURLWithPath: "/dev/stdout")
 //#endif

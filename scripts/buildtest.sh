@@ -23,7 +23,7 @@ for TARGET in ${TARGETS}; do
     # -only-testing:${TARGET}Tests 
 
     # get the most recent derived data folder
-    DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skip-core-*/SourcePackages/plugins/skip-core.output | tail -n 1`
+    DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
 
     tree -lh -I build ${DER}/${TARGET}TestsKt/SkipTranspilePlugIn/
 
