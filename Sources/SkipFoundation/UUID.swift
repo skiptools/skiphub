@@ -12,28 +12,27 @@ public typealias UUID = SkipUUID
 public typealias PlatformUUID = java.util.UUID
 #endif
 
-// XXXSKIPXXX INSERT: public operator fun SkipUUID.Companion.invoke(uuidString: String): SkipUUID? { return SkipUUID.fromString(uuidString) }
-
-// XXXSKIPXXX REPLACE: @JvmInline public value class SkipUUID(val rawValue: PlatformUUID = PlatformUUID.randomUUID()) { companion object { } }
-
 #if SKIP
 // FIXME: make RawRepresentable part of SkipLib
 protocol RawRepresentable {
 }
 #endif
 
+#if SKIP
 public func UUID(uuidString: String) -> SkipUUID? {
-    #if SKIP
     // Java throws an exception for bad UUID, but Foundation expects it to return nil
     guard let uuid = try? java.util.UUID.fromString(uuidString) else { return nil }
-    #else
-    guard let uuid = PlatformUUID(uuidString: uuidString) else { return nil }
-    #endif
     return SkipUUID(rawValue: uuid)
 }
+#endif
 
+// SKIP REPLACE: @JvmInline public value class SkipUUID(val rawValue: PlatformUUID = PlatformUUID.randomUUID()) { companion object { } }
 public struct SkipUUID : RawRepresentable {
     public let rawValue: PlatformUUID
+
+    public init(_ rawValue: PlatformUUID) {
+        self.rawValue = rawValue
+    }
 
     #if !SKIP
     public init(rawValue: PlatformUUID) {
@@ -45,18 +44,17 @@ public struct SkipUUID : RawRepresentable {
     public init() {
         self.rawValue = java.util.UUID.randomUUID()
     }
+    #endif
+}
 
+extension SkipUUID {
+    #if SKIP
     public static func fromString(uuidString: String) -> SkipUUID? {
         // Java throws an exception for bad UUID, but Foundation expects it to return nil
         // return try? SkipUUID(rawValue: PlatformUUID.fromString(uuidString)) // mistranspiles to: (PlatformUUID.companionObjectInstance as java.util.UUID.Companion).fromString(uuidString))
         return try? SkipUUID(rawValue: java.util.UUID.fromString(uuidString))
     }
-
     #endif
-
-    public init(_ rawValue: PlatformUUID) {
-        self.rawValue = rawValue
-    }
 
     #if SKIP
     // Kotlin does not support constructors that return nil. Consider creating a factory function

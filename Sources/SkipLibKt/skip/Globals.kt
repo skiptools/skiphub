@@ -3,11 +3,10 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
+package skip.lib
 
-// THIS FILE IS NOT TRANSPILED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
+// Global functions:
 
-public protocol Error {
-}
+// `Swift.fatalError` function calls `Kotlin.error`
+fun fatalError(message: String = "fatalError"): Nothing = error(message)
+

@@ -6,7 +6,7 @@
 #if false // !SKIP
 import SkipUI
 
-//public let logger: Logger = Logger(subsystem: "activity", category: "ExampleApp")
+//public let logger = Logger(subsystem: "activity", category: "ExampleApp")
 
 //class ExampleApp : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {

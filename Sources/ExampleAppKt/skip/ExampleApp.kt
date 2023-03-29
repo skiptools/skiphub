@@ -15,7 +15,7 @@
 //import skip.foundation.info
 //import skip.foundation.warning
 
-////public val logger: Logger = Logger(subsystem = "activity", category = "ExampleApp")
+////public val logger = Logger(subsystem = "activity", category = "ExampleApp")
 
 //class ExampleApp : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {

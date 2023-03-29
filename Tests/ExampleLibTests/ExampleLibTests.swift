@@ -19,9 +19,13 @@ final class ExampleLibTests: XCTestCase {
 
         let name = SkipLibPublicModuleName()
         XCTAssertEqual(1, f(f(f(f(f(name))))))
+
+//        if false {
+            fatalError("XXX")
+//        }
     }
 
-    
+
     private func f(_ string: String) -> Int {
         #if SKIP
         return string.length

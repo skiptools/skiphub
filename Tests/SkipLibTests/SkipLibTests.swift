@@ -37,6 +37,17 @@ final class SkipLibTests: XCTestCase {
         XCTAssertLessThan(1, 2)
         XCTAssertLessThan(1, 2, "one < two")
     }
+
+    // SKIP INSERT: @Test
+    func testFatalError() throws {
+        if ({ false }()) {
+            fatalError("this is a fatal error")
+        }
+
+        if ({ false }()) {
+            fatalError() // no-arg
+        }
+    }
 }
 
 #if !SKIP

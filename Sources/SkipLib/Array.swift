@@ -9,12 +9,12 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-#if !SKIP
 public struct Array<T> {
     public init() {
         fatalError()
     }
 
+    #if !SKIP // Skip does not support this Swift syntax [subscriptDecl]
     public subscript(index: Int) -> T {
         get {
             fatalError()
@@ -23,6 +23,7 @@ public struct Array<T> {
             fatalError()
         }
     }
+    #endif
 
     public mutating func append(_ element: T) {
         fatalError()
@@ -32,5 +33,4 @@ public struct Array<T> {
         fatalError()
     }
 }
-#endif
 
