@@ -28,7 +28,10 @@ open class JUnitTestCase: XCTestCase {
         print("skipping testProjectGradle() for non-macOS target")
         #endif
     }
+}
 
+#if os(macOS) || os(Linux)
+extension JUnitTestCase {
     func runGradleTests() async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
@@ -314,7 +317,7 @@ open class JUnitTestCase: XCTestCase {
         }
     }
 }
-
+#endif // os(macOS) || os(Linux)
 
 extension XCTSourceCodeLocation : SourceCodeLocation {
 

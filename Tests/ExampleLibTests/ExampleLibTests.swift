@@ -20,9 +20,9 @@ final class ExampleLibTests: XCTestCase {
         let name = SkipLibPublicModuleName()
         XCTAssertEqual(1, f(f(f(f(f(name))))))
 
-//        if false {
+        if false {
             fatalError("XXX")
-//        }
+        }
     }
 
 
