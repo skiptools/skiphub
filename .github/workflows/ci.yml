@@ -15,9 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #target: ['SkipLib', 'SkipFoundation', 'ExampleLib' ]
-        target: ['SkipLib', 'SkipFoundation', 'SkipUI', 'SkipDevice', 'SkipSQL']
-        #target: ['SkipLib', 'SkipFoundation', 'SkipUI', 'SkipDevice', 'SkipSQL', 'SkipUI', 'ExampleLib', 'ExampleApp']
+        target: ['SkipUnit', 'SkipLib', 'SkipFoundation', 'SkipUI', 'SkipDevice', 'SkipSQL', 'ExampleLib', 'ExampleApp']
         mode: ['Debug', 'Release']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']

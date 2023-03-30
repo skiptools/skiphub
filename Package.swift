@@ -42,9 +42,8 @@ let package = Package(
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
-        .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"],
-                resources: [.copy("skip")],
-                plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipUnitTestsKt", dependencies: ["SkipUnitKt", "SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Standard library types: Array, Dictionary, Set, etc.
         .target(name: "SkipLib", plugins: [.plugin(name: "preflight", package: "skip")]),
