@@ -10,7 +10,6 @@ import XCTest
 final class DataTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "DataTests")
 
-    // SKIP INSERT: @Test
     func testData() throws {
         let hostsFile: URL = URL(fileURLWithPath: "/etc/hosts", isDirectory: false)
 

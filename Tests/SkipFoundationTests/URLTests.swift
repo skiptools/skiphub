@@ -8,7 +8,6 @@ import OSLog
 import XCTest
 
 final class URLTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testURLs() throws {
         let url: URL? = URL(string: "https://github.com/skiptools/skip.git")
         XCTAssertEqual("https://github.com/skiptools/skip.git", url?.absoluteString)

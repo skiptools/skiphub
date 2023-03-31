@@ -5,10 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 import XCTest
 
-import SkipUnit
-
-final class SkipUnitTests: XCTestCase {
-    // SKIP INSERT: @Test
+class SkipUnitTests: XCTestCase {
     func testSkipUnit() {
         XCTAssertEqual(1, 1)
     }

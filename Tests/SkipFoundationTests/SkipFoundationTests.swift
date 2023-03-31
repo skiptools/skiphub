@@ -11,7 +11,6 @@ import XCTest
 #endif
 
 final class SkipFoundationTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testSkipFoundation() throws {
         XCTAssertEqual(3, 1 + 2)
         XCTAssertEqual("SkipFoundation", SkipFoundationInternalModuleName())
@@ -25,7 +24,6 @@ final class SkipFoundationTests: XCTestCase {
     }
 
     // MARK: - ArrayTests
-    // SKIP INSERT: @Test
     func testArrayLiteralInit() {
         let emptyArray: [Int] = []
         XCTAssertEqual(emptyArray.count, 0)

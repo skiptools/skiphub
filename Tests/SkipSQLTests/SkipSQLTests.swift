@@ -12,14 +12,12 @@ import SkipFoundation
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 final class SkipSQLTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testSkipSQL() throws {
         #if !SKIP
         try Connection.testDatabase()
         #endif
     }
 
-    // SKIP INSERT: @Test
     func testConnection() throws {
         let url: URL = URL.init(fileURLWithPath: "/tmp/testConnection.db", isDirectory: false)
         let conn: Connection = try Connection.open(url: url)

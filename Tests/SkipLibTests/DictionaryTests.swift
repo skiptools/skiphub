@@ -6,7 +6,6 @@
 import XCTest
 
 final class DictionaryTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testDictionaryLiteralInit() {
         let emptyDictionary: [String: Int] = [:]
         XCTAssertEqual(emptyDictionary.count, 0)
@@ -30,7 +29,6 @@ final class DictionaryTests: XCTestCase {
         XCTAssertEqual(multipleElementDictionary["b"], 2)
     }
 
-    // SKIP INSERT: @Test
     func testSubscriptDidSet() {
         let holder = DictionaryHolder()
         holder.dictionary["a"] = 1
@@ -50,7 +48,6 @@ final class DictionaryTests: XCTestCase {
         XCTAssertEqual(dictionary["a"], 100)
     }
 
-    // SKIP INSERT: @Test
     func testNestedSubscriptDidSet() {
         let holder = DictionaryHolder()
         holder.dictionaryOfDictionaries["a"] = ["a": 1, "b": 2, "c": 3]
@@ -70,7 +67,6 @@ final class DictionaryTests: XCTestCase {
         XCTAssertEqual(dictionary["a"]?["b"], 200)
     }
 
-    // SKIP INSERT: @Test
     func testDictionaryReferences() {
         var dict: [String: Int] = [:]
         dict["a"] = 1

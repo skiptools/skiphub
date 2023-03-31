@@ -6,7 +6,6 @@
 import XCTest
 
 final class StructTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testStructMutate() {
         var struct1a = Struct1(i: 2)
         struct1a.i += 1
@@ -18,7 +17,6 @@ final class StructTests: XCTestCase {
         XCTAssertEqual(struct1a.i, 3)
     }
 
-    // SKIP INSERT: @Test
     func testStructMutateDidSet() {
         let holder = StructHolder()
         XCTAssertEqual(holder.structSetCount, 0)
@@ -40,7 +38,6 @@ final class StructTests: XCTestCase {
         XCTAssertEqual(struct1.i, 2)
     }
 
-    // SKIP INSERT: @Test
     func testNestedStructDidSet() {
         let holder = StructHolder()
         holder.struct2.s1.i = 3
@@ -58,7 +55,6 @@ final class StructTests: XCTestCase {
         XCTAssertEqual(struct2.s1.i, 2)
     }
 
-    // SKIP INSERT: @Test
     func testStructReferences() {
         var struct1a = Struct1()
         struct1a.i += 1

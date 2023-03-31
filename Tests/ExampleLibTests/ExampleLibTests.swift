@@ -10,7 +10,6 @@ import XCTest
 import SkipLib
 
 final class ExampleLibTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testExampleLib() throws {
         XCTAssertEqual(3.0 + 1.5, 9.0/2)
         XCTAssertEqual("ExampleLib", ExampleLibInternalModuleName())

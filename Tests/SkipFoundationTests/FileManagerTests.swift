@@ -10,7 +10,6 @@ import XCTest
 final class FileManagerTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "FileManagerTests")
 
-    // SKIP INSERT: @Test
     func testFileManager() throws {
         let tmp = NSTemporaryDirectory()
         logger.log("temporary folder: \(tmp)")

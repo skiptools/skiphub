@@ -13,7 +13,6 @@ import SkipUI
 
 
 final class ExampleAppTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testExampleApp() throws {
         XCTAssertEqual(3, 1 + 2 + 0)
 //        XCTAssertEqual("ExampleApp", ExampleAppInternalModuleName())

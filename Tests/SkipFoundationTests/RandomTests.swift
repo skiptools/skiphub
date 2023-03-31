@@ -14,7 +14,6 @@ final class RandomTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "RandomNumberGeneratorTests")
 
     /// Verify that the system RNG is at least a little bit random.
-    // SKIP INSERT: @Test
     func testSystemRandomNumberGenerator() throws {
         var rng = SystemRandomNumberGenerator()
         XCTAssertNotEqual(rng.next(), rng.next())
@@ -25,7 +24,6 @@ final class RandomTests: XCTestCase {
     }
 
     /// Verifies that a sequence of seeded longs returns the same numbers in Swift and Java.
-    // SKIP INSERT: @Test
     func testGenerateLongs() throws {
         var rng = PseudoRandomNumberGenerator.seeded(seed: 1153443)
         XCTAssertEqual(778315946, rng.nextInt())
@@ -45,7 +43,6 @@ final class RandomTests: XCTestCase {
         XCTAssertEqual(-883510693287642453, rng2.nextLong())
     }
 
-    // SKIP INSERT: @Test
     func testGenerateBools() throws {
         var rng = PseudoRandomNumberGenerator.seeded(seed: 34789)
         XCTAssertEqual(true, rng.nextBoolean())
@@ -53,7 +50,6 @@ final class RandomTests: XCTestCase {
         XCTAssertEqual(false, rng.nextBoolean())
     }
 
-    // SKIP INSERT: @Test
     func testGenerateInts() throws {
         var rng = PseudoRandomNumberGenerator.seeded(seed: 8832)
         XCTAssertEqual(-160123848, rng.nextInt())
@@ -61,7 +57,6 @@ final class RandomTests: XCTestCase {
         XCTAssertEqual(1087824573, rng.nextInt())
     }
 
-    // SKIP INSERT: @Test
     func testGenerateUUIDs() throws {
         var rng = PseudoRandomNumberGenerator.seeded(seed: 487903)
         XCTAssertEqual("0DFDC8B1-78A0-417C-AB5D-A7F833BD7F4C", rng.nextUUID().uuidString)

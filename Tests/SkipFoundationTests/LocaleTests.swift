@@ -10,7 +10,6 @@ import XCTest
 final class LocaleTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "LocaleTests")
 
-    // SKIP INSERT: @Test
     func testLanguageCodes() throws {
         let fr = Locale(identifier: "fr_FR")
         XCTAssertNotNil(fr)

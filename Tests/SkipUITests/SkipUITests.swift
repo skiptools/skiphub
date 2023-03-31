@@ -10,7 +10,6 @@ import XCTest
 import SkipFoundation
 
 final class SkipUITests: XCTestCase {
-    // SKIP INSERT: @Test
     func testSkipUI() throws {
         XCTAssertEqual(3, 1 + 2)
         //XCTAssertEqual("SkipUI", SkipUIInternalModuleName())

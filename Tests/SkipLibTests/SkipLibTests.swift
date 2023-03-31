@@ -9,14 +9,12 @@ import XCTest
 #endif
 
 final class SkipLibTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testSkipLib() throws {
         XCTAssertEqual(3, 1 + 2)
         XCTAssertEqual("SkipLib", SkipLibInternalModuleName())
         XCTAssertEqual("SkipLib", SkipLibPublicModuleName())
     }
 
-    // SKIP INSERT: @Test
     func testUnitTests() throws {
         // test the various test assertions and ensure the JUnit implementations match the XCUnit ones
         XCTAssertEqual(1, 1)
@@ -38,7 +36,6 @@ final class SkipLibTests: XCTestCase {
         XCTAssertLessThan(1, 2, "one < two")
     }
 
-    // SKIP INSERT: @Test
     func testFatalError() throws {
         if ({ false }()) {
             fatalError("this is a fatal error")

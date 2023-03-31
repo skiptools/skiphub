@@ -25,20 +25,17 @@ import XCTest
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 class TestUserDefaults : XCTestCase {
 
-    // SKIP INSERT: @Test
     func testUserDefaults() throws {
     }
 
 
-    // SKIP INSERT: @Test
     func test_createUserDefaults() {
         let defaults = UserDefaults.standard
 
         defaults.set(4, forKey: "ourKey")
     }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem() {
+////    func test_getRegisteredDefaultItem() {
 //        let defaults = UserDefaults.standard
 //
 //        defaults.register(defaults: ["key1": NSNumber(value: Int(5))])
@@ -49,8 +46,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.integer(forKey: "key1"), 5)
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_NSString() {
+////    func test_getRegisteredDefaultItem_NSString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register a NSString value. UserDefaults.string(forKey:) is supposed to return the NSString as a String
@@ -62,8 +58,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_String() {
+////    func test_getRegisteredDefaultItem_String() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register a String value. UserDefaults.string(forKey:) is supposed to return the String
@@ -75,8 +70,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_NSURL() {
+////    func test_getRegisteredDefaultItem_NSURL() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register an NSURL value. UserDefaults.url(forKey:) is supposed to return the URL
@@ -88,8 +82,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_URL() {
+////    func test_getRegisteredDefaultItem_URL() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register an URL value. UserDefaults.url(forKey:) is supposed to return the URL
@@ -101,8 +94,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_NSData() {
+////    func test_getRegisteredDefaultItem_NSData() {
 //        let defaults = UserDefaults.standard
 //        let bytes = [0, 1, 2, 3, 4] as [UInt8]
 //
@@ -115,8 +107,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_Data() {
+////    func test_getRegisteredDefaultItem_Data() {
 //        let defaults = UserDefaults.standard
 //        let bytes = [0, 1, 2, 3, 4] as [UInt8]
 //
@@ -129,8 +120,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_BoolFromString() {
+////    func test_getRegisteredDefaultItem_BoolFromString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register a boolean default value as a string. UserDefaults.bool(forKey:) is supposed to return the parsed Bool value
@@ -142,8 +132,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.bool(forKey: "key1"), true)
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_IntFromString() {
+////    func test_getRegisteredDefaultItem_IntFromString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register an int default value as a string. UserDefaults.integer(forKey:) is supposed to return the parsed Int value
@@ -155,8 +144,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.integer(forKey: "key1"), 1234)
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_getRegisteredDefaultItem_DoubleFromString() {
+////    func test_getRegisteredDefaultItem_DoubleFromString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register a double default value as a string. UserDefaults.double(forKey:) is supposed to return the parsed Double value
@@ -168,8 +156,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.double(forKey: "key1"), 12.34)
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_NSString() {
+////    func test_setValue_NSString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Set a NSString value. UserDefaults.string(forKey:) is supposed to return the NSString as a String
@@ -178,7 +165,6 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
 //    }
 
-    // SKIP INSERT: @Test
     func test_setValue_String() {
         let defaults = UserDefaults.standard
 
@@ -188,8 +174,7 @@ class TestUserDefaults : XCTestCase {
         XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
     }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_NSURL() {
+////    func test_setValue_NSURL() {
 //        let defaults = UserDefaults.standard
 //
 //        // Set a NSURL value. UserDefaults.url(forKey:) is supposed to return the NSURL as a URL
@@ -198,8 +183,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_URL() {
+////    func test_setValue_URL() {
 //        let defaults = UserDefaults.standard
 //
 //        // Set a URL value. UserDefaults.url(forKey:) is supposed to return the URL
@@ -208,8 +192,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_NSData() {
+////    func test_setValue_NSData() {
 //        let defaults = UserDefaults.standard
 //        let bytes = [0, 1, 2, 3, 4] as [UInt8]
 //
@@ -219,8 +202,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_Data() {
+////    func test_setValue_Data() {
 //        let defaults = UserDefaults.standard
 //        let bytes = [0, 1, 2, 3, 4] as [UInt8]
 //
@@ -230,7 +212,6 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
 //    }
 
-    // SKIP INSERT: @Test
     func test_setValue_Bool() {
         let defaults = UserDefaults.standard
 
@@ -239,8 +220,7 @@ class TestUserDefaults : XCTestCase {
         XCTAssertEqual(defaults.bool(forKey: "key1"), true)
     }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_BoolFromString() {
+////    func test_setValue_BoolFromString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register a boolean default value as a string. UserDefaults.bool(forKey:) is supposed to return the parsed Bool value
@@ -249,7 +229,6 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.bool(forKey: "key1"), true)
 //    }
 
-    // SKIP INSERT: @Test
     func test_setValue_Int() {
         let defaults = UserDefaults.standard
 
@@ -258,8 +237,7 @@ class TestUserDefaults : XCTestCase {
         XCTAssertEqual(defaults.integer(forKey: "key1"), 1234)
     }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_IntFromString() {
+////    func test_setValue_IntFromString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register an int default value as a string. UserDefaults.integer(forKey:) is supposed to return the parsed Int value
@@ -268,7 +246,6 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.integer(forKey: "key1"), 1234)
 //    }
 
-    // SKIP INSERT: @Test
     func test_setValue_Double() {
         let defaults = UserDefaults.standard
 
@@ -277,8 +254,7 @@ class TestUserDefaults : XCTestCase {
         XCTAssertEqual(defaults.double(forKey: "key1"), 5.5)
     }
 
-//    // SKIP INSERT: @Test
-//    func test_setValue_DoubleFromString() {
+////    func test_setValue_DoubleFromString() {
 //        let defaults = UserDefaults.standard
 //
 //        // Register a double default value as a string. UserDefaults.double(forKey:) is supposed to return the parsed Double value
@@ -287,8 +263,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaults.double(forKey: "key1"), 12.34)
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_volatileDomains() {
+////    func test_volatileDomains() {
 //        let dateKey = "A Date",
 //        stringKey = "A String",
 //        arrayKey = "An Array",
@@ -322,8 +297,7 @@ class TestUserDefaults : XCTestCase {
 //        XCTAssertEqual(defaultsIn[boolKey] as! Bool, defaultsOut[boolKey] as! Bool)
 //    }
 
-//    // SKIP INSERT: @Test
-//    func test_persistentDomain() {
+////    func test_persistentDomain() {
 //        let int = (key: "An Integer", value: 1234)
 //        let double = (key: "A Double", value: 5678.1234)
 //        let string = (key: "A String", value: "Some string")

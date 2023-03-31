@@ -10,13 +10,11 @@ import XCTest
 final class DateTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "DateTests")
 
-    // SKIP INSERT: @Test
     func testDateTime() throws {
         let date: Date = Date()
         XCTAssertNotEqual(0, date.getTime())
     }
 
-    // SKIP INSERT: @Test
     func testMultipleConstructorsSameParams() throws {
         let d1 = Date(timeIntervalSince1970: 99999.0)
         let d2 = Date(timeIntervalSinceReferenceDate: 99999.0)
@@ -28,7 +26,6 @@ final class DateTests: XCTestCase {
         XCTAssertEqual(99999.0, d2.timeIntervalSinceReferenceDate)
     }
 
-    // SKIP INSERT: @Test
     func testISOFormatting() throws {
         let d = Date.create(timeIntervalSince1970: 172348932.0)
         XCTAssertEqual(172348932.0, d.getTime())
@@ -52,7 +49,6 @@ final class DateTests: XCTestCase {
         XCTAssertEqual("4001-01-01T00:00:00Z", Date.distantFuture.ISO8601Format())
     }
 
-    // SKIP INSERT: @Test
     func testAbsoluteTimeGetCurrent() {
         XCTAssertNotEqual(0, CFAbsoluteTimeGetCurrent())
     }

@@ -13,20 +13,17 @@ import XCTest
 final class UUIDTests: XCTestCase {
     var logger = Logger(subsystem: "test", category: "UUIDTests")
 
-    // SKIP INSERT: @Test
     func testRandomUUID() throws {
         XCTAssertNotEqual(UUID(), UUID())
         XCTAssertNotEqual("", UUID().uuidString)
         logger.log("UUID: \(UUID().uuidString)")
     }
 
-    // SKIP INSERT: @Test
     func testFixedUUID() throws {
         let uuid: UUID? = UUID(uuidString: "d500d1f7-ddb0-439b-ab90-22fdbe5b5790")
         XCTAssertEqual("D500D1F7-DDB0-439B-AB90-22FDBE5B5790", uuid?.uuidString)
     }
 
-    // SKIP INSERT: @Test
     func testUUIDFromBits() throws {
         XCTAssertEqual("00000000-0000-0000-0000-000000000000", UUID(mostSigBits: 0, leastSigBits: 0).uuidString)
         XCTAssertEqual("00000000-0000-0001-0000-000000000000", UUID(mostSigBits: 1, leastSigBits: 0).uuidString)
@@ -46,7 +43,6 @@ final class UUIDTests: XCTestCase {
         XCTAssertEqual("7FFFFFFF-FFFF-FFFF-8000-000000000000", UUID(mostSigBits: mx, leastSigBits: mn).uuidString)
     }
 
-    // SKIP INSERT: @Test
     func test_UUIDEquality() {
         let uuidA = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
         let uuidB = UUID(uuidString: "e621e1f8-c36c-495a-93fc-0c247a3e6e5f")
@@ -58,7 +54,6 @@ final class UUIDTests: XCTestCase {
         XCTAssertNotEqual(uuidB, uuidD, "Two different UUIDs must not be equal.")
     }
 
-    // SKIP INSERT: @Test
     func test_UUIDInvalid() {
         let uuid = UUID(uuidString: "Invalid UUID")
         XCTAssertNil(uuid, "The convenience initializer `init?(uuidString string:)` must return nil for an invalid UUID string.")
@@ -69,7 +64,6 @@ final class UUIDTests: XCTestCase {
 //        XCTAssertEqual(uuid.uuidString, "E621E1F8-C36C-495A-93FC-0C247A3E6E5F", "The uuidString representation must be uppercase.")
 //    }
 
-    // SKIP INSERT: @Test
     func test_UUIDdescription() {
         let uuid = UUID()
         XCTAssertEqual(uuid.description, uuid.uuidString, "The description must be the same as the uuidString.")

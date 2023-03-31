@@ -6,7 +6,6 @@
 import XCTest
 
 final class ArrayTests: XCTestCase {
-    // SKIP INSERT: @Test
     func testArrayLiteralInit() {
         let emptyArray: [Int] = []
         XCTAssertEqual(emptyArray.count, 0)
@@ -32,7 +31,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(multipleElementArray[1], 2)
     }
 
-    // SKIP INSERT: @Test
     func testArrayAppend() {
         var array = [1, 2]
         array.append(3)
@@ -47,7 +45,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(array.count, 3)
     }
 
-    // SKIP INSERT: @Test
     func testAppendDidSet() {
         let holder = ArrayHolder()
         XCTAssertEqual(holder.arraySetCount, 0)
@@ -70,7 +67,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(array.count, 2)
     }
 
-    // SKIP INSERT: @Test
     func testSubscriptDidSet() {
         let holder = ArrayHolder()
         holder.array.append(1)
@@ -90,7 +86,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(array[0], 100)
     }
 
-    // SKIP INSERT: @Test
     func testNestedSubscriptDidSet() {
         let holder = ArrayHolder()
         holder.arrayOfArrays.append([1, 2, 3])
@@ -110,7 +105,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(array[0][1], 200)
     }
 
-    // SKIP INSERT: @Test
     func testDeepNestedArrays() {
         var nested: [[[[[Int]]]]] = [[[[[1]]]]]
         let nested0: [[[Int]]] = [[[-1]]]
@@ -121,7 +115,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(nested[0][0][0][0][0], 0)
     }
 
-    // SKIP INSERT: @Test
     func testArrayReferences() {
         var arr: [Int] = []
         arr.append(1)
