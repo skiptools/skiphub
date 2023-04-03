@@ -103,7 +103,7 @@ extension JUnitTestCase {
                 if outputFolder.pathExtension != pathExtension {
                     continue // only check known path extensions (e.g., ".output" or nil)
                 }
-                let pluginModuleOutputFolder = URL(fileURLWithPath: moduleName + "/SkipTranspilePlugIn/", isDirectory: true, relativeTo: outputFolder)
+                let pluginModuleOutputFolder = URL(fileURLWithPath: moduleName + "/skip-transpiler/", isDirectory: true, relativeTo: outputFolder)
                 if (try? pluginModuleOutputFolder.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true {
                     return pluginModuleOutputFolder
                 }
@@ -220,7 +220,7 @@ extension JUnitTestCase {
     /// Parse the line looking for compile errors like:
     ///
     /// ```
-    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skiphub.output/SkipSQLTestsKt/SkipTranspilePlugIn/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
+    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skiphub.output/SkipSQLTestsKt/skip-transpiler/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
     /// ```
     private func checkOutputForIssue(line: String) {
         if line.hasPrefix("e: file://") || line.hasPrefix("w: file://") {

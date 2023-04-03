@@ -25,10 +25,10 @@ for TARGET in ${TARGETS}; do
     # get the most recent derived data folder
     DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
 
-    tree -lh -I build ${DER}/${TARGET}TestsKt/SkipTranspilePlugIn/
+    tree -lh -I build ${DER}/${TARGET}TestsKt/skip-transpiler/
 
     # run the tests for the target
-    # cd ${DER}/${TARGET}TestsKt/SkipTranspilePlugIn
-    gradle --project-dir ${DER}/${TARGET}TestsKt/SkipTranspilePlugIn check
+    # cd ${DER}/${TARGET}TestsKt/skip-transpiler
+    gradle --project-dir ${DER}/${TARGET}TestsKt/skip-transpiler check
 done
 

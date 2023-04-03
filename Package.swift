@@ -4,13 +4,6 @@ import PackageDescription
 let package = Package(
     name: "skiphub",
     defaultLocalization: "en",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12),
-        .tvOS(.v15),
-        .watchOS(.v8),
-        .macCatalyst(.v15),
-    ],
     products: [
         .library(name: "SkipUnit", targets: ["SkipUnit"]),
         .library(name: "SkipUnitKt", targets: ["SkipUnitKt"]),
@@ -101,23 +94,10 @@ extension Target {
     }
 }
 
-// Instead of these .gradle shortcuts, the targets could be written out manually like so:
-
-//.target(name: "SkipLib", dependencies: ["SkipUnit"]),
-//.testTarget(name: "SkipLibTests", dependencies: ["SkipLib"]),
-//
-//.target(name: "SkipLibKt", dependencies: ["SkipLib"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-//.testTarget(name: "SkipLibKtTests", dependencies: ["SkipLibKt", "SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-//
-//.target(name: "SkipFoundation", dependencies: ["SkipLib"], resources: [.process("Resources")]),
-//.testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")]),
-//
-//.target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-//.testTarget(name: "SkipFoundationKtTests", dependencies: ["SkipFoundationKt", "SkipUnit"], plugins: [.plugin(name: "transpile", package: "skip")]),
-
-
 import class Foundation.ProcessInfo
+// For Skip library development in peer directories, run: SKIPLOCAL=.. xed Package.swift
 if let localPath = ProcessInfo.processInfo.environment["SKIPLOCAL"] {
-    // build agains the local relative packages in the peer folders by running: SKIPLOCAL=.. xed Package.swift
+    // locally linking SwiftSyntax requires explicit min platform targets
+    package.platforms = package.platforms ?? [.iOS(.v15), .macOS(.v12), .tvOS(.v15), .watchOS(.v8), .macCatalyst(.v15)]
     package.dependencies[0] = .package(path: localPath + "/skip")
 }
