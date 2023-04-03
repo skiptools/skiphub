@@ -6,8 +6,9 @@
 #if !SKIP
 @testable import SkipDevice
 #endif
+import OSLog
+import Foundation
 import XCTest
-import SkipFoundation
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)

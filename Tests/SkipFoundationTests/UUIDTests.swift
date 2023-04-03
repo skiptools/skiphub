@@ -6,17 +6,14 @@
 import Foundation
 import OSLog
 import XCTest
-#if !SKIP
-@testable import SkipFoundation // needed for UUID(mostSigBits:) extension
-#endif
 
 final class UUIDTests: XCTestCase {
-    var logger = Logger(subsystem: "test", category: "UUIDTests")
+    //var logger = Logger(subsystem: "test", category: "UUIDTests")
 
     func testRandomUUID() throws {
         XCTAssertNotEqual(UUID(), UUID())
         XCTAssertNotEqual("", UUID().uuidString)
-        logger.log("UUID: \(UUID().uuidString)")
+        //logger.log("UUID: \(UUID().uuidString)")
     }
 
     func testFixedUUID() throws {

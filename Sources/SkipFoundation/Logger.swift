@@ -6,14 +6,55 @@
 #if !SKIP
 import os
 
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-public typealias Logger = os.Logger
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-public typealias OSLogType = os.OSLogType
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-public typealias OSLogMessage = os.OSLogMessage
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias OSLog = os.OSLog
+public typealias OSLogType = os.OSLogType
+
+#if canImport(Concurrency)
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+public typealias Logger = os.Logger
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+public typealias OSLogMessage = os.OSLogMessage
+#else
+//public typealias Logger = LoggerShim
+//public typealias OSLogMessage = StaticString
+#endif
+
+
+/// Logger cover for versions before Logger was available (which coincides with Concurrency)
+public final class LoggerShim {
+    let log: os.OSLog
+
+    public init(subsystem: String, category: String) {
+        self.log = os.OSLog(subsystem: subsystem, category: category)
+    }
+
+    public func log(_ message: String) {
+    }
+
+    public func trace(_ message: String) {
+    }
+
+    public func debug(_ message: String) {
+    }
+
+    public func info(_ message: String) {
+    }
+
+    public func notice(_ message: String) {
+    }
+
+    public func warning(_ message: String) {
+    }
+
+    public func error(_ message: String) {
+    }
+
+    public func critical(_ message: String) {
+    }
+
+    public func fault(_ message: String) {
+    }
+}
 
 #elseif SKIP_LOGGING_ANDROID // skip.foundation does not rely on Android
 

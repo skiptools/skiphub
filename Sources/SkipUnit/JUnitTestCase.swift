@@ -15,28 +15,24 @@ open class JUnitTestCase: XCTestCase {
     open var maxTestMemory: UInt64? {
         ProcessInfo.processInfo.physicalMemory
     }
-
-    #if canImport(Concurrency)
-    public func testProjectGradle() async throws {
-        // only run in subclasses, not in the base test
-        if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-#if os(macOS) || os(Linux)
-            if self.className == "SkipUnit.JUnitTestCase" {
-                // TODO: add a general system gradle checkup test here
-            } else {
-                try await runGradleTests()
-            }
-#else
-            print("skipping testProjectGradle() for non-macOS target")
-#endif
-        }
-    }
-    #endif
 }
 
-#if os(macOS) || os(Linux)
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+#if canImport(_Concurrency)
 extension JUnitTestCase {
+
+    public func testProjectGradle() async throws {
+        // only run in subclasses, not in the base test
+        #if os(macOS) || os(Linux)
+        if self.className == "SkipUnit.JUnitTestCase" {
+            // TODO: add a general system gradle checkup test here
+        } else {
+            try await runGradleTests()
+        }
+        #else
+        print("skipping testProjectGradle() for non-macOS target")
+        #endif
+    }
+
     func runGradleTests() async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
@@ -322,7 +318,7 @@ extension JUnitTestCase {
         }
     }
 }
-#endif // os(macOS) || os(Linux)
+#endif // canImport(Concurrency)
 
 extension XCTSourceCodeLocation : SourceCodeLocation {
 
