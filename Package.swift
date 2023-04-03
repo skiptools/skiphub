@@ -35,8 +35,8 @@ let package = Package(
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
-        .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
-        .testTarget(name: "SkipUnitTestsKt", dependencies: ["SkipUnitKt", "SkipUnit"], resources: [.copy("skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .testTarget(name: "SkipUnitTestsKt", dependencies: ["SkipUnitKt", "SkipUnit"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Standard library types: Array, Dictionary, Set, etc.
         .target(name: "SkipLib", plugins: [.plugin(name: "preflight", package: "skip")]),
@@ -85,12 +85,12 @@ let package = Package(
 extension Target {
     /// Helper function to create a `target` for a `Kt` framework peer of a Swift target.
     static func gradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?, includePeerDependency: Bool = true) -> Target {
-        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + (includePeerDependency ? [Dependency(stringLiteral: name)] : []), resources: [.copy("skip")], plugins: plugins)
+        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + (includePeerDependency ? [Dependency(stringLiteral: name)] : []), resources: [.copy("Skip")], plugins: plugins)
     }
 
     /// Helper function to create a `testTarget` for a `Kt` framework peer of a Swift target.
     static func testGradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?, includePeerDependency: Bool = true) -> Target {
-        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"] + (includePeerDependency ? [Dependency(stringLiteral: String(name.dropLast("Tests".count)))] : []), resources: [.copy("skip")], plugins: plugins)
+        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"] + (includePeerDependency ? [Dependency(stringLiteral: String(name.dropLast("Tests".count)))] : []), resources: [.copy("Skip")], plugins: plugins)
     }
 }
 
