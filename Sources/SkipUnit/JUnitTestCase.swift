@@ -16,6 +16,7 @@ open class JUnitTestCase: XCTestCase {
         ProcessInfo.processInfo.physicalMemory
     }
 
+    #if canImport(Concurrency)
     public func testProjectGradle() async throws {
         // only run in subclasses, not in the base test
         if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
@@ -30,6 +31,7 @@ open class JUnitTestCase: XCTestCase {
 #endif
         }
     }
+    #endif
 }
 
 #if os(macOS) || os(Linux)
