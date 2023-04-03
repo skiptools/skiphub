@@ -6,9 +6,13 @@
 #if !SKIP
 import os
 
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias Logger = os.Logger
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias OSLogType = os.OSLogType
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias OSLogMessage = os.OSLogMessage
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias OSLog = os.OSLog
 
 #elseif SKIP_LOGGING_ANDROID // skip.foundation does not rely on Android

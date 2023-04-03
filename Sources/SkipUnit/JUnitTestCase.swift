@@ -18,19 +18,22 @@ open class JUnitTestCase: XCTestCase {
 
     public func testProjectGradle() async throws {
         // only run in subclasses, not in the base test
-        #if os(macOS) || os(Linux)
-        if self.className == "SkipUnit.JUnitTestCase" {
-            // TODO: add a general system gradle checkup test here
-        } else {
-            try await runGradleTests()
+        if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
+#if os(macOS) || os(Linux)
+            if self.className == "SkipUnit.JUnitTestCase" {
+                // TODO: add a general system gradle checkup test here
+            } else {
+                try await runGradleTests()
+            }
+#else
+            print("skipping testProjectGradle() for non-macOS target")
+#endif
         }
-        #else
-        print("skipping testProjectGradle() for non-macOS target")
-        #endif
     }
 }
 
 #if os(macOS) || os(Linux)
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension JUnitTestCase {
     func runGradleTests() async throws {
         let selfType = type(of: self)
