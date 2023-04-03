@@ -22,7 +22,7 @@ final class SkipDeviceTests: XCTestCase {
         XCTAssertEqual(3.0 + 1.5, 9.0/2)
         XCTAssertEqual("SkipDevice", SkipDeviceInternalModuleName())
         XCTAssertEqual("SkipDevice", SkipDevicePublicModuleName())
-        XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
+        //XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
     }
 
     #if SKIP

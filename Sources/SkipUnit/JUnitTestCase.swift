@@ -25,7 +25,7 @@ extension JUnitTestCase {
         #if os(macOS) || os(Linux)
         if self.className == "SkipUnit.JUnitTestCase" {
             // TODO: add a general system gradle checkup test here
-        } else {
+        } else if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             try await runGradleTests()
         }
         #else
@@ -33,6 +33,7 @@ extension JUnitTestCase {
         #endif
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func runGradleTests() async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
@@ -125,6 +126,7 @@ extension JUnitTestCase {
     ///      at java.base/java.lang.reflect.Method.invoke(Method.java:578)
     ///      at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
     /// ```
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     private func extractSourceLocation(dir: URL, failure: GradleDriver.TestFailure) -> (kotlin: XCTSourceCodeLocation?, swift: XCTSourceCodeLocation?) {
         // turn: "at skip.lib.SkipLibTests.testSkipLib$SkipLib(SkipLibTests.kt:16)"
         // into: src/main/skip/lib/SkipLibTests.kt line: 16
@@ -258,6 +260,7 @@ extension JUnitTestCase {
         }
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     private func reportTestResults(_ testSuites: [GradleDriver.TestSuite], _ dir: URL) {
         // parse the test result XML files and convert test failures into XCTIssues with links to the failing source and line
         for testSuite in testSuites {
@@ -266,7 +269,7 @@ extension JUnitTestCase {
                 msg += className + "."
                 // Jupiter test case names are like "testSystemRandomNumberGenerator$SkipFoundation()"
                 msg += testCase.name.split(separator: "$").first?.description ?? testCase.name
-                msg += " (" + testCase.time.formatted(.number) + ") " // add in the time for profiling
+                msg += " (" + testCase.time.description + ") " // add in the time for profiling
 
                 print("GRADLE TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
                 // add a failure for each reported failure
