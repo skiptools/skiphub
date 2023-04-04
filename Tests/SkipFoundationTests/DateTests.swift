@@ -7,7 +7,7 @@ import Foundation
 import OSLog
 import XCTest
 
-@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 final class DateTests: XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "DateTests")
 
