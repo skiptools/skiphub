@@ -15,6 +15,7 @@ import XCTest
 //
 
 class TestUnitInformationStorage: XCTestCase {
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func testUnitInformationStorage() {
         let bits = Measurement(value: 8, unit: UnitInformationStorage.bits)
         XCTAssertEqual(
@@ -41,6 +42,7 @@ class TestUnitInformationStorage: XCTestCase {
         )
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static let allTests = [
         ("testUnitInformationStorage", testUnitInformationStorage),
     ]

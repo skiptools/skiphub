@@ -24,6 +24,7 @@ func dateWithString(_ str: String) -> Date {
 
 class TestDate : XCTestCase {
     
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestDate) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -182,6 +183,7 @@ class TestDate : XCTestCase {
         checkHashable(values, equalityOracle: { $0 == $1 })
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_advancedBy() {
         let date1 = dateWithString("2010-05-17 14:49:47 -0000")
         let date2 = dateWithString("2010-05-18 14:49:47 -0000")
@@ -191,6 +193,7 @@ class TestDate : XCTestCase {
         XCTAssertEqual(date1.advanced(by: 0), date1)
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_distanceTo() {
         let date1 = dateWithString("2010-05-17 14:49:47 -0000")
         let date2 = dateWithString("2010-05-18 14:49:47 -0000")

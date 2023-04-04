@@ -15,8 +15,7 @@ import XCTest
 //
 
 
-
-
+@available(macOS 10.15, iOS 13.4, watchOS 6.0, tvOS 13.0, *)
 class TestPipe: XCTestCase {
     
     static var allTests: [(String, (TestPipe) -> () throws -> Void)] {

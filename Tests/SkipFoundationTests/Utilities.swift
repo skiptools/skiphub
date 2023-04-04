@@ -558,7 +558,11 @@ private var shouldRunXFailTests: Bool {
 
 
 private func printStderr(_ msg: String) {
-    try? FileHandle.standardError.write(contentsOf: Data(msg.utf8))
+    if #available(iOS 13.4, *) {
+        try? FileHandle.standardError.write(contentsOf: Data(msg.utf8))
+    } else {
+        print(msg)
+    }
 }
 
 func shouldAttemptXFailTests(_ reason: String) -> Bool {

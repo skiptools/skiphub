@@ -947,6 +947,7 @@ class TestJSONEncoder : XCTestCase {
         XCTAssertEqual(jsonObject, camelCaseDictionary)
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_OutputFormattingValues() {
         XCTAssertEqual(JSONEncoder.OutputFormatting.prettyPrinted.rawValue, 1)
         if #available(OSX 10.13, *) {
@@ -1536,6 +1537,7 @@ fileprivate struct JSON: Equatable {
 // MARK: - Run Tests
 
 extension TestJSONEncoder {
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestJSONEncoder) -> () throws -> Void)] {
         return [
             ("test_encodingTopLevelFragments", test_encodingTopLevelFragments),

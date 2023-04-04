@@ -14,13 +14,12 @@ import XCTest
 // See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
-
-
 import Dispatch
 #if os(Windows)
 import WinSDK
 #endif
 
+@available(macOS 10.15, iOS 13.4, watchOS 6.0, tvOS 13.0, *)
 class TestFileHandle : XCTestCase {
     var allHandles: [FileHandle] = []
     var allTemporaryFileURLs: [URL] = []

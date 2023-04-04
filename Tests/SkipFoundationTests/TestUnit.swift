@@ -16,6 +16,7 @@ import XCTest
 
 class TestUnit: XCTestCase {
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_equality() {
         let s1 = "a"
         let s2 = "ab"
@@ -94,6 +95,7 @@ class TestUnit: XCTestCase {
         testEquality(ofDimensionSubclass: UnitVolume.self)
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestUnit) -> () throws -> Void)] {
         return [
             ("test_equality", test_equality),

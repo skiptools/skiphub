@@ -22,6 +22,7 @@ class TestJSONSerialization : XCTestCase {
         .utf32LittleEndian, .utf32BigEndian
     ]
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestJSONSerialization) -> () throws -> Void)] {
         return JSONObjectWithDataTests
             + deserializationTests
@@ -1112,6 +1113,7 @@ extension TestJSONSerialization {
 // MARK: - serializationTests
 extension TestJSONSerialization {
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     class var serializationTests: [(String, (TestJSONSerialization) -> () throws -> Void)] {
         return [
             ("test_serialize_emptyObject", test_serialize_emptyObject),
@@ -1507,6 +1509,7 @@ extension TestJSONSerialization {
         XCTAssertEqual(try trySerialize("test", options: .fragmentsAllowed), "\"test\"")
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_serialize_withoutEscapingSlashes() {
         // .withoutEscapingSlashes controls whether a "/" is encoded as "\\/" or "/"
         let testString      = "This /\\/ is a \\ \\\\ \\\\\\ \"string\"\n\r\t\u{0}\u{1}\u{8}\u{c}\u{f}"

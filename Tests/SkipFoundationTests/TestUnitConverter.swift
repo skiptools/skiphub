@@ -16,6 +16,7 @@ import XCTest
 
 class TestUnitConverter: XCTestCase {
     
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestUnitConverter) -> () throws -> Void)] {
         return [
             ("test_baseUnit", test_linearity),
@@ -77,6 +78,7 @@ class TestUnitConverter: XCTestCase {
         XCTAssertEqual(baseUnitConverter.baseUnitValue(fromValue: 1), coefficient)
     }
     
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_bijectivity() {
         let delta = 1e-9
         let testIdentity: (Dimension) -> Double = { dimension in

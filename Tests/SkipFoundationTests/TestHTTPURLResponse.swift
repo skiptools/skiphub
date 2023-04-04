@@ -14,6 +14,7 @@ import XCTest
 // See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 class TestHTTPURLResponse: XCTestCase {
 
     let url = URL(string: "https://www.swift.org")!
