@@ -20,12 +20,13 @@ open class JUnitTestCase: XCTestCase {
 #if canImport(_Concurrency)
 extension JUnitTestCase {
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func testProjectGradle() async throws {
         // only run in subclasses, not in the base test
         #if os(macOS) || os(Linux)
         if self.className == "SkipUnit.JUnitTestCase" {
             // TODO: add a general system gradle checkup test here
-        } else if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+        } else {
             try await runGradleTests()
         }
         #else
