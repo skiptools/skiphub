@@ -7,7 +7,7 @@ import Foundation
 import OSLog
 import XCTest
 
-@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
 final class DateTests: XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "DateTests")
 
@@ -27,7 +27,6 @@ final class DateTests: XCTestCase {
         XCTAssertEqual(99999.0, d2.timeIntervalSinceReferenceDate)
     }
 
-    @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
     func testISOFormatting() throws {
         let d = Date.create(timeIntervalSince1970: 172348932.0)
         XCTAssertEqual(172348932.0, d.getTime())

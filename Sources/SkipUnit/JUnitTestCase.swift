@@ -34,6 +34,7 @@ extension JUnitTestCase {
         #endif
     }
 
+    #if os(macOS) || os(Linux)
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func runGradleTests() async throws {
         let selfType = type(of: self)
@@ -321,6 +322,8 @@ extension JUnitTestCase {
             }
         }
     }
+    #endif // os(macOS) || os(Linux)
+
 }
 #endif // canImport(Concurrency)
 
