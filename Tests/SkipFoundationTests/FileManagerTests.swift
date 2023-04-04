@@ -7,8 +7,9 @@ import Foundation
 import OSLog
 import XCTest
 
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class FileManagerTests: XCTestCase {
-    var logger = Logger(subsystem: "test", category: "FileManagerTests")
+    fileprivate let logger = Logger(subsystem: "test", category: "FileManagerTests")
 
     func testFileManager() throws {
         let tmp = NSTemporaryDirectory()

@@ -13,8 +13,9 @@ fileprivate typealias Map = Dictionary
 fileprivate typealias StringEncoding = String.Encoding
 #endif
 
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class BundleTests: XCTestCase {
-    var logger = Logger(subsystem: "test", category: "BundleTests")
+    fileprivate let logger = Logger(subsystem: "test", category: "BundleTests")
 
     func testBundle() throws {
         if true {

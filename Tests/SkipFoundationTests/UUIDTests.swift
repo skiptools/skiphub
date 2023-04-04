@@ -7,8 +7,9 @@ import Foundation
 import OSLog
 import XCTest
 
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class UUIDTests: XCTestCase {
-    //var logger = Logger(subsystem: "test", category: "UUIDTests")
+    fileprivate let logger = Logger(subsystem: "test", category: "UUIDTests")
 
     func testRandomUUID() throws {
         XCTAssertNotEqual(UUID(), UUID())

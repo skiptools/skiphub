@@ -12,8 +12,9 @@ import XCTest
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class SkipDeviceTests: XCTestCase {
-    var logger = Logger(subsystem: "test", category: "BundleTests")
+    fileprivate let logger = Logger(subsystem: "test", category: "BundleTests")
     
     func testSkipDevice() throws {
         print("Running: testSkipDevice…")
