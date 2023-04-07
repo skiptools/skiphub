@@ -10,7 +10,7 @@ struct DestinationOne : View {
     var body: some View {
         VStack {
             Text("ONE")
-                .font(.title)
+                // .font(.title)
             NavigationLink(value: "TWO", label: { Text("Two") })
         }
     }
