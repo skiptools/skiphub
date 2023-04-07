@@ -16,10 +16,8 @@ final class ArrayTests: XCTestCase {
         let emptyArray3 = [Int]()
         XCTAssertEqual(emptyArray3.count, 0)
 
-        #if !SKIP
         let emptyArray4 = Array<Int>()
         XCTAssertEqual(emptyArray4.count, 0)
-        #endif
         
         let singleElementArray = [1]
         XCTAssertEqual(singleElementArray.count, 1)
@@ -129,6 +127,48 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(arr2.count, 2)
         XCTAssertEqual(arr3.count, 3)
 
+    }
+
+    func testArrayMap() {
+        let strings = ["A", "Z", "M"]
+        let strings2 = strings.map {
+            $0 + $0
+        }
+        XCTAssertEqual(Array(strings2), ["AA", "ZZ", "MM"])
+    }
+
+    func testArrayFilter() {
+        let strings = ["A", "Z", "M"]
+        let strings2 = strings.filter {
+            $0 != "M"
+        }
+        XCTAssertEqual(Array(strings2), ["A", "Z"])
+        #if !SKIP
+        XCTAssertEqual(strings2, ["A", "Z"]) // testProjectGradle(): java.lang.AssertionError: expected:<skip.lib.Array@128d2484> but was:<[A, Z]>
+        #endif
+    }
+
+    func testArrayReduceFold() {
+        let strings = ["A", "Z", "M"]
+        #if SKIP
+        XCTAssertEqual(strings.fold("", { $0 + $1 }), "AZM")
+        #else
+        XCTAssertEqual(strings.reduce("", { $0 + $1 }), "AZM") // Kotlin:  inferred type is String but (TypeVariable(S), TypeVariable(T)) -> TypeVariable(S) was expected
+        #endif
+    }
+
+    func testArraySort() {
+        let strings = ["A", "Z", "M"]
+        // FIXME: inferred type is List<String> but Array<String> was expected
+        //strings = strings.sorted()
+        let strings2 = strings.sorted()
+        #if SKIP
+        XCTAssertEqual(strings.javaClass.getName(), "skip.lib.Array")
+        XCTAssertEqual(strings2.javaClass.getName(), "java.util.ArrayList")
+        #endif
+
+        XCTAssertEqual(strings, ["A", "Z", "M"])
+        XCTAssertEqual(Array(strings2), ["A", "M", "Z"])
     }
 }
 
