@@ -5,6 +5,13 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// Convert the Swift `description` to Java's `toString()`
+val Any.description: String
+	get() = this.toString()
+
+val Any.debugDescription: String
+	get() = this.toString()
+
 // Global functions:
 
 // `Swift.fatalError` function calls `Kotlin.error`

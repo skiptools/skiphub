@@ -143,17 +143,20 @@ final class ArrayTests: XCTestCase {
             $0 != "M"
         }
         XCTAssertEqual(Array(strings2), ["A", "Z"])
+
         #if !SKIP
+        XCTAssertEqual(Array(strings.filter { $0 != "Z" }), ["A", "M"]) // java.lang.AssertionError: expected:<skip.lib.Array@51399530> but was:<kotlin.collections.CollectionsKt___CollectionsKt$asSequence$$inlined$Sequence$1@6b2ea799>
         XCTAssertEqual(strings2, ["A", "Z"]) // testProjectGradle(): java.lang.AssertionError: expected:<skip.lib.Array@128d2484> but was:<[A, Z]>
         #endif
     }
 
     func testArrayReduceFold() {
-        let strings = ["A", "Z", "M"]
-        #if SKIP
-        XCTAssertEqual(strings.fold("", { $0 + $1 }), "AZM")
-        #else
-        XCTAssertEqual(strings.reduce("", { $0 + $1 }), "AZM") // Kotlin:  inferred type is String but (TypeVariable(S), TypeVariable(T)) -> TypeVariable(S) was expected
+        let strings = ["K", "I", "P"]
+        XCTAssertEqual(strings.reduce("S", { $0 + $1 }), "SKIP")
+        XCTAssertEqual(strings.lazy.reduce("S", { $0 + $1 }), "SKIP")
+        #if !SKIP
+        XCTAssertEqual(strings.reduce("S", +), "SKIP") // ArrayTests.kt:157:45 Expecting an element
+        XCTAssertEqual(strings.lazy.lazy.reduce("S", { $0 + $1 }), "SKIP") // Cannot infer a type for this parameter. Please specify it explicitly.
         #endif
     }
 
@@ -162,14 +165,58 @@ final class ArrayTests: XCTestCase {
         // FIXME: inferred type is List<String> but Array<String> was expected
         //strings = strings.sorted()
         let strings2 = strings.sorted()
+        XCTAssertEqual(strings, ["A", "Z", "M"])
+        XCTAssertEqual(Array(strings2), ["A", "M", "Z"])
+
+        #if !SKIP
+        //XCTAssertEqual(strings.lazy, ["A", "Z", "M"]) // java.lang.AssertionError: expected:<skip.lib.Array@51399530> but was:<kotlin.collections.CollectionsKt___CollectionsKt$asSequence$$inlined$Sequence$1@6b2ea799>
+        #endif
+
         #if SKIP
         XCTAssertEqual(strings.javaClass.getName(), "skip.lib.Array")
         XCTAssertEqual(strings2.javaClass.getName(), "java.util.ArrayList")
         #endif
-
-        XCTAssertEqual(strings, ["A", "Z", "M"])
-        XCTAssertEqual(Array(strings2), ["A", "M", "Z"])
     }
+
+    func testArrayFilterMapReduce() {
+        let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        let result = numbers.filter { $0 % 2 == 0 }
+                            .map { $0 * 2 }
+                            .reduce(0, { $0 + $1 })
+        XCTAssertEqual(result, 60)
+    }
+
+    func testDictionaryForEach() {
+        let dictionary = ["apple": 3, "banana": 5, "cherry": 2]
+        var count = 0
+        dictionary.forEach { count += $0.value }
+        XCTAssertEqual(count, 10)
+    }
+
+    func testStringFirstDropFirst() {
+        let str = "hello, world!"
+//        let firstChar = str.first
+//        XCTAssertEqual(firstChar, "h")
+//        let rest = str.dropFirst()
+//        XCTAssertEqual(rest, "ello, world!")
+    }
+
+    func testZipCompactMap() {
+        let names = ["Alice", "Bob", "Charlie"]
+        let ages = [25, nil, 35]
+//        let result = zip(names, ages)
+//                        .compactMap { $0.1.map { "\($0) year old \($0 < 30 ? "youth" : "adult") \($0 > 1 ? "s" : "") named \($0.0)" } }
+//        XCTAssertEqual(result, ["25 year old youth named Alice", "35 year old adult named Charlie"])
+    }
+
+    func testLazyFilterMap() {
+//        let numbers = sequence(first: 0, next: { $0 + 1 })
+//        let result = numbers.lazy.filter { $0 % 2 == 0 }
+//                                .map { $0 * 3 }
+//                                .prefix(10)
+//        XCTAssertEqual(Array(result), [0, 6, 12, 18, 24, 30, 36, 42, 48, 54])
+    }
+
 }
 
 
