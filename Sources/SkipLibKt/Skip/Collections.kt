@@ -21,6 +21,9 @@ val <T> Iterable<T>.lazy: Sequence<T>
 val <T> Collection<T>.count: Int
 	get() = this.count()
 
+val <T> Collection<T>.isEmpty: Boolean
+	get() = this.isEmpty()
+
 //fun <T> Collection<T>.firstIndex(of: T): Int? {
 //	for (i in this.indices) {
 //		if (this[i] == element) {

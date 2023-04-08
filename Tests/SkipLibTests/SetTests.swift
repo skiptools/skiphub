@@ -6,7 +6,6 @@
 import XCTest
 
 final class SetTests: XCTestCase {
-    #if !SKIP // Set is not yet implemented
     func testInit() {
         let set1 = Set<Int>()
         XCTAssertEqual(set1.count, 0)
@@ -73,16 +72,13 @@ final class SetTests: XCTestCase {
         XCTAssertTrue(symmetricDifferenceSet.contains(4))
     }
 
-    func testIsSubset() {
+    func testSubsetSuperset() {
         let set1 = Set([1, 2, 3])
         let set2 = Set([2, 3])
         XCTAssertTrue(set2.isSubset(of: set1))
-    }
-
-    func testIsSuperset() {
-        let set1 = Set([1, 2, 3])
-        let set2 = Set([2, 3])
         XCTAssertTrue(set1.isSuperset(of: set2))
+        XCTAssertFalse(set1.isDisjoint(with: set2))
+        XCTAssertFalse(set2.isDisjoint(with: set1))
     }
 
     func testIsDisjoint() {
@@ -90,5 +86,4 @@ final class SetTests: XCTestCase {
         let set2 = Set([4, 5, 6])
         XCTAssertTrue(set1.isDisjoint(with: set2))
     }
-    #endif
 }
