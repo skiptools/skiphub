@@ -93,12 +93,28 @@ class Set<T>: MutableStruct, Iterable<T> {
         return of.containsAll(this.storage)
     }
 
+	fun isStrictSubset(of: Set<T>): Boolean {
+        return of.count > this.count && isSubset(of)
+    }
+
+	fun isStrictSubset(of: Collection<T>): Boolean {
+        return of.count > this.count && isSubset(of)
+    }
+
     fun isSuperset(of: Set<T>): Boolean {
         return this.storage.containsAll(of.storage)
     }
 
     fun isSuperset(of: Collection<T>): Boolean {
         return this.storage.containsAll(of)
+    }
+
+    fun isStrictSuperset(of: Set<T>): Boolean {
+        return of.count < this.count && isSuperset(of)
+    }
+
+    fun isStrictSuperset(of: Collection<T>): Boolean {
+        return of.count < this.count && isSuperset(of)
     }
 
 	fun isDisjoint(with: Iterable<T>): Boolean {

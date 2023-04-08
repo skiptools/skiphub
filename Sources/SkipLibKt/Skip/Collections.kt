@@ -15,6 +15,39 @@ fun <T, R> Sequence<T>.reduce(initial: R, operation: (acc: R, T) -> R): R {
 	return this.fold(initial, operation)
 }
 
+val <T> Iterable<T>.first: T
+	get() = this.first()
+
+fun <T> Iterable<T>.first(where: (acc: T) -> Boolean): T? {
+	for (element in this) {
+		if (where(element) == true) {
+			return element
+		}
+	}
+	return null
+}
+
+val <T> Collection<T>.last: T
+	get() = this.last()
+
+fun <T> Iterable<T>.last(where: (acc: T) -> Boolean): T? {
+	for (element in this.reversed()) {
+		if (where(element) == true) {
+			return element
+		}
+	}
+	return null
+}
+
+fun <T> Iterable<T>.contains(where: (acc: T) -> Boolean): Boolean {
+	for (element in this) {
+		if (where(element) == true) {
+			return true
+		}
+	}
+	return false
+}
+
 val <T> Iterable<T>.lazy: Sequence<T>
 	get() = this.asSequence()
 
@@ -24,11 +57,6 @@ val <T> Collection<T>.count: Int
 val <T> Collection<T>.isEmpty: Boolean
 	get() = this.isEmpty()
 
-//fun <T> Collection<T>.firstIndex(of: T): Int? {
-//	for (i in this.indices) {
-//		if (this[i] == element) {
-//			return i
-//		}
-//	}
-//	return null
-//}
+fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
+	return this.sortedWith(compareBy { it })
+}

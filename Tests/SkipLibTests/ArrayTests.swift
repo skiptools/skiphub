@@ -168,6 +168,13 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(strings, ["A", "Z", "M"])
         XCTAssertEqual(Array(strings2), ["A", "M", "Z"])
 
+        XCTAssertEqual("Z", strings.first(where: { $0 == "Z" }))
+        XCTAssertEqual(nil, strings.first(where: { $0 == "Q" }))
+        XCTAssertEqual("Z", strings.last(where: { $0 == "Z" }))
+        XCTAssertEqual(nil, strings.last(where: { $0 == "Q" }))
+        XCTAssertEqual(true, strings.contains(where: { $0 == "Z" }))
+        XCTAssertEqual(false, strings.contains(where: { $0 == "Q" }))
+
         #if !SKIP
         //XCTAssertEqual(strings.lazy, ["A", "Z", "M"]) // java.lang.AssertionError: expected:<skip.lib.Array@51399530> but was:<kotlin.collections.CollectionsKt___CollectionsKt$asSequence$$inlined$Sequence$1@6b2ea799>
         #endif
@@ -191,14 +198,6 @@ final class ArrayTests: XCTestCase {
         var count = 0
         dictionary.forEach { count += $0.value }
         XCTAssertEqual(count, 10)
-    }
-
-    func testStringFirstDropFirst() {
-        let str = "hello, world!"
-//        let firstChar = str.first
-//        XCTAssertEqual(firstChar, "h")
-//        let rest = str.dropFirst()
-//        XCTAssertEqual(rest, "ello, world!")
     }
 
     func testZipCompactMap() {

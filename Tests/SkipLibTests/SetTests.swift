@@ -12,6 +12,9 @@ final class SetTests: XCTestCase {
 
         let set2 = Set([1, 2, 3])
         XCTAssertEqual(set2.count, 3)
+
+        XCTAssertEqual(set2.sorted().first, 1)
+        XCTAssertEqual(set2.sorted().last, 3)
     }
 
     func testInsert() {
@@ -76,7 +79,9 @@ final class SetTests: XCTestCase {
         let set1 = Set([1, 2, 3])
         let set2 = Set([2, 3])
         XCTAssertTrue(set2.isSubset(of: set1))
+        XCTAssertTrue(set2.isStrictSubset(of: set1))
         XCTAssertTrue(set1.isSuperset(of: set2))
+        XCTAssertTrue(set1.isStrictSuperset(of: set2))
         XCTAssertFalse(set1.isDisjoint(with: set2))
         XCTAssertFalse(set2.isDisjoint(with: set1))
     }

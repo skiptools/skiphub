@@ -102,4 +102,19 @@ final class StringTests: XCTestCase {
         XCTAssertEqual(str.distance(from: str.startIndex, to: index), 10)
         #endif
     }
+
+    func testStringFirstDropFirst() {
+        let str = "hello, world!"
+        let firstChar = str.first
+        XCTAssertEqual(firstChar?.description, "h")
+        let rest = str.dropFirst()
+        XCTAssertEqual(rest, "ello, world!")
+        let rest2 = str.dropFirst(2)
+        XCTAssertEqual(rest2, "llo, world!")
+        let frst = str.dropLast()
+        XCTAssertEqual(frst, "hello, world")
+        let frst2 = str.dropLast(2)
+        XCTAssertEqual(frst2, "hello, worl")
+    }
+
 }
