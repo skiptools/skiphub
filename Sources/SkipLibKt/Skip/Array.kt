@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// We convert array literals [...] into arrayOf(...)
 fun <T> arrayOf(vararg elements: T): Array<T> {
     val array = Array<T>()
     for (element in elements) {
@@ -13,7 +14,7 @@ fun <T> arrayOf(vararg elements: T): Array<T> {
     return array
 }
 
-class Array<T>: MutableStruct, Iterable<T> {
+class Array<T>: MutableStruct, Iterable<T>, Hashable {
     private var storage: ArrayStorage<T>
     private var isStorageShared = false
 
@@ -83,6 +84,10 @@ class Array<T>: MutableStruct, Iterable<T> {
             return false
         }
         return other.storage == storage
+    }
+
+    override fun hashCode(): Int {
+        return storage.hashCode()
     }
 
     override var supdate: ((Any) -> Unit)? = null

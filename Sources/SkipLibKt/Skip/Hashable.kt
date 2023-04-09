@@ -5,24 +5,23 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-interface Hashable {
-    fun hash(into: InOut<Hasher>)
+interface Hashable: Equatable {
     val hashValue: Int
-        get() {
-            var hasher = Hasher()
-            this.hash(InOut<Hasher>({ hasher }, { hasher = it }))
-            return hasher.finalize()
-        }
+        get() = hashCode()
+
+    // Note that while the transpiler uses user-defined `hash(into:)` functions, we do not include that function in
+    // this interface. Doing so would require us to synthesize less efficient code in some cases than we can by taking
+    // advantage of `hashCode()`. We're relying on `hash(into:)` not typically being invoked manually
 }
 
 class Hasher {
-    private var hashCode = 1
+    private var result = 1
 
     fun combine(value: Any?) {
-        hashCode = hashCode * 17 + (value?.hashCode() ?: 0)
+        result = result * 17 + (value?.hashCode() ?: 0)
     }
 
     fun finalize(): Int {
-        return hashCode
+        return result
     }
 }

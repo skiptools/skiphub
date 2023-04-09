@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// We convert dictionary literals [...] into dictionaryOf(...)
 fun <K, V> dictionaryOf(vararg entries: Pair<K, V>): Dictionary<K, V> {
     val dictionary = Dictionary<K, V>()
     for (entry in entries) {
@@ -13,7 +14,7 @@ fun <K, V> dictionaryOf(vararg entries: Pair<K, V>): Dictionary<K, V> {
     return dictionary
 }
 
-class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>> {
+class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>>, Hashable {
     private var storage: DictionaryStorage<K, V>
     private var isStorageShared = false
 
@@ -91,6 +92,10 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>> {
         return other.storage == storage
     }
 
+    override fun hashCode(): Int {
+        return storage.hashCode()
+    }
+
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
     override fun scopy(): MutableStruct {
@@ -112,6 +117,7 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>> {
     }
 }
 
+// Pair extension functions to mimic a dictionary entry tuple
 val <K, V> Pair<K, V>.key: K
     get() = first
 val <K, V> Pair<K, V>.value: V

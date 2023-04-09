@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// We convert array literals assigned to Set vars [...] into setOf(...)
 fun <T> setOf(vararg elements: T): Set<T> {
 	val set = Set<T>()
 	for (element in elements) {
@@ -21,7 +22,7 @@ fun <T> Set(elements: Array<T>): Set<T> {
 	return set
 }
 
-class Set<T>: MutableStruct, Iterable<T> {
+class Set<T>: MutableStruct, Iterable<T>, Hashable {
     private var storage: SetStorage<T>
     private var isStorageShared = false
 

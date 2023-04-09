@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// Used to mimic the behavior of `inout` Swift parameters
 class InOut<T>(val get: () -> T, val set: (T) -> Unit) {
     var value: T
         get() = this.get()
