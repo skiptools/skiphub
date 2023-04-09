@@ -168,13 +168,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(strings, ["A", "Z", "M"])
         XCTAssertEqual(Array(strings2), ["A", "M", "Z"])
 
-        XCTAssertEqual("Z", strings.first(where: { $0 == "Z" }))
-        XCTAssertEqual(nil, strings.first(where: { $0 == "Q" }))
-        XCTAssertEqual("Z", strings.last(where: { $0 == "Z" }))
-        XCTAssertEqual(nil, strings.last(where: { $0 == "Q" }))
-        XCTAssertEqual(true, strings.contains(where: { $0 == "Z" }))
-        XCTAssertEqual(false, strings.contains(where: { $0 == "Q" }))
-
         #if !SKIP
         //XCTAssertEqual(strings.lazy, ["A", "Z", "M"]) // java.lang.AssertionError: expected:<skip.lib.Array@51399530> but was:<kotlin.collections.CollectionsKt___CollectionsKt$asSequence$$inlined$Sequence$1@6b2ea799>
         #endif
@@ -183,6 +176,21 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(strings.javaClass.getName(), "skip.lib.Array")
         XCTAssertEqual(strings2.javaClass.getName(), "java.util.ArrayList")
         #endif
+    }
+
+    func testArrayFirstLast() {
+        let strings = ["A", "Z", "M"]
+
+        XCTAssertEqual("A", strings.first)
+        XCTAssertEqual("Z", strings.first(where: { $0 == "Z" }))
+        XCTAssertEqual(nil, strings.first(where: { $0 == "Q" }))
+
+        XCTAssertEqual("M", strings.last)
+        XCTAssertEqual("Z", strings.last(where: { $0 == "Z" }))
+        XCTAssertEqual(nil, strings.last(where: { $0 == "Q" }))
+
+        XCTAssertEqual(true, strings.contains(where: { $0 == "Z" }))
+        XCTAssertEqual(false, strings.contains(where: { $0 == "Q" }))
     }
 
     func testArrayFilterMapReduce() {
@@ -201,8 +209,8 @@ final class ArrayTests: XCTestCase {
     }
 
     func testZipCompactMap() {
-        let names = ["Alice", "Bob", "Charlie"]
-        let ages = [25, nil, 35]
+//        let names = ["Alice", "Bob", "Charlie"]
+//        let ages = [25, nil, 35]
 //        let result = zip(names, ages)
 //                        .compactMap { $0.1.map { "\($0) year old \($0 < 30 ? "youth" : "adult") \($0 > 1 ? "s" : "") named \($0.0)" } }
 //        XCTAssertEqual(result, ["25 year old youth named Alice", "35 year old adult named Charlie"])
