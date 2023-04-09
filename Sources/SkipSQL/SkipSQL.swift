@@ -39,7 +39,7 @@ public final class Connection {
     public init(_ filename: String, readonly: Bool = false) throws {
         #if SKIP
         // self.db = SQLiteDatabase.openDatabase(filename, null, readonly ? SQLiteDatabase.OPEN_READONLY : (SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE))
-        
+
         self.db = SQLiteDatabase.openDatabase(filename, null, SQLiteDatabase.CREATE_IF_NECESSARY)
         #else
         let flags = readonly ? SQLITE_OPEN_READONLY : (SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE)
@@ -71,9 +71,7 @@ public final class Connection {
     /// Executes a single SQL statement.
     public func execute(sql: String, params: [SQLValue] = []) throws {
         #if SKIP
-        // SKIP REPLACE: error("SKIP")
         let bindArgs = params.map { $0.toBindArg() }
-        // SKIP REPLACE: error("SKIP")
         db.execSQL(sql, bindArgs.toTypedArray())
         #else
         if params.isEmpty {
@@ -150,7 +148,6 @@ public enum SQLValue {
     case float(_ double: Double)
     case blob(_ data: Data)
 
-    // SKIP REPLACE: internal val columnType: ColumnType get() { error("SKIP") }
     var columnType: ColumnType {
         switch self {
         case SQLValue.nul:
@@ -172,67 +169,61 @@ public enum SQLValue {
         }
     }
 
-    // SKIP REPLACE: internal fun toBindArg(): Any? { error("SKIP") }
     func toBindArg() -> Any? {
         switch self {
         case SQLValue.nul:
             return nil
-        case let SQLValue.text(string: str):
+        case let SQLValue.text(str):
             return str
-        case let SQLValue.integer(int: num):
+        case let SQLValue.integer(num):
             return num
-        case let SQLValue.float(double: dbl):
+        case let SQLValue.float(dbl):
             return dbl
-        case let SQLValue.blob(data: bytes):
+        case let SQLValue.blob(bytes):
             return bytes
         }
     }
 
-    // SKIP REPLACE: internal fun toBindString(): String? { error("SKIP") }
     func toBindString() -> String? {
         switch self {
         case SQLValue.nul:
             return nil
-        case let SQLValue.text(string: str):
+        case let SQLValue.text(str):
             return str
-        case let SQLValue.integer(int: num):
+        case let SQLValue.integer(num):
             return num.description
-        case let SQLValue.float(double: dbl):
+        case let SQLValue.float(dbl):
             return dbl.description
-        case SQLValue.blob(data: _):
+        case let SQLValue.blob(bytes):
             return nil // bytes.description // mis-transpiles
         }
     }
 
     /// If this is a `text` value, then return the underlying string
-    // SKIP REPLACE: internal val textValue: String? get() { error("SKIP") }
     var textValue: String? {
         switch self {
-        case let SQLValue.text(string: str): return str
+        case let SQLValue.text(str): return str
         default: return nil
         }
     }
 
     /// If this is a `integer` value, then return the underlying integer
-    // SKIP REPLACE: internal val integerValue: Long? get() { error("SKIP") }
     var integerValue: Int64? {
         switch self {
-        case let SQLValue.integer(int: num): return num
+        case let SQLValue.integer(num): return num
         default: return nil
         }
     }
 
     /// If this is a `float` value, then return the underlying double
-    // SKIP REPLACE: internal val floatValue: Double? get() { return null }
     var floatValue: Double? {
         switch self {
-        case let SQLValue.float(double: dbl): return dbl
+        case let SQLValue.float(dbl): return dbl
         default: return nil
         }
     }
 
     /// If this is a `blob` value, then return the underlying data
-    // SKIP REPLACE: internal val blobValue: Data? get() { return null }
     var blobValue: Data? {
         switch self {
         case SQLValue.blob(let dat): return dat
@@ -301,7 +292,6 @@ public final class Cursor {
         #endif
     }
 
-    // SKIP REPLACE: internal val columnCount: Int get() { return 0 }
     var columnCount: Int32 {
         #if SKIP
         self.cursor.getColumnCount()
@@ -366,28 +356,26 @@ public final class Cursor {
     }
 
     /// Returns the values of the current row as an array
-    // SKIP REPLACE: fun getRow(): Array<SQLValue> { error("SKIP") }
     public func getRow() -> [SQLValue] {
-        return (0..<columnCount).map { column in
+        return Array((0..<columnCount).map { column in
             getValue(column: column)
-        }
+        })
     }
 
     /// Returns a textual description of the row's values in a format suitable for printing to a console
-    // SKIP REPLACE: fun rowText(header: Boolean = false, values: Boolean = false, width: Int = 80): String { error("SKIP") }
     public func rowText(header: Bool = false, values: Bool = false, width: Int = 80) -> String {
         var str = ""
         let sep = header == false && values == false ? "+" : "|"
         str += sep
-        let count = /* SKIP VALUE: columnCount */ Int(columnCount)
-        var cellSpan = (width / count) - 2
+        let count: Int = Int(columnCount)
+        var cellSpan: Int = (width / count) - 2
         if cellSpan < 0 {
             cellSpan = 0
             cellSpan = 0
         }
 
         for col in 0..<count {
-            let i = /* SKIP VALUE: col */ Int32(col)
+            let i = Int32(col)
             let cell: String
             if header {
                 cell = getColumnName(column: i)
@@ -411,7 +399,6 @@ public final class Cursor {
     }
 
     /// Returns a single value from the query, closing the result set afterwards
-    // SKIP REPLACE: fun singleValue(): SQLValue? { error("SKIP") }
     public func singleValue() throws -> SQLValue? {
         try nextRow(close: true)?.first
     }
@@ -504,18 +491,19 @@ public final class Cursor {
     #endif
 }
 
-#if !SKIP
 extension String {
-    // SKIP REPLACE: internal fun String.pad(to: Int, with: String, rightAlign: Boolean): String { error("SKIP") }
     func pad(to width: Int, with padding: String, rightAlign: Bool) -> String {
         var str = self
         while str.count < width {
             str = (rightAlign ? padding : "") + str + (!rightAlign ? padding : "")
         }
         if str.count > width {
+            #if SKIP
+            str = str.dropLast(width - str.count)
+            #else
             str.removeLast(width - str.count)
+            #endif
         }
         return str
     }
 }
-#endif

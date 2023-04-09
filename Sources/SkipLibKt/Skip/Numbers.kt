@@ -17,8 +17,10 @@ typealias UInt32 = kotlin.UInt
 typealias Int64 = kotlin.Long
 typealias UInt64 = kotlin.ULong
 
-//typealias Int = Int64
-typealias UInt = UInt64
+//typealias Int = kotlin.Int64
+//typealias UInt = kotlin.UInt64
+typealias Int = kotlin.Int
+typealias UInt = kotlin.UInt
 
 typealias Float = kotlin.Float
 typealias Double = kotlin.Double
@@ -43,14 +45,14 @@ val kotlin.Long.Companion.min: Int64 get() = Int64.MIN_VALUE
 val kotlin.ULong.Companion.max: UInt64 get() = UInt64.MAX_VALUE
 val kotlin.ULong.Companion.min: UInt64 get() = UInt64.MIN_VALUE
 
+fun Int(number: Number): Int = number.toInt()
 fun Int8(number: Number): Int8 = number.toInt().toByte()
 fun Int16(number: Number): Int16 = number.toInt().toShort()
 fun Int32(number: Number): Int32 = number.toInt().toInt()
 fun Int64(number: Number): Int64 = number.toLong()
-fun Int(number: Number): Long = number.toLong()
 
+fun UInt(number: Number): UInt = number.toLong().toULong().toUInt()
 fun UInt8(number: Number): UInt8 = number.toLong().toULong().toUByte()
 fun UInt16(number: Number): UInt16 = number.toLong().toULong().toUShort()
 fun UInt32(number: Number): UInt32 = number.toLong().toULong().toUInt()
 fun UInt64(number: Number): UInt64 = number.toLong().toULong()
-fun UInt(number: Number): ULong = number.toLong().toULong()

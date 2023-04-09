@@ -6,12 +6,12 @@
 package skip.lib
 
 // Forward Swift's `count` property Kotlin's `count()` function
-val <T> Collection<T>.count: Int
+val <T> Iterable<T>.count: Int
 	get() = this.count()
 
-// Forward Swift's `isEmpty` property Kotlin's `isEmpty()` function
-val <T> Collection<T>.isEmpty: Boolean
-	get() = this.isEmpty()
+// Forward Swift's `isEmpty` property Kotlin's `none()` function
+val <T> Iterable<T>.isEmpty: Boolean
+	get() = this.none()
 
 // Forward Swift's `lazy` property Kotlin's `asSequence()` function
 val <T> Iterable<T>.lazy: Sequence<T>
@@ -40,10 +40,6 @@ fun <T> Iterable<T>.first(where: (acc: T) -> Boolean): T? {
 }
 
 // Forward Swift's `last` property to Kotlin's `last()` function
-val <T> Collection<T>.last: T
-	get() = this.last()
-
-// Forward Swift's `last` property to Kotlin's `last()` function
 val <T> Array<T>.last: T
 	get() = this.last()
 
@@ -65,6 +61,6 @@ fun <T> Iterable<T>.contains(where: (acc: T) -> Boolean): Boolean {
 	return false
 }
 
-fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
-	return this.sortedWith(compareBy { it })
+fun <T : Comparable<T>> Iterable<T>.sorted(): Array<T> {
+	return Array(this.sortedWith(compareBy { it }))
 }

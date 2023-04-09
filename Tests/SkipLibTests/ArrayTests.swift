@@ -162,20 +162,9 @@ final class ArrayTests: XCTestCase {
 
     func testArraySort() {
         let strings = ["A", "Z", "M"]
-        // FIXME: inferred type is List<String> but Array<String> was expected
-        //strings = strings.sorted()
         let strings2 = strings.sorted()
         XCTAssertEqual(strings, ["A", "Z", "M"])
-        XCTAssertEqual(Array(strings2), ["A", "M", "Z"])
-
-        #if !SKIP
-        //XCTAssertEqual(strings.lazy, ["A", "Z", "M"]) // java.lang.AssertionError: expected:<skip.lib.Array@51399530> but was:<kotlin.collections.CollectionsKt___CollectionsKt$asSequence$$inlined$Sequence$1@6b2ea799>
-        #endif
-
-        #if SKIP
-        XCTAssertEqual(strings.javaClass.getName(), "skip.lib.Array")
-        XCTAssertEqual(strings2.javaClass.getName(), "java.util.ArrayList")
-        #endif
+        XCTAssertEqual(strings2, ["A", "M", "Z"])
     }
 
     func testArrayFirstLast() {
