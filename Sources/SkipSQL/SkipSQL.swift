@@ -281,9 +281,8 @@ public final class Cursor {
         self.connection = connection
 
         #if SKIP
-//        let bindArgs: [String?] = params.map { $0.toBindString() }
-//        self.cursor = connection.db.rawQuery(SQL, bindArgs.toTypedArray())
-        self.cursor = connection.db.rawQuery(SQL, null) // TODO: re-implement args array
+        let bindArgs = params.map { $0.toBindString() }
+        self.cursor = connection.db.rawQuery(SQL, bindArgs.toTypedArray())
         #else
         try connection.check(resultOf: sqlite3_prepare_v2(connection.handle, SQL, -1, &handle, nil))
         for (index, param) in params.enumerated() {
