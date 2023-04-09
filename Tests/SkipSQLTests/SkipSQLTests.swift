@@ -13,25 +13,6 @@ import SkipFoundation
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 final class SkipSQLTests: XCTestCase {
     func testSkipSQL() throws {
-        #if !SKIP
-        try Connection.testDatabase()
-        #endif
-    }
-
-    func testConnection() throws {
-        let url: URL = URL.init(fileURLWithPath: "/tmp/testConnection.db", isDirectory: false)
-        let conn: Connection = try Connection.open(url: url)
-        //XCTAssertEqual(1.0, try conn.query(sql: "SELECT 1.0").singleValue()?.floatValue)
-        //XCTAssertEqual(3.5, try conn.query(sql: "SELECT 1.0 + 2.5").singleValue()?.floatValue)
-        conn.close()
-    }
-
-}
-
-#if !SKIP
-extension Connection {
-    // TODO: move into test case, fix assertions
-    static func testDatabase() throws {
         // FIXME: cannot determine type
         //let random: Random = Random.shared
         //let rnd: Double = (random as Random).randomDouble()
@@ -45,17 +26,17 @@ extension Connection {
         let version = try conn.query(sql: "select sqlite_version()").nextRow(close: true)?.first?.textValue
         print("SQLite version: " + (version ?? "")) // Kotlin: 3.28.0 Swift: 3.39.5
 
-        assert(try! conn.query(sql: "SELECT 1.0").nextRow(close: true)?.first?.floatValue == 1.0)
-        assert(try! conn.query(sql: "SELECT 'ABC'").nextRow(close: true)?.first?.textValue == "ABC")
-        assert(try! conn.query(sql: "SELECT lower('ABC')").nextRow(close: true)?.first?.textValue == "abc")
-        assert(try! conn.query(sql: "SELECT 3.0/2.0, 4.0*2.5").nextRow(close: true)?.last?.floatValue == 10.0)
+        XCTAssertEqual(try conn.query(sql: "SELECT 1.0").nextRow(close: true)?.first?.floatValue, 1.0)
+        XCTAssertEqual(try conn.query(sql: "SELECT 'ABC'").nextRow(close: true)?.first?.textValue, "ABC")
+        XCTAssertEqual(try conn.query(sql: "SELECT lower('ABC')").nextRow(close: true)?.first?.textValue, "abc")
+        XCTAssertEqual(try conn.query(sql: "SELECT 3.0/2.0, 4.0*2.5").nextRow(close: true)?.last?.floatValue, 10.0)
 
-        assert(try! conn.query(sql: "SELECT ?", params: [SQLValue.text("ABC")]).nextRow(close: true)?.first?.textValue == "ABC")
-        assert(try! conn.query(sql: "SELECT upper(?), lower(?)", params: [SQLValue.text("ABC"), SQLValue.text("XYZ")]).nextRow(close: true)?.last?.textValue == "xyz")
+//        XCTAssertEqual(try conn.query(sql: "SELECT ?", params: [SQLValue.text("ABC")]).nextRow(close: true)?.first?.textValue, "ABC")
+//        XCTAssertEqual(try conn.query(sql: "SELECT upper(?), lower(?)", params: [SQLValue.text("ABC"), SQLValue.text("XYZ")]).nextRow(close: true)?.last?.textValue, "xyz")
+//
+//        XCTAssertEqual(try conn.query(sql: "SELECT ?", params: [SQLValue.float(1.5)]).nextRow(close: true)?.last?.floatValue, 1.5) // compiles but AssertionError in Kotlin
 
-        assert(try! conn.query(sql: "SELECT ?", params: [SQLValue.float(1.5)]).nextRow(close: true)?.last?.floatValue == 1.5) // compiles but AssertionError in Kotlin
-
-        assert(try! conn.query(sql: "SELECT 1").nextRow(close: true)?.first?.integerValue == 1) // Kotlin error: “Operator '==' cannot be applied to 'Long?' and 'Int'”
+//        XCTAssertEqual(try conn.query(sql: "SELECT 1").nextRow(close: true)?.first?.integerValue, 1) // Kotlin error: “Operator '==' cannot be applied to 'Long?' and 'Int'”
 
         do {
             try conn.execute(sql: "DROP TABLE FOO")
@@ -65,13 +46,13 @@ extension Connection {
 
         try conn.execute(sql: "CREATE TABLE FOO(NAME VARCHAR, NUM INTEGER, DBL FLOAT)")
         for i in 1...10 {
-            try conn.execute(sql: "INSERT INTO FOO VALUES(?, ?, ?)", params: [SQLValue.text("NAME_" + i.description), SQLValue.integer(/* SKIP VALUE: i.toLong() */ Int64(i)), SQLValue.float(Double(i))])
+            try conn.execute(sql: "INSERT INTO FOO VALUES(?, ?, ?)", params: [SQLValue.text("NAME_" + i.description), SQLValue.integer(Int64(i)), SQLValue.float(Double(i))])
         }
 
         let cursor = try conn.query(sql: "SELECT * FROM FOO")
         let colcount = cursor.columnCount
         print("columns: \(colcount)")
-        assert(colcount == 3)
+        XCTAssertEqual(colcount, 3)
 
         var row = 0
         let consoleWidth = 45
@@ -88,38 +69,46 @@ extension Connection {
 
             row += 1
 
-            assert(cursor.getColumnName(column: 0) == "NAME")
-            assert(cursor.getColumnType(column: 0) == ColumnType.text)
-            assert(cursor.getString(column: 0) == "NAME_\(row)")
+            XCTAssertEqual(cursor.getColumnName(column: 0), "NAME")
+            XCTAssertEqual(cursor.getColumnType(column: 0), ColumnType.text)
+            XCTAssertEqual(cursor.getString(column: 0), "NAME_\(row)")
 
-            assert(cursor.getColumnName(column: 1) == "NUM")
-            assert(cursor.getColumnType(column: 1) == ColumnType.integer)
-            assert(cursor.getInt64(column: 1) == /* SKIP VALUE: row.toLong() */ Int64(row))
+            XCTAssertEqual(cursor.getColumnName(column: 1), "NUM")
+            XCTAssertEqual(cursor.getColumnType(column: 1), ColumnType.integer)
+            XCTAssertEqual(cursor.getInt64(column: 1), Int64(row))
 
-            assert(cursor.getColumnName(column: 2) == "DBL")
-            assert(cursor.getColumnType(column: 2) == ColumnType.float)
-            assert(cursor.getDouble(column: 2) == Double(row))
+            XCTAssertEqual(cursor.getColumnName(column: 2), "DBL")
+            XCTAssertEqual(cursor.getColumnType(column: 2), ColumnType.float)
+            XCTAssertEqual(cursor.getDouble(column: 2), Double(row))
         }
 
         print(cursor.rowText(header: false, values: false, width: consoleWidth))
 
         try cursor.close()
-        assert(cursor.closed == true)
+        XCTAssertEqual(cursor.closed, true)
 
         try conn.execute(sql: "DROP TABLE FOO")
 
         conn.close()
-        assert(conn.closed == true)
+        XCTAssertEqual(conn.closed, true)
 
         // .init not being resolved for some reason…
 
         // let dataFile: Data = try Data.init(contentsOfFile: dbname)
-        // assert(dataFile.count > 1024) // 8192 on Darwin, 12288 for Android
+        // XCTAssertEqual(dataFile.count > 1024) // 8192 on Darwin, 12288 for Android
 
         // 'removeItem(at:)' is deprecated: URL paths not yet implemented in Kotlin
         //try FileManager.default.removeItem(at: URL(fileURLWithPath: dbname, isDirectory: false))
 
         try FileManager.default.removeItem(atPath: dbname)
     }
+
+    func testConnection() throws {
+        let url: URL = URL.init(fileURLWithPath: "/tmp/testConnection.db", isDirectory: false)
+        let conn: Connection = try Connection.open(url: url)
+        //XCTAssertEqual(1.0, try conn.query(sql: "SELECT 1.0").singleValue()?.floatValue)
+        //XCTAssertEqual(3.5, try conn.query(sql: "SELECT 1.0 + 2.5").singleValue()?.floatValue)
+        conn.close()
+    }
+
 }
-#endif

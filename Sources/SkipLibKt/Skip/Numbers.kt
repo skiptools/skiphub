@@ -56,3 +56,6 @@ fun UInt8(number: Number): UInt8 = number.toLong().toULong().toUByte()
 fun UInt16(number: Number): UInt16 = number.toLong().toULong().toUShort()
 fun UInt32(number: Number): UInt32 = number.toLong().toULong().toUInt()
 fun UInt64(number: Number): UInt64 = number.toLong().toULong()
+
+fun Float(number: Number): Float = number.toFloat()
+fun Double(number: Number): Double = number.toDouble()

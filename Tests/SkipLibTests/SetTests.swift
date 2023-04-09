@@ -76,6 +76,10 @@ final class SetTests: XCTestCase {
     }
 
     func testSubsetSuperset() {
+        XCTAssertTrue(Set([1, 3]).isSubset(of: Set([1, 2, 3])))
+        XCTAssertTrue(Set([1, 2, 3]).isSubset(of: Set([1, 2, 3])))
+        XCTAssertFalse(Set([1, 2, 3, 4]).isSubset(of: Set([1, 2, 3])))
+
         let set1 = Set([1, 2, 3])
         let set2 = Set([2, 3])
         XCTAssertTrue(set2.isSubset(of: set1))
@@ -91,4 +95,37 @@ final class SetTests: XCTestCase {
         let set2 = Set([4, 5, 6])
         XCTAssertTrue(set1.isDisjoint(with: set2))
     }
+
+    func testCustomHashable() {
+        let item = SetItem(name: "ABC", number: 12)
+        var item2 = SetItem(name: "ABC", number: 12)
+        let item3 = SetItem(name: "XYZ", number: 12)
+
+        XCTAssertNotEqual(item, item3)
+
+        XCTAssertEqual(item, item2)
+        item2.number += 1
+        XCTAssertNotEqual(item, item2)
+        item2.number -= 1
+        XCTAssertEqual(item, item2)
+
+//        XCTAssertTrue(Set([item]).contains(item))
+//        XCTAssertTrue(Set([item]).contains(item2))
+    }
+}
+
+struct SetItem : Hashable {
+    let name: String
+    var number: Int
+
+    static func ==(lhs: SetItem, rhs: SetItem) -> Bool {
+        return lhs.name == rhs.name && lhs.number == rhs.number
+    }
+
+    // “'hash' overrides nothing” from `override fun hash(into: InOut<Hasher>)`
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(name)
+//        hasher.combine(number)
+//    }
+
 }

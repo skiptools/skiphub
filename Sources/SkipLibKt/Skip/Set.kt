@@ -30,9 +30,9 @@ class Set<T>: MutableStruct, Iterable<T>, Hashable {
         storage = SetStorage()
     }
 
-    constructor(collection: Collection<T>) {
+    constructor(items: Iterable<T>) {
         storage = SetStorage()
-        for (element in collection) {
+        for (element in items) {
 			insert(element)
         }
     }
@@ -86,35 +86,24 @@ class Set<T>: MutableStruct, Iterable<T>, Hashable {
 		return result
 	}
 
-    fun isSubset(of: Set<T>): Boolean {
-        return of.storage.containsAll(this.storage)
+    fun isSubset(of: Iterable<T>): Boolean {
+        return Set(of).isSuperset(this)
     }
 
-    fun isSubset(of: Collection<T>): Boolean {
-        return of.containsAll(this.storage)
-    }
-
-	fun isStrictSubset(of: Set<T>): Boolean {
+	fun isStrictSubset(of: Iterable<T>): Boolean {
         return of.count > this.count && isSubset(of)
     }
 
-	fun isStrictSubset(of: Collection<T>): Boolean {
-        return of.count > this.count && isSubset(of)
+    fun isSuperset(of: Iterable<T>): Boolean {
+        for (element in of) {
+            if (!contains(element)) {
+                return false
+            }
+        }
+        return true
     }
 
-    fun isSuperset(of: Set<T>): Boolean {
-        return this.storage.containsAll(of.storage)
-    }
-
-    fun isSuperset(of: Collection<T>): Boolean {
-        return this.storage.containsAll(of)
-    }
-
-    fun isStrictSuperset(of: Set<T>): Boolean {
-        return of.count < this.count && isSuperset(of)
-    }
-
-    fun isStrictSuperset(of: Collection<T>): Boolean {
+    fun isStrictSuperset(of: Iterable<T>): Boolean {
         return of.count < this.count && isSuperset(of)
     }
 
