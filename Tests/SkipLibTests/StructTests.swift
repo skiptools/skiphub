@@ -73,7 +73,7 @@ final class StructTests: XCTestCase {
 }
 
 private struct Struct1 {
-    var i = 0
+    var i: Int = Int(0)
 }
 
 private struct Struct2 {
@@ -91,5 +91,5 @@ private class StructHolder {
             structSetCount += 1
         }
     }
-    var structSetCount = 0
+    var structSetCount: Int = Int(0)
 }

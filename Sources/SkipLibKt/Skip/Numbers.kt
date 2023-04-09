@@ -17,7 +17,7 @@ typealias UInt32 = kotlin.UInt
 typealias Int64 = kotlin.Long
 typealias UInt64 = kotlin.ULong
 
-//typealias Int = Int64
+typealias Int = Int64
 typealias UInt = UInt64
 
 typealias Float = kotlin.Float

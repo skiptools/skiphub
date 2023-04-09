@@ -27,8 +27,8 @@ final class RandomTests: XCTestCase {
     /// Verifies that a sequence of seeded longs returns the same numbers in Swift and Java.
     func testGenerateLongs() throws {
         var rng = PseudoRandomNumberGenerator.seeded(seed: 1153443)
-        XCTAssertEqual(778315946, rng.nextInt())
-        XCTAssertEqual(-1911835035, rng.nextInt())
+        XCTAssertEqual(Int32(778315946), rng.nextInt())
+        XCTAssertEqual(Int32(-1911835035), rng.nextInt())
 
         var rng2 = PseudoRandomNumberGenerator.seeded(seed: 1153443)
         XCTAssertEqual(3342841532113466981, rng2.nextLong())
@@ -53,9 +53,9 @@ final class RandomTests: XCTestCase {
 
     func testGenerateInts() throws {
         var rng = PseudoRandomNumberGenerator.seeded(seed: 8832)
-        XCTAssertEqual(-160123848, rng.nextInt())
-        XCTAssertEqual(222216155, rng.nextInt())
-        XCTAssertEqual(1087824573, rng.nextInt())
+        XCTAssertEqual(Int32(-160123848), rng.nextInt())
+        XCTAssertEqual(Int32(222216155), rng.nextInt())
+        XCTAssertEqual(Int32(1087824573), rng.nextInt())
     }
 
     func testGenerateUUIDs() throws {

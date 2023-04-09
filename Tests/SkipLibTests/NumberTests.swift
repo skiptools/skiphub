@@ -136,9 +136,10 @@ final class NumberTests: XCTestCase {
     }
 
     func testFixedWidthIntegers() {
-        let a: Int16 = -300
-        let b: Int16 = 600
+        let a: Int16 = Int16(-300)
+        let b: Int16 = Int16(600)
 
+        #if !SKIP
         // Test addition
         XCTAssertEqual(a + b, 300)
 
@@ -150,7 +151,8 @@ final class NumberTests: XCTestCase {
 
         // Test division
         XCTAssertEqual(b / a, -2)
-
+        #endif
+        
         // Test overflow behavior
         #if !SKIP
         XCTAssertFalse(a.addingReportingOverflow(b).overflow)

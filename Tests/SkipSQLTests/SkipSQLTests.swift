@@ -13,26 +13,6 @@ import SkipFoundation
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 final class SkipSQLTests: XCTestCase {
     func testSkipSQL() throws {
-        #if !SKIP
-        try Connection.testDatabase()
-        #endif
-    }
-
-    func testConnection() throws {
-        let url: URL = URL.init(fileURLWithPath: "/tmp/testConnection.db", isDirectory: false)
-        let conn: Connection = try Connection.open(url: url)
-        //XCTAssertEqual(1.0, try conn.query(sql: "SELECT 1.0").singleValue()?.floatValue)
-        //XCTAssertEqual(3.5, try conn.query(sql: "SELECT 1.0 + 2.5").singleValue()?.floatValue)
-        conn.close()
-    }
-
-}
-
-#if !SKIP
-extension Connection {
-    // TODO: move into test case, fix assertions
-    static func testDatabase() throws {
-        // FIXME: cannot determine type
         //let random: Random = Random.shared
         //let rnd: Double = (random as Random).randomDouble()
         let rnd = 1
@@ -45,6 +25,7 @@ extension Connection {
         let version = try conn.query(sql: "select sqlite_version()").nextRow(close: true)?.first?.textValue
         print("SQLite version: " + (version ?? "")) // Kotlin: 3.28.0 Swift: 3.39.5
 
+        #if !SKIP
         assert(try! conn.query(sql: "SELECT 1.0").nextRow(close: true)?.first?.floatValue == 1.0)
         assert(try! conn.query(sql: "SELECT 'ABC'").nextRow(close: true)?.first?.textValue == "ABC")
         assert(try! conn.query(sql: "SELECT lower('ABC')").nextRow(close: true)?.first?.textValue == "abc")
@@ -120,6 +101,15 @@ extension Connection {
         //try FileManager.default.removeItem(at: URL(fileURLWithPath: dbname, isDirectory: false))
 
         try FileManager.default.removeItem(atPath: dbname)
+        #endif
     }
+
+    func testConnection() throws {
+        let url: URL = URL.init(fileURLWithPath: "/tmp/testConnection.db", isDirectory: false)
+        let conn: Connection = try Connection.open(url: url)
+        //XCTAssertEqual(1.0, try conn.query(sql: "SELECT 1.0").singleValue()?.floatValue)
+        //XCTAssertEqual(3.5, try conn.query(sql: "SELECT 1.0 + 2.5").singleValue()?.floatValue)
+        conn.close()
+    }
+
 }
-#endif

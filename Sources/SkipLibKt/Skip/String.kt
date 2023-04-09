@@ -13,7 +13,7 @@ fun String(string: String): String {
 // The String constructor that repeats a Character
 fun String(repeating: String, count: Int): String {
 	return StringBuilder().apply {
-		repeat(count) {
+		(1..count).forEach { i ->
 			append(repeating)
 		}
 	}.toString()
@@ -21,7 +21,7 @@ fun String(repeating: String, count: Int): String {
 
 // Pass the count property to the function count()
 val String.count: Int
-	get() = this.count()
+	get() = Int(this.count())
 
 // Pass the first property to the function first()
 val String.first: Char
@@ -44,18 +44,18 @@ fun String.hasSuffix(suffix: String): Boolean {
 }
 
 fun String.dropFirst(n: Int = 1): String {
-	return this.drop(n)
+	return this.drop(n.toInt())
 }
 
 fun String.dropLast(n: Int = 1): String {
 	//return this.dropLast(n)
-	return this.reversed().drop(n).reversed()
+	return this.reversed().drop(n.toInt()).reversed()
 }
 
 fun String.firstIndex(of: String): Int? {
 	for (i in this.indices) {
 		if (this.startsWith(of, startIndex = i)) {
-			return i
+			return i.toLong()
 		}
 	}
 	return null

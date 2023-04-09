@@ -16,7 +16,7 @@ interface Hashable {
 }
 
 class Hasher {
-    private var hashCode = 1
+    private var hashCode = Int(1)
 
     fun combine(value: Any?) {
         hashCode = hashCode * 17 + (value?.hashCode() ?: 0)

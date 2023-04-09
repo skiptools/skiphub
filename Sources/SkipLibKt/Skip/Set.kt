@@ -140,7 +140,7 @@ class Set<T>: MutableStruct, Iterable<T> {
 	}
 
     val count: Int
-        get() = storage.count()
+        get() = storage.count().toLong()
 
     val isEmpty: Boolean
         get() = storage.isEmpty()
@@ -156,7 +156,7 @@ class Set<T>: MutableStruct, Iterable<T> {
     }
 
     override var supdate: ((Any) -> Unit)? = null
-    override var smutatingcount = 0
+    override var smutatingcount = Int(0)
     override fun scopy(): MutableStruct {
         isStorageShared = true
         return Set(storage = storage)

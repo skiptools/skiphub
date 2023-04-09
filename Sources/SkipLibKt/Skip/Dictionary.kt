@@ -79,7 +79,7 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>> {
         get() = Array(storage.values)
 
     val count: Int
-        get() = storage.count()
+        get() = storage.count().toLong()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -92,7 +92,7 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>> {
     }
 
     override var supdate: ((Any) -> Unit)? = null
-    override var smutatingcount = 0
+    override var smutatingcount = Int(0)
     override fun scopy(): MutableStruct {
         isStorageShared = true
         return Dictionary(storage = storage)

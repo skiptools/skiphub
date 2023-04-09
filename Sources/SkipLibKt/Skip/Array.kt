@@ -53,7 +53,7 @@ class Array<T>: MutableStruct, Iterable<T> {
     }
 
     operator fun get(index: Int): T {
-        return storage[index].sref({
+        return storage[index.toInt()].sref({
             set(index, it)
         })
     }
@@ -61,7 +61,7 @@ class Array<T>: MutableStruct, Iterable<T> {
     operator fun set(index: Int, element: T) {
         copyStorageIfNeeded()
         willmutate()
-        storage[index] = element.sref()
+        storage[index.toInt()] = element.sref()
         didmutate()
     }
 
@@ -73,7 +73,7 @@ class Array<T>: MutableStruct, Iterable<T> {
     }
 
     val count: Int
-        get() = storage.count()
+        get() = storage.count().toLong()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -86,7 +86,7 @@ class Array<T>: MutableStruct, Iterable<T> {
     }
 
     override var supdate: ((Any) -> Unit)? = null
-    override var smutatingcount = 0
+    override var smutatingcount = Int(0)
     override fun scopy(): MutableStruct {
         isStorageShared = true
         return Array(storage = storage)

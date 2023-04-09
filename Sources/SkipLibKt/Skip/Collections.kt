@@ -7,7 +7,7 @@ package skip.lib
 
 /// Forward Swift's `count` property Kotlin's `count()` function
 val <T> Collection<T>.count: Int
-	get() = this.count()
+	get() = this.count().toLong()
 
 /// Forward Swift's `isEmpty` property Kotlin's `isEmpty()` function
 val <T> Collection<T>.isEmpty: Boolean
