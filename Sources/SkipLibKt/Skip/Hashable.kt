@@ -14,6 +14,8 @@ interface Hashable: Equatable {
     // advantage of `hashCode()`. We're relying on `hash(into:)` not typically being invoked manually
 }
 
+typealias AnyHashable = Any
+
 class Hasher {
     private var result = 1
 

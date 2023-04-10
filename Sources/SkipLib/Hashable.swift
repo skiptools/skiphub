@@ -13,6 +13,8 @@ public protocol Hashable: Equatable {
     var hashValue: Int { get }
 }
 
+typealias AnyHashable = Any
+
 public struct Hasher {
     public init() {
     }
