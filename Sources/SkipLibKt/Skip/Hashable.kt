@@ -18,10 +18,16 @@ class Hasher {
     private var result = 1
 
     fun combine(value: Any?) {
-        result = result * 17 + (value?.hashCode() ?: 0)
+        result = Companion.combine(result, value)
     }
 
     fun finalize(): Int {
         return result
+    }
+
+    companion object {
+        fun combine(result: Int, value: Any?): Int {
+            return result * 17 + (value?.hashCode() ?: 0)
+        }
     }
 }

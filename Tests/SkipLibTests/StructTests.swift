@@ -68,7 +68,6 @@ final class StructTests: XCTestCase {
         XCTAssertEqual(struct1a.i, 2)
         XCTAssertEqual(struct1b.i, 2)
         XCTAssertEqual(struct1c.i, 3)
-
     }
 }
 
