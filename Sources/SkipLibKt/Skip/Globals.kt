@@ -17,3 +17,10 @@ val Any.debugDescription: String
 // `Swift.fatalError` function calls `Kotlin.error`
 fun fatalError(message: String = "fatalError"): Nothing = error(message)
 
+fun <T : Comparable<T>> min(a: T, b: T): T {
+	return if (a <= b) a else b
+}
+
+fun <T : Comparable<T>> max(a: T, b: T): T {
+	return if (a >= b) a else b
+}

@@ -7,6 +7,7 @@ import XCTest
 
 final class NumberTests: XCTestCase {
     func testNumberMinMax() {
+        #if !SKIP
         XCTAssertGreaterThan(Int8.max, Int8.min)
         XCTAssertGreaterThan(Int16.max, Int16.min)
         XCTAssertGreaterThan(Int32.max, Int32.min)
@@ -38,28 +39,55 @@ final class NumberTests: XCTestCase {
 
 //        XCTAssertEqual(UInt.max, UInt(18446744073709551615))
         XCTAssertEqual(UInt.min, UInt(0))
+        #endif
+    }
+
+    func testNumberInitializers() {
+        XCTAssertEqual(Int(100), 100)
+        XCTAssertEqual(Int32(100), 100)
+
+        XCTAssertEqual(Int8(100), 100)
+        XCTAssertEqual(Int16(100), 100)
+        XCTAssertEqual(Int64(100), 100)
+
+        #if !SKIP
+        XCTAssertEqual(UInt(100), 100) // java.lang.AssertionError: expected: java.lang.Integer<100> but was: kotlin.UInt<100>
+        XCTAssertEqual(UInt8(100), 100)
+        XCTAssertEqual(UInt16(100), 100)
+        XCTAssertEqual(UInt32(100), 100)
+        XCTAssertEqual(UInt64(100), 100)
+
+        // java.lang.ClassCastException: class java.lang.Integer cannot be cast to class java.lang.Byte (java.lang.Integer and java.lang.Byte are in module java.base of loader 'bootstrap')
+        XCTAssertEqual(100 as Int, 100)
+        XCTAssertEqual(100 as Int8, 100)
+        XCTAssertEqual(100 as Int16, 100)
+        XCTAssertEqual(100 as Int32, 100)
+        XCTAssertEqual(100 as Int64, 100)
+        #endif
     }
 
     func testNumberConversions() {
-//        XCTAssertEqual(Int(13), 13)
-//        XCTAssertEqual(Int8(13), 13)
-//        XCTAssertEqual(Int32(13), 13)
-//        XCTAssertEqual(Int64(13), 13)
-//
+        XCTAssertEqual(Int(13), 13)
+        XCTAssertEqual(Int8(13), Int8(13))
+        XCTAssertEqual(Int(Int32(13)), 13)
+        XCTAssertEqual(Int(Int64(13)), 13)
+
 //        XCTAssertEqual(UInt(13), 13)
 //        XCTAssertEqual(UInt8(13), 13)
 //        XCTAssertEqual(UInt32(13), 13)
 //        XCTAssertEqual(UInt64(13), 13)
-//
-//        XCTAssertEqual(Double(13), 13)
-//        XCTAssertEqual(Float(13), 13)
-//
-//        XCTAssertEqual(Int(Double(Float(13))), 13)
+
+        XCTAssertEqual(Double(13), 13.0)
+        XCTAssertEqual(Double(Float(13)), 13.0)
+        XCTAssertEqual(Double(13), 13.0, accuracy: 0.0)
+        XCTAssertEqual(Double(Float(13)), 13.0, accuracy: 0.0)
+
+        XCTAssertEqual(Int(Double(Float(1.3)) * 10.0), 12)
     }
 
     func testIntegers() {
-        let a: Int = 10
-        let b: Int = 3
+        let a: Int32 = 10
+        let b: Int32 = 3
 
         // Test addition
         XCTAssertEqual(a + b, 13)
@@ -107,12 +135,14 @@ final class NumberTests: XCTestCase {
     }
 
     func testUnsignedIntegers() {
+        let a: UInt8 = UInt8(200)
+        let b: UInt8 = UInt8(50)
+
         #if !SKIP
-        let a: UInt8 = 200
-        let b: UInt8 = 50
+        // automatic coercion to unsigned types doesn't work
 
         // Test addition
-        XCTAssertEqual(a + b, 250)
+        XCTAssertEqual(a + b, 250) // java.lang.AssertionError: expected: java.lang.Integer<250> but was: kotlin.UInt<250>
 
         // Test subtraction
         XCTAssertEqual(a - b, 150)
@@ -160,5 +190,25 @@ final class NumberTests: XCTestCase {
 
         // Test equality
         XCTAssertNotEqual(a, b)
+    }
+
+    func testMinMax() {
+        XCTAssertEqual(1, min(1, 2))
+        XCTAssertEqual(2, max(1, 2))
+
+        XCTAssertTrue(isWholeNumber(min(1, 2)))
+        XCTAssertFalse(isWholeNumber(min(1.1, 2.2)))
+        XCTAssertFalse(isWholeNumber(min(Double(1), 2.2)))
+        #if !SKIP
+        XCTAssertFalse(isWholeNumber(min(1, 2.2))) // inferred type is IntegerLiteralType[Int,Long,Byte,Short] but Comparable<Double> was expected
+        #endif
+    }
+
+    private func isWholeNumber(_ i: Int) -> Bool {
+        true
+    }
+
+    private func isWholeNumber(_ d: Double) -> Bool {
+        false
     }
 }

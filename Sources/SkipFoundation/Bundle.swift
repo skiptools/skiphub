@@ -50,10 +50,10 @@ extension SkipBundle {
     public var resourceURL: SkipURL? {
         get {
             var url: java.net.URL? = rawValue.getResource(".")
-            if (url != null) {
+            if (url != nil) {
                 return SkipURL(url)
             } else {
-                return null
+                return nil
             }
         }
     }
@@ -61,22 +61,22 @@ extension SkipBundle {
     public func url(forResource: String, withExtension: String?, subdirectory: String?, localization: String?) -> URL? {
         // similar behavior to: https://github.com/apple/swift-corelibs-foundation/blob/69ab3975ea636d1322ad19bbcea38ce78b65b26a/CoreFoundation/PlugIn.subproj/CFBundle_Resources.c#L1114
         var res = forResource
-        if (withExtension != null) {
+        if (withExtension != nil) {
             res += "." + withExtension
         }
-        if (localization != null) {
+        if (localization != nil) {
             //let lprojExtension = "lproj" // _CFBundleLprojExtension
             var lprojExtensionWithDot = ".lproj" // _CFBundleLprojExtensionWithDot
             res = localization + lprojExtensionWithDot + "/" + res
         }
-        if (subdirectory != null) {
+        if (subdirectory != nil) {
             res = subdirectory + "/" + res
         }
         var url: java.net.URL? = rawValue.getResource(res)
-        if (url != null) {
+        if (url != nil) {
             return SkipURL(url)
         } else {
-            return null
+            return nil
         }
     }
 }

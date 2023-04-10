@@ -247,15 +247,17 @@ extension JUnitTestCase {
                 print("reporing error in file:", fileURLString, "line:", lineNumber)
                 let kotlinLocation = XCTSourceCodeLocation(fileURL: fileURL, lineNumber: lineNumber)
 
+                let desc = lineComponents.last?.description ?? String(trimmedLine)
+
                 // report the Kotlin error
                 do {
-                    let issue = XCTIssue(type: .system, compactDescription: lineComponents.last?.description ?? String(trimmedLine), detailedDescription: nil, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
+                    let issue = XCTIssue(type: .system, compactDescription: desc, detailedDescription: desc, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
                     record(issue)
                 }
 
                 // also look up in the Swift location
                 if let swiftLocation = try? kotlinLocation.findSourceMapLine() {
-                    let issue = XCTIssue(type: .system, compactDescription: lineComponents.last?.description ?? String(trimmedLine), detailedDescription: nil, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
+                    let issue = XCTIssue(type: .system, compactDescription: desc, detailedDescription: desc, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
                     record(issue)
                 }
             }

@@ -38,9 +38,8 @@ public final class Connection {
 
     public init(_ filename: String, readonly: Bool = false) throws {
         #if SKIP
-        // self.db = SQLiteDatabase.openDatabase(filename, null, readonly ? SQLiteDatabase.OPEN_READONLY : (SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE))
-
-        self.db = SQLiteDatabase.openDatabase(filename, null, SQLiteDatabase.CREATE_IF_NECESSARY)
+        // self.db = SQLiteDatabase.openDatabase(filename, nil, readonly ? SQLiteDatabase.OPEN_READONLY : (SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE))
+        self.db = SQLiteDatabase.openDatabase(filename, nil, SQLiteDatabase.CREATE_IF_NECESSARY)
         #else
         let flags = readonly ? SQLITE_OPEN_READONLY : (SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE)
         try check(resultOf: sqlite3_open_v2(filename, &_handle, flags | SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_URI, nil))
@@ -141,7 +140,7 @@ let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 #endif
 
 public enum SQLValue {
-    // we would rather call this "null", but the transplier objects to the name
+    // we would rather call this "null", but the Kotlin objects to the name
     case nul
     case text(_ string: String)
     case integer(_ int: Int64)
@@ -152,20 +151,14 @@ public enum SQLValue {
         switch self {
         case SQLValue.nul:
             return ColumnType.nul
-        case SQLValue.text(string: _):
-            // binding should be unnecessary, but prevents transpiled error:
-            // SkipSQL.kt:82:26 Function invocation 'text(...)' expected
+        case SQLValue.text:
             return ColumnType.text
-        case SQLValue.integer(int: _):
+        case SQLValue.integer:
             return ColumnType.integer
-        case SQLValue.float(double: _):
+        case SQLValue.float:
             return ColumnType.float
-        case SQLValue.blob(data: _):
+        case SQLValue.blob:
             return ColumnType.blob
-//        default:
-//            // should be unnecessary, but works around transpiled code error:
-//            // SkipSQL.kt:79:13 'when' expression must be exhaustive, add necessary 'is blobcase', 'is floatcase', 'is integercase', 'is nulcase', 'is textcase' branches or 'else' branch instead
-//            return ColumnType.nul
         }
     }
 

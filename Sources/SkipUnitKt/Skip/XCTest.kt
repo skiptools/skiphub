@@ -40,6 +40,11 @@ interface XCTestCase {
     fun XCTAssertNotEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertNotEquals(b, a)
     fun XCTAssertNotEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertNotEquals(msg, b, a)
 
+	fun <T : Comparable<T>> XCTAssertEqual(a: T?, b: T?): Unit = org.junit.Assert.assertTrue("${a} != ${b}", a == b)
+	fun <T : Comparable<T>> XCTAssertEqual(a: T?, b: T?, msg: String): Unit = org.junit.Assert.assertTrue(msg, a == b)
+	fun <T : Comparable<T>> XCTAssertNotEqual(a: T?, b: T?): Unit = org.junit.Assert.assertFalse("${a} == ${b}", a == b)
+	fun <T : Comparable<T>> XCTAssertNotEqual(a: T?, b: T?, msg: String): Unit = org.junit.Assert.assertFalse(msg, a == b)
+
 	fun XCTAssertEqual(a: Double, b: Double, accuracy: Double): Unit = org.junit.Assert.assertEquals(b, a, accuracy)
 	fun XCTAssertEqual(a: Double, b: Double, accuracy: Double, msg: String): Unit = org.junit.Assert.assertEquals(msg, b, a, accuracy)
 

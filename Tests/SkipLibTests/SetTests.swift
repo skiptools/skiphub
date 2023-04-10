@@ -109,8 +109,8 @@ final class SetTests: XCTestCase {
         item2.number -= 1
         XCTAssertEqual(item, item2)
 
-//        XCTAssertTrue(Set([item]).contains(item))
-//        XCTAssertTrue(Set([item]).contains(item2))
+        XCTAssertTrue(Set([item]).contains(item))
+        XCTAssertTrue(Set([item]).contains(item2))
     }
 }
 
@@ -126,5 +126,4 @@ struct SetItem : Hashable {
         hasher.combine(name)
         hasher.combine(number)
     }
-
 }

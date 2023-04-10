@@ -13,11 +13,9 @@ import SkipFoundation
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 final class SkipSQLTests: XCTestCase {
     func testSkipSQL() throws {
-        // FIXME: cannot determine type
-        //let random: Random = Random.shared
-        //let rnd: Double = (random as Random).randomDouble()
+        //var random = PseudoRandomNumberGenerator(seed: 1234)
+        //let rnd = (0...999999).randomElement(using: &random)!
         let rnd = 1
-
         let dbname = "/tmp/demosql_\(rnd).db"
 
         print("connecting to: " + dbname)

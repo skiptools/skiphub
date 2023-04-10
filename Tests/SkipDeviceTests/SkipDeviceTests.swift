@@ -48,7 +48,7 @@ final class SkipDeviceTests: XCTestCase {
     }
 
     func testSQLite() throws {
-        let db = context.openOrCreateDatabase("mydb", 0, null, null)
+        let db = context.openOrCreateDatabase("mydb", 0, nil, nil)
         defer { db.close() }
         XCTAssertEqual(3, db.compileStatement("SELECT 1 + 2").simpleQueryForLong().toInt())
     }
