@@ -10,7 +10,6 @@
 //
 
 public protocol Hashable: Equatable {
-    func hash(into hasher: inout Hasher)
     var hashValue: Int { get }
 }
 
@@ -22,6 +21,10 @@ public struct Hasher {
     }
 
     public func finalize() -> Int {
+        return 0
+    }
+
+    static func combine(result: Int, value: Any?) -> Int {
         return 0
     }
 }

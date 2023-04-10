@@ -122,10 +122,9 @@ struct SetItem : Hashable {
         return lhs.name == rhs.name && lhs.number == rhs.number
     }
 
-    // “'hash' overrides nothing” from `override fun hash(into: InOut<Hasher>)`
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(name)
-//        hasher.combine(number)
-//    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(number)
+    }
 
 }
