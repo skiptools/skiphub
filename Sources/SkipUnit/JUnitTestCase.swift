@@ -98,21 +98,24 @@ extension JUnitTestCase {
             return try findModuleFolder(in: xcodeFolder, extension: "output")
         } else {
             // note that unlike Xcode, the local SPM outputs folder is just the package name without the ".output" suffix
-            return try findModuleFolder(in: URL(fileURLWithPath: ".build/plugins/outputs", isDirectory: true), extension: nil)
+            return try findModuleFolder(in: URL(fileURLWithPath: ".build/plugins/outputs", isDirectory: true), extension: "")
         }
 
         /// The only known way to figure out the package name asociated with the test's module is to brute-force search through the plugin output folders.
-        func findModuleFolder(in pluginOutputFolder: URL, extension pathExtension: String?) throws -> URL {
+        func findModuleFolder(in pluginOutputFolder: URL, extension pathExtension: String) throws -> URL {
             for outputFolder in try FileManager.default.contentsOfDirectory(at: pluginOutputFolder, includingPropertiesForKeys: [.isDirectoryKey]) {
                 if outputFolder.pathExtension != pathExtension {
-                    continue // only check known path extensions (e.g., ".output" or nil)
+                    continue // only check known path extensions (e.g., ".output" or "")
                 }
                 let pluginModuleOutputFolder = URL(fileURLWithPath: moduleName + "/skip-transpiler/", isDirectory: true, relativeTo: outputFolder)
                 if (try? pluginModuleOutputFolder.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true {
                     return pluginModuleOutputFolder
                 }
             }
-            throw CocoaError(.fileNoSuchFile, userInfo: [NSFilePathErrorKey: pluginOutputFolder.path])
+            struct NoModuleFolder : LocalizedError {
+                var errorDescription: String?
+            }
+            throw NoModuleFolder(errorDescription: "Unable to fund module folders in \(pluginOutputFolder.path)")
         }
     }
 
