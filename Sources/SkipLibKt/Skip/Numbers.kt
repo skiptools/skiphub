@@ -46,16 +46,14 @@ val ULong.Companion.max: ULong get() = ULong.MAX_VALUE
 val ULong.Companion.min: ULong get() = ULong.MIN_VALUE
 
 fun Int(number: Number): Int = number.toInt()
-fun Int8(number: Number): Byte = number.toInt().toByte()
-fun Int16(number: Number): Short = number.toInt().toShort()
-fun Int32(number: Number): Int = number.toInt().toInt()
-fun Int64(number: Number): Long = number.toLong()
+fun Byte(number: Number): Byte = number.toInt().toByte()
+fun Short(number: Number): Short = number.toInt().toShort()
+fun Long(number: Number): Long = number.toLong()
 
 fun UInt(number: Number): UInt = number.toLong().toULong().toUInt()
-fun UInt8(number: Number): UByte = number.toLong().toULong().toUByte()
-fun UInt16(number: Number): UShort = number.toLong().toULong().toUShort()
-fun UInt32(number: Number): UInt = number.toLong().toULong().toUInt()
-fun UInt64(number: Number): ULong = number.toLong().toULong()
+fun UByte(number: Number): UByte = number.toLong().toULong().toUByte()
+fun UShort(number: Number): UShort = number.toLong().toULong().toUShort()
+fun ULong(number: Number): ULong = number.toLong().toULong()
 
 fun Float(number: Number): Float = number.toFloat()
 fun Double(number: Number): Double = number.toDouble()
