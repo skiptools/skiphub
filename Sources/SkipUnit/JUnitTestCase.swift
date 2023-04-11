@@ -115,7 +115,7 @@ extension JUnitTestCase {
             struct NoModuleFolder : LocalizedError {
                 var errorDescription: String?
             }
-            throw NoModuleFolder(errorDescription: "Unable to fund module folders in \(pluginOutputFolder.path)")
+            throw NoModuleFolder(errorDescription: "Unable to find module folders in \(pluginOutputFolder.path)")
         }
     }
 
