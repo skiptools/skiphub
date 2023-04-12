@@ -85,12 +85,12 @@ let package = Package(
 extension Target {
     /// Helper function to create a `target` for a `Kt` framework peer of a Swift target.
     static func gradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?, includePeerDependency: Bool = true) -> Target {
-        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + (includePeerDependency ? [Dependency(stringLiteral: name)] : []), resources: [.copy("Skip")], plugins: plugins)
+        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0) }) + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + (includePeerDependency ? [Dependency(stringLiteral: name)] : []), resources: [.copy("Skip")], plugins: plugins)
     }
 
     /// Helper function to create a `testTarget` for a `Kt` framework peer of a Swift target.
     static func testGradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?, includePeerDependency: Bool = true) -> Target {
-        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"] + (includePeerDependency ? [Dependency(stringLiteral: String(name.dropLast("Tests".count)))] : []), resources: [.copy("Skip")], plugins: plugins)
+        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0) }) + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"] + (includePeerDependency ? [Dependency(stringLiteral: String(name.dropLast("Tests".count)))] : []), resources: [.copy("Skip")], plugins: plugins)
     }
 }
 

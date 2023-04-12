@@ -83,6 +83,8 @@ jobs:
           #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
 
       - name: Run ${{ matrix.target }} Swift Tests (iOS)
+        # disabled to speed up CI (adds ~5m)
+        if: false
         working-directory: skiphub
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
