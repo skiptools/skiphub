@@ -80,10 +80,10 @@ jobs:
         # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
           swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\." \
-            || swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\." \
-            || swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\." \
-            || swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\." \
-            || swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\."
+            || (rm -rf .build ; swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\.") \
+            || (rm -rf .build ; swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\.") \
+            || (rm -rf .build ; swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\.") \
+            || (rm -rf .build ; swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\.")
           #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
 
       - name: Run ${{ matrix.target }} Swift Tests (iOS)
