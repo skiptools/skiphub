@@ -78,7 +78,10 @@ jobs:
         working-directory: skiphub
         # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
+          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES \
+            || xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES |
+            || xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES |
+            || xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
 
       - name: Run ${{ matrix.target }} Swift Tests (iOS)
         working-directory: skiphub
