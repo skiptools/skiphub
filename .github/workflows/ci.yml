@@ -72,23 +72,22 @@ jobs:
       - name: Run ${{ matrix.target }} Swift Tests (macOS)
         working-directory: skiphub
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
+          swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}Tests\."
+          #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Run ${{ matrix.target }} Kotlin Tests (macOS)
+      - name: Run ${{ matrix.target }} Gradle Tests (macOS)
         working-directory: skiphub
         # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES \
-            || xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES \
-            || xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES \
-            || xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
+          swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\."
+          #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
 
       - name: Run ${{ matrix.target }} Swift Tests (iOS)
         working-directory: skiphub
         run: |
           xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Run ${{ matrix.target }} Kotlin Tests (Android)
+      - name: Run ${{ matrix.target }} Gradle Tests (Android)
         working-directory: skiphub
         run: |
           # get the most recent derived data folder
