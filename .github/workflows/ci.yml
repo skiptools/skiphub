@@ -90,10 +90,11 @@ jobs:
       - name: Run ${{ matrix.target }} Gradle Tests (Android)
         working-directory: skiphub
         run: |
+          PLUGIN_OUTPUT=.build/plugins/outputs/skiphub
           # get the most recent derived data folder
-          DER=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
+          #PLUGIN_OUTPUT=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
 
-          cd ${DER}/${{ matrix.target }}TestsKt/skip-transpiler
+          cd ${PLUGIN_OUTPUT}/${{ matrix.target }}TestsKt/skip-transpiler
 
           brew install tree
           tree -lh -I build .
