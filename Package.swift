@@ -30,7 +30,7 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip.git", from: "0.0.0"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.3.24"),
     ],
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
@@ -84,13 +84,13 @@ let package = Package(
 
 extension Target {
     /// Helper function to create a `target` for a `Kt` framework peer of a Swift target.
-    static func gradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?, includePeerDependency: Bool = true) -> Target {
-        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0) }) + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + (includePeerDependency ? [Dependency(stringLiteral: name)] : []), resources: [.copy("Skip")], plugins: plugins)
+    static func gradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?) -> Target {
+        .target(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0) }) + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }), resources: [.copy("Skip")], plugins: plugins)
     }
 
     /// Helper function to create a `testTarget` for a `Kt` framework peer of a Swift target.
-    static func testGradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?, includePeerDependency: Bool = true) -> Target {
-        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0) }) + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"] + (includePeerDependency ? [Dependency(stringLiteral: String(name.dropLast("Tests".count)))] : []), resources: [.copy("Skip")], plugins: plugins)
+    static func testGradle(name: String, dependencies: [String] = [], plugins: [PluginUsage]?) -> Target {
+        .testTarget(name: name + "Kt", dependencies: dependencies.map({ Dependency(stringLiteral: $0) }) + dependencies.map({ Dependency(stringLiteral: $0 + "Kt") }) + ["SkipUnitKt"], resources: [.copy("Skip")], plugins: plugins)
     }
 }
 
