@@ -76,8 +76,8 @@ jobs:
         # SPM will attempt to build the targets in parallel
         if: true
         run: |
-          #swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipDeviceKt && swift build --target SkipSQLKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
-          swift build --target SkipUnitKt --target SkipLibKt --target SkipFoundationKt --target SkipDeviceKt --target SkipSQLKt --target SkipUIKt --target ExampleLibKt --target ExampleAppKt
+          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipDeviceKt && swift build --target SkipSQLKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
+          #swift build --target SkipUnitKt --target SkipLibKt --target SkipFoundationKt --target SkipDeviceKt --target SkipSQLKt --target SkipUIKt --target ExampleLibKt --target ExampleAppKt
 
       - name: Run ${{ matrix.target }} Swift Tests (macOS)
         working-directory: skiphub
