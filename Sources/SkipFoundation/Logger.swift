@@ -156,6 +156,8 @@ public func Logger(subsystem: String, category: String) -> Logger {
     Logger.getLogger(subsystem + "/" + category)
 }
 
+// FIXME: workaround “Enum class cannot inherit from classes” when it inserts Hashable extension
+// SKIP REPLACE: enum class OSLogType { default, info, debug, error, fault; companion object { } }
 public enum OSLogType {
     case `default`
     case info

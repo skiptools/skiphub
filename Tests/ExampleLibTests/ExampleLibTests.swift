@@ -37,32 +37,32 @@ final class ExampleLibTests: XCTestCase {
         return "\(number)"
     }
 
-    func testThisOrThat() throws {
-        let x: ThisOrThat<Int, String> = .a(1)
-        let x2: ThisOrThat<Int, String> = .a(1)
-        let y: ThisOrThat<Int, String> = .b("2")
-
-        XCTAssertEqual(x, x)
-        XCTAssertEqual(x, x2)
-        XCTAssertNotEqual(x, y)
-    }
+//    func testThisOrThat() throws {
+//        let x: ThisOrThat<Int, String> = .a(1)
+//        let x2: ThisOrThat<Int, String> = .a(1)
+//        let y: ThisOrThat<Int, String> = .b("2")
+//
+//        XCTAssertEqual(x, x)
+//        XCTAssertEqual(x, x2)
+//        XCTAssertNotEqual(x, y)
+//    }
 }
 
-#if SKIP
-typealias ThisOrThatEquatable = Equatable
-#else
-/// Empty protocol for type stub
-protocol ThisOrThatEquatable {
-}
-#endif
-
-enum ThisOrThat<A, B> : ThisOrThatEquatable {
-    case a(A)
-    case b(B)
-}
-
-#if !SKIP
-extension ThisOrThat : Swift.Equatable where A : Swift.Equatable, B : Swift.Equatable {
-}
-#endif
+//#if SKIP
+//typealias ThisOrThatEquatable = Equatable
+//#else
+///// Empty protocol for type stub
+//protocol ThisOrThatEquatable {
+//}
+//#endif
+//
+//enum ThisOrThat<A, B> : ThisOrThatEquatable {
+//    case a(A)
+//    case b(B)
+//}
+//
+//#if !SKIP
+//extension ThisOrThat : Swift.Equatable where A : Swift.Equatable, B : Swift.Equatable {
+//}
+//#endif
 

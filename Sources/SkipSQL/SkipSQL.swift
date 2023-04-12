@@ -234,6 +234,9 @@ public enum SQLValue {
 ///  - string
 ///  - BLOB
 ///  - NULL
+///  
+// FIXME: workaround “Enum class cannot inherit from classes” when it inserts Hashable extension
+// SKIP REPLACE: enum class ColumnType(val rawValue: Int) { nul(0), integer(1), float(2), text(3), blob(4); }
 public enum ColumnType : Int32 {
     /// `SQLITE_NULL`
     case nul = 0
@@ -245,7 +248,9 @@ public enum ColumnType : Int32 {
     case text = 3
     /// `SQLITE_BLOB`, a byte array
     case blob = 4
+}
 
+extension ColumnType {
     /// Returns true if this column is expected to hold a numeric type.
     var isNumeric: Bool {
         switch self {
