@@ -5,26 +5,6 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-//typealias Int8 = kotlin.Byte
-//typealias UInt8 = kotlin.UByte
-//
-//typealias Int16 = kotlin.Short
-//typealias UInt16 = kotlin.UShort
-//
-//typealias Int32 = kotlin.Int
-//typealias UInt32 = kotlin.UInt
-//
-//typealias Int64 = kotlin.Long
-//typealias UInt64 = kotlin.ULong
-//
-////typealias Int = kotlin.Int64
-////typealias UInt = kotlin.UInt64
-//typealias Int = kotlin.Int
-//typealias UInt = kotlin.UInt
-//
-//typealias Float = kotlin.Float
-//typealias Double = kotlin.Double
-
 val Byte.Companion.max: Byte get() = Byte.MAX_VALUE
 val Byte.Companion.min: Byte get() = Byte.MIN_VALUE
 val UByte.Companion.max: Byte get() = Byte.MAX_VALUE

@@ -5,16 +5,13 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-interface Hashable: Equatable {
-    val hashValue: Int
-        get() = hashCode()
+// This typealias is defined to satisfy references in Swift. All types have hashCode(). We cannot define this
+// as a protocol because there is no way to make existing Kotlin types (e.g. kotlin.Int) conform to new protocols
+typealias Hashable = Any
+typealias AnyHashable = Hashable
 
-    // Note that while the transpiler uses user-defined `hash(into:)` functions, we do not include that function in
-    // this interface. Doing so would require us to synthesize less efficient code in some cases than we can by taking
-    // advantage of `hashCode()`. We're relying on `hash(into:)` not typically being invoked manually
-}
-
-typealias AnyHashable = Any
+val Any.hashValue: Int
+    get() = hashCode()
 
 class Hasher {
     private var result = 1

@@ -18,7 +18,6 @@ final class NumberTests: XCTestCase {
         XCTAssertGreaterThan(UInt32.max, UInt32.min)
         XCTAssertGreaterThan(UInt64.max, UInt64.min)
 
-
         XCTAssertEqual(Int8.max, Int8(127))
         XCTAssertEqual(Int8.min, Int8(-128))
 
@@ -204,11 +203,44 @@ final class NumberTests: XCTestCase {
         #endif
     }
 
+    func testEquatable() {
+        // Check that numbers can be used as Equatable
+        XCTAssertTrue(isEquatable(1))
+        XCTAssertTrue(isEquatable(1.0))
+        XCTAssertTrue(isEqual(1, 1))
+        XCTAssertFalse(isEqual(1, 2))
+        XCTAssertTrue(isEqual(1.0, 1.0))
+        XCTAssertFalse(isEqual(1.0, 2.0))
+    }
+
+    func testHashable() {
+        // Check that numbers can be used as Hashable
+        XCTAssertTrue(isHashable(1))
+        XCTAssertTrue(isHashable(1.0))
+        XCTAssertTrue(hashValueEqual(1, 1))
+        XCTAssertFalse(hashValueEqual(1, 2))
+        XCTAssertTrue(hashValueEqual(1.0, 1.0))
+        XCTAssertFalse(hashValueEqual(1.0, 2.0))
+    }
+
     private func isWholeNumber(_ i: Int) -> Bool {
         true
     }
-
     private func isWholeNumber(_ d: Double) -> Bool {
         false
+    }
+
+    private func isEquatable(_ e: any Equatable) -> Bool {
+        return true
+    }
+    private func isEqual<T: Equatable>(_ lhs: T, _ rhs: T) -> Bool {
+        return lhs == rhs
+    }
+
+    private func isHashable(_ h: any Hashable) -> Bool {
+        return true
+    }
+    private func hashValueEqual<T: Hashable>(_ lhs: T, _ rhs: T) -> Bool {
+        return lhs.hashValue == rhs.hashValue
     }
 }
