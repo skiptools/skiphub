@@ -69,10 +69,19 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
+      - name: Pre-build ${{ matrix.target }}
+        working-directory: skiphub
+        # the pre-build needs to take place because the Skip
+        # packages currently need to be built in order, but
+        # SPM will attempt to build the targets in parallel
+        if: true
+        run: |
+          #swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipDeviceKt && swift build --target SkipSQLKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
+          swift build --target SkipUnitKt --target SkipLibKt --target SkipFoundationKt --target SkipDeviceKt --target SkipSQLKt --target SkipUIKt --target ExampleLibKt --target ExampleAppKt
+
       - name: Run ${{ matrix.target }} Swift Tests (macOS)
         working-directory: skiphub
         run: |
-          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipDeviceKt && swift build --target SkipSQLKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
           swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}Tests\."
           #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
