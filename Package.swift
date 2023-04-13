@@ -30,7 +30,7 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.3.30"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.3.31"),
     ],
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
@@ -69,8 +69,8 @@ let package = Package(
         .testGradle(name: "SkipUITests", dependencies: ["SkipUI"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Example library
-        .target(name: "ExampleLib", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
-        .gradle(name: "ExampleLib", dependencies: ["SkipLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "ExampleLib", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .gradle(name: "ExampleLib", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "ExampleLibTests", dependencies: ["ExampleLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testGradle(name: "ExampleLibTests", dependencies: ["ExampleLib"], plugins: [.plugin(name: "transpile", package: "skip")]),
 
