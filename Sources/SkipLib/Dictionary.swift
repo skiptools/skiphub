@@ -9,31 +9,31 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-public struct Dictionary<K, V> {
+public struct Dictionary<Key, Value> {
     public init() {
-        fatalError()
+        Swift.fatalError()
     }
 
     #if !SKIP // Skip does not support this Swift syntax [subscriptDecl]
-    public subscript(key: K?) -> V? {
+    public subscript(key: Key?) -> Value? {
         get {
-            fatalError()
+            Swift.fatalError()
         }
         set {
-            fatalError()
+            Swift.fatalError()
         }
     }
     #endif
 
-    public var keys: Array<K> {
-        fatalError()
+    public var keys: Array<Key> {
+        Swift.fatalError()
     }
 
-    public var values: Array<V> {
-        fatalError()
+    public var values: Array<Value> {
+        Swift.fatalError()
     }
 
     public var count: Int {
-        fatalError()
+        Swift.fatalError()
     }
 }

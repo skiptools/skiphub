@@ -9,28 +9,28 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-public struct Array<T> {
+public struct Array<Element> {
     public init() {
-        fatalError()
+        Swift.fatalError()
     }
 
     #if !SKIP // Skip does not support this Swift syntax [subscriptDecl]
-    public subscript(index: Int) -> T {
+    public subscript(index: Int) -> Element {
         get {
-            fatalError()
+            Swift.fatalError()
         }
         set {
-            fatalError()
+            Swift.fatalError()
         }
     }
     #endif
 
-    public mutating func append(_ element: T) {
-        fatalError()
+    public mutating func append(_ element: Element) {
+        Swift.fatalError()
     }
 
     public var count: Int {
-        fatalError()
+        Swift.fatalError()
     }
 }
 

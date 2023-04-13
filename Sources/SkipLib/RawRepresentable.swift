@@ -3,7 +3,8 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-package skip.lib
 
-interface Error {
+public protocol RawRepresentable {
+    associatedtype RawType
+    var rawValue: RawType { get }
 }

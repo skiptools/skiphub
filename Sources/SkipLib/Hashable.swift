@@ -17,16 +17,18 @@ typealias AnyHashable = Hashable
 
 public struct Hasher {
     public init() {
+        Swift.fatalError()
     }
 
     public mutating func combine(_ value: Any?) {
+        Swift.fatalError()
     }
 
     public func finalize() -> Int {
-        return 0
+        Swift.fatalError()
     }
 
     static func combine(result: Int, value: Any?) -> Int {
-        return 0
+        Swift.fatalError()
     }
 }
