@@ -4,4 +4,3 @@ package skip.foundation
 fun foundationHelperDemo(): String {
     return "Kotlin"
 }
-//
