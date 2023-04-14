@@ -5,8 +5,6 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-data class Tuple2<A, B>(val value0: A, val value1: B)
-
 // These types are not themselves mutable, but their members might be, and a destructuring assignment can
 // access members without calling sref() on them. So support sref() on the tuples themselves. Note that
 // because the tuples aren't mutable, we can ignore the onUpdate closures

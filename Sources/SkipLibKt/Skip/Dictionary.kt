@@ -6,15 +6,15 @@
 package skip.lib
 
 // We convert dictionary literals [...] into dictionaryOf(...)
-fun <K, V> dictionaryOf(vararg entries: Pair<K, V>): Dictionary<K, V> {
+fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     val dictionary = Dictionary<K, V>()
     for (entry in entries) {
-        dictionary[entry.first] = entry.second
+        dictionary[entry.element0] = entry.element1
     }
     return dictionary
 }
 
-class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>>, Hashable {
+class Dictionary<K, V>: MutableStruct, Iterable<Tuple2<K, V>>, Hashable {
     private var storage: DictionaryStorage<K, V>
     private var isStorageShared = false
 
@@ -29,10 +29,10 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>>, Hashable {
         }
     }
 
-    constructor(vararg entries: Pair<K, V>) {
+    constructor(vararg entries: Tuple2<K, V>) {
         storage = DictionaryStorage()
         for (entry in entries) {
-            this[entry.first] = entry.second
+            this[entry.element0] = entry.element1
         }
     }
 
@@ -41,15 +41,15 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>>, Hashable {
         isStorageShared = true
     }
 
-    override fun iterator(): Iterator<Pair<K, V>> {
+    override fun iterator(): Iterator<Tuple2<K, V>> {
         val storageIterator = storage.iterator()
-        return object: Iterator<Pair<K, V>> {
+        return object: Iterator<Tuple2<K, V>> {
             override fun hasNext(): Boolean {
                 return storageIterator.hasNext()
             }
-            override fun next(): Pair<K, V> {
+            override fun next(): Tuple2<K, V> {
                 val entry = storageIterator.next()
-                return Pair(entry.key.sref(), entry.value.sref())
+                return Tuple2(entry.key.sref(), entry.value.sref())
             }
         }
     }
@@ -117,7 +117,7 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>>, Hashable {
     }
 }
 
-// Pair extension functions to mimic a dictionary entry tuple
+// Tuple2 extension functions to mimic a dictionary entry tuple
 val <K, V> Tuple2<K, V>.key: K
     get() = element0
 val <K, V> Tuple2<K, V>.value: V
