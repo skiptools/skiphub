@@ -167,11 +167,12 @@ class TestUserDefaults : XCTestCase {
 
     func test_setValue_String() {
         let defaults = UserDefaults.standard
+        let keyName = "key" + UUID().uuidString
 
         // Register a String value. UserDefaults.string(forKey:) is supposed to return the String
-        defaults.set("hello", forKey: "key1")
+        defaults.set("hello", forKey: keyName)
 
-        XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
+        XCTAssertEqual(defaults.string(forKey: keyName), "hello")
     }
 
 ////    func test_setValue_NSURL() {
@@ -214,10 +215,11 @@ class TestUserDefaults : XCTestCase {
 
     func test_setValue_Bool() {
         let defaults = UserDefaults.standard
+        let keyName = "key" + UUID().uuidString
 
-        defaults.set(true, forKey: "key1")
+        defaults.set(true, forKey: keyName)
 
-        XCTAssertEqual(defaults.bool(forKey: "key1"), true)
+        XCTAssertEqual(defaults.bool(forKey: keyName), true)
     }
 
 ////    func test_setValue_BoolFromString() {
@@ -231,10 +233,11 @@ class TestUserDefaults : XCTestCase {
 
     func test_setValue_Int() {
         let defaults = UserDefaults.standard
+        let keyName = "key" + UUID().uuidString
 
-        defaults.set(1234, forKey: "key1")
+        defaults.set(1234, forKey: keyName)
 
-        XCTAssertEqual(defaults.integer(forKey: "key1"), 1234)
+        XCTAssertEqual(defaults.integer(forKey: keyName), 1234)
     }
 
 ////    func test_setValue_IntFromString() {
@@ -248,10 +251,11 @@ class TestUserDefaults : XCTestCase {
 
     func test_setValue_Double() {
         let defaults = UserDefaults.standard
+        let keyName = "key" + UUID().uuidString
 
-        defaults.set(5.5, forKey: "key1")
+        defaults.set(5.5, forKey: keyName)
 
-        XCTAssertEqual(defaults.double(forKey: "key1"), 5.5)
+        XCTAssertEqual(defaults.double(forKey: keyName), 5.5)
     }
 
 ////    func test_setValue_DoubleFromString() {
