@@ -118,7 +118,7 @@ class Dictionary<K, V>: MutableStruct, Iterable<Pair<K, V>>, Hashable {
 }
 
 // Pair extension functions to mimic a dictionary entry tuple
-val <K, V> Pair<K, V>.key: K
-    get() = first
-val <K, V> Pair<K, V>.value: V
-    get() = second
+val <K, V> Tuple2<K, V>.key: K
+    get() = element0
+val <K, V> Tuple2<K, V>.value: V
+    get() = element1
