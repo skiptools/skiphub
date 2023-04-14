@@ -14,7 +14,7 @@ import XCTest
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class SkipDeviceTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "BundleTests")
+    fileprivate let logger = Logger(subsystem: "test", category: "SkipDeviceTests")
     
     func testSkipDevice() throws {
         print("Running: testSkipDevice…")
@@ -85,6 +85,17 @@ final class SkipDeviceTests: XCTestCase {
         XCTAssertNotNil(service)
         //let tasks = service.getAppTasks()
         let processes = service.getRunningAppProcesses()
+
+        // “Return the approximate per-application memory class of the current device. This gives you an idea of how hard a memory limit you should impose on your application to let the overall system work best. The returned value is in megabytes; the baseline Android memory class is 16 (which happens to be the Java heap limit of those devices); some device with more memory may return 24 or even higher numbers.”
+        let memoryClass = service.getMemoryClass()
+        XCTAssertEqual(16, memoryClass)
+
+        let largeMemoryClass = service.getMemoryClass()
+        XCTAssertEqual(16, largeMemoryClass)
+
+        XCTAssertEqual(false, android.app.ActivityManager.isRunningInTestHarness())
+        XCTAssertEqual(false, android.app.ActivityManager.isUserAMonkey())
+
     }
 
     func testALARM_SERVICE() {
