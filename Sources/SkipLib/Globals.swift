@@ -20,3 +20,7 @@ public func min<T>(_ x: T, _ y: T) -> T where T : Comparable {
 public func max<T>(_ x: T, _ y: T) -> T where T : Comparable {
     Swift.fatalError()
 }
+
+public func type(of: Any) -> Any.Type {
+    Swift.fatalError()
+}

@@ -16,8 +16,8 @@ final class DictionaryTests: XCTestCase {
         let emptyDictionary3 = [String: Int]()
         XCTAssertEqual(emptyDictionary3.count, 0)
 
-//        let emptyDictionary4 = Dictionary<String, Int>()
-//        XCTAssertEqual(emptyDictionary4.count, 0)
+        let emptyDictionary4 = Dictionary<String, Int>()
+        XCTAssertEqual(emptyDictionary4.count, 0)
 
         let singleElementDictionary = ["a": 1]
         XCTAssertEqual(singleElementDictionary.count, 1)
@@ -80,7 +80,6 @@ final class DictionaryTests: XCTestCase {
         XCTAssertEqual(dict.count, 2)
         XCTAssertEqual(dict2.count, 2)
         XCTAssertEqual(dict3.count, 3)
-
     }
 }
 

@@ -247,7 +247,7 @@ extension JUnitTestCase {
             }
 
             if !isWarning {
-                print("reporing error in file:", fileURLString, "line:", lineNumber)
+                print("reporting error in file:", fileURLString, "line:", lineNumber)
                 let kotlinLocation = XCTSourceCodeLocation(fileURL: fileURL, lineNumber: lineNumber)
 
                 let desc = lineComponents.last?.description ?? String(trimmedLine)

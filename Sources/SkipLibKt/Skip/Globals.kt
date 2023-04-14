@@ -5,6 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+import kotlin.reflect.*
+
 // Convert the Swift `description` to Java's `toString()`
 val Any.description: String
 	get() = this.toString()
@@ -23,4 +25,8 @@ fun <T : Comparable<T>> min(a: T, b: T): T {
 
 fun <T : Comparable<T>> max(a: T, b: T): T {
 	return if (a >= b) a else b
+}
+
+fun type(of: Any): KClass<*> {
+    return of::class
 }
