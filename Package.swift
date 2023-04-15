@@ -30,7 +30,7 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.3.34"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.3.35"),
     ],
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),

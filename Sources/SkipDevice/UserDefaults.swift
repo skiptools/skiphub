@@ -30,17 +30,8 @@ public struct SkipUserDefaults : RawRepresentable {
 extension SkipUserDefaults {
     public static var standard: SkipUserDefaults {
         // FIXME: uses androidx.test and
-        SkipUserDefaults(context.getSharedPreferences("defaults", android.content.Context.MODE_PRIVATE))
+        SkipUserDefaults(androidContext().getSharedPreferences("defaults", android.content.Context.MODE_PRIVATE))
     }
-
-    static var context: android.content.Context {
-        // we don't have a compile dependency on android test, so we need to load using reflection
-        //androidx.test.core.app.ApplicationProvider.getApplicationContext()
-        Class.forName("androidx.test.core.app.ApplicationProvider")
-            .getDeclaredMethod("getApplicationContext")
-            .invoke(nil) as android.content.Context
-    }
-
 
     public func `set`(_ value: Int, forKey keyName: String) {
         let prefs = rawValue.edit()
