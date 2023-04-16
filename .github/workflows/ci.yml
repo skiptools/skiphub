@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ['SkipUnit', 'SkipLib', 'SkipFoundation', 'SkipUI', 'SkipDevice', 'SkipSQL', 'ExampleLib', 'ExampleApp']
-        mode: ['Debug', 'Release']
+        target: ['SkipUnit', 'SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
+        mode: ['debug', 'release']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
 
@@ -43,29 +43,29 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Configure Debug Flags
-        # when in Debug mode, we run against a local build of the toolchain
-        if: ${{ matrix.mode == 'Debug' }}
+      - name: Configure debug Flags
+        # when in debug mode, we run against a local build of the toolchain
+        if: ${{ matrix.mode == 'debug' }}
         run: |
           echo "SKIPLOCAL=.." >> $GITHUB_ENV
 
       - name: Checkout skip
-        if: ${{ matrix.mode == 'Debug' }}
+        if: ${{ matrix.mode == 'debug' }}
         uses: actions/checkout@v3
         with:
           path: skip
           repository: skiptools/skip
 
       - name: Checkout SkipSource
-        if: ${{ matrix.mode == 'Debug' }}
+        if: ${{ matrix.mode == 'debug' }}
         uses: actions/checkout@v3
         with:
           path: SkipSource
           repository: skiptools/SkipSource
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Check skiptool (Debug)
-        if: ${{ matrix.mode == 'Debug' }}
+      - name: Check skiptool (debug)
+        if: ${{ matrix.mode == 'debug' }}
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
@@ -82,22 +82,21 @@ jobs:
       - name: Run ${{ matrix.target }} Swift Tests (macOS)
         working-directory: skiphub
         run: |
-          swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}Tests\."
-          #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
+          swift test --configuration "${CONFIG}" --filter "${{ matrix.target }}Tests\."
 
       - name: Run ${{ matrix.target }} Gradle Tests (macOS)
         working-directory: skiphub
         # we don't use xcpretty here because it doesn't show skip's gradle output
         run: |
-          swift test --configuration $(echo "${CONFIG}" | tr '[:upper:]' '[:lower:]') --filter "${{ matrix.target }}TestsKt\."
-          #xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "macosx" -destination "platform=macosx" -scheme "${{ matrix.target }}Kt" ENABLE_TESTABILITY=YES
+          swift test --configuration "${CONFIG}" --filter "${{ matrix.target }}KtTests\."
 
       - name: Run ${{ matrix.target }} Swift Tests (iOS)
         # disabled to speed up CI (adds ~5m)
         if: false
         working-directory: skiphub
         run: |
-          xcodebuild test -skipPackagePluginValidation -configuration "${CONFIG}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
+          # note CONFIG Release/Debug needs to be capitalized for xcodebuild
+          xcodebuild test -skipPackagePluginValidation -configuration "${${CONFIG/debug/Debug}/release/Release}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Run ${{ matrix.target }} Gradle Tests (Android)
         working-directory: skiphub
@@ -106,7 +105,7 @@ jobs:
           # get the most recent derived data folder
           #PLUGIN_OUTPUT=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
 
-          cd ${PLUGIN_OUTPUT}/${{ matrix.target }}TestsKt/skip-transpiler
+          cd ${PLUGIN_OUTPUT}/${{ matrix.target }}KtTests/skip-transpiler
 
           brew install tree
           tree -lh -I build .

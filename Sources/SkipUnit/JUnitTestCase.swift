@@ -39,7 +39,8 @@ extension JUnitTestCase {
     func runGradleTests() async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
-        let moduleSuffix = "TestsKt"
+        //let moduleSuffix = "TestsKt"
+        let moduleSuffix = "KtTests"
         if !moduleName.hasSuffix(moduleSuffix) {
             struct InvalidModuleNameError : LocalizedError {
                 var errorDescription: String?
@@ -50,7 +51,7 @@ extension JUnitTestCase {
         let driver = try await GradleDriver()
         let dir = try pluginOutputFolder(module: moduleName)
 
-        // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibTestsKt")
+        // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
         let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
 
         var testProcessResult: ProcessResult? = nil
@@ -178,7 +179,7 @@ extension JUnitTestCase {
             // extract the kotlin module name, which comes after the dollar in the stack trace:
             // e.g., "SkipLib" is extracted from "skip.lib.SkipLibTests.testSkipLib$SkipLib"
             // also handle Kotlin/Gradle/Android appending of _debug or _release to the module name:
-            // "skip.device.SkipDeviceTests.testCanvas$SkipDevice_debug" should turn into "SkipDevice"
+            // "skip.device.SkipKitTests.testCanvas$SkipKit_debug" should turn into "SkipKit"
             // this will break of the package/module name has an underscore in it.
 
             // FIXME: only test cases seems to be appended with the "$Module_debug" suffix; non-test stack do not have it, so we'll need to try to figure out the module name for the code if we want to handle jumping to non-test locations
@@ -228,7 +229,7 @@ extension JUnitTestCase {
     /// Parse the line looking for compile errors like:
     ///
     /// ```
-    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skiphub.output/SkipSQLTestsKt/skip-transpiler/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
+    /// e: file:///SOME/PAH/Library/Developer/Xcode/DerivedData/Skip-ID/SourcePackages/plugins/skiphub.output/SkipSQLKtTests/skip-transpiler/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
     /// ```
     private func checkOutputForIssue(line: String) {
         if line.hasPrefix("e: file://") || line.hasPrefix("w: file://") {

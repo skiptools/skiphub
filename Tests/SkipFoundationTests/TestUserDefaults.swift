@@ -8,7 +8,7 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-// disabled for now since they are moved to SkipDevice (and these don't handle parallel testing, since they try to overwrite the same default "key1" from different tests)
+// disabled for now since they are moved to SkipKit (and these don't handle parallel testing, since they try to overwrite the same default "key1" from different tests)
 #if false
 //#if !SKIP
 

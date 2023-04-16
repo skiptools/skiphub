@@ -4,7 +4,7 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-@testable import SkipDevice
+@testable import SkipKit
 #endif
 import OSLog
 import Foundation
@@ -13,16 +13,16 @@ import XCTest
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-final class SkipDeviceTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "SkipDeviceTests")
+final class SkipKitTests: XCTestCase {
+    fileprivate let logger = Logger(subsystem: "test", category: "SkipKitTests")
     
-    func testSkipDevice() throws {
-        print("Running: testSkipDevice…")
-        logger.log("running testSkipDevice")
+    func testSkipKit() throws {
+        print("Running: testSkipKit…")
+        logger.log("running testSkipKit")
 
         XCTAssertEqual(3.0 + 1.5, 9.0/2)
-        XCTAssertEqual("SkipDevice", SkipDeviceInternalModuleName())
-        XCTAssertEqual("SkipDevice", SkipDevicePublicModuleName())
+        XCTAssertEqual("SkipKit", SkipKitInternalModuleName())
+        XCTAssertEqual("SkipKit", SkipKitPublicModuleName())
         //XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
     }
 

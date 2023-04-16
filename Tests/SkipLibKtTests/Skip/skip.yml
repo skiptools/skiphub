@@ -5,4 +5,4 @@
 #  contents:
 #    - block: 'dependencies'
 #      contents:
-#        - '// no new dependencies in SkipLibTestsKt'
+#        - '// no new dependencies in SkipLibKtTests'
