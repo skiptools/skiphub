@@ -3,11 +3,8 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
+package skip.lib
 
-// THIS TRANSPILATION IS NOT USED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
-
-public protocol Equatable {
+// We cannot define allCases because Kotlin does not support static protocol requirements
+interface CaseIterable {
 }
