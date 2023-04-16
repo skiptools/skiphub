@@ -117,4 +117,15 @@ final class StringTests: XCTestCase {
         XCTAssertEqual(frst2, "hello, worl")
     }
 
+    func testMultlineStrings() {
+        let str = """
+        Hello there,
+
+        How do you do?
+
+            Bye!
+        """
+        let str2 = "Hello there,\n\nHow do you do?\n\n    Bye!"
+        XCTAssertEqual(str, str2)
+    }
 }
