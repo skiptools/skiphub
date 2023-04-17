@@ -16,8 +16,17 @@ val Any.debugDescription: String
 
 // Global functions:
 
-// `Swift.fatalError` function calls `Kotlin.error`
 fun fatalError(message: String = "fatalError"): Nothing = error(message)
+
+fun type(of: Any): KClass<*> {
+    return of::class
+}
+
+fun <T> swap(a: InOut<T>, b: InOut<T>) {
+    val t = a.value
+    a.value = b.value
+    b.value = t
+}
 
 fun <T : Comparable<T>> min(a: T, b: T): T {
 	return if (a <= b) a else b
@@ -25,8 +34,4 @@ fun <T : Comparable<T>> min(a: T, b: T): T {
 
 fun <T : Comparable<T>> max(a: T, b: T): T {
 	return if (a >= b) a else b
-}
-
-fun type(of: Any): KClass<*> {
-    return of::class
 }

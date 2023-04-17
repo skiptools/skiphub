@@ -13,14 +13,18 @@ public func fatalError(message: String = "fatalError") -> Never {
     Swift.fatalError()
 }
 
+public func type(of: Any) -> Any.Type {
+    Swift.fatalError()
+}
+
+public func swap<T>(_ a: inout T, _ b: inout T) {
+    Swift.fatalError()
+}
+
 public func min<T>(_ x: T, _ y: T) -> T where T : Comparable {
     Swift.fatalError()
 }
 
 public func max<T>(_ x: T, _ y: T) -> T where T : Comparable {
-    Swift.fatalError()
-}
-
-public func type(of: Any) -> Any.Type {
     Swift.fatalError()
 }

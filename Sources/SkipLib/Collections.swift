@@ -9,6 +9,12 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+// Support these lower-level Swift protocols to transpile code that may use them.
+// We move the majority of the API into extensions, however, to allow ourselves to communicate
+// e.g. default function parameter values to the type inference engine. We're also overly
+// non-specific with some parameter types and overly specific with some return types to simplify
+// type inference - we can rely on the Swift compiler to prevent any type mismatches
+
 public protocol IteratorProtocol<Element> {
     associatedtype Element
     mutating func next() -> Element?
@@ -23,6 +29,9 @@ public protocol Collection<Element>: Sequence {
     associatedtype Element
     // SKIP NOWARN
     typealias Index = Int
+}
+
+public protocol MutableCollection: Collection {
 }
 
 public protocol BidirectionalCollection: Collection {
@@ -257,9 +266,34 @@ extension Collection {
     // UNSUPPORTED:
     // public func randomElement<T: RandomNumberGenerator>(using generator: inout T) -> Element?
     // public mutating func partition(by belongsInSecondPartition: (Element) throws -> Bool) rethrows -> Index
-    // public mutating func partition(by belongsInSecondPartition: (Element) throws -> Bool) rethrows -> Index
     // public func shuffled<T: RandomNumberGenerator>(using generator: inout T) -> [Element] {
     // public mutating func shuffle<T: RandomNumberGenerator>(using generator: inout T)
+}
+
+extension MutableCollection {
+    // SKIP NOWARN
+    public subscript(position: Int) -> Element {
+        get {
+            Swift.fatalError()
+        }
+        set {
+            Swift.fatalError()
+        }
+    }
+
+    // SKIP NOWARN
+    public subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
+        get {
+            Swift.fatalError()
+        }
+        set {
+            Swift.fatalError()
+        }
+    }
+
+    public mutating func swapAt(_ i: Index, _ j: Index) {
+        Swift.fatalError()
+    }
 }
 
 extension BidirectionalCollection {
