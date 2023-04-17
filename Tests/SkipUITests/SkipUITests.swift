@@ -16,4 +16,8 @@ final class SkipUITests: XCTestCase {
         XCTAssertEqual("SkipUI", SkipUIPublicModuleName())
         //XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
     }
+
+    // TODO:
+    //@get:Rule
+    //val rule = createComposeRule()
 }
