@@ -4,7 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-@_exported import SkipFoundation
+@_exported import SkipKit
+
+// Rather than re-exporting all of SwiftUI, this method
+// selectively aliases SkipUI.View to SwiftUI.View.
+
+//@_exported import SwiftUI
 import SwiftUI
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
