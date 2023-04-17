@@ -6,7 +6,7 @@
 package skip.lib
 
 // We convert array literals [...] into arrayOf(...)
-fun <Element: Any> arrayOf(vararg elements: Element): Array<Element> {
+fun <Element> arrayOf(vararg elements: Element): Array<Element> {
     val storage = ArrayList<Element>()
     for (element in elements) {
         storage.add(element.sref())
@@ -14,7 +14,7 @@ fun <Element: Any> arrayOf(vararg elements: Element): Array<Element> {
     return Array(storage, nocopy = true)
 }
 
-class Array<Element: Any>: AbstractMutableList<Element>, RandomAccessCollection<Element>, MutableCollection<Element>, MutableStruct {
+class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Element>, MutableCollection<Element>, MutableStruct {
     private var isStorageShared = false
     private var _mutableStorage: MutableList<Element>? = null
     private var _immutableStorage: List<Element>? = null

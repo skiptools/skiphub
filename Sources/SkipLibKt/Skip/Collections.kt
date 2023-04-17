@@ -5,11 +5,11 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-interface IteratorProtocol<Element: Any> {
+interface IteratorProtocol<Element> {
     fun next(): Element?
 }
 
-interface Sequence<Element: Any>: Iterable<Element> {
+interface Sequence<Element>: Iterable<Element> {
     fun makeIterator(): IteratorProtocol<Element>
 
     val underestimatedCount: Int
@@ -21,11 +21,11 @@ interface Sequence<Element: Any>: Iterable<Element> {
 
     // Iterable.forEach does not need modification
 
-    fun <ElementOfResult: Any> map(transform: (Element) -> ElementOfResult): Array<ElementOfResult> {
+    fun <ElementOfResult> map(transform: (Element) -> ElementOfResult): Array<ElementOfResult> {
         return Array((this as Iterable<Element>).map(transform), nocopy = true)
     }
 
-    fun <ElementOfResult: Any> compactMap(transform: (Element) -> ElementOfResult?): Array<ElementOfResult> {
+    fun <ElementOfResult> compactMap(transform: (Element) -> ElementOfResult?): Array<ElementOfResult> {
         return Array(mapNotNull(transform), nocopy = true)
     }
 
@@ -60,22 +60,22 @@ interface Sequence<Element: Any>: Iterable<Element> {
 //    }
 }
 
-interface Collection<Element: Any>: Sequence<Element> {
+interface Collection<Element>: Sequence<Element> {
     val count: Int
         get() = count()
 }
 
-interface MutableCollection<Element: Any>: Collection<Element> {
+interface MutableCollection<Element>: Collection<Element> {
 
 }
 
-interface BidirectionalCollection<Element: Any>: Collection<Element> {
+interface BidirectionalCollection<Element>: Collection<Element> {
     fun last(where: (Element) -> Boolean): Element? {
         return lastOrNull(where)
     }
 }
 
-interface RandomAccessCollection<Element: Any>: BidirectionalCollection<Element> {
+interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
 
 }
 
@@ -118,7 +118,7 @@ fun <T> Iterable<T>.first(where: (acc: T) -> Boolean): T? {
 }
 
 // Forward Swift's `last` property to Kotlin's `last()` function
-val <T: Any> Array<T>.last: T
+val <T> Array<T>.last: T
 	get() = this.last()
 
 fun <T> Iterable<T>.last(where: (acc: T) -> Boolean): T? {
