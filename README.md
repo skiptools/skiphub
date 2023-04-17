@@ -1,127 +1,114 @@
-# Skip core libraries
+# SkipHub
 
-Modules that constitute the core libraries for Skip.
+The SkipHub repository contains the Swift Package Manager
+modules for the core Skip library ecosystem, consisting of
+the following core packages:
 
-
+- SkipUnit: base testing support for Skip packages
+- SkipLib: the Swift standard library Kotlin support
+- SkipFoundation: Kotlin equivalents for a subset of Foundation
+- SkipKit: Skip platform for iOS and Android
+- SkipUI: Declarative user-interface module for iOS and Android based on SwiftUI and Jetpack Compose.
 
 Modules
 =======
 
-System
-  Crypto
-  SQLite
-  FileSystem
-  Localization
-
-Device
-  Network
-  NetInfo
-  Clipboard
-  Battery
-  Location
-  Brightness
-  AsyncStorage
-  BackgroundFetch
-  Notifications
-  SecureStore (Keychain + UserDefaults)
-  
-Periphireals
-  Camera
-  Print
-
-Sensors
-  Accelerometer
-  Barometer
-  Gyroscope
-  DeviceMotion
-  LightSensor
-  Magnetometer
-  Pedometer
-
-Services
-  Maps
-  Speech
-  Geocoding
-  Sharing
-  PlatformAuthentication
-  SMS
-  Cellular
-
-LocalInfobase
-  Calendar
-  Contacts
-  MediaLibrary
-
-Application
-Linking
-
-TaskManager
-
-AV
-Audio
-Video
-VideoThumbnails
-Asset
-AuthSession
-BarCodeScanner
-BuildProperties
-Constants
-ErrorRecovery
-FaceDetector
-FlashList
-Haptics
-IntentLauncher
-KeepAwake
-LocalAuthentication
-MailComposer
-Reanimated
-SafeAreaContext
-ScreenCapture
-ScreenOrientation
-Screens
-SharedElement
-Skia
-Stripe
-Svg
-SystemUI
-TrackingTransparency
-
-InAppPurchases
-Updates
-StoreReview
-
-Font
-Image
-
-Picker
-Slider
-Checkbox
-SegmentedControl
-
-NavigationBar
-ViewPager
-DocumentPicker
-
-BlurView
-MaskedView
-LinearGradient
-GestureHandler
-
-GLView
-WebView
-WebBrowser
-DateTimePicker
-ImageManipulator
-ImagePicker
-MapView
-SplashScreen
-StatusBar
-Lottie
-
-Excluded:
-
-Random
-
+- System
+  - Crypto
+  - SQLite
+  - FileSystem
+  - Localization
+- Device
+  - Network
+  - NetInfo
+  - Clipboard
+  - Battery
+  - Location
+  - Brightness
+  - AsyncStorage
+  - BackgroundFetch
+  - Notifications
+  - SecureStore (Keychain + UserDefaults)
+- Periphireals
+  - Camera
+  - Print
+- Sensors
+  - Accelerometer
+  - Barometer
+  - Gyroscope
+  - DeviceMotion
+  - LightSensor
+  - Magnetometer
+  - Pedometer
+- Services
+  - Maps
+  - Speech
+  - Geocoding
+  - Sharing
+  - PlatformAuthentication
+  - SMS
+  - Cellular
+- LocalInfobase
+  - Calendar
+  - Contacts
+  - MediaLibrary
+- Application
+- Linking
+- TaskManager
+- AV
+- Audio
+- Video
+- VideoThumbnails
+- Asset
+- AuthSession
+- BarCodeScanner
+- BuildProperties
+- Constants
+- ErrorRecovery
+- FaceDetector
+- FlashList
+- Haptics
+- IntentLauncher
+- KeepAwake
+- LocalAuthentication
+- MailComposer
+- Reanimated
+- SafeAreaContext
+- ScreenCapture
+- ScreenOrientation
+- Screens
+- SharedElement
+- Skia
+- Stripe
+- Svg
+- SystemUI
+- TrackingTransparency
+- InAppPurchases
+- Updates
+- StoreReview
+- Font
+- Image
+- Picker
+- Slider
+- Checkbox
+- SegmentedControl
+- NavigationBar
+- ViewPager
+- DocumentPicker
+- BlurView
+- MaskedView
+- LinearGradient
+- GestureHandler
+- GLView
+- WebView
+- WebBrowser
+- DateTimePicker
+- ImageManipulator
+- ImagePicker
+- MapView
+- SplashScreen
+- StatusBar
+- Lottie
 
 
 SkipFoundation
