@@ -6,7 +6,7 @@
 package skip.lib
 
 // We convert dictionary literals [...] into dictionaryOf(...)
-fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
+fun <K: Any, V: Any> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     val dictionary = Dictionary<K, V>()
     for (entry in entries) {
         dictionary[entry.element0] = entry.element1
@@ -14,7 +14,7 @@ fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     return dictionary
 }
 
-class Dictionary<K, V>: MutableStruct, Iterable<Tuple2<K, V>>, Hashable {
+class Dictionary<K: Any, V: Any>: MutableStruct, Iterable<Tuple2<K, V>>, Hashable {
     private var storage: DictionaryStorage<K, V>
     private var isStorageShared = false
 

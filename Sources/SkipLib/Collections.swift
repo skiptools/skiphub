@@ -51,15 +51,23 @@ extension Sequence {
         Swift.fatalError()
     }
 
+    public func forEach(_ body: (Element) throws -> Void) rethrows {
+        Swift.fatalError()
+    }
+
     public func map<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult) rethrows -> [ElementOfResult] {
         Swift.fatalError()
     }
 
-    public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> [Element] {
+    public func compactMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult] {
         Swift.fatalError()
     }
 
-    public func forEach(_ body: (Element) throws -> Void) rethrows {
+    public func flatMap<ElementOfResult>(_ transform: (Element) throws -> any Sequence<ElementOfResult>) rethrows -> [ElementOfResult] {
+        Swift.fatalError()
+    }
+
+    public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> [Element] {
         Swift.fatalError()
     }
 
@@ -136,14 +144,6 @@ extension Sequence {
     }
 
     public func reversed() -> [Element] {
-        Swift.fatalError()
-    }
-
-    public func flatMap<ElementOfResult>(_ transform: (Element) throws -> any Sequence<ElementOfResult>) rethrows -> [ElementOfResult] {
-        Swift.fatalError()
-    }
-
-    public func compactMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult] {
         Swift.fatalError()
     }
 

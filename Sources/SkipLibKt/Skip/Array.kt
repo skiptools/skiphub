@@ -6,75 +6,111 @@
 package skip.lib
 
 // We convert array literals [...] into arrayOf(...)
-fun <T> arrayOf(vararg elements: T): Array<T> {
-    val array = Array<T>()
+fun <Element: Any> arrayOf(vararg elements: Element): Array<Element> {
+    val storage = ArrayList<Element>()
     for (element in elements) {
-        array.append(element)
+        storage.add(element.sref())
     }
-    return array
+    return Array(storage, nocopy = true)
 }
 
-class Array<T>: MutableStruct, Iterable<T>, Hashable {
-    private var storage: ArrayStorage<T>
+class Array<Element: Any>: AbstractMutableList<Element>, RandomAccessCollection<Element>, MutableCollection<Element>, MutableStruct {
     private var isStorageShared = false
+    private var _mutableStorage: MutableList<Element>? = null
+    private var _immutableStorage: List<Element>? = null
+
+    // Use for read operations
+    private val readStorage: List<Element>
+        get() = _mutableStorage ?: _immutableStorage!!
+
+    // Use for write operations. Copies our internal storage as needed
+    private val writeStorage: MutableList<Element>
+        get() {
+            if (!isStorageShared) {
+                var storage = _mutableStorage
+                if (storage != null) {
+                    return storage
+                }
+            }
+            val storage = ArrayList(readStorage)
+            isStorageShared = false
+            _mutableStorage = storage
+            _immutableStorage = null
+            return storage
+        }
 
     constructor() {
-        storage = ArrayStorage()
+        _mutableStorage = ArrayList()
     }
 
-    constructor(collection: Collection<T>) {
-        storage = ArrayStorage()
-        for (element in collection) {
-            append(element)
+    constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
+        if (nocopy) {
+            if (collection is MutableList<*>) {
+                _mutableStorage = collection as MutableList<Element>
+                isStorageShared = shared
+            } else if (collection is List<*>) {
+                _immutableStorage = collection as List<Element>
+                isStorageShared = shared
+            }
+        }
+        if (_mutableStorage == null && _immutableStorage == null) {
+            val storage = ArrayList<Element>()
+            storage.addAll(collection)
+            _mutableStorage = storage
         }
     }
 
-    constructor(vararg elements: T) {
-        storage = ArrayStorage()
+    constructor(vararg elements: Element) {
+        val storage = ArrayList<Element>()
         for (element in elements) {
-            append(element)
+            storage.add(element.sref())
         }
+        _mutableStorage = storage
     }
 
-    private constructor(storage: ArrayStorage<T>) {
-        this.storage = storage
-        isStorageShared = true
+    fun append(newElement: Element) {
+        add(newElement)
     }
 
-    override fun iterator(): Iterator<T> {
-        val storageIterator = storage.iterator()
-        return object: Iterator<T> {
-            override fun hasNext(): Boolean {
-                return storageIterator.hasNext()
-            }
-            override fun next(): T {
-                return storageIterator.next().sref()
-            }
-        }
+    // Overrides
+
+    override val size: Int
+        get() = readStorage.size
+
+    override fun add(index: Int, element: Element) {
+        willmutate()
+        writeStorage.add(index, element.sref())
+        didmutate()
     }
 
-    operator fun get(index: Int): T {
-        return storage[index].sref({
+    override fun removeAt(index: Int): Element {
+        willmutate()
+        val ret = writeStorage.removeAt(index)
+        didmutate()
+        return ret
+    }
+
+    override fun get(index: Int): Element {
+        return readStorage[index].sref({
             set(index, it)
         })
     }
 
-    operator fun set(index: Int, element: T) {
-        copyStorageIfNeeded()
+    override fun set(index: Int, element: Element): Element {
         willmutate()
-        storage[index] = element.sref()
+        val ret = writeStorage.set(index, element.sref())
         didmutate()
+        return ret
     }
 
-    fun append(element: T) {
-        copyStorageIfNeeded()
-        willmutate()
-        storage.add(element.sref())
-        didmutate()
+    override fun makeIterator(): IteratorProtocol<Element> {
+        val iter = iterator()
+        return object: IteratorProtocol<Element> {
+            override fun next(): Element? {
+                return if (iter.hasNext()) iter.next() else null
+            }
+        }
     }
-
-    val count: Int
-        get() = storage.count()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -83,30 +119,20 @@ class Array<T>: MutableStruct, Iterable<T>, Hashable {
         if (other as? Array<*> == null) {
             return false
         }
-        return other.storage == storage
+        return other.readStorage == readStorage
     }
 
-    override fun hashCode(): Int {
-        return storage.hashCode()
-    }
+    // MutableStruct
 
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
     override fun scopy(): MutableStruct {
-        isStorageShared = true
-        return Array(storage = storage)
-    }
-
-    private fun copyStorageIfNeeded() {
-        if (isStorageShared) {
-            storage = ArrayStorage(storage)
-            isStorageShared = false
-        }
-    }
-
-    private class ArrayStorage<T>(): ArrayList<T>() {
-        constructor(list: List<T>) : this() {
-            addAll(list)
+        val storage = _mutableStorage
+        if (storage != null) {
+            isStorageShared = true
+            return Array(storage, nocopy = true, shared = true)
+        } else {
+            return Array(_immutableStorage!!)
         }
     }
 }
