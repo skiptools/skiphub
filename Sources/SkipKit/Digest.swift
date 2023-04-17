@@ -11,15 +11,21 @@ import SkipFoundation
 
 #if !SKIP
 /// An alias for `HMAC<Insecure.MD5>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 typealias HMACMD5 = HMAC<Insecure.MD5>
 /// An alias for `HMAC<Insecure.SHA1>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 typealias HMACSHA1 = HMAC<Insecure.SHA1>
 /// An alias for `HMAC<SHA256>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 typealias HMACSHA256 = HMAC<SHA256>
 /// An alias for `HMAC<SHA384>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 typealias HMACSHA384 = HMAC<SHA384>
 /// An alias for `HMAC<SHA512>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 typealias HMACSHA512 = HMAC<SHA512>
+
 #else
 
 open class DigestFunction {
