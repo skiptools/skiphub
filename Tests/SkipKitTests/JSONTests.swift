@@ -76,7 +76,7 @@ class TestJSON : XCTestCase {
 
         // note Android differences:
         // 1. We do not yet support sorted keys on Android (we'd need to override the JSONStringer, or make a recursive copy of the tree)
-        // 2. Swift pretty output has spaced in front of the colons
+        // 2. Swift pretty output has spaces in front of the colons
         #if SKIP
         XCTAssertEqual(prettyString, """
         {

@@ -8,7 +8,7 @@ import SkipUI
 // NOTE: Skip overridden with ExampleApp.kt
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-let logger = Logger(subsystem: "activity", category: "ExampleApp")
+let logger = Logger(subsystem: "skip", category: "ExampleApp")
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 struct TextView : View {
