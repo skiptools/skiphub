@@ -24,11 +24,15 @@ final class SkipKitTests: XCTestCase {
         XCTAssertEqual("SkipKit", SkipKitInternalModuleName())
         XCTAssertEqual("SkipKit", SkipKitPublicModuleName())
         //XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
+
+        #if SKIP
+        XCTAssertEqual("stdout", System.getProperty("robolectric.logging"), "Robolectric build.gradle.kts should have enabled logging")
+        #endif
     }
 
     #if SKIP
     // get an Android context from the current test environment
-    let context: android.content.Context = androidx.test.core.app.ApplicationProvider.getApplicationContext()
+    let context: android.content.Context = androidContext()
 
     func testUserDefaults() throws {
         let prefs: android.content.SharedPreferences = context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)

@@ -1,6 +1,5 @@
 package example.app
 
-/*
 import androidx.compose.runtime.Composable
 
 class DestinationOne: View() {
@@ -18,4 +17,4 @@ class DestinationOne: View() {
         body().Compose(context)
     }
 }
-*/
+

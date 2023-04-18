@@ -3,10 +3,25 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if false // !SKIP
 import SkipUI
 
-//public let logger = Logger(subsystem: "activity", category: "ExampleApp")
+public let logger = Logger(subsystem: "activity", category: "ExampleApp")
+
+struct TextView : View {
+    let text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(text)
+    }
+}
+
+// TODO: restore
+
+#if false // !SKIP
 
 //class ExampleApp : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,18 +78,6 @@ struct TextFieldView : View {
             .textFieldStyle(.roundedBorder)
     }
 
-}
-
-struct TextView : View {
-    let text: String
-
-    init(_ text: String) {
-        self.text = text
-    }
-
-    var body: some View {
-        Text(text)
-    }
 }
 
 //class RootView: View() {
