@@ -1,6 +1,10 @@
+// Copyright 2023 Skip
+//
+// This is free software: you can redistribute and/or modify it
+// under the terms of the GNU Lesser General Public License 3.0
+// as published by the Free Software Foundation https://fsf.org
 package example.app
 
-/*
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,8 +26,10 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import skip.foundation.warning
+import skip.foundation.Logger
 
+
+val logger = Logger(subsystem = "skip", category = "SkipUI")
 
 class ModelObservableObject {
     var modelValue = 0
@@ -401,9 +407,10 @@ class SheetModifier(val target: View, val isPresented: Binding<Boolean>, val con
             true
         })
 
-        LaunchedEffect(targetState) {
-            state.animateTo(targetState)
-        }
+		// "Cannot access 'animateTo': it is internal in 'ModalBottomSheetState'"
+        //LaunchedEffect(targetState) {
+        //    state.animateTo(targetState)
+        //}
 
         ModalBottomSheetLayout(sheetContent = {
             Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.95f), contentAlignment = Alignment.Center) {
@@ -489,4 +496,3 @@ val Typography = Typography(
     //)
 
 )
-*/
