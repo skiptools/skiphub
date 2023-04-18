@@ -11,14 +11,22 @@ import SkipFoundation
 // SKIP INSERT: import androidx.compose.material.Text
 // SKIP INSERT: import androidx.compose.material.Button
 // SKIP INSERT: import androidx.compose.ui.Modifier
+// SKIP INSERT: import androidx.compose.runtime.mutableStateOf
+// SKIP INSERT: import androidx.compose.runtime.remember
+// SKIP INSERT: import androidx.compose.runtime.getValue
+// SKIP INSERT: import androidx.compose.runtime.setValue
+// SKIP INSERT: import androidx.compose.ui.platform.testTag
 // SKIP INSERT: import androidx.compose.ui.test.assertIsDisplayed
 // SKIP INSERT: import androidx.compose.ui.test.onNodeWithText
+// SKIP INSERT: import androidx.compose.ui.test.onNodeWithTag
+// SKIP INSERT: import androidx.compose.ui.test.performClick
+// SKIP INSERT: import androidx.compose.ui.test.assertTextEquals
 // SKIP INSERT: import androidx.compose.ui.test.junit4.createComposeRule
 // SKIP INSERT: import androidx.test.ext.junit.runners.AndroidJUnit4
 // SKIP INSERT: import org.junit.runner.RunWith
 
 // SKIP INSERT: @RunWith(AndroidJUnit4::class)
-// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [android.os.Build.VERSION_CODES.S])
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class SkipUITests: XCTestCase {
     // SKIP INSERT: @get:Rule val rule = createComposeRule()
 
@@ -31,17 +39,40 @@ final class SkipUITests: XCTestCase {
 
 
     func testCompose() {
-        // SKIP INSERT: // DEMO
-        XCTAssertEqual("X", "X")
-        // SKIP INSERT: rule.setContent {
-        // SKIP INSERT:     Text(text = "Hello")
-        // SKIP INSERT: }
-        XCTAssertEqual("X", "X")
+        #if SKIP
+        rule.setContent {
+            Text(text: "ABC")
+        }
+
+        //rule.onRoot().printToLog("TAG")
+        rule.onNodeWithText("ABC").assertIsDisplayed()
+        #endif
     }
 
-    // SKIP INSERT: @Test func testComposeFunctions() {
-    // SKIP INSERT: rule.setContent {
-    // SKIP INSERT:     Text("Hello")
-    // SKIP INSERT: }
-    // SKIP INSERT: }
+    func testPressButton() {
+        #if SKIP
+        rule.setContent {
+            // SKIP INSERT: var counter by remember { mutableStateOf(0) }
+
+            Text(
+                text: counter.toString(),
+                modifier: Modifier.testTag("Counter")
+            )
+            Button(onClick = { counter++ }) {
+                Text("Increment")
+            }
+        }
+
+        rule
+            .onNodeWithTag("Counter")
+            .assertTextEquals("0")
+        rule
+            .onNodeWithText("Increment")
+            .performClick()
+        rule
+            .onNodeWithTag("Counter")
+            .assertTextEquals("1")
+
+        #endif
+    }
 }

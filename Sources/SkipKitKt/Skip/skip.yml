@@ -8,12 +8,8 @@ build:
   contents:
     - block: 'plugins'
       contents:
-        #- 'id("com.android.application") version "7.4.2"'
         - 'kotlin("android") version "1.8.10"'
-        # currently matches "8.1.0-alpha10"
         - 'id("com.android.library") version "8.1.+"'
-        #- 'id("com.android.library") version "7.4.2"'
-        #- 'id("org.jetbrains.kotlin.android") version "1.5.31"'
 
       # we need to replace the `kotlin-dsl` plugin or else
       # error: “The 'java' plugin has been applied, but it is not compatible with the Android plugins.”
@@ -23,11 +19,11 @@ build:
     - block: 'android'
       contents:
         - 'namespace = group as String'
-        - 'compileSdkVersion(31)'
+        - 'compileSdkVersion(33)'
         - block: 'defaultConfig'
           contents:
-            - 'minSdkVersion(31)'
-            - 'targetSdkVersion(31)'
+            - 'minSdkVersion(33)'
+            - 'targetSdkVersion(33)'
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
@@ -36,6 +32,9 @@ build:
         - block: 'kotlinOptions'
           contents:
             - 'jvmTarget = "11"'
+        - block: 'testOptions'
+          contents:
+            - 'unitTests.isIncludeAndroidResources = true'
 
     - block: 'dependencies'
       contents:
