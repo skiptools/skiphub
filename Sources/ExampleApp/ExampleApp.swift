@@ -5,6 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 import SkipUI
 
+// NOTE: Skip overridden with ExampleApp.kt
+
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 let logger = Logger(subsystem: "activity", category: "ExampleApp")
 
@@ -17,7 +19,10 @@ struct TextView : View {
     }
 
     var body: some View {
-        Text(text)
+        VStack {
+            Text(text)
+            Text(text)
+        }
     }
 }
 

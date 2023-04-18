@@ -5,6 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 import SkipUI
 
+// NOTE: Skip overridden with DestinationOne.kt
+
 @available(macOS 13, iOS 16, tvOS 16, watchOS 8, *)
 struct DestinationOne : View {
     var body: some View {

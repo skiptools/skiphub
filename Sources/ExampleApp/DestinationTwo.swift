@@ -11,18 +11,44 @@ let destinationTwoTitle = "TWO"
 
 // SKIP REPLACE: class DestinationTwo(val title: String = destinationTwoTitle) : View() { @Composable override fun Compose(context: ComposeContext) { body().Compose(context) } }
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-struct DestinationTwo : View { let title: String = destinationTwoTitle }
+struct DestinationTwo : View {
+    let title: String = destinationTwoTitle
+}
 
 // SKIP REPLACE: fun DestinationTwo.body() : View { return createTextView().font("title") }
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension DestinationTwo {
-    var body: some View { createTextView().font(.title) }
+    var body: some View {
+        createTextView().font(.title)
+    }
 }
+
+#if SKIP
+typealias VStack = VStackView
+typealias Text = TextView
+typealias Button = ButtonView
+#endif
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension DestinationTwo {
     func createTextView() -> TextView {
-        return TextView(title)
+        TextView(title)
+    }
+
+    func demoVStack() -> some View {
+        VStack {
+            Text("One")
+            Text("Two")
+            Text("Three")
+            Text("Four")
+            Text("Five")
+            Text("Six")
+            Text("Seven")
+            Text("Eight")
+            Text("Nine")
+            Text("Ten")
+            //Text("Eleven")
+        }
     }
 }
 
