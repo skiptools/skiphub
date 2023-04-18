@@ -240,7 +240,7 @@ final class NumberTests: XCTestCase {
     private func isHashable(_ h: any Hashable) -> Bool {
         return true
     }
-    private func hashValueEqual<T: Hashable>(_ lhs: T, _ rhs: T) -> Bool {
+    private func hashValueEqual<T: Hashable>(_ lhs: T, _ rhs: T) -> Bool where T: Any {
         return lhs.hashValue == rhs.hashValue
     }
 }
