@@ -18,7 +18,7 @@ final class ArrayTests: XCTestCase {
 
         let emptyArray4 = Array<Int>()
         XCTAssertEqual(emptyArray4.count, 0)
-        
+
         let singleElementArray = [1]
         XCTAssertEqual(singleElementArray.count, 1)
         XCTAssertEqual(singleElementArray[0], 1)
@@ -147,15 +147,15 @@ final class ArrayTests: XCTestCase {
         }
         XCTAssertEqual(strings2, ["AA", "ZZ", "MM"])
 
-//        let raws = [1, 2, 3].map { ElementEnum(rawValue: $0) }
-//        XCTAssertTrue(raws[0] == .one)
-//        XCTAssertTrue(raws[1] == .two)
-//        XCTAssertTrue(raws[2] == .three)
-//
-//        let cases = [0, 1, 2].map { ElementEnum.allCases[$0] }
-//        XCTAssertTrue(cases[0] == .one)
-//        XCTAssertTrue(cases[1] == .two)
-//        XCTAssertTrue(cases[2] == .three)
+        let raws = [1, 2, 3].map { ElementEnum(rawValue: $0) }
+        XCTAssertTrue(raws[0] == .one)
+        XCTAssertTrue(raws[1] == .two)
+        XCTAssertTrue(raws[2] == .three)
+
+        let cases = [0, 1, 2].map { ElementEnum.allCases[$0] }
+        XCTAssertTrue(cases[0] == .one)
+        XCTAssertTrue(cases[1] == .two)
+        XCTAssertTrue(cases[2] == .three)
     }
 
     func testArrayFilter() {
@@ -246,8 +246,8 @@ private class ArrayHolder {
     }
 }
 
-//private enum ElementEnum: Int, CaseIterable {
-//    case one = 1
-//    case two
-//    case three
-//}
+private enum ElementEnum: Int, CaseIterable {
+    case one = 1
+    case two
+    case three
+}
