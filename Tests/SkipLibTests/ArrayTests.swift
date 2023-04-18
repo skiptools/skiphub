@@ -158,6 +158,19 @@ final class ArrayTests: XCTestCase {
         XCTAssertTrue(cases[2] == .three)
     }
 
+    func testCompactMap() {
+        let strings = ["A", "Z", "M"]
+        let strings2 = strings.compactMap {
+            $0 == "Z" ? nil : $0 + $0
+        }
+        XCTAssertEqual(strings2, ["AA", "MM"])
+
+        let raws = [1, 5, 3].compactMap { ElementEnum(rawValue: $0) }
+        XCTAssertEqual(2, raws.count)
+        XCTAssertTrue(raws[0] == .one)
+        XCTAssertTrue(raws[1] == .three)
+    }
+
     func testArrayFilter() {
         let strings = ["A", "Z", "M"]
         let strings2 = strings.filter {
