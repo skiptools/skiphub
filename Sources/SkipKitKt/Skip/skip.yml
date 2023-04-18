@@ -1,7 +1,7 @@
 # skip.tools per-configuration file
 
 #skip:
-#  package: 'skip.device'
+#  package: 'skip.kit'
 
 # the blocks to add to the build.gradle.kts
 build:
