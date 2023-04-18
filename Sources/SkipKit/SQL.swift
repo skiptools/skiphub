@@ -186,7 +186,7 @@ public enum SQLValue {
             return num.description
         case let SQLValue.float(dbl):
             return dbl.description
-        case let SQLValue.blob(bytes):
+        case SQLValue.blob:
             return nil // bytes.description // mis-transpiles
         }
     }

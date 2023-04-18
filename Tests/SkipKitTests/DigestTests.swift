@@ -15,18 +15,9 @@ import Foundation
 import XCTest
 
 final class DigestTests: XCTestCase {
-    func testDigestHashMD5() {
-        let inputData = Data("Hello World".utf8)
-        let hashedData: Insecure.MD5Digest = Insecure.MD5.hash(data: inputData)
-        XCTAssertEqual("MD5 digest: b10a8db164e0754105b7a99be72e3fe5", hashedData.description)
-        XCTAssertEqual("MD5 digest: 5f17026cffec9e27c6657f2f2a54e655", Insecure.MD5.hash(data: Data("ZZ Top".utf8)).description)
-    }
-
-    func testDigestHashSHA1() {
-        let inputData = Data("Hello World".utf8)
-        let hashedData: Insecure.SHA1Digest = Insecure.SHA1.hash(data: inputData)
-        XCTAssertEqual("SHA1 digest: 0a4d55a8d778e5022fab701977c5d840bbc486d0", hashedData.description)
-        XCTAssertEqual("SHA1 digest: 962f927d8fb5f84a01d2c7c7a2bdefff151dff09", Insecure.SHA1.hash(data: Data("ZZ Top".utf8)).description)
+    func testSHA256() {
+        XCTAssertEqual("Hello World".utf8Data.sha256().hex(), "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e")
+        XCTAssertEqual("Hello World".utf8Data.sha256().hex(upperCase: true), "A591A6D40BF420404A011733CFB7B190D62C65BF0BCDA32B57B277D9AD9F146E")
     }
 
     func testDigestHashSHA256() {
@@ -48,6 +39,20 @@ final class DigestTests: XCTestCase {
         let hashedData = SHA512.hash(data: inputData)
         XCTAssertEqual("SHA512 digest: 2c74fd17edafd80e8447b0d46741ee243b7eb74dd2149a0ab1b9246fb30382f27e853d8585719e0e67cbda0daa8f51671064615d645ae27acb15bfb1447f459b", hashedData.description)
         XCTAssertEqual("SHA512 digest: 5a293a75e255fbdc85d826483fb1dc05519a750b98e76dfe2922a513df5a4aec2c9daa07cd3abcb0156bdeba3e41897bd0b8f06a3e1df4dd0ec1d0ffefc8abe1", SHA512.hash(data: Data("ZZ Top".utf8)).description)
+    }
+
+    func testDigestHashMD5() {
+        let inputData = Data("Hello World".utf8)
+        let hashedData: Insecure.MD5Digest = Insecure.MD5.hash(data: inputData)
+        XCTAssertEqual("MD5 digest: b10a8db164e0754105b7a99be72e3fe5", hashedData.description)
+        XCTAssertEqual("MD5 digest: 5f17026cffec9e27c6657f2f2a54e655", Insecure.MD5.hash(data: Data("ZZ Top".utf8)).description)
+    }
+
+    func testDigestHashSHA1() {
+        let inputData = Data("Hello World".utf8)
+        let hashedData: Insecure.SHA1Digest = Insecure.SHA1.hash(data: inputData)
+        XCTAssertEqual("SHA1 digest: 0a4d55a8d778e5022fab701977c5d840bbc486d0", hashedData.description)
+        XCTAssertEqual("SHA1 digest: 962f927d8fb5f84a01d2c7c7a2bdefff151dff09", Insecure.SHA1.hash(data: Data("ZZ Top".utf8)).description)
     }
 
     #if !SKIP

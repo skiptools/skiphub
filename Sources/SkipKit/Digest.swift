@@ -7,30 +7,73 @@ import SkipFoundation
 
 #if !SKIP
 @_exported import CryptoKit
-#endif
 
-#if !SKIP
 /// An alias for `HMAC<Insecure.MD5>` since Kotlin does not support static access to generics
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-typealias HMACMD5 = HMAC<Insecure.MD5>
+public typealias HMACMD5 = HMAC<Insecure.MD5>
 /// An alias for `HMAC<Insecure.SHA1>` since Kotlin does not support static access to generics
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-typealias HMACSHA1 = HMAC<Insecure.SHA1>
+public typealias HMACSHA1 = HMAC<Insecure.SHA1>
 /// An alias for `HMAC<SHA256>` since Kotlin does not support static access to generics
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-typealias HMACSHA256 = HMAC<SHA256>
+public typealias HMACSHA256 = HMAC<SHA256>
 /// An alias for `HMAC<SHA384>` since Kotlin does not support static access to generics
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-typealias HMACSHA384 = HMAC<SHA384>
+public typealias HMACSHA384 = HMAC<SHA384>
 /// An alias for `HMAC<SHA512>` since Kotlin does not support static access to generics
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-typealias HMACSHA512 = HMAC<SHA512>
+public typealias HMACSHA512 = HMAC<SHA512>
+
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+extension String {
+    /// Returns the underlying UTF-8 data for this string
+    @inlinable public var utf8Data: Data {
+        Data(utf8)
+    }
+}
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+extension DataProtocol {
+    public func sha256() -> ContiguousBytes {
+        SHA256.hash(data: self)
+    }
+}
+
+//extension ContiguousBytes {
+//    public func sha256() -> ContiguousBytes {
+//        withUnsafeBytes {
+//            SHA256.hash(data: Data($0))
+//        }
+//    }
+//}
+
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+extension ContiguousBytes {
+    /// Returns the contents of the Data as a hex string
+    /// - Parameter uppercase: whether to return the hex string with uppercase characters
+    public func hex(upperCase: Bool = false) -> String {
+        let hexDigits = upperCase ? "0123456789ABCDEF" : "0123456789abcdef"
+        let utf8Digits = Array(hexDigits.utf8)
+
+        return withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> String in
+            let buffer = bytes.bindMemory(to: UInt8.self)
+            return String(unsafeUninitializedCapacity: 2 * buffer.count) { (ptr) -> Int in
+                var p = ptr.baseAddress!
+                for byte in buffer {
+                    p[0] = utf8Digits[Int(byte / 16)]
+                    p[1] = utf8Digits[Int(byte % 16)]
+                    p += 2
+                }
+                return 2 * buffer.count
+            }
+        }
+    }
+}
 
 #else
 
 open class DigestFunction {
-    static var hashName: String = ""
-
     static func authenticationCode(for message: Data, using secret: SymmetricKey, algorithm hashName: String) -> PlatformData {
         let secretKeySpec = javax.crypto.spec.SecretKeySpec(secret.data.rawValue, "Hmac\(hashName)")
         let mac = javax.crypto.Mac.getInstance("Hmac\(hashName)")
@@ -73,24 +116,30 @@ open class HMACSHA512 : DigestFunction {
     }
 }
 
-#endif
-
-#if SKIP
 
 /// Implemented as a simple Data wrapper
 public struct SymmetricKey {
     let data: Data
 }
 
-public extension Data {
+extension Data {
     /// Convert the bytes into a base64 string
     public func base64EncodedString() -> String {
         return java.util.Base64.getEncoder().encodeToString(rawValue)
     }
 
     /// Convert the bytes into a hex string
-    public func hex() -> String {
-        rawValue.hex()
+    public func sha256() -> Data {
+        Data(SHA256.hash(data: self).rawValue)
+    }
+
+    /// Convert the bytes into a hex string
+    public func hex(upperCase: Bool = false) -> String {
+        if upperCase {
+            return rawValue.hex().toUpperCase()
+        } else {
+            return rawValue.hex()
+        }
     }
 }
 
@@ -215,6 +264,10 @@ public struct Insecure {
 }
 
 extension String {
+    public var utf8Data: Data {
+        return Data(utf8)
+    }
+
     public var utf8: PlatformData {
         return toByteArray(java.nio.charset.StandardCharsets.UTF_8)
     }
