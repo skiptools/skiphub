@@ -75,7 +75,7 @@ jobs:
         # the pre-build needs to take place because the Skip
         # packages currently need to be built in order, but
         # SPM will attempt to build the targets in parallel
-        if: false
+        if: true
         run: |
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
 
