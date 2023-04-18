@@ -30,14 +30,17 @@ final class ArrayTests: XCTestCase {
     }
 
     func testOptionalElements() {
-        let optionalArray: [Int?] = [1, nil, 2]
+        var optionalArray: [Int?] = [1, nil, 2]
         XCTAssertEqual(optionalArray.count, 3)
         XCTAssertEqual(optionalArray[0], 1)
         XCTAssertNil(optionalArray[1])
         XCTAssertEqual(optionalArray[2], 2)
+
+        optionalArray.append(nil)
+        XCTAssertNil(optionalArray[3])
     }
 
-    func testArrayAppend() {
+    func testAppend() {
         var array = [1, 2]
         array.append(3)
         XCTAssertEqual(array.count, 3)
@@ -137,12 +140,22 @@ final class ArrayTests: XCTestCase {
 
     }
 
-    func testArrayMap() {
+    func testMap() {
         let strings = ["A", "Z", "M"]
         let strings2 = strings.map {
             $0 + $0
         }
-        XCTAssertEqual(Array(strings2), ["AA", "ZZ", "MM"])
+        XCTAssertEqual(strings2, ["AA", "ZZ", "MM"])
+
+//        let raws = [1, 2, 3].map { ElementEnum(rawValue: $0) }
+//        XCTAssertTrue(raws[0] == .one)
+//        XCTAssertTrue(raws[1] == .two)
+//        XCTAssertTrue(raws[2] == .three)
+//
+//        let cases = [0, 1, 2].map { ElementEnum.allCases[$0] }
+//        XCTAssertTrue(cases[0] == .one)
+//        XCTAssertTrue(cases[1] == .two)
+//        XCTAssertTrue(cases[2] == .three)
     }
 
     func testArrayFilter() {
@@ -150,12 +163,7 @@ final class ArrayTests: XCTestCase {
         let strings2 = strings.filter {
             $0 != "M"
         }
-        XCTAssertEqual(Array(strings2), ["A", "Z"])
-
-        #if !SKIP
-        XCTAssertEqual(Array(strings.filter { $0 != "Z" }), ["A", "M"]) // java.lang.AssertionError: expected:<skip.lib.Array@51399530> but was:<kotlin.collections.CollectionsKt___CollectionsKt$asSequence$$inlined$Sequence$1@6b2ea799>
-        XCTAssertEqual(strings2, ["A", "Z"]) // testProjectGradle(): java.lang.AssertionError: expected:<skip.lib.Array@128d2484> but was:<[A, Z]>
-        #endif
+        XCTAssertEqual(strings2, ["A", "Z"])
     }
 
     func testArrayReduceFold() {
@@ -223,7 +231,6 @@ final class ArrayTests: XCTestCase {
 
 }
 
-
 private class ArrayHolder {
     var array: [Int] = [] {
         didSet {
@@ -238,3 +245,9 @@ private class ArrayHolder {
         }
     }
 }
+
+//private enum ElementEnum: Int, CaseIterable {
+//    case one = 1
+//    case two
+//    case three
+//}

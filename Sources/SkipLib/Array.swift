@@ -9,27 +9,22 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-public struct Array<Element> {
+public struct Array<Element>: MutableCollection, RandomAccessCollection {
     public init() {
         Swift.fatalError()
     }
 
-    #if !SKIP // Skip does not support subscripts
-    public subscript(index: Int) -> Element {
-        get {
-            Swift.fatalError()
-        }
-        set {
-            Swift.fatalError()
-        }
+    public init<S: Sequence<Element>>(_ sequence: S) {
+        Swift.fatalError()
     }
-    #endif
 
     public mutating func append(_ element: Element) {
         Swift.fatalError()
     }
 
-    public var count: Int {
+    // Sequence
+
+    public func makeIterator() -> any IteratorProtocol<Element> {
         Swift.fatalError()
     }
 }

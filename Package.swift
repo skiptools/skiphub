@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "SkipUnitKt", targets: ["SkipUnitKt"]),
 
         .library(name: "SkipLib", targets: ["SkipLib"]),
-        .library(name: "SkipLibKt", targets: ["SkipLib"]),
+        .library(name: "SkipLibKt", targets: ["SkipLibKt"]),
 
         .library(name: "SkipFoundation", targets: ["SkipFoundation"]),
         .library(name: "SkipFoundationKt", targets: ["SkipFoundationKt"]),
