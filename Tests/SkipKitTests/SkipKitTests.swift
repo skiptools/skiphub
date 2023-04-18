@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
-// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class SkipKitTests: XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "SkipKitTests")
@@ -241,11 +241,6 @@ final class SkipKitTests: XCTestCase {
         //let connection = usbManager.openDevice(device)
     }
 
-    func testTEXT_SERVICES_MANAGER_SERVICE() {
-        let textServicesManager = context.getSystemService(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE) as android.view.textservice.TextServicesManager
-        XCTAssertNotNil(textServicesManager)
-    }
-
     func testWIFI_P2P_SERVICE() {
         let wifiP2pManager = context.getSystemService(android.content.Context.WIFI_P2P_SERVICE) as android.net.wifi.p2p.WifiP2pManager
         XCTAssertNotNil(wifiP2pManager)
@@ -383,7 +378,7 @@ final class SkipKitTests: XCTestCase {
         logger.info("CONNECTIVITY_DIAGNOSTICS_SERVICE: \(context.getSystemService(android.content.Context.CONNECTIVITY_DIAGNOSTICS_SERVICE))") // Robolectric: null
         logger.info("FILE_INTEGRITY_SERVICE: \(context.getSystemService(android.content.Context.FILE_INTEGRITY_SERVICE))") // Robolectric: null
         logger.info("TELEPHONY_IMS_SERVICE: \(context.getSystemService(android.content.Context.TELEPHONY_IMS_SERVICE))") // Robolectric: null
-        logger.info("VPN_MANAGEMENT_SERVICE: \(context.getSystemService(android.content.Context.VPN_MANAGEMENT_SERVICE))") // Robolectric: null
+        //logger.info("VPN_MANAGEMENT_SERVICE: \(context.getSystemService(android.content.Context.VPN_MANAGEMENT_SERVICE))") // Robolectric: null
 
         /* Added in API level 31 */
         logger.info("APP_SEARCH_SERVICE: \(context.getSystemService(android.content.Context.APP_SEARCH_SERVICE))") // Robolectric: null

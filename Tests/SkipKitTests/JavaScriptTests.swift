@@ -12,8 +12,8 @@ import OSLog
 import XCTest
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
-// SKIP INSERT: @org.robolectric.annotation.Config(sdk = [android.os.Build.VERSION_CODES.P])
-class TestJavaScript : XCTestCase {
+// SKIP INSERT: @org.robolectric.annotation.Config(sdk = [33])
+class JavaScriptTests : XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "TestJavaScript")
 
     func testJavaScript() throws {
@@ -25,7 +25,8 @@ class TestJavaScript : XCTestCase {
         XCTAssertEqual(19, android.os.Build.VERSION_CODES.KITKAT)
 
         XCTAssertEqual(28, android.os.Build.VERSION_CODES.P)
-        XCTAssertEqual(28, android.os.Build.VERSION.SDK_INT)
+        XCTAssertEqual(33, android.os.Build.VERSION_CODES.TIRAMISU)
+        XCTAssertEqual(33, android.os.Build.VERSION.SDK_INT)
 
 
         XCTAssertEqual(0, webView.webView.getContentHeight())

@@ -10,7 +10,7 @@ import XCTest
 import SkipFoundation
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
-// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class SkipSQLTests: XCTestCase {
     func testSkipSQL() throws {
         //var random = PseudoRandomNumberGenerator(seed: 1234)

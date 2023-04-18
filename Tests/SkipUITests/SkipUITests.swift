@@ -15,13 +15,21 @@ import SkipFoundation
 // SKIP INSERT: import androidx.compose.runtime.remember
 // SKIP INSERT: import androidx.compose.runtime.getValue
 // SKIP INSERT: import androidx.compose.runtime.setValue
+// SKIP INSERT: import androidx.compose.ui.geometry.Rect
 // SKIP INSERT: import androidx.compose.ui.platform.testTag
+// SKIP INSERT: import androidx.compose.ui.semantics.SemanticsNode
+// SKIP INSERT: import androidx.compose.ui.semantics.SemanticsConfiguration
+// SKIP INSERT: import androidx.compose.ui.semantics.SemanticsProperties
 // SKIP INSERT: import androidx.compose.ui.test.assertIsDisplayed
 // SKIP INSERT: import androidx.compose.ui.test.onNodeWithText
 // SKIP INSERT: import androidx.compose.ui.test.onNodeWithTag
 // SKIP INSERT: import androidx.compose.ui.test.performClick
+// SKIP INSERT: import androidx.compose.ui.test.onRoot
+// SKIP INSERT: import androidx.compose.ui.test.printToLog
 // SKIP INSERT: import androidx.compose.ui.test.assertTextEquals
 // SKIP INSERT: import androidx.compose.ui.test.junit4.createComposeRule
+// SKIP INSERT: import androidx.compose.ui.text.AnnotatedString
+// SKIP INSERT: import androidx.compose.ui.unit.toSize
 // SKIP INSERT: import androidx.test.ext.junit.runners.AndroidJUnit4
 // SKIP INSERT: import org.junit.runner.RunWith
 
@@ -46,6 +54,11 @@ final class SkipUITests: XCTestCase {
 
         //rule.onRoot().printToLog("TAG")
         rule.onNodeWithText("ABC").assertIsDisplayed()
+
+        XCTAssertEqual(rule.onRoot().fetchSemanticsNode().treeString(), """
+        Node:
+          Node:Text=[ABC] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+        """)
         #endif
     }
 
@@ -63,6 +76,12 @@ final class SkipUITests: XCTestCase {
             }
         }
 
+        XCTAssertEqual(rule.onRoot().fetchSemanticsNode().treeString(), """
+        Node:
+          Node:TestTag=Counter Text=[0] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+          Node:Role=Button OnClick=AccessibilityAction(label=null, action=() -> kotlin.Boolean) Focused=false RequestFocus=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Text=[Increment] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+        """)
+
         rule
             .onNodeWithTag("Counter")
             .assertTextEquals("0")
@@ -73,6 +92,42 @@ final class SkipUITests: XCTestCase {
             .onNodeWithTag("Counter")
             .assertTextEquals("1")
 
+        XCTAssertEqual(rule.onRoot().fetchSemanticsNode().treeString(), """
+        Node:
+          Node:TestTag=Counter Text=[1] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+          Node:Role=Button OnClick=AccessibilityAction(label=null, action=() -> kotlin.Boolean) Focused=false RequestFocus=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Text=[Increment] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+        """)
+
         #endif
     }
 }
+
+#if SKIP
+
+extension SemanticsNode {
+    /// Returns a description of this node's hierarchy and attributes
+    func treeString(indent: String = "") -> String {
+        let nodeDescription = "\(indent)Node:\(attrList())"
+        let cdesc = self.children.joinToString(separator = "\n") { child in
+            child.treeString(indent + "  ")
+        }
+        return cdesc.isBlank() ? nodeDescription : (nodeDescription + "\n" + cdesc)
+    }
+
+    private func attrList() -> String {
+        var desc = ""
+
+        config.forEach { configValue in
+            let key = configValue.key.name
+            let values = configValue.value
+            if !desc.isEmpty {
+                desc += " "
+            }
+            desc += "\(key)=\(values)"
+        }
+
+        return desc
+    }
+}
+
+#endif

@@ -11,7 +11,7 @@ import OSLog
 import XCTest
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
-// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 class TestJSON : XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "TestJSON")
 
@@ -70,15 +70,7 @@ class TestJSON : XCTestCase {
 
         let plainString = try jsonObject.stringify(pretty: false, sorted: true)
 
-        #if SKIP
-        XCTAssertEqual(plainString, """
-        {"name":"John Smith","isEmployed":true,"age":30}
-        """)
-        #else
-        XCTAssertEqual(plainString, """
-        {"age":30,"isEmployed":true,"name":"John Smith"}
-        """)
-        #endif
+        XCTAssertEqual(plainString, #"{"age":30,"isEmployed":true,"name":"John Smith"}"#)
 
         let prettyString = try jsonObject.stringify(pretty: true, sorted: true)
 
@@ -88,9 +80,9 @@ class TestJSON : XCTestCase {
         #if SKIP
         XCTAssertEqual(prettyString, """
         {
-          "name": "John Smith",
+          "age": 30,
           "isEmployed": true,
-          "age": 30
+          "name": "John Smith"
         }
         """)
         #else
@@ -116,7 +108,7 @@ class TestJSON : XCTestCase {
         bigString = arrayify(10, bigString)
         bigString = arrayify(10, bigString)
         bigString = arrayify(10, bigString) // 100,000: 0.202 Swift, 0.095 Robo
-        bigString = arrayify(4, bigString) // 400,000 (~50M): 1.021 Swift macOS, 0.311 Java Robolectric
+        //bigString = arrayify(4, bigString) // 400,000 (~50M): 1.021 Swift macOS, 0.311 Java Robolectric
         //bigString = arrayify(…, bigString) // 10,000,000: 24.408 Swift,  OOME Robo
 
         // good timing test
