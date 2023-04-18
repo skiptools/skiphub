@@ -6,6 +6,7 @@
 import SkipUI
 
 // SKIP INSERT: import androidx.compose.runtime.Composable
+// SKIP INSERT: import androidx.compose.foundation.layout.Column
 
 let destinationTwoTitle = "TWO"
 
@@ -24,9 +25,11 @@ extension DestinationTwo {
 }
 
 #if SKIP
-typealias VStack = VStackView
+//typealias VStack = Column
 typealias Text = TextView
 typealias Button = ButtonView
+#else
+typealias Column = VStack
 #endif
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
@@ -35,19 +38,22 @@ extension DestinationTwo {
         TextView(title)
     }
 
-    func demoVStack() -> some View {
-        VStack {
-            Text("One")
-            Text("Two")
-            Text("Three")
-            Text("Four")
-            Text("Five")
-            Text("Six")
-            Text("Seven")
-            Text("Eight")
-            Text("Nine")
-            Text("Ten")
-            //Text("Eleven")
+    func demoVStack() {
+        // SKIP INSERT: @Composable
+        func ComposableColumnView() {
+            Column {
+                Text("One")
+                Text("Two")
+                Text("Three")
+                Text("Four")
+                Text("Five")
+                Text("Six")
+                Text("Seven")
+                Text("Eight")
+                Text("Nine")
+                Text("Ten")
+                //Text("Eleven")
+            }
         }
     }
 }
