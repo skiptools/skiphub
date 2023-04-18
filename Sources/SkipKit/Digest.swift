@@ -130,7 +130,7 @@ extension Data {
 
     /// Convert the bytes into a hex string
     public func sha256() -> Data {
-        Data(SHA256.hash(data: self).rawValue)
+        Data(SHA256.hash(data: self).bytes)
     }
 
     /// Convert the bytes into a hex string
@@ -177,15 +177,15 @@ public struct SHA256 : NamedHashFunction {
     public let digestName = "SHA256"
 
     public static func hash(data: Data) -> SHA256Digest {
-        return SHA256Digest(rawValue: SHA256().digest.digest(data.rawValue))
+        return SHA256Digest(bytes: SHA256().digest.digest(data.rawValue))
     }
 }
 
 public struct SHA256Digest : Digest {
-    let rawValue: PlatformData
+    let bytes: PlatformData
 
     var description: String {
-        "SHA256 digest: " + rawValue.hex()
+        "SHA256 digest: " + bytes.hex()
     }
 }
 
@@ -195,15 +195,15 @@ public struct SHA384 : NamedHashFunction {
     public let digestName = "SHA384"
 
     public static func hash(data: Data) -> SHA384Digest {
-        return SHA384Digest(rawValue: SHA384().digest.digest(data.rawValue))
+        return SHA384Digest(bytes: SHA384().digest.digest(data.rawValue))
     }
 }
 
 public struct SHA384Digest : Digest {
-    let rawValue: PlatformData
+    let bytes: PlatformData
 
     var description: String {
-        "SHA384 digest: " + rawValue.hex()
+        "SHA384 digest: " + bytes.hex()
     }
 }
 
@@ -213,15 +213,15 @@ public struct SHA512 : NamedHashFunction {
     public let digestName = "SHA"
 
     public static func hash(data: Data) -> SHA512Digest {
-        return SHA512Digest(rawValue: SHA512().digest.digest(data.rawValue))
+        return SHA512Digest(bytes: SHA512().digest.digest(data.rawValue))
     }
 }
 
 public struct SHA512Digest : Digest {
-    let rawValue: PlatformData
+    let bytes: PlatformData
 
     var description: String {
-        "SHA512 digest: " + rawValue.hex()
+        "SHA512 digest: " + bytes.hex()
     }
 }
 
@@ -232,15 +232,15 @@ public struct Insecure {
         public let digestName = "MD5"
 
         public static func hash(data: Data) -> MD5Digest {
-            return MD5Digest(rawValue: MD5().digest.digest(data.rawValue))
+            return MD5Digest(bytes: MD5().digest.digest(data.rawValue))
         }
     }
 
     public struct MD5Digest : Digest {
-        let rawValue: PlatformData
+        let bytes: PlatformData
 
         var description: String {
-            "MD5 digest: " + rawValue.hex()
+            "MD5 digest: " + bytes.hex()
         }
     }
 
@@ -250,15 +250,15 @@ public struct Insecure {
         public let digestName = "SHA1"
 
         public static func hash(data: Data) -> SHA1Digest {
-            return SHA1Digest(rawValue: SHA1().digest.digest(data.rawValue))
+            return SHA1Digest(bytes: SHA1().digest.digest(data.rawValue))
         }
     }
 
     public struct SHA1Digest : Digest {
-        let rawValue: PlatformData
+        let bytes: PlatformData
 
         var description: String {
-            "SHA1 digest: " + rawValue.hex()
+            "SHA1 digest: " + bytes.hex()
         }
     }
 }
