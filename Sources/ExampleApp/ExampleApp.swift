@@ -5,8 +5,10 @@
 // as published by the Free Software Foundation https://fsf.org
 import SkipUI
 
-public let logger = Logger(subsystem: "activity", category: "ExampleApp")
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+let logger = Logger(subsystem: "activity", category: "ExampleApp")
 
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 struct TextView : View {
     let text: String
 

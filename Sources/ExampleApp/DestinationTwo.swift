@@ -10,11 +10,16 @@ import SkipUI
 let destinationTwoTitle = "TWO"
 
 // SKIP REPLACE: class DestinationTwo(val title: String = destinationTwoTitle) : View() { @Composable override fun Compose(context: ComposeContext) { body().Compose(context) } }
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 struct DestinationTwo : View { let title: String = destinationTwoTitle }
 
 // SKIP REPLACE: fun DestinationTwo.body() : View { return createTextView().font("title") }
-extension DestinationTwo { var body: some View { createTextView().font(.title) } }
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+extension DestinationTwo {
+    var body: some View { createTextView().font(.title) }
+}
 
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension DestinationTwo {
     func createTextView() -> TextView {
         return TextView(title)
