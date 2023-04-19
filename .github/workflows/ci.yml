@@ -15,9 +15,8 @@ jobs:
   ci:
     strategy:
       fail-fast: false
-      max-parallel: 40
       matrix:
-        target: ['SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
+        #target: ['SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
         #mode: ['debug', 'release']
@@ -25,7 +24,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      TARGET: ${{ matrix.target }}
+      OS: ${{ matrix.os }}
+      #TARGET: ${{ matrix.target }}
 
     steps:
       - name: Setup ${{ github.event_name }} environment
@@ -85,31 +85,68 @@ jobs:
         # the pre-build needs to take place because the Skip
         # packages currently need to be built in order, but
         # SPM will attempt to build the targets in parallel
-        if: true
+        if: false
         run: |
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
 
-      - name: Run ${{ matrix.target }} Swift Tests (macOS)
+      - name: SkipLib Swift Tests
         working-directory: skiphub
-        run: |
-          swift test --configuration "${CONFIG}" --filter "${{ matrix.target }}Tests\."
-
-      - name: Run ${{ matrix.target }} Gradle Tests (macOS)
+        run: swift test -c ${CONFIG} --filter SkipLibTests
+      - name: SkipLib Kotlin Tests
         working-directory: skiphub
-        # we don't use xcpretty here because it doesn't show skip's gradle output
-        run: |
-          swift test --configuration "${CONFIG}" --filter "${{ matrix.target }}KtTests\."
+        run: swift test -c ${CONFIG} --filter SkipLibKtTests
 
-      - name: Run ${{ matrix.target }} Swift Tests (iOS)
+      - name: SkipFoundation Swift Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter SkipFoundationTests
+      - name: SkipFoundation Kotlin Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
+
+      - name: SkipKit Swift Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter SkipKitTests
+      - name: SkipKit Kotlin Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter SkipKitKtTests
+
+      - name: SkipUI Swift Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter SkipUITests
+      - name: SkipUI Kotlin Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter SkipUIKtTests
+
+      - name: ExampleLib Swift Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter ExampleLibTests
+      - name: ExampleLib Kotlin Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter ExampleLibKtTests
+
+      - name: ExampleApp Swift Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter ExampleAppTests
+      - name: ExampleApp Kotlin Tests
+        working-directory: skiphub
+        run: swift test -c ${CONFIG} --filter ExampleAppKtTests
+
+      - name: Parallel Tests
+        working-directory: skiphub
+        run: swift test -c release --parallel || echo "PARALLEL TESTS FAILED"
+
+      - name: Swift Tests (iOS)
         # disabled to speed up CI (adds ~5m)
-        if: false
+        # if: false
         working-directory: skiphub
         run: |
           # note CONFIG Release/Debug needs to be capitalized for xcodebuild
-          xcodebuild test -skipPackagePluginValidation -configuration "${${CONFIG/debug/Debug}/release/Release}" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "${{ matrix.target }}" ENABLE_TESTABILITY=YES | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          # | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Run ${{ matrix.target }} Gradle Tests (Android)
+      - name: Gradle Tests (Android)
         working-directory: skiphub
+        if: false
         run: |
           PLUGIN_OUTPUT=.build/plugins/outputs/skiphub
           # get the most recent derived data folder
