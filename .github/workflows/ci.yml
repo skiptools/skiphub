@@ -16,7 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ['SkipUnit', 'SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
+        max-parallel: 40
+        target: ['SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
         #mode: ['debug', 'release']
