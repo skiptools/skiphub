@@ -17,17 +17,26 @@ jobs:
       fail-fast: false
       matrix:
         target: ['SkipUnit', 'SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
-        mode: ['debug', 'release']
         os: ['macos-12']
         #os: ['macos-12', 'macos-13']
+        #mode: ['debug', 'release']
 
     runs-on: ${{ matrix.os }}
 
     env:
-      CONFIG: ${{ matrix.mode }}
       TARGET: ${{ matrix.target }}
 
     steps:
+      - name: Setup ${{ github.event_name }} environment
+        # when the workflow was dispatched manually run against source HEAD
+        # otherwise, run tests against the latest binary release
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "CONFIG=debug" >> $GITHUB_ENV
+          else 
+            echo "CONFIG=release" >> $GITHUB_ENV
+          fi
+
       - name: Checkout skiphub
         uses: actions/checkout@v3
         with:
@@ -46,19 +55,19 @@ jobs:
 
       - name: Configure debug Flags
         # when in debug mode, we run against a local build of the toolchain
-        if: matrix.mode == 'debug'
+        if: env.CONFIG == 'debug'
         run: |
           echo "SKIPLOCAL=.." >> $GITHUB_ENV
 
       - name: Checkout skip
-        if: ${{ matrix.mode == 'debug' }}
+        if: env.CONFIG == 'debug'
         uses: actions/checkout@v3
         with:
           path: skip
           repository: skiptools/skip
 
       - name: Checkout SkipSource
-        if: matrix.mode == 'debug'
+        if: env.CONFIG == 'debug'
         uses: actions/checkout@v3
         with:
           path: SkipSource
@@ -66,7 +75,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Check skiptool (debug)
-        if: matrix.mode == 'debug'
+        if: env.CONFIG == 'debug'
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
@@ -113,6 +122,6 @@ jobs:
           gradle check -Pandroid.useAndroidX=true --console=plain --no-daemon
 
           # TODO:
-          #gradle "connected${{ matrix.mode }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
+          #gradle "connected${{ env.CONFIG }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
 
 
