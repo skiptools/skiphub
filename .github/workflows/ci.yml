@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
   pull_request:
 
-env:
-  DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+#env:
+  #DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
 
 jobs:
   ci:
@@ -81,6 +81,16 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
+      - name: Swift Tests (iOS)
+        # disabled to speed up CI (adds ~5m)
+        # if: false
+        working-directory: skiphub
+        run: |
+          xcodebuild -showsdks
+          # note CONFIG Release/Debug needs to be capitalized for xcodebuild
+          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          # | xcpretty && exit ${PIPESTATUS[0]}
+
       - name: Pre-build ${{ matrix.target }}
         working-directory: skiphub
         # the pre-build needs to take place because the Skip
@@ -137,15 +147,6 @@ jobs:
       - name: Parallel Tests
         working-directory: skiphub
         run: swift test -c release --parallel || echo "PARALLEL TESTS FAILED"
-
-      - name: Swift Tests (iOS)
-        # disabled to speed up CI (adds ~5m)
-        # if: false
-        working-directory: skiphub
-        run: |
-          # note CONFIG Release/Debug needs to be capitalized for xcodebuild
-          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
-          # | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Gradle Tests (Android)
         working-directory: skiphub
