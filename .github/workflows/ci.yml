@@ -13,18 +13,19 @@ env:
 
 jobs:
   ci:
-    strategy:
-      fail-fast: false
-      matrix:
+    #strategy:
+      #fail-fast: false
+      #matrix:
         #target: ['SkipLib', 'SkipFoundation', 'SkipKit', 'SkipUI', 'ExampleLib', 'ExampleApp']
-        os: ['macos-12']
+        #os: ['macos-12']
         #os: ['macos-12', 'macos-13']
         #mode: ['debug', 'release']
 
-    runs-on: ${{ matrix.os }}
+    #runs-on: ${{ matrix.os }}
+    runs-on: macos-12
 
-    env:
-      OS: ${{ matrix.os }}
+    #env:
+      #OS: ${{ matrix.os }}
       #TARGET: ${{ matrix.target }}
 
     steps:
@@ -85,7 +86,9 @@ jobs:
         # the pre-build needs to take place because the Skip
         # packages currently need to be built in order, but
         # SPM will attempt to build the targets in parallel
-        if: false
+        # e.g.: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json: warning: error loading codebase for linkModuleName: SkipFoundation from: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json error: The file “SkipFoundation.skipcode.json” couldn’t be opened because there is no such file.
+
+        #if: false
         run: |
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
 
