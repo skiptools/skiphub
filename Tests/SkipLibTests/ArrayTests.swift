@@ -258,6 +258,13 @@ final class ArrayTests: XCTestCase {
 
 }
 
+// Ensure that array generic extensions are transpiled correctly
+extension Array {
+    var forceFirst: Element? {
+        return self[0]
+    }
+}
+
 private class ArrayHolder {
     var array: [Int] = [] {
         didSet {
