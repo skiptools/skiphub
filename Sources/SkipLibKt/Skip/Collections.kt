@@ -5,12 +5,12 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-interface IteratorProtocol<E> {
-    fun next(): E?
+interface IteratorProtocol<Element> {
+    fun next(): Element?
 }
 
-interface Sequence<E>: Iterable<E> {
-    fun makeIterator(): IteratorProtocol<E>
+interface Sequence<Element>: Iterable<Element> {
+    fun makeIterator(): IteratorProtocol<Element>
 
     val underestimatedCount: Int
         get() = 0
@@ -21,24 +21,25 @@ interface Sequence<E>: Iterable<E> {
 
     // Iterable.forEach does not need modification
 
-    fun <RE> map(transform: (E) -> RE): Array<RE> {
-        return Array((this as Iterable<E>).map(transform), nocopy = true)
+    fun <RE> map(transform: (Element) -> RE): Array<RE> {
+        return Array((this as Iterable<Element>).map(transform), nocopy = true)
     }
 
-    fun <RE> compactMap(transform: (E) -> RE?): Array<RE> {
+    fun <RE> compactMap(transform: (Element) -> RE?): Array<RE> {
         return Array(mapNotNull(transform), nocopy = true)
     }
 
-    fun <RE> flatMap(transform: (E) -> Iterable<RE>): Array<RE> {
-        return Array((this as Iterable<E>).flatMap(transform), nocopy = true)
+    fun <RE> flatMap(transform: (Element) -> Iterable<RE>): Array<RE> {
+        return Array((this as Iterable<Element>).flatMap(transform), nocopy = true)
     }
 
-    fun <R> reduce(initialResult: R, nextPartialResult: (R, E) -> R): R {
+    // Warnign: although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
+    // into our Kotlin call sites to differentiate between calls to the two reduce() functions. Do not change
+    fun <R> reduce(initialResult: R, nextPartialResult: (R, Element) -> R): R {
         return fold(initialResult, nextPartialResult)
     }
 
-/*~~~
-    fun <R> reduce(into: R, unusedp: Nothing? = null, updateAccumulatingResult: (InOut<R>, E) -> Unit): R {
+    fun <R> reduce(into: R, unusedp: Nothing? = null, updateAccumulatingResult: (InOut<R>, Element) -> Unit): R {
         return fold(into) { result, element ->
             var accResult = result
             val inoutAccResult = InOut<R>({ accResult }, { accResult = it })
@@ -46,27 +47,26 @@ interface Sequence<E>: Iterable<E> {
             accResult
         }
     }
-*/
 
-    fun filter(isIncluded: (E) -> Boolean): Array<E> {
-        return Array((this as Iterable<E>).filter(isIncluded), nocopy = true)
+    fun filter(isIncluded: (Element) -> Boolean): Array<Element> {
+        return Array((this as Iterable<Element>).filter(isIncluded), nocopy = true)
     }
 
-    fun first(where: (E) -> Boolean): E? {
+    fun first(where: (Element) -> Boolean): Element? {
         return firstOrNull(where)
     }
 
     // Generate for transpiled custom sequences:
-//    override fun iterator(): Iterator<E> {
+//    override fun iterator(): Iterator<Element> {
 //        val iter = makeIterator()
-//        return object: Iterator<E> {
+//        return object: Iterator<Element> {
 //            var next = iter.next()
 //
 //            override fun hasNext(): Boolean {
 //                return next != null
 //            }
 //
-//            override fun next(): E {
+//            override fun next(): Element {
 //                val ret = next
 //                if (ret != null) {
 //                    next = iter.next()
@@ -79,26 +79,26 @@ interface Sequence<E>: Iterable<E> {
 //    }
 }
 
-interface Collection<E>: Sequence<E> {
+interface Collection<Element>: Sequence<Element> {
     val count: Int
         get() = count()
 }
 
-interface MutableCollection<E>: Collection<E> {
+interface MutableCollection<Element>: Collection<Element> {
 
 }
 
-interface BidirectionalCollection<E>: Collection<E> {
-    fun last(where: (E) -> Boolean): E? {
+interface BidirectionalCollection<Element>: Collection<Element> {
+    fun last(where: (Element) -> Boolean): Element? {
         return lastOrNull(where)
     }
 }
 
-interface RandomAccessCollection<E>: BidirectionalCollection<E> {
+interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
 
 }
 
-typealias Slice<E> = Array<E>
+typealias Slice<Element> = Array<Element>
 
 //~~~
 

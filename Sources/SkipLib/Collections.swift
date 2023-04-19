@@ -15,18 +15,18 @@
 // non-specific with some parameter types and overly specific with some return types to simplify
 // type inference - we can rely on the Swift compiler to prevent any type mismatches
 
-public protocol IteratorProtocol<E> {
-    associatedtype E
-    mutating func next() -> E?
+public protocol IteratorProtocol<Element> {
+    associatedtype Element
+    mutating func next() -> Element?
 }
 
-public protocol Sequence<E> {
-    associatedtype E
-    func makeIterator() -> any IteratorProtocol<E>
+public protocol Sequence<Element> {
+    associatedtype Element
+    func makeIterator() -> any IteratorProtocol<Element>
 }
 
-public protocol Collection<E>: Sequence {
-    associatedtype E
+public protocol Collection<Element>: Sequence {
+    associatedtype Element
     // SKIP NOWARN
     typealias Index = Int
 }
@@ -51,111 +51,111 @@ extension Sequence {
         Swift.fatalError()
     }
 
-    public func forEach(_ body: (E) throws -> Void) rethrows {
+    public func forEach(_ body: (Element) throws -> Void) rethrows {
         Swift.fatalError()
     }
 
-    public func map<RE>(_ transform: (E) throws -> RE) rethrows -> [RE] {
+    public func map<RE>(_ transform: (Element) throws -> RE) rethrows -> [RE] {
         Swift.fatalError()
     }
 
-    public func compactMap<RE>(_ transform: (E) throws -> RE?) rethrows -> [RE] {
+    public func compactMap<RE>(_ transform: (Element) throws -> RE?) rethrows -> [RE] {
         Swift.fatalError()
     }
 
-    public func flatMap<RE>(_ transform: (E) throws -> any Sequence<RE>) rethrows -> [RE] {
+    public func flatMap<RE>(_ transform: (Element) throws -> any Sequence<RE>) rethrows -> [RE] {
         Swift.fatalError()
     }
 
-    public func reduce<R>(_ initialResult: R, _ nextPartialResult: (_ partialResult: R, E) throws -> R) rethrows -> R {
+    public func reduce<R>(_ initialResult: R, _ nextPartialResult: (_ partialResult: R, Element) throws -> R) rethrows -> R {
         Swift.fatalError()
     }
 
-    public func reduce<R>(into initialResult: R, _ updateAccumulatingResult: (_ partialResult: inout R, E) throws -> ()) rethrows -> R {
+    public func reduce<R>(into initialResult: R, _ updateAccumulatingResult: (_ partialResult: inout R, Element) throws -> ()) rethrows -> R {
         Swift.fatalError()
     }
 
-    public func filter(_ isIncluded: (E) throws -> Bool) rethrows -> [E] {
+    public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> [Element] {
         Swift.fatalError()
     }
 
-    public func first(where predicate: (E) throws -> Bool) rethrows -> E? {
+    public func first(where predicate: (Element) throws -> Bool) rethrows -> Element? {
         Swift.fatalError()
     }
 
-    public func split(separator: E, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true, whereSeparator isSeparator: (E) throws -> Bool) rethrows -> [E] /* ArraySlice<E> */ {
+    public func split(separator: Element, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true, whereSeparator isSeparator: (Element) throws -> Bool) rethrows -> [Element] /* ArraySlice<Element> */ {
         Swift.fatalError()
     }
 
-    public func suffix(_ maxLength: Int) -> [E] {
+    public func suffix(_ maxLength: Int) -> [Element] {
         Swift.fatalError()
     }
 
-    public func dropFirst(_ k: Int = 1) -> [E] /* DropFirstSequence<Self> */ {
+    public func dropFirst(_ k: Int = 1) -> [Element] /* DropFirstSequence<Self> */ {
         Swift.fatalError()
     }
 
-    public func dropLast(_ k: Int = 1) -> [E] {
+    public func dropLast(_ k: Int = 1) -> [Element] {
         Swift.fatalError()
     }
 
-    public func drop(while predicate: (E) throws -> Bool) rethrows -> [E] /* DropWhileSequence<Self> */ {
+    public func drop(while predicate: (Element) throws -> Bool) rethrows -> [Element] /* DropWhileSequence<Self> */ {
         Swift.fatalError()
     }
 
-    public func prefix(_ maxLength: Int) -> [E] /* PrefixSequence<Self> */ {
+    public func prefix(_ maxLength: Int) -> [Element] /* PrefixSequence<Self> */ {
         Swift.fatalError()
     }
 
-    public func prefix(while predicate: (E) throws -> Bool) rethrows -> [E] {
+    public func prefix(while predicate: (Element) throws -> Bool) rethrows -> [Element] {
         Swift.fatalError()
     }
 
-    public func enumerated() -> [(Int, E)] /* EnumeratedSequence<Self> */ {
+    public func enumerated() -> [(Int, Element)] /* EnumeratedSequence<Self> */ {
         Swift.fatalError()
     }
 
-    public func min(by areInIncreasingOrder: ((E, E) throws -> Bool) = { _, _ in false }) rethrows -> E? {
+    public func min(by areInIncreasingOrder: ((Element, Element) throws -> Bool) = { _, _ in false }) rethrows -> Element? {
         Swift.fatalError()
     }
 
-    public func max(by areInIncreasingOrder: ((E, E) throws -> Bool) = { _, _ in false }) rethrows -> E? {
+    public func max(by areInIncreasingOrder: ((Element, Element) throws -> Bool) = { _, _ in false }) rethrows -> Element? {
         Swift.fatalError()
     }
 
-    public func starts(with possiblePrefix: Any, by areEquivalent: ((E, E) throws -> Bool) = { _, _ in false }) rethrows -> Bool {
+    public func starts(with possiblePrefix: Any, by areEquivalent: ((Element, Element) throws -> Bool) = { _, _ in false }) rethrows -> Bool {
         Swift.fatalError()
     }
 
-    public func elementsEqual(_ other: Any, by areEquivalent: ((E, E) throws -> Bool) = { _, _ in false }) rethrows -> Bool {
+    public func elementsEqual(_ other: Any, by areEquivalent: ((Element, Element) throws -> Bool) = { _, _ in false }) rethrows -> Bool {
         Swift.fatalError()
     }
 
-    public func lexicographicallyPrecedes(_ other: Any, by areInIncreasingOrder: ((E, E) throws -> Bool) = { _, _ in false}) rethrows -> Bool {
+    public func lexicographicallyPrecedes(_ other: Any, by areInIncreasingOrder: ((Element, Element) throws -> Bool) = { _, _ in false}) rethrows -> Bool {
         Swift.fatalError()
     }
 
-    public func contains(where predicate: ((E) throws -> Bool) = { _ in false }) rethrows -> Bool {
+    public func contains(where predicate: ((Element) throws -> Bool) = { _ in false }) rethrows -> Bool {
         Swift.fatalError()
     }
 
-    public func contains(_ element: E) -> Bool {
+    public func contains(_ element: Element) -> Bool {
         Swift.fatalError()
     }
 
-    public func allSatisfy(_ predicate: (E) throws -> Bool) rethrows -> Bool {
+    public func allSatisfy(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         Swift.fatalError()
     }
 
-    public func reversed() -> [E] {
+    public func reversed() -> [Element] {
         Swift.fatalError()
     }
 
-    public func sorted() -> [E] {
+    public func sorted() -> [Element] {
         Swift.fatalError()
     }
 
-    public func sorted(by areInIncreasingOrder: (E, E) throws -> Bool) rethrows -> [E] {
+    public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
         Swift.fatalError()
     }
 }
@@ -170,12 +170,12 @@ extension Collection {
     }
 
     // SKIP NOWARN
-    public subscript(position: Int) -> E {
+    public subscript(position: Int) -> Element {
         Swift.fatalError()
     }
 
     // SKIP NOWARN
-    public subscript(bounds: Range<Int>) -> [E] /* Collection<Element> */ {
+    public subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
         Swift.fatalError()
     }
 
@@ -215,31 +215,31 @@ extension Collection {
         Swift.fatalError()
     }
 
-    public func randomElement() -> E? {
+    public func randomElement() -> Element? {
         Swift.fatalError()
     }
 
-    public mutating func popFirst() -> E? {
+    public mutating func popFirst() -> Element? {
         Swift.fatalError()
     }
 
-    public var first: E? {
+    public var first: Element? {
         Swift.fatalError()
     }
 
-    public func prefix(upTo end: Int) -> [E] /* Collection<Element> */ {
+    public func prefix(upTo end: Int) -> [Element] /* Collection<Element> */ {
         Swift.fatalError()
     }
 
-    public func suffix(from start: Int) -> [E] /* Collection<Element> */ {
+    public func suffix(from start: Int) -> [Element] /* Collection<Element> */ {
         Swift.fatalError()
     }
 
-    public func prefix(through end: Int) -> [E] /* Collection<Element> */ {
+    public func prefix(through end: Int) -> [Element] /* Collection<Element> */ {
         Swift.fatalError()
     }
 
-    public mutating func removeFirst() -> E {
+    public mutating func removeFirst() -> Element {
         Swift.fatalError()
     }
 
@@ -247,15 +247,15 @@ extension Collection {
         Swift.fatalError()
     }
 
-    public func firstIndex(of element: E) -> Int? {
+    public func firstIndex(of element: Element) -> Int? {
         Swift.fatalError()
     }
 
-    public func firstIndex(where predicate: (E) throws -> Bool) rethrows -> Int? {
+    public func firstIndex(where predicate: (Element) throws -> Bool) rethrows -> Int? {
         Swift.fatalError()
     }
 
-    public func shuffled() -> [E] {
+    public func shuffled() -> [Element] {
         Swift.fatalError()
     }
 
@@ -276,7 +276,7 @@ extension Collection {
 
 extension MutableCollection {
     // SKIP NOWARN
-    public subscript(position: Int) -> E {
+    public subscript(position: Int) -> Element {
         get {
             Swift.fatalError()
         }
@@ -286,7 +286,7 @@ extension MutableCollection {
     }
 
     // SKIP NOWARN
-    public subscript(bounds: Range<Int>) -> [E] /* Collection<Element> */ {
+    public subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
         get {
             Swift.fatalError()
         }
@@ -301,19 +301,19 @@ extension MutableCollection {
 }
 
 extension BidirectionalCollection {
-    public var last: E? {
+    public var last: Element? {
         Swift.fatalError()
     }
 
-    public func last(where predicate: (E) throws -> Bool) rethrows -> E? {
+    public func last(where predicate: (Element) throws -> Bool) rethrows -> Element? {
         Swift.fatalError()
     }
 
-    public func lastIndex(where predicate: (E) throws -> Bool) rethrows -> Int? {
+    public func lastIndex(where predicate: (Element) throws -> Bool) rethrows -> Int? {
         Swift.fatalError()
     }
 
-    public func lastIndex(of element: E) -> Int? {
+    public func lastIndex(of element: Element) -> Int? {
         Swift.fatalError()
     }
 }
