@@ -5,12 +5,12 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-interface IteratorProtocol<Element> {
-    fun next(): Element?
+interface IteratorProtocol<E> {
+    fun next(): E?
 }
 
-interface Sequence<Element>: Iterable<Element> {
-    fun makeIterator(): IteratorProtocol<Element>
+interface Sequence<E>: Iterable<E> {
+    fun makeIterator(): IteratorProtocol<E>
 
     val underestimatedCount: Int
         get() = 0
@@ -21,37 +21,52 @@ interface Sequence<Element>: Iterable<Element> {
 
     // Iterable.forEach does not need modification
 
-    fun <ElementOfResult> map(transform: (Element) -> ElementOfResult): Array<ElementOfResult> {
-        return Array((this as Iterable<Element>).map(transform), nocopy = true)
+    fun <RE> map(transform: (E) -> RE): Array<RE> {
+        return Array((this as Iterable<E>).map(transform), nocopy = true)
     }
 
-    fun <ElementOfResult> compactMap(transform: (Element) -> ElementOfResult?): Array<ElementOfResult> {
+    fun <RE> compactMap(transform: (E) -> RE?): Array<RE> {
         return Array(mapNotNull(transform), nocopy = true)
     }
 
-    fun <ElementOfResult> flatMap(transform: (Element) -> Iterable<ElementOfResult>): Array<ElementOfResult> {
-        return Array((this as Iterable<Element>).flatMap(transform), nocopy = true)
+    fun <RE> flatMap(transform: (E) -> Iterable<RE>): Array<RE> {
+        return Array((this as Iterable<E>).flatMap(transform), nocopy = true)
     }
 
-    fun filter(isIncluded: (Element) -> Boolean): Array<Element> {
-        return Array((this as Iterable<Element>).filter(isIncluded), nocopy = true)
+    fun <R> reduce(initialResult: R, nextPartialResult: (R, E) -> R): R {
+        return fold(initialResult, nextPartialResult)
     }
 
-    fun first(where: (Element) -> Boolean): Element? {
+/*~~~
+    fun <R> reduce(into: R, unusedp: Nothing? = null, updateAccumulatingResult: (InOut<R>, E) -> Unit): R {
+        return fold(into) { result, element ->
+            var accResult = result
+            val inoutAccResult = InOut<R>({ accResult }, { accResult = it })
+            updateAccumulatingResult(inoutAccResult, element)
+            accResult
+        }
+    }
+*/
+
+    fun filter(isIncluded: (E) -> Boolean): Array<E> {
+        return Array((this as Iterable<E>).filter(isIncluded), nocopy = true)
+    }
+
+    fun first(where: (E) -> Boolean): E? {
         return firstOrNull(where)
     }
 
     // Generate for transpiled custom sequences:
-//    override fun iterator(): Iterator<Element> {
+//    override fun iterator(): Iterator<E> {
 //        val iter = makeIterator()
-//        return object: Iterator<Element> {
+//        return object: Iterator<E> {
 //            var next = iter.next()
 //
 //            override fun hasNext(): Boolean {
 //                return next != null
 //            }
 //
-//            override fun next(): Element {
+//            override fun next(): E {
 //                val ret = next
 //                if (ret != null) {
 //                    next = iter.next()
@@ -64,26 +79,26 @@ interface Sequence<Element>: Iterable<Element> {
 //    }
 }
 
-interface Collection<Element>: Sequence<Element> {
+interface Collection<E>: Sequence<E> {
     val count: Int
         get() = count()
 }
 
-interface MutableCollection<Element>: Collection<Element> {
+interface MutableCollection<E>: Collection<E> {
 
 }
 
-interface BidirectionalCollection<Element>: Collection<Element> {
-    fun last(where: (Element) -> Boolean): Element? {
+interface BidirectionalCollection<E>: Collection<E> {
+    fun last(where: (E) -> Boolean): E? {
         return lastOrNull(where)
     }
 }
 
-interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
+interface RandomAccessCollection<E>: BidirectionalCollection<E> {
 
 }
 
-typealias Slice<Element> = Array<Element>
+typealias Slice<E> = Array<E>
 
 //~~~
 
@@ -99,10 +114,6 @@ val <T> Iterable<T>.isEmpty: Boolean
 val <T> Iterable<T>.lazy: kotlin.sequences.Sequence<T>
     get() = this.asSequence()
 
-// Forward Swift's `reduce()` function to Kotlin's `fold()` function
-fun <T, R> Iterable<T>.reduce(initial: R, operation: (acc: R, T) -> R): R {
-	return this.fold(initial, operation)
-}
 // Forward Swift's `reduce()` function to Kotlin's `fold()` function
 fun <T, R> kotlin.sequences.Sequence<T>.reduce(initial: R, operation: (acc: R, T) -> R): R {
 	return this.fold(initial, operation)

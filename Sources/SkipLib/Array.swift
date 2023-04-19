@@ -9,22 +9,22 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-public struct Array<Element>: MutableCollection, RandomAccessCollection {
+public struct Array<E>: MutableCollection, RandomAccessCollection {
     public init() {
         Swift.fatalError()
     }
 
-    public init<S: Sequence<Element>>(_ sequence: S) {
+    public init<S: Sequence<E>>(_ sequence: S) {
         Swift.fatalError()
     }
 
-    public mutating func append(_ element: Element) {
+    public mutating func append(_ element: E) {
         Swift.fatalError()
     }
 
     // Sequence
 
-    public func makeIterator() -> any IteratorProtocol<Element> {
+    public func makeIterator() -> any IteratorProtocol<E> {
         Swift.fatalError()
     }
 }

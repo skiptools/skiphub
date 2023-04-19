@@ -179,6 +179,17 @@ final class ArrayTests: XCTestCase {
         XCTAssertTrue(enums == [.one, .two, .three, .one, .two, .three])
     }
 
+    func testReduce() {
+        let strings = ["K", "I", "P"]
+        XCTAssertEqual(strings.reduce("S", { $0 + $1 }), "SKIP")
+        XCTAssertEqual(strings.reduce("S", +), "SKIP")
+        //~~~
+        #if !SKIP
+        XCTAssertEqual(strings.lazy.reduce("S", { $0 + $1 }), "SKIP")
+        XCTAssertEqual(strings.lazy.lazy.reduce("S", { $0 + $1 }), "SKIP") // Cannot infer a type for this parameter. Please specify it explicitly.
+        #endif
+    }
+
     func testFilter() {
         let strings = ["A", "Z", "M"]
         let strings2 = strings.filter {
@@ -190,16 +201,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(2, filtered.count)
         XCTAssertTrue(filtered[0] == .one)
         XCTAssertTrue(filtered[1] == .three)
-    }
-
-    func testArrayReduceFold() {
-        let strings = ["K", "I", "P"]
-        XCTAssertEqual(strings.reduce("S", { $0 + $1 }), "SKIP")
-        XCTAssertEqual(strings.lazy.reduce("S", { $0 + $1 }), "SKIP")
-        #if !SKIP
-        XCTAssertEqual(strings.reduce("S", +), "SKIP") // ArrayTests.kt:157:45 Expecting an element
-        XCTAssertEqual(strings.lazy.lazy.reduce("S", { $0 + $1 }), "SKIP") // Cannot infer a type for this parameter. Please specify it explicitly.
-        #endif
     }
 
     func testArraySort() {
