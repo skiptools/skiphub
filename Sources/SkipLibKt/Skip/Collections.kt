@@ -29,6 +29,10 @@ interface Sequence<Element>: Iterable<Element> {
         return Array(mapNotNull(transform), nocopy = true)
     }
 
+    fun <ElementOfResult> flatMap(transform: (Element) -> Iterable<ElementOfResult>): Array<ElementOfResult> {
+        return Array((this as Iterable<Element>).flatMap(transform), nocopy = true)
+    }
+
     fun filter(isIncluded: (Element) -> Boolean): Array<Element> {
         return Array((this as Iterable<Element>).filter(isIncluded), nocopy = true)
     }

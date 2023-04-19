@@ -137,7 +137,6 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(arr.count, 2)
         XCTAssertEqual(arr2.count, 2)
         XCTAssertEqual(arr3.count, 3)
-
     }
 
     func testMap() {
@@ -171,12 +170,26 @@ final class ArrayTests: XCTestCase {
         XCTAssertTrue(raws[1] == .three)
     }
 
-    func testArrayFilter() {
+    func testFlatMap() {
+        let strings = [["A", "a"], ["B", "b"], ["C", "c"]]
+        let strings2 = strings.flatMap { $0 }
+        XCTAssertEqual(strings2, ["A", "a", "B", "b", "C", "c"])
+
+        let enums = [1, 2].flatMap { _ in ElementEnum.allCases }
+        XCTAssertTrue(enums == [.one, .two, .three, .one, .two, .three])
+    }
+
+    func testFilter() {
         let strings = ["A", "Z", "M"]
         let strings2 = strings.filter {
             $0 != "M"
         }
         XCTAssertEqual(strings2, ["A", "Z"])
+
+        let filtered = [ElementEnum.one, ElementEnum.two, ElementEnum.three].filter { $0.rawValue % 2 == 1 }
+        XCTAssertEqual(2, filtered.count)
+        XCTAssertTrue(filtered[0] == .one)
+        XCTAssertTrue(filtered[1] == .three)
     }
 
     func testArrayReduceFold() {
