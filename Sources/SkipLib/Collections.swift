@@ -267,11 +267,25 @@ extension Collection {
         Swift.fatalError()
     }
 
-    // UNSUPPORTED:
-    // public func randomElement<T: RandomNumberGenerator>(using generator: inout T) -> Element?
-    // public mutating func partition(by belongsInSecondPartition: (Element) throws -> Bool) rethrows -> Index
-    // public func shuffled<T: RandomNumberGenerator>(using generator: inout T) -> [Element] {
-    // public mutating func shuffle<T: RandomNumberGenerator>(using generator: inout T)
+    @available(*, unavailable)
+    public func randomElement<T: RandomNumberGenerator>(using generator: inout T) -> Element? {
+        Swift.fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func partition(by belongsInSecondPartition: (Element) throws -> Bool) rethrows -> Int {
+        Swift.fatalError()
+    }
+
+    @available(*, unavailable)
+    public func shuffled<T: RandomNumberGenerator>(using generator: inout T) -> [Element] {
+        Swift.fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func shuffle<T: RandomNumberGenerator>(using generator: inout T) {
+        Swift.fatalError()
+    }
 }
 
 extension MutableCollection {
@@ -318,10 +332,53 @@ extension BidirectionalCollection {
     }
 }
 
-// UNSUPPORTED:
-// public struct DropFirstSequence<Base: Sequence>
-// public struct PrefixSequence<Base: Sequence>
-// public struct DropWhileSequence<Base: Sequence>
-// public struct IteratorSequence<Base: IteratorProtocol>
-// public struct EnumeratedSequence<Base: Sequence>
-// public struct IndexingIterator<Elements: Collection>
+//~~~ TODO: There are many more types in Swift.Collection to process
+// Move this
+public protocol RandomNumberGenerator {
+    mutating func next() -> UInt64
+}
+
+@available(*, unavailable)
+public struct DropWhileSequence<Base: Sequence> {
+    // SKIP NOWARN
+    public typealias Element = Base.Element
+    public func makeIterator() -> any IteratorProtocol<Element> {
+        Swift.fatalError()
+    }
+}
+
+@available(*, unavailable)
+public struct EnumeratedSequence<Base: Sequence> {
+    // SKIP NOWARN
+    public typealias Element = Base.Element
+    public func makeIterator() -> any IteratorProtocol<Element> {
+        Swift.fatalError()
+    }
+}
+
+@available(*, unavailable)
+public struct IndexingIterator<Elements: Collection>: Sequence {
+    // SKIP NOWARN
+    public typealias Element = Elements.Element
+    public func makeIterator() -> any IteratorProtocol<Element> {
+        Swift.fatalError()
+    }
+}
+
+@available(*, unavailable)
+public struct IteratorSequence<Base: IteratorProtocol>: Sequence {
+    // SKIP NOWARN
+    public typealias Element = Base.Element
+    public func makeIterator() -> any IteratorProtocol<Element> {
+        Swift.fatalError()
+    }
+}
+
+@available(*, unavailable)
+public struct PrefixSequence<Base: Sequence> {
+    // SKIP NOWARN
+    public typealias Element = Base.Element
+    public func makeIterator() -> any IteratorProtocol<Element> {
+        Swift.fatalError()
+    }
+}

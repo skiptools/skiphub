@@ -262,7 +262,6 @@ final class ArrayTests: XCTestCase {
 //                                .prefix(10)
 //        XCTAssertEqual(Array(result), [0, 6, 12, 18, 24, 30, 36, 42, 48, 54])
     }
-
 }
 
 // Ensure that array generic extensions are transpiled correctly
