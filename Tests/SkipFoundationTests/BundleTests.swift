@@ -3,14 +3,13 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-import Foundation
+import SkipFoundation
 import OSLog
 import XCTest
 
 #if !SKIP
 /// Name fix until skip supports Dictionary -> Map transpilation
 fileprivate typealias Map = Dictionary
-fileprivate typealias StringEncoding = String.Encoding
 #endif
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)

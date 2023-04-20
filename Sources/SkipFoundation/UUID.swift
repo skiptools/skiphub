@@ -13,12 +13,6 @@ public typealias PlatformUUID = java.util.UUID
 #endif
 
 #if SKIP
-// FIXME: make RawRepresentable part of SkipLib
-protocol RawRepresentable {
-}
-#endif
-
-#if SKIP
 public func UUID(uuidString: String) -> SkipUUID? {
     // Java throws an exception for bad UUID, but Foundation expects it to return nil
     guard let uuid = try? java.util.UUID.fromString(uuidString) else { return nil }
@@ -26,8 +20,7 @@ public func UUID(uuidString: String) -> SkipUUID? {
 }
 #endif
 
-// SKIP REPLACE: @JvmInline public value class SkipUUID(val rawValue: PlatformUUID = PlatformUUID.randomUUID()) { companion object { } }
-public struct SkipUUID : RawRepresentable {
+public struct SkipUUID : RawRepresentable, Hashable {
     public let rawValue: PlatformUUID
 
     public init(_ rawValue: PlatformUUID) {
@@ -45,9 +38,7 @@ public struct SkipUUID : RawRepresentable {
         self.rawValue = java.util.UUID.randomUUID()
     }
     #endif
-}
 
-extension SkipUUID {
     #if SKIP
     public static func fromString(uuidString: String) -> SkipUUID? {
         // Java throws an exception for bad UUID, but Foundation expects it to return nil

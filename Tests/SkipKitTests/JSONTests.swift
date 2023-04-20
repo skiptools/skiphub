@@ -12,6 +12,7 @@ import XCTest
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class TestJSON : XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "TestJSON")
 
@@ -140,6 +141,7 @@ public final class JSONObject {
     }
 }
 
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public extension JSONObject {
     /// Returns the JSON string representing this Object.
     func stringify(pretty: Bool = false, sorted: Bool = false) throws -> String {

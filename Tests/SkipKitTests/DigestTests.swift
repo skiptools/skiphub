@@ -14,6 +14,7 @@
 import Foundation
 import XCTest
 
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class DigestTests: XCTestCase {
     func testSHA256() {
         XCTAssertEqual("Hello World".utf8Data.sha256().hex(), "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e")

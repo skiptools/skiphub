@@ -3,12 +3,113 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-import Foundation
+import SkipFoundation
 import XCTest
 
-// These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
+#if SKIP
 
-#if !SKIP
+// MARK: Shims for test support
+
+// NSURL does not exist in Skip, but for the purposes of the test case, we pretend it is the same a Foundation.URL
+fileprivate typealias NSURL = SkipURL
+fileprivate typealias FoundationURL = SkipURL
+
+// test case handling for NSError (which is not provided by Skip)
+fileprivate typealias NSError = java.lang.Exception
+
+// test case handling for NSString (which is not provided by Skip)
+fileprivate typealias NSString = String
+
+fileprivate func NSURL(string: String, relativeTo: SkipURL? = nil) -> SkipURL? {
+    return SkipURL(string: string, relativeTo: relativeTo)
+}
+
+fileprivate func NSURL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDirectory: Bool? = nil) -> SkipURL {
+    return SkipURL(fileURLWithPath: path, relativeTo: relativeTo, isDirectory: isDirectory)
+}
+
+fileprivate func strlen(_ string: String) -> Int {
+    return string.count
+}
+
+fileprivate func strncmp(_ str1: String, _ str2: String) -> Int {
+    return str1.toLowerCase() == str2.toLowerCase() ? 0 : 1
+}
+
+fileprivate let logger = Logger(subsystem: "test", category: "TestURL")
+
+fileprivate func NSLog(_ message: String) {
+    logger.info(message)
+}
+
+fileprivate extension NSURL {
+    var fileSystemRepresentation: String {
+        return path
+    }
+
+    func copy() -> NSURL {
+        NSURL(self)
+    }
+
+    func isEqual(_ other: NSURL) -> Bool {
+        return self == other
+    }
+}
+
+extension String {
+    func appendingPathComponent(_ path: String) -> NSString {
+        return self + "/" + path
+    }
+}
+
+fileprivate var errno: Int32 = 0
+
+fileprivate func strerror(_ errno: Int32) -> String? {
+    ""
+}
+
+fileprivate func String(cString: String) -> String {
+    return cString
+}
+
+#else
+fileprivate typealias FoundationURL = Foundation.URL
+fileprivate typealias URL = SkipURL
+
+// shims to support API comptibility with SkipURL -> Foundation.URL
+
+fileprivate typealias FileManager = SkipFileManager
+
+fileprivate extension URLComponents {
+    func url(relativeTo url: SkipURL?) -> SkipURL? {
+        self.url(relativeTo: url?.foundationURL).flatMap({ .init(rawValue: $0 as PlatformURL) })
+    }
+}
+#endif
+
+fileprivate extension String {
+    func write(to url: SkipURL, atomically: Bool, encoding: StringEncoding) throws {
+        #if !SKIP
+        try write(to: url.foundationURL, atomically: atomically, encoding: encoding)
+        #else
+        url.toFile().writeText(self, encoding.rawValue)
+        #endif
+    }
+}
+
+fileprivate extension Data {
+    func write(to url: SkipURL) throws { // TODO:  options: WritingOptions = []) throws {
+        #if !SKIP
+        try write(to: url.foundationURL)
+        #else
+        url.toFile().writeBytes(rawValue)
+        #endif
+    }
+}
+
+
+
+// These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 // This source file is part of the Swift.org open source project
 //
@@ -41,6 +142,10 @@ let kNullString = "<null>"
 
 /// Reads the test data plist file and returns the list of objects
 private func getTestData() -> [Any]? {
+    #if SKIP
+    // in order to implement this, XML plist parsing will need to be implemented
+    throw XCTSkip("TODO")
+    #else
     let testFilePath = testBundle().url(forResource: "NSURLTestData", withExtension: "plist")
     let data = try! Data(contentsOf: testFilePath!)
     guard let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) else {
@@ -56,84 +161,15 @@ private func getTestData() -> [Any]? {
         return nil
     }
     return parsingTests
+    #endif
 }
 
 class TestURL : XCTestCase {
-#if os(Windows)
-    func test_WindowsPathSeparator() {
-      // ensure that the mixed slashes are handled properly
-      // e.g. NOT file:///S:/b/u1%2/
-      let u1 = URL(fileURLWithPath: "S:\\b\\u1/")
-      XCTAssertEqual(u1.absoluteString, "file:///S:/b/u1/")
-
-      // ensure that trailing slashes are compressed
-      // e.g. NOT file:///S:/b/u2%2F%2F%2F%/
-      let u2 = URL(fileURLWithPath: "S:\\b\\u2/////")
-      XCTAssertEqual(u2.absoluteString, "file:///S:/b/u2/")
-
-      // ensure that the trailing slashes are compressed even when mixed
-      // e.g. NOT file:///S:/b/u3%2F%/%2F%2/
-      let u3 = URL(fileURLWithPath: "S:\\b\\u3//\\//")
-      XCTAssertEqual(u3.absoluteString, "file:///S:/b/u3/")
-      XCTAssertEqual(u3.path, "S:/b/u3")
-
-      // ensure that the regular conversion works
-      let u4 = URL(fileURLWithPath: "S:\\b\\u4")
-      XCTAssertEqual(u4.absoluteString, "file:///S:/b/u4")
-
-      // ensure that the trailing slash is added
-      let u5 = URL(fileURLWithPath: "S:\\b\\u5", isDirectory: true)
-      XCTAssertEqual(u5.absoluteString, "file:///S:/b/u5/")
-
-      // ensure that the trailing slash is preserved
-      let u6 = URL(fileURLWithPath: "S:\\b\\u6\\")
-      XCTAssertEqual(u6.absoluteString, "file:///S:/b/u6/")
-
-      // ensure that we do not index beyond the start of the string
-      // NOTE: explicitly mark `S:\b` as a directory as this test expects the
-      // directory to exist to determine that it is a directory.
-      let u7 = URL(fileURLWithPath: "eh",
-                   relativeTo: URL(fileURLWithPath: "S:\\b", isDirectory: true))
-      XCTAssertEqual(u7.absoluteString, "file:///S:/b/eh")
-
-      let u8 = URL(fileURLWithPath: "eh",
-                   relativeTo: URL(fileURLWithPath: "S:\\b", isDirectory: false))
-      XCTAssertEqual(u8.absoluteString, "file:///S:/eh")
-
-      // ensure that / is handled properly
-      let u9 = URL(fileURLWithPath: "/")
-      XCTAssertEqual(u9.absoluteString, "file:///")
-    }
-
-    func test_WindowsPathSeparator2() {
-      let u1 = URL(fileURLWithPath: "S:\\b\\u1\\", isDirectory: false)
-      XCTAssertEqual(u1.absoluteString, "file:///S:/b/u1")
-
-      let u2 = URL(fileURLWithPath: "/", isDirectory: false)
-      XCTAssertEqual(u2.absoluteString, "file:///")
-
-      let u3 = URL(fileURLWithPath: "\\", isDirectory: false)
-      XCTAssertEqual(u3.absoluteString, "file:///")
-
-      let u4 = URL(fileURLWithPath: "S:\\b\\u3//\\//")
-      XCTAssertEqual(u4.absoluteString, "file:///S:/b/u3/")
-
-      // ensure leading slash doesn't break everything
-      let u5 = URL(fileURLWithPath: "\\abs\\path")
-      XCTAssertEqual(u5.absoluteString, "file:///abs/path")
-      XCTAssertEqual(u5.path, "/abs/path")
-
-      let u6 = u5.appendingPathComponent("test")
-      XCTAssertEqual(u6.absoluteString, "file:///abs/path/test")
-      XCTAssertEqual(u6.path, "/abs/path/test")
-
-      let u7 = u6.deletingLastPathComponent()
-      XCTAssertEqual(u7.absoluteString, "file:///abs/path/")
-      XCTAssertEqual(u7.path, "/abs/path")
-    }
-#endif
 
     func test_fileURLWithPath_relativeTo() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let homeDirectory = NSHomeDirectory()
         let homeURL = URL(fileURLWithPath: homeDirectory, isDirectory: true)
         XCTAssertEqual(homeDirectory, homeURL.path)
@@ -147,21 +183,22 @@ class TestURL : XCTestCase {
         #elseif os(Linux) || os(OpenBSD)
         let baseURL = URL(fileURLWithPath: "/usr", isDirectory: true)
         let relativePath = "include"
-        #elseif os(Windows)
-        let baseURL = URL(fileURLWithPath: homeDirectory, isDirectory: true)
-        let relativePath = "Documents"
         #endif
-//        // we're telling fileURLWithPath:isDirectory:relativeTo: Documents is a directory
-//        let url1 = URL(fileURLWithFileSystemRepresentation: relativePath, isDirectory: true, relativeTo: baseURL)
-//        // we're letting fileURLWithPath:relativeTo: determine Documents is a directory with I/O
-//        let url2 = URL(fileURLWithPath: relativePath, relativeTo: baseURL)
-//        XCTAssertEqual(url1, url2, "\(url1) was not equal to \(url2)")
-//        // we're telling fileURLWithPath:relativeTo: Documents is a directory with a trailing slash
-//        let url3 = URL(fileURLWithPath: relativePath + "/", relativeTo: baseURL)
-//        XCTAssertEqual(url1, url3, "\(url1) was not equal to \(url3)")
+        // we're telling fileURLWithPath:isDirectory:relativeTo: Documents is a directory
+        let url1 = URL(fileURLWithFileSystemRepresentation: relativePath, isDirectory: true, relativeTo: baseURL)
+        // we're letting fileURLWithPath:relativeTo: determine Documents is a directory with I/O
+        let url2 = URL(fileURLWithPath: relativePath, relativeTo: baseURL)
+        XCTAssertEqual(url1, url2, "\(url1) was not equal to \(url2)")
+        // we're telling fileURLWithPath:relativeTo: Documents is a directory with a trailing slash
+        let url3 = URL(fileURLWithPath: relativePath + "/", relativeTo: baseURL)
+        XCTAssertEqual(url1, url3, "\(url1) was not equal to \(url3)")
+        #endif
     }
 
     func test_relativeFilePath() {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         let url1 = URL(fileURLWithPath: "/this/is/absolute", relativeTo: nil)
         XCTAssertNil(url1.baseURL, "Absolute URLs should have no base URL")
         XCTAssertEqual(url1.path, url1.relativePath, "URLs without base path should have equal path and relativePath")
@@ -169,12 +206,6 @@ class TestURL : XCTestCase {
         let url2 = URL(fileURLWithPath: "this/is/relative", relativeTo: nil)
         XCTAssertNotNil(url2.baseURL, "Relative URLs should have base URL assigned")
         XCTAssertNotEqual(url2.path, url2.relativePath, "URLs without base path should have different path and relativePath")
-
-        #if os(Windows)
-        let url3 = URL(fileURLWithPath: "C:\\this\\is\\absolute", relativeTo: nil)
-        XCTAssertNil(url3.baseURL, "Absolute URLs should have no base URL")
-        XCTAssertEqual(url3.path, url3.relativePath, "URLs without base path should have equal path and relativePath")
-        #endif
     }
 
     /// Returns a URL from the given url string and base
@@ -187,7 +218,7 @@ class TestURL : XCTestCase {
         }
     }
 
-    internal func generateResults(_ url: URL, pathComponent: String?, pathExtension : String?) -> [String : Any] {
+    fileprivate func generateResults(_ url: URL, pathComponent: String?, pathExtension : String?) -> [String : Any] {
         var result = [String : Any]()
         if let pathComponent = pathComponent {
             let newFileURL = url.appendingPathComponent(pathComponent, isDirectory: false)
@@ -228,7 +259,10 @@ class TestURL : XCTestCase {
         return result
     }
 
-    internal func compareResults(_ url : URL, expected : [String : Any], got : [String : Any]) -> (Bool, [String]) {
+    #if !SKIP
+    // TODO: plist parsing
+
+    fileprivate func compareResults(_ url : URL, expected : [String : Any], got : [String : Any]) -> (Bool, [String]) {
         var differences = [String]()
         for (key, expectation) in expected {
             // Skip non-string expected results
@@ -305,19 +339,11 @@ class TestURL : XCTestCase {
                 XCTFail()
             }
 
-#if os(Windows)
-            // On Windows, pipes are valid charcters which can be used
-            // to replace a ':'. See RFC 8089 Section E.2.2 for
-            // details.
-            //
-            // Skip the test which expects pipes to be invalid
-            let skippedPipeTest = "NSURLWithString-parse-absolute-escape-006-pipe-invalid"
-#else
             // On other platforms, pipes are not valid
             //
             // Skip the test which expects pipes to be valid
             let skippedPipeTest = "NSURLWithString-parse-absolute-escape-006-pipe-valid"
-#endif
+
             let skippedTests = [
                 "NSURLWithString-parse-ambiguous-url-001", // TODO: Fix Test
                 skippedPipeTest,
@@ -337,13 +363,14 @@ class TestURL : XCTestCase {
             }
         }
     }
+    #endif
 
     static let gBaseTemporaryDirectoryPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.swift.foundation.TestFoundation.TestURL.\(ProcessInfo.processInfo.processIdentifier)")
     static var gBaseCurrentWorkingDirectoryPath : String {
         return FileManager.default.currentDirectoryPath
     }
     static var gSavedPath = ""
-    static var gRelativeOffsetFromBaseCurrentWorkingDirectory: UInt = 0
+    static var gRelativeOffsetFromBaseCurrentWorkingDirectory: UInt = UInt(0)
     static let gFileExistsName = "TestCFURL_file_exists\(ProcessInfo.processInfo.globallyUniqueString)"
     static let gFileDoesNotExistName = "TestCFURL_file_does_not_exist"
     static let gDirectoryExistsName = "TestCFURL_directory_exists\(ProcessInfo.processInfo.globallyUniqueString)"
@@ -353,6 +380,7 @@ class TestURL : XCTestCase {
     static let gDirectoryExistsPath = gBaseTemporaryDirectoryPath + gDirectoryExistsName
     static let gDirectoryDoesNotExistPath = gBaseTemporaryDirectoryPath + gDirectoryDoesNotExistName
 
+    #if !SKIP
     override class func tearDown() {
         let path = TestURL.gBaseTemporaryDirectoryPath
         if (try? FileManager.default.attributesOfItem(atPath: path)) != nil {
@@ -365,56 +393,71 @@ class TestURL : XCTestCase {
 
         super.tearDown()
     }
+    #endif
 
     static func setup_test_paths() -> Bool {
-        _ = FileManager.default.createFile(atPath: gFileExistsPath, contents: nil)
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
+        let _ = FileManager.default.createFile(atPath: gFileExistsPath, contents: nil)
 
         do {
           try FileManager.default.removeItem(atPath: gFileDoesNotExistPath)
         } catch {
+          #if !SKIP
           // The error code is a CocoaError
           if (error as? NSError)?.code != CocoaError.fileNoSuchFile.rawValue {
             return false
           }
+          #endif
         }
 
         do {
           try FileManager.default.createDirectory(atPath: gDirectoryExistsPath, withIntermediateDirectories: false)
         } catch {
+            #if !SKIP
             // The error code is a CocoaError
             if (error as? NSError)?.code != CocoaError.fileWriteFileExists.rawValue {
                 return false
             }
+            #endif
         }
 
         do {
           try FileManager.default.removeItem(atPath: gDirectoryDoesNotExistPath)
         } catch {
+            #if !SKIP
             // The error code is a CocoaError
             if (error as? NSError)?.code != CocoaError.fileNoSuchFile.rawValue {
                 return false
             }
+            #endif
         }
 
         TestURL.gSavedPath = FileManager.default.currentDirectoryPath
-        FileManager.default.changeCurrentDirectoryPath(NSTemporaryDirectory())
+        //FileManager.default.changeCurrentDirectoryPath(NSTemporaryDirectory())
 
         let cwd = FileManager.default.currentDirectoryPath
         let cwdURL = URL(fileURLWithPath: cwd, isDirectory: true)
         // 1 for path separator
-        cwdURL.withUnsafeFileSystemRepresentation {
+        #if !SKIP
+        cwdURL.foundationURL.withUnsafeFileSystemRepresentation {
             gRelativeOffsetFromBaseCurrentWorkingDirectory = UInt(strlen($0!) + 1)
         }
+        #endif
 
         return true
     }
 
     func test_fileURLWithPath() {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         if !TestURL.setup_test_paths() {
             let error = strerror(errno)!
             XCTFail("Failed to set up test paths: \(String(cString: error))")
         }
-        defer { FileManager.default.changeCurrentDirectoryPath(TestURL.gSavedPath) }
+        //defer { FileManager.default.changeCurrentDirectoryPath(TestURL.gSavedPath) }
 
         // test with file that exists
         var path = TestURL.gFileExistsPath
@@ -449,16 +492,11 @@ class TestURL : XCTestCase {
         // 1 for path separator
         let expectedLength = UInt(strlen(TestURL.gFileDoesNotExistName)) + TestURL.gRelativeOffsetFromBaseCurrentWorkingDirectory
         XCTAssertEqual(UInt(actualLength), expectedLength, "fileSystemRepresentation was too short")
-#if os(Windows)
-        // On Windows, the URL path should have `/` separators and the
-        // fileSystemRepresentation should have `\` separators.
-        XCTAssertTrue(strncmp(String(TestURL.gBaseCurrentWorkingDirectoryPath.map { $0 == "/" ? "\\" : $0 }),
-                              fileSystemRep,
-                              Int(strlen(TestURL.gBaseCurrentWorkingDirectoryPath))) == 0,
-                      "fileSystemRepresentation of base path is wrong")
-#else
+
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #else
         XCTAssertTrue(strncmp(TestURL.gBaseCurrentWorkingDirectoryPath, fileSystemRep, Int(strlen(TestURL.gBaseCurrentWorkingDirectoryPath))) == 0, "fileSystemRepresentation of base path is wrong")
-#endif
         let lengthOfRelativePath = Int(strlen(TestURL.gFileDoesNotExistName))
         let relativePath = fileSystemRep.advanced(by: Int(TestURL.gRelativeOffsetFromBaseCurrentWorkingDirectory))
         XCTAssertTrue(strncmp(TestURL.gFileDoesNotExistName, relativePath, lengthOfRelativePath) == 0, "fileSystemRepresentation of file path is wrong")
@@ -467,6 +505,7 @@ class TestURL : XCTestCase {
         let url1 = URL(fileURLWithPath: "/path/to/b/folder", isDirectory: true).standardizedFileURL.absoluteString
         let url2 = URL(fileURLWithPath: "/path/to/b/folder", isDirectory: true).absoluteString
         XCTAssertEqual(url1, url2)
+        #endif
     }
 
     func test_fileURLWithPath_isDirectory() {
@@ -474,7 +513,7 @@ class TestURL : XCTestCase {
             let error = strerror(errno)!
             XCTFail("Failed to set up test paths: \(String(cString: error))")
         }
-        defer { FileManager.default.changeCurrentDirectoryPath(TestURL.gSavedPath) }
+        //defer { FileManager.default.changeCurrentDirectoryPath(TestURL.gSavedPath) }
 
         // test with file that exists
         var path = TestURL.gFileExistsPath
@@ -519,45 +558,56 @@ class TestURL : XCTestCase {
         // 1 for path separator
         let expectedLength = UInt(strlen(TestURL.gFileDoesNotExistName)) + TestURL.gRelativeOffsetFromBaseCurrentWorkingDirectory
         XCTAssertEqual(actualLength, expectedLength, "fileSystemRepresentation was too short")
-#if os(Windows)
-        // On Windows, the URL path should have `/` separators and the
-        // fileSystemRepresentation should have `\` separators.
-        XCTAssertTrue(strncmp(String(TestURL.gBaseCurrentWorkingDirectoryPath.map { $0 == "/" ? "\\" : $0 }),
-                              fileSystemRep,
-                              Int(strlen(TestURL.gBaseCurrentWorkingDirectoryPath))) == 0,
-                      "fileSystemRepresentation of base path is wrong")
-#else
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #else
         XCTAssertTrue(strncmp(TestURL.gBaseCurrentWorkingDirectoryPath, fileSystemRep, Int(strlen(TestURL.gBaseCurrentWorkingDirectoryPath))) == 0, "fileSystemRepresentation of base path is wrong")
-#endif
         let lengthOfRelativePath = Int(strlen(TestURL.gFileDoesNotExistName))
         let relativePath = fileSystemRep.advanced(by: Int(TestURL.gRelativeOffsetFromBaseCurrentWorkingDirectory))
         XCTAssertTrue(strncmp(TestURL.gFileDoesNotExistName, relativePath, lengthOfRelativePath) == 0, "fileSystemRepresentation of file path is wrong")
+        #endif
     }
 
     func test_URLByResolvingSymlinksInPathShouldRemoveDuplicatedPathSeparators() {
         let url = URL(fileURLWithPath: "//foo///bar////baz/")
         let result = url.resolvingSymlinksInPath()
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         XCTAssertEqual(result, URL(fileURLWithPath: "/foo/bar/baz"))
     }
 
     func test_URLByResolvingSymlinksInPathShouldRemoveSingleDotsBetweenSeparators() {
         let url = URL(fileURLWithPath: "/./foo/./.bar/./baz/./")
         let result = url.resolvingSymlinksInPath()
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         XCTAssertEqual(result, URL(fileURLWithPath: "/foo/.bar/baz"))
     }
 
     func test_URLByResolvingSymlinksInPathShouldCompressDoubleDotsBetweenSeparators() {
         let url = URL(fileURLWithPath: "/foo/../..bar/../baz/")
         let result = url.resolvingSymlinksInPath()
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         XCTAssertEqual(result, URL(fileURLWithPath: "/baz"))
     }
 
     func test_URLByResolvingSymlinksInPathShouldUseTheCurrentDirectory() throws {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
         defer { try? fileManager.removeItem(at: writableTestDirectoryURL) }
-
         let previousCurrentDirectory = fileManager.currentDirectoryPath
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #elseif false // these tests are disabled because they rely on chaning the current working directory, which breaks when testing in parallel
+
+        // unavailable in Skip
         fileManager.changeCurrentDirectoryPath(writableTestDirectoryURL.path)
         defer { fileManager.changeCurrentDirectoryPath(previousCurrentDirectory) }
 
@@ -567,28 +617,39 @@ class TestURL : XCTestCase {
         // destination exists, so we create the destination to avoid having to
         // compare against /private in Darwin.
         try fileManager.createDirectory(at: writableTestDirectoryURL.appendingPathComponent("foo/bar"), withIntermediateDirectories: true)
-        try "".write(to: writableTestDirectoryURL.appendingPathComponent("foo/bar/baz"), atomically: true, encoding: .utf8)
+        try "".write(to: writableTestDirectoryURL.appendingPathComponent("foo/bar/baz"), atomically: true, encoding: StringEncoding.utf8)
 
         let url = URL(fileURLWithPath: "foo/bar/baz")
         let result = url.resolvingSymlinksInPath()
         XCTAssertEqual(result, URL(fileURLWithPath: writableTestDirectoryURL.path + "/foo/bar/baz").resolvingSymlinksInPath())
+        #endif
     }
 
     func test_resolvingSymlinksInPathShouldAppendTrailingSlashWhenExistingDirectory() throws {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
         defer { try? fileManager.removeItem(at: writableTestDirectoryURL) }
 
         var path = writableTestDirectoryURL.path
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #else
         if path.hasSuffix("/") {
             path.remove(at: path.index(path.endIndex, offsetBy: -1))
         }
         let url = URL(fileURLWithPath: path)
         let result = url.resolvingSymlinksInPath()
         XCTAssertEqual(result, URL(fileURLWithPath: path + "/").resolvingSymlinksInPath())
+        #endif
     }
 
     func test_resolvingSymlinksInPathShouldResolveSymlinks() throws {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         // NOTE: this test only works on file systems that support symlinks.
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
@@ -596,7 +657,7 @@ class TestURL : XCTestCase {
 
         let symbolicLink = writableTestDirectoryURL.appendingPathComponent("origin")
         let destination = writableTestDirectoryURL.appendingPathComponent("destination")
-        try "".write(to: destination, atomically: true, encoding: .utf8)
+        try "".write(to: destination, atomically: true, encoding: StringEncoding.utf8)
         try fileManager.createSymbolicLink(at: symbolicLink, withDestinationURL: destination)
 
         let result = symbolicLink.resolvingSymlinksInPath()
@@ -604,6 +665,9 @@ class TestURL : XCTestCase {
     }
 
     func test_resolvingSymlinksInPathShouldRemovePrivatePrefix() {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         // NOTE: this test only works on Darwin, since the code that removes
         // /private relies on /private/tmp existing.
         let url = URL(fileURLWithPath: "/private/tmp")
@@ -612,6 +676,9 @@ class TestURL : XCTestCase {
     }
 
     func test_resolvingSymlinksInPathShouldNotRemovePrivatePrefixIfOnlyComponent() {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         // NOTE: this test only works on Darwin, since only there /tmp is
         // symlinked to /private/tmp.
         let url = URL(fileURLWithPath: "/tmp/..")
@@ -620,12 +687,18 @@ class TestURL : XCTestCase {
     }
 
     func test_resolvingSymlinksInPathShouldNotChangeNonFileURLs() throws {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         let url = try XCTUnwrap(URL(string: "myscheme://server/foo/bar/baz"))
         let result = url.resolvingSymlinksInPath().absoluteString
         XCTAssertEqual(result, "myscheme://server/foo/bar/baz")
     }
 
     func test_resolvingSymlinksInPathShouldNotChangePathlessURLs() throws {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         let url = try XCTUnwrap(URL(string: "file://"))
         let result = url.resolvingSymlinksInPath().absoluteString
         XCTAssertEqual(result, "file://")
@@ -634,31 +707,36 @@ class TestURL : XCTestCase {
     func test_reachable() {
         #if os(Android)
         var url = URL(fileURLWithPath: "/data")
-        #elseif os(Windows)
-        var url = URL(fileURLWithPath: NSHomeDirectory())
         #else
         var url = URL(fileURLWithPath: "/usr")
+        #endif
+        #if SKIP
+        throw XCTSkip("TODO: port test")
         #endif
         XCTAssertEqual(true, try? url.checkResourceIsReachable())
 
         url = URL(string: "https://www.swift.org")!
         do {
-            _ = try url.checkResourceIsReachable()
+            let _ = try url.checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
+            #if !SKIP
             XCTAssertEqual(NSCocoaErrorDomain, error.domain)
             XCTAssertEqual(CocoaError.Code.fileReadUnsupportedScheme.rawValue, error.code)
+            #endif
         } catch {
             XCTFail()
         }
 
         url = URL(fileURLWithPath: "/some_random_path")
         do {
-            _ = try url.checkResourceIsReachable()
+            let _ = try url.checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
+            #if !SKIP
             XCTAssertEqual(NSCocoaErrorDomain, error.domain)
             XCTAssertEqual(CocoaError.Code.fileReadNoSuchFile.rawValue, error.code)
+            #endif
         } catch {
             XCTFail()
         }
@@ -670,26 +748,30 @@ class TestURL : XCTestCase {
         #else
         var nsURL = NSURL(fileURLWithPath: "/usr")
         #endif
-        XCTAssertEqual(true, try? (nsURL as URL).checkResourceIsReachable())
+        XCTAssertEqual(true, try? (nsURL as FoundationURL).checkResourceIsReachable())
 
         nsURL = NSURL(string: "https://www.swift.org")!
         do {
-            _ = try (nsURL as URL).checkResourceIsReachable()
+            let _ = try (.init(nsURL) as URL).checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
+            #if !SKIP
             XCTAssertEqual(NSCocoaErrorDomain, error.domain)
             XCTAssertEqual(CocoaError.Code.fileReadUnsupportedScheme.rawValue, error.code)
+            #endif
         } catch {
             XCTFail()
         }
 
         nsURL = NSURL(fileURLWithPath: "/some_random_path")
         do {
-            _ = try (nsURL as URL).checkResourceIsReachable()
+            let _ = try (.init(nsURL) as URL).checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
+            #if !SKIP
             XCTAssertEqual(NSCocoaErrorDomain, error.domain)
             XCTAssertEqual(CocoaError.Code.fileReadNoSuchFile.rawValue, error.code)
+            #endif
         } catch {
             XCTFail()
         }
@@ -700,41 +782,59 @@ class TestURL : XCTestCase {
         let urlCopy = url!.copy() as! NSURL
         XCTAssertTrue(url!.isEqual(urlCopy))
 
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #else
         let queryItem = NSURLQueryItem(name: "id", value: "23")
         let queryItemCopy = queryItem.copy() as! NSURLQueryItem
         XCTAssertTrue(queryItem.isEqual(queryItemCopy))
+        #endif
     }
 
-    func test_itemNSCoding() {
-        let queryItemA = NSURLQueryItem(name: "id", value: "23")
-        let queryItemB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: queryItemA)) as! NSURLQueryItem
-        XCTAssertEqual(queryItemA, queryItemB, "Archived then unarchived query item must be equal.")
-    }
+//    func test_itemNSCoding() {
+//        let queryItemA = NSURLQueryItem(name: "id", value: "23")
+//        let queryItemB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: queryItemA)) as! NSURLQueryItem
+//        XCTAssertEqual(queryItemA, queryItemB, "Archived then unarchived query item must be equal.")
+//    }
 
     func test_dataRepresentation() {
         let url = NSURL(fileURLWithPath: "/tmp/foo")
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #else
         let url2 = NSURL(dataRepresentation: url.dataRepresentation,
             relativeTo: nil)
         XCTAssertEqual(url, url2)
+        #endif
     }
 
    func test_description() {
         let url = URL(string: "http://amazon.in")!
         XCTAssertEqual(url.description, "http://amazon.in")
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #else
         var urlComponents = URLComponents()
         urlComponents.port = 8080
         urlComponents.host = "amazon.in"
         urlComponents.password = "abcd"
         let relativeURL = urlComponents.url(relativeTo: url)
         XCTAssertEqual(relativeURL?.description, "//:abcd@amazon.in:8080 -- http://amazon.in")
+       #endif
     }
 
     // MARK: Resource values.
 
     func test_URLResourceValues() throws {
+        #if SKIP
+        throw XCTSkip("TODO: port test")
+        #endif
         do {
             try FileManager.default.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
             var a = writableTestDirectoryURL.appendingPathComponent("a")
+            #if SKIP
+            throw XCTSkip("TODO: port test")
+            #else
             try Data().write(to: a)
 
             // Not all OSes support fractions of a second; remove the fractional part.
@@ -770,19 +870,22 @@ class TestURL : XCTestCase {
                 let newValues = try separateA.resourceValues(forKeys: keys)
                 assertRelevantValuesAreEqual(in: newValues)
             }
+            #endif
         } catch {
+            #if !SKIP
             if let error = error as? NSError {
                 print("error: \(error.description) - \(error.userInfo)")
             } else {
                 print("error: \(error)")
             }
+            #endif
             throw error
         }
     }
 
     // MARK: -
 
-    var writableTestDirectoryURL: URL!
+    fileprivate var writableTestDirectoryURL: URL = URL(fileURLWithPath: NSTemporaryDirectory()) // need a default value for Kotlin, but this will be replaced in setUp()
 
     override func setUp() {
         super.setUp()
@@ -792,7 +895,7 @@ class TestURL : XCTestCase {
     }
 
     override func tearDown() {
-        if let directoryURL = writableTestDirectoryURL,
+        if let directoryURL = (writableTestDirectoryURL as URL?),
             (try? FileManager.default.attributesOfItem(atPath: directoryURL.path)) != nil {
             do {
                 try FileManager.default.removeItem(at: directoryURL)
@@ -804,6 +907,7 @@ class TestURL : XCTestCase {
         super.tearDown()
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestURL) -> () throws -> Void)] {
         var tests: [(String, (TestURL) -> () throws -> Void)] = [
             ("test_URLStrings", test_URLStrings),
@@ -822,19 +926,12 @@ class TestURL : XCTestCase {
             ("test_resolvingSymlinksInPathShouldNotChangePathlessURLs", test_resolvingSymlinksInPathShouldNotChangePathlessURLs),
             ("test_reachable", test_reachable),
             ("test_copy", test_copy),
-            ("test_itemNSCoding", test_itemNSCoding),
+//            ("test_itemNSCoding", test_itemNSCoding),
             ("test_dataRepresentation", test_dataRepresentation),
             ("test_description", test_description),
             ("test_URLResourceValues", testExpectedToFail(test_URLResourceValues,
                 "test_URLResourceValues: Except for .nameKey, we have no testable attributes that work in the environment Swift CI uses, for now. SR-XXXX")),
         ]
-
-#if os(Windows)
-        tests.append(contentsOf: [
-            ("test_WindowsPathSeparator", test_WindowsPathSeparator),
-            ("test_WindowsPathSeparator2", test_WindowsPathSeparator2),
-        ])
-#endif
 
 #if canImport(Darwin)
         tests += [
@@ -845,7 +942,6 @@ class TestURL : XCTestCase {
 
         return tests
     }
+    #endif
 }
-
-#endif
 

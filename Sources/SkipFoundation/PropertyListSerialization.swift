@@ -3,36 +3,7 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-/// Needed unti Skip supports creating typealias inside extensions
-public typealias StringEncoding = String.Encoding
-#else
-
-extension String {
-    public func data(using: StringEncoding, allowLossyConversion: Bool) -> Data? {
-        return try? Data(rawValue: toByteArray(using.encoding))
-    }
-}
-
-
-// SKIP REPLACE: @JvmInline public value class StringEncoding(val encoding: java.nio.charset.Charset) { companion object { public val utf8 = StringEncoding(encoding = Charsets.UTF_8) } }
-public struct StringEncoding : RawRepresentable {
-    public let encoding: java.nio.charset.Charset
-
-    public init(encoding: java.nio.charset.Charset) {
-        self.encoding = encoding
-    }
-
-    public init(_ encoding: java.nio.charset.Charset) {
-        self.encoding = encoding
-    }
-}
-
-//public extension StringEncoding {
-//    public static var utf8 = StringEncoding(encoding: Charsets.UTF_8)
-//}
-
-
+#if SKIP
 public class PropertyListSerialization {
     private static var plistRegex = getPlistRegex().toRegex()
 

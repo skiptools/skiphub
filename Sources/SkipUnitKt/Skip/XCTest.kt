@@ -8,10 +8,34 @@ package skip.unit
 // Alias for the @Test annotation to be able to use it without importing JUnit
 typealias Test = org.junit.Test
 
+// Alias for an org.junit.AssumptionViolatedException, which will skip a test in the same way as conditionally throwing XCTSkip
+typealias XCTSkip = org.junit.AssumptionViolatedException
+
 // Mimics the API of XCTest for a JUnit 5 test
 // Behavior difference: JUnit assert* thows an exception, but XCTAssert* just reports the failure and continues
 // NOTE: the parameter order of JUnit 5's org.junit.jupiter.api.Assertions is the reverse of JUnit 4's org.junit.Assert
 interface XCTestCase {
+
+	// SKIP INSERT: @org.junit.Before
+	fun beforeTest() {
+		setUp()
+	}
+
+	// The equivalent to XCTestCase setUp(), meant to be overridden in subclasses
+	fun setUp() {
+
+	}
+
+	// SKIP INSERT: @org.junit.After
+	fun afterTest() {
+		tearDown()
+	}
+
+	// The equivalent to XCTestCase tearDown(), meant to be overridden in subclasses
+	fun tearDown() {
+
+	}
+
     fun XCTFail(): Unit = org.junit.Assert.fail()
 
     fun XCTFail(msg: String): Unit = org.junit.Assert.fail(msg)
