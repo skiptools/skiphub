@@ -42,7 +42,7 @@ fileprivate func NSLog(_ message: String) {
     logger.info(message)
 }
 
-fileprivate extension NSURL {
+fileprivate extension SkipURL {
     var fileSystemRepresentation: String {
         return path
     }

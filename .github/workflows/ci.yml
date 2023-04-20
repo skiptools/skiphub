@@ -39,11 +39,6 @@ jobs:
             echo "CONFIG=release" >> $GITHUB_ENV
           fi
 
-      - name: Check gradle
-        run: |
-          which gradle
-          gradle --version
-
       - name: Checkout skiphub
         uses: actions/checkout@v3
         with:
@@ -59,6 +54,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Check gradle
+        run: |
+          which gradle
+          gradle --version
 
       - name: Configure debug Flags
         # when in debug mode, we run against a local build of the toolchain
@@ -105,7 +105,7 @@ jobs:
 
         #if: false
         run: |
-          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt
+          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
 
       - name: SkipLib Swift Tests
         working-directory: skiphub

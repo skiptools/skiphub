@@ -5,7 +5,6 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 import XCTest
-import SkipDriver
 
 /// A base test case for a JUnit test suite which will run the skip-transpiled test cases
 open class JUnitTestCase: XCTestCase {

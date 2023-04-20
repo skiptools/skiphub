@@ -27,10 +27,10 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.3.47"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.3.48"),
     ],
     targets: [
-        .target(name: "SkipUnit", dependencies: [.product(name: "SkipDriver", package: "skip")]),
+        .target(name: "SkipUnit", dependencies: []),
         .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
         .testTarget(name: "SkipUnitKtTests", dependencies: ["SkipUnitKt", "SkipUnit"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
