@@ -44,7 +44,7 @@ public struct GradleDriver {
         self.gradleInfo = try await Self.execGradleInfo(gradleArgs: self.gradleArgs)
 
         guard let gradleVersionString = self.gradleInfo["Gradle"],
-              let gradleVersion = Version(gradleVersionString) else {
+              let gradleVersion = try? Version(versionString: gradleVersionString, usesLenientParsing: true) else {
             throw GradleDriverError.noGradleVersion(gradle: self.gradlePath, props: self.gradleInfo)
         }
 
@@ -54,7 +54,7 @@ public struct GradleDriver {
         }
 
         guard let kotlinVersionString = self.gradleInfo["Kotlin"],
-              let kotlinVersion = Version(kotlinVersionString) else {
+              let kotlinVersion = try? Version(versionString: kotlinVersionString, usesLenientParsing: true) else {
             throw GradleDriverError.noKotlinVersion(gradle: self.gradlePath)
         }
 
