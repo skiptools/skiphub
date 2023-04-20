@@ -13,8 +13,7 @@ public typealias PlatformDateFormatter = java.text.DateFormat
 #endif
 
 
-// SKIP REPLACE: @JvmInline public value class SkipDateFormatter(val rawValue: PlatformDateFormatter) { companion object { } }
-public struct SkipDateFormatter : RawRepresentable {
+public struct SkipDateFormatter : Hashable, RawRepresentable {
     public let rawValue: PlatformDateFormatter
 
     public init(rawValue: PlatformDateFormatter) {

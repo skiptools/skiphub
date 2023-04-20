@@ -12,9 +12,7 @@ public typealias Bundle = SkipBundle
 public typealias PlatformBundle = java.lang.Class<Any>
 #endif
 
-
-// SKIP REPLACE: @JvmInline public value class SkipBundle(val rawValue: PlatformBundle) { companion object { } }
-public struct SkipBundle : RawRepresentable {
+public struct SkipBundle : Hashable, RawRepresentable {
     public let rawValue: PlatformBundle
 
     public init(rawValue: PlatformBundle) {

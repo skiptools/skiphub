@@ -14,8 +14,7 @@ public typealias UserDefaults = SkipUserDefaults
 
 #if SKIP
 
-// SKIP REPLACE: @JvmInline public value class SkipUserDefaults(val rawValue: android.content.SharedPreferences) { companion object { } }
-public struct SkipUserDefaults : RawRepresentable {
+public struct SkipUserDefaults : Hashable, RawRepresentable {
     public let rawValue: android.content.SharedPreferences
 
     public init(rawValue: android.content.SharedPreferences) {

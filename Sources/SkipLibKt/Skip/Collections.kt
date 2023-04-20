@@ -157,3 +157,7 @@ fun <T> Iterable<T>.contains(where: (acc: T) -> Boolean): Boolean {
 fun <T : Comparable<T>> Iterable<T>.sorted(): Array<T> {
 	return Array(this.sortedWith(compareBy { it }))
 }
+
+interface RandomNumberGenerator {
+	fun next(): ULong
+}

@@ -44,9 +44,7 @@ public struct PseudoRandomNumberGenerator : RandomNumberGenerator {
     @inlinable public mutating func next() -> UInt64 {
         return UInt64(bitPattern: nextLong())
     }
-}
 
-extension PseudoRandomNumberGenerator {
     public static func seeded(seed: Int64) -> PseudoRandomNumberGenerator {
         PseudoRandomNumberGenerator(seed: seed)
     }
@@ -72,11 +70,6 @@ extension RandomNumberGenerator {
 public typealias PlatformPseudoRandomNumberGenerator = java.util.Random
 public typealias PlatformSystemRandomNumberGenerator = java.security.SecureRandom
 
-public protocol RandomNumberGenerator {
-
-}
-
-// SKIP REPLACE: @JvmInline public value class SystemRandomNumberGenerator(val rawValue: PlatformSystemRandomNumberGenerator = PlatformSystemRandomNumberGenerator()) :  RandomNumberGenerator { companion object { } }
 public struct SystemRandomNumberGenerator : RawRepresentable, RandomNumberGenerator {
     public let rawValue: PlatformSystemRandomNumberGenerator
 
@@ -84,12 +77,10 @@ public struct SystemRandomNumberGenerator : RawRepresentable, RandomNumberGenera
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: PlatformSystemRandomNumberGenerator) {
+    public init(_ rawValue: PlatformSystemRandomNumberGenerator = PlatformSystemRandomNumberGenerator()) {
         self.rawValue = rawValue
     }
-}
 
-extension SystemRandomNumberGenerator {
     public func nextLong() -> Long {
         return rawValue.nextLong()
     }
@@ -98,7 +89,7 @@ extension SystemRandomNumberGenerator {
         return rawValue.nextInt()
     }
 
-    public func next() -> ULong {
+    public func next() -> UInt64 {
         return rawValue.nextLong().toULong()
     }
 
@@ -112,7 +103,6 @@ extension SystemRandomNumberGenerator {
 }
 
 
-// SKIP REPLACE: @JvmInline public value class PseudoRandomNumberGenerator(val rawValue: PlatformPseudoRandomNumberGenerator = PlatformPseudoRandomNumberGenerator()) { companion object { } }
 public struct PseudoRandomNumberGenerator : RawRepresentable {
     public let rawValue: PlatformPseudoRandomNumberGenerator
 
@@ -120,18 +110,13 @@ public struct PseudoRandomNumberGenerator : RawRepresentable {
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: PlatformPseudoRandomNumberGenerator) {
+    public init(_ rawValue: PlatformPseudoRandomNumberGenerator = PlatformPseudoRandomNumberGenerator()) {
         self.rawValue = rawValue
     }
-}
 
-extension PseudoRandomNumberGenerator {
     public static func seeded(seed: Int64) -> PseudoRandomNumberGenerator {
         return PseudoRandomNumberGenerator(rawValue: PlatformPseudoRandomNumberGenerator(seed))
     }
-}
-
-extension PseudoRandomNumberGenerator {
 
     public func nextLong() -> Long {
         return rawValue.nextLong()

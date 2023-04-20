@@ -33,15 +33,14 @@ public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
 
 #endif
 
-// SKIP REPLACE: @JvmInline public value class SkipDate(val rawValue: PlatformDate = PlatformDate()) { companion object { } }
-public struct SkipDate : RawRepresentable {
+public struct SkipDate : Hashable, RawRepresentable {
     public let rawValue: PlatformDate
 
     public init(rawValue: PlatformDate) {
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: PlatformDate) {
+    public init(_ rawValue: PlatformDate = PlatformDate()) {
         self.rawValue = rawValue
     }
 }

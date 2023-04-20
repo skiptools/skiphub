@@ -12,9 +12,7 @@ public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
 #endif
 
-
-// SKIP REPLACE: @JvmInline public value class SkipData(val rawValue: PlatformData) { companion object { } }
-public struct SkipData : RawRepresentable {
+public struct SkipData : Hashable, RawRepresentable {
     public let rawValue: PlatformData
 
     public init(rawValue: PlatformData) {

@@ -13,8 +13,7 @@ public typealias PlatformTimeZone = java.util.TimeZone
 #endif
 
 
-// SKIP REPLACE: @JvmInline public value class SkipTimeZone(val rawValue: PlatformTimeZone) { companion object { } }
-public struct SkipTimeZone : RawRepresentable {
+public struct SkipTimeZone : Hashable, RawRepresentable {
     public let rawValue: PlatformTimeZone
 
     public init(rawValue: PlatformTimeZone) {
