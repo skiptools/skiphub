@@ -39,6 +39,11 @@ jobs:
             echo "CONFIG=release" >> $GITHUB_ENV
           fi
 
+      - name: Check gradle
+        run: |
+          which gradle
+          gradle --version
+
       - name: Checkout skiphub
         uses: actions/checkout@v3
         with:
