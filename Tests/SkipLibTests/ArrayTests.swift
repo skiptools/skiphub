@@ -183,7 +183,14 @@ final class ArrayTests: XCTestCase {
         let strings = ["K", "I", "P"]
         XCTAssertEqual(strings.reduce("S", { $0 + $1 }), "SKIP")
         XCTAssertEqual(strings.reduce("S", +), "SKIP")
-        //~~~
+
+        let dict = [1, 2, 3].reduce(into: [Int: ElementEnum]()) { result, i in
+            result[i] = ElementEnum(rawValue: i)!
+        }
+        XCTAssertTrue(dict[1] == .one)
+        XCTAssertTrue(dict[2] == .two)
+        XCTAssertTrue(dict[3] == .three)
+
         #if !SKIP
         XCTAssertEqual(strings.lazy.reduce("S", { $0 + $1 }), "SKIP")
         XCTAssertEqual(strings.lazy.lazy.reduce("S", { $0 + $1 }), "SKIP") // Cannot infer a type for this parameter. Please specify it explicitly.

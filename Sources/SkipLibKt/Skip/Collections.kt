@@ -39,7 +39,7 @@ interface Sequence<Element>: Iterable<Element> {
         return fold(initialResult, nextPartialResult)
     }
 
-    fun <R> reduce(into: R, unusedp: Nothing? = null, updateAccumulatingResult: (InOut<R>, Element) -> Unit): R {
+    fun <R> reduce(unusedp: Nothing? = null, into: R, updateAccumulatingResult: (InOut<R>, Element) -> Unit): R {
         return fold(into) { result, element ->
             var accResult = result
             val inoutAccResult = InOut<R>({ accResult }, { accResult = it })

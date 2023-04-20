@@ -71,11 +71,19 @@ extension Sequence {
         Swift.fatalError()
     }
 
-    public func reduce<R>(into initialResult: R, _ updateAccumulatingResult: (_ partialResult: inout R, Element) throws -> ()) rethrows -> R {
+    public func reduce<R>(into initialResult: R, _ updateAccumulatingResult: (_ partialResult: inout R, Element) throws -> Void) rethrows -> R {
         Swift.fatalError()
     }
 
     public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> [Element] {
+        Swift.fatalError()
+    }
+
+    public func contains(where predicate: ((Element) throws -> Bool) = { _ in false }) rethrows -> Bool {
+        Swift.fatalError()
+    }
+
+    public func contains(_ element: Element) -> Bool {
         Swift.fatalError()
     }
 
@@ -132,14 +140,6 @@ extension Sequence {
     }
 
     public func lexicographicallyPrecedes(_ other: Any, by areInIncreasingOrder: ((Element, Element) throws -> Bool) = { _, _ in false}) rethrows -> Bool {
-        Swift.fatalError()
-    }
-
-    public func contains(where predicate: ((Element) throws -> Bool) = { _ in false }) rethrows -> Bool {
-        Swift.fatalError()
-    }
-
-    public func contains(_ element: Element) -> Bool {
         Swift.fatalError()
     }
 
