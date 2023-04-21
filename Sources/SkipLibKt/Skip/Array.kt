@@ -44,13 +44,25 @@ class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Eleme
     }
 
     constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
+        // Don't use another of our Sequence impls as internal storage because we'll double-sref() elements
         if (nocopy) {
-            if (collection is MutableList<*>) {
+            if (collection is Array<*>) {
+                // Share storage with the given array, marking it as shared in both
+                val storage = collection._mutableStorage
+                if (storage != null) {
+                    if (shared) {
+                        collection.isStorageShared = true
+                        isStorageShared = true
+                    }
+                    _mutableStorage = storage as MutableList<Element>
+                } else {
+                    _immutableStorage = collection._immutableStorage as List<Element>
+                }
+            } else if (collection is MutableList<*>) {
                 _mutableStorage = collection as MutableList<Element>
                 isStorageShared = shared
             } else if (collection is List<*>) {
                 _immutableStorage = collection as List<Element>
-                isStorageShared = shared
             }
         }
         if (_mutableStorage == null && _immutableStorage == null) {
@@ -127,12 +139,6 @@ class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Eleme
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
     override fun scopy(): MutableStruct {
-        val storage = _mutableStorage
-        if (storage != null) {
-            isStorageShared = true
-            return Array(storage, nocopy = true, shared = true)
-        } else {
-            return Array(_immutableStorage!!)
-        }
+        return Array(this, nocopy = true, shared = true)
     }
 }
