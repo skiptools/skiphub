@@ -9,7 +9,7 @@ import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class DataTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "DataTests")
+    fileprivate let logger: Logger = Logger(subsystem: "test", category: "DataTests")
 
     func testData() throws {
         let hostsFile: URL = URL(fileURLWithPath: "/etc/hosts", isDirectory: false)

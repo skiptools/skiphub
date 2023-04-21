@@ -9,7 +9,7 @@ import XCTest
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 final class DateTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "DateTests")
+    fileprivate let logger: Logger = Logger(subsystem: "test", category: "DateTests")
 
     func testDateTime() throws {
         let date: Date = Date()

@@ -9,7 +9,7 @@ import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class LocaleTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "LocaleTests")
+    fileprivate let logger: Logger = Logger(subsystem: "test", category: "LocaleTests")
 
     func testLanguageCodes() throws {
         let fr = Locale(identifier: "fr_FR")

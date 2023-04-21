@@ -16,19 +16,19 @@ public typealias PlatformURL = java.net.URL
 
 #if SKIP
 public func SkipURL(string: String) -> SkipURL? {
-    return SkipURL(PlatformURL(string))
+    return SkipURL(rawValue: PlatformURL(string))
 }
 
 public func SkipURL(string: String, relativeTo: SkipURL?) -> SkipURL? {
-    return SkipURL(PlatformURL(relativeTo?.rawValue, string))
+    return SkipURL(rawValue: PlatformURL(relativeTo?.rawValue, string))
 }
 
 public func SkipURL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDirectory: Bool? = nil) -> SkipURL {
     // SKIP INSERT: val nil = null
     if (relativeTo != nil) {
-        return SkipURL(PlatformURL(relativeTo?.rawValue, fileURLWithPath))
+        return SkipURL(rawValue: PlatformURL(relativeTo?.rawValue, fileURLWithPath))
     } else {
-        return SkipURL(PlatformURL("file://" + path)) // TODO: isDirectory handling?
+        return SkipURL(rawValue: PlatformURL("file://" + path)) // TODO: isDirectory handling?
     }
 }
 
@@ -43,9 +43,9 @@ public func URL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDire
 public func URL(fileURLWithFileSystemRepresentation path: String, relativeTo: SkipURL?, isDirectory: Bool) -> SkipURL {
     // SKIP INSERT: val nil = null
     if (relativeTo != nil) {
-        return SkipURL(PlatformURL(relativeTo?.rawValue, path))
+        return SkipURL(rawValue: PlatformURL(relativeTo?.rawValue, path))
     } else {
-        return SkipURL(PlatformURL("file://" + path)) // TODO: isDirectory handling?
+        return SkipURL(rawValue: PlatformURL("file://" + path)) // TODO: isDirectory handling?
     }
 }
 
@@ -344,7 +344,7 @@ public struct SkipURL : RawRepresentable, Hashable {
             return self // not a link
         } else {
             let normalized = java.nio.file.Files.readSymbolicLink(originalPath).normalize()
-            return SkipURL(normalized.toUri().toURL())
+            return SkipURL(rawValue: normalized.toUri().toURL())
         }
         #endif
     }

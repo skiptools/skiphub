@@ -173,7 +173,7 @@ public protocol NamedHashFunction : HashFunction {
 
 public struct SHA256 : NamedHashFunction {
     typealias Digest = SHA256Digest
-    public let digest = MessageDigest.getInstance("SHA-256")
+    public let digest: MessageDigest = MessageDigest.getInstance("SHA-256")
     public let digestName = "SHA256"
 
     public static func hash(data: Data) -> SHA256Digest {
@@ -191,7 +191,7 @@ public struct SHA256Digest : Digest {
 
 public struct SHA384 : NamedHashFunction {
     typealias Digest = SHA384Digest
-    public let digest = MessageDigest.getInstance("SHA-384")
+    public let digest: MessageDigest = MessageDigest.getInstance("SHA-384")
     public let digestName = "SHA384"
 
     public static func hash(data: Data) -> SHA384Digest {
@@ -209,7 +209,7 @@ public struct SHA384Digest : Digest {
 
 public struct SHA512 : NamedHashFunction {
     typealias Digest = SHA512Digest
-    public let digest = MessageDigest.getInstance("SHA-512")
+    public let digest: MessageDigest = MessageDigest.getInstance("SHA-512")
     public let digestName = "SHA"
 
     public static func hash(data: Data) -> SHA512Digest {
@@ -228,7 +228,7 @@ public struct SHA512Digest : Digest {
 public struct Insecure {
     public struct MD5 : NamedHashFunction {
         typealias Digest = MD5Digest
-        public let digest = MessageDigest.getInstance("MD5")
+        public let digest: MessageDigest = MessageDigest.getInstance("MD5")
         public let digestName = "MD5"
 
         public static func hash(data: Data) -> MD5Digest {
@@ -246,7 +246,7 @@ public struct Insecure {
 
     public struct SHA1 : NamedHashFunction {
         typealias Digest = SHA1Digest
-        public let digest = MessageDigest.getInstance("SHA1")
+        public let digest: MessageDigest = MessageDigest.getInstance("SHA1")
         public let digestName = "SHA1"
 
         public static func hash(data: Data) -> SHA1Digest {

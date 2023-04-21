@@ -12,7 +12,7 @@ import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class RandomTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "RandomNumberGeneratorTests")
+    fileprivate let logger: Logger = Logger(subsystem: "test", category: "RandomNumberGeneratorTests")
 
     /// Verify that the system RNG is at least a little bit random.
     func testSystemRandomNumberGenerator() throws {

@@ -141,8 +141,12 @@ extension Logger {
 // SKIP INSERT: import java.util.logging.Logger
 // SKIP INSERT: import java.util.logging.Level
 
+/// The logger type in Java is just the logger itself
+public typealias Logger = java.util.logging.Logger
+
 /// In swift, this is a custom type that does lazy interpolation
 public typealias OSLogMessage = String
+
 
 public extension Logger {
     // error: /opt/src/github/skiptools/skiphub/Sources/SkipFoundation/Logger.swift:105:5 Cannot use an extension to add additional constructors to a Kotlin type defined outside of this module

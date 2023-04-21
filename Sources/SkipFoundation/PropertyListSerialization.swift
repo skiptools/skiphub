@@ -5,11 +5,10 @@
 // as published by the Free Software Foundation https://fsf.org
 #if SKIP
 public class PropertyListSerialization {
-    private static var plistRegex = getPlistRegex().toRegex()
+    private static var plistRegex: kotlin.text.Regex = getPlistRegex().toRegex()
 
     private static func getPlistRegex() -> String {
-        // SKIP REPLACE: return """(?<!\\)"(.*?)(?<!\\)"\s*=\s*"(.*?)(?<!\\)";"""
-        return null
+        return #"(?<!\\)"(.*?)(?<!\\)"\s*=\s*"(.*?)(?<!\\)";"#
     }
 
     /// Creates and returns a property list from the specified data.
