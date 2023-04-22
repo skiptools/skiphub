@@ -69,11 +69,7 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
     public var description: String {
-        #if SKIP
-        return rawValue.toString()
-        #else
-        return foundationURL.description
-        #endif
+        return rawValue.description
     }
 
     #if !SKIP

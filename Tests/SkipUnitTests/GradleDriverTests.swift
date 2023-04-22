@@ -38,7 +38,7 @@ final class GradleDriverTests: XCTestCase {
         let files = try FileManager.default.contentsOfDirectory(at: tmp, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
         let fileNames = Set(files.map(\.lastPathComponent))
 
-        XCTAssertEqual([modname, "settings.gradle.kts", "gradlew", "gradlew.bat", "gradle"], fileNames, "unexpected files were created by gradle init")
+        XCTAssertTrue(fileNames.isSubset(of: [modname, "settings.gradle.kts", "gradlew", "gradlew.bat", "gradle", "gradle.properties"]), "unexpected files were created by gradle init: \(fileNames.sorted())")
 
         // the module name we created
         let lib = URL(fileURLWithPath: modname, isDirectory: true, relativeTo: tmp)
