@@ -18,7 +18,7 @@ public typealias PlatformLocale = java.util.Locale
 
 // SKXX INSERT: public fun Locale(identifier: String): SkipLocale { return SkipLocale(PlatformLocale(identifier)) }
 
-public struct SkipLocale : Hashable, RawRepresentable {
+public struct SkipLocale : RawRepresentable, Hashable {
     public let rawValue: PlatformLocale
 
     public init(rawValue: PlatformLocale) {

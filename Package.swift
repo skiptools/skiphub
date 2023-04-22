@@ -27,9 +27,10 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.3.50"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.3.51"),
     ],
     targets: [
+        // Unit testing support: XCTest to JUnit conversion, Gradle test launch and results handling
         .target(name: "SkipUnit", dependencies: []),
         .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
@@ -41,19 +42,19 @@ let package = Package(
         .testTarget(name: "SkipLibTests", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testTarget(name: "SkipLibKtTests", dependencies: ["SkipLibKt", "SkipUnitKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
-        // Foundation types: URL, Data, Date, etc.
+        // Foundation types: URL, Data, Date, DateFormatter, Bundle, FileManager, etc.
         .target(name: "SkipFoundation", dependencies: ["SkipLib"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testTarget(name: "SkipFoundationKtTests", dependencies: ["SkipFoundationKt", "SkipUnitKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
-        // Device-specific services: UserDefaults, Logging, etc.
+        // Host-specific services: Logging, UserDefaults, Notifications, SQL, Digests, etc.
         .target(name: "SkipKit", dependencies: ["SkipFoundation"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .target(name: "SkipKitKt", dependencies: ["SkipKit", "SkipFoundationKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipKitTests", dependencies: ["SkipKit"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testTarget(name: "SkipKitKtTests", dependencies: ["SkipKitKt", "SkipUnitKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
-        // UI
+        // UI: SwiftUI to Compose, semantic unit testing
         .target(name: "SkipUI", dependencies: ["SkipKit"], plugins: [.plugin(name: "preflight", package: "skip")]),
         .target(name: "SkipUIKt", dependencies: ["SkipUI", "SkipKitKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipUITests", dependencies: ["SkipUI"], plugins: [.plugin(name: "preflight", package: "skip")]),

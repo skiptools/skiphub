@@ -12,7 +12,7 @@ public typealias Bundle = SkipBundle
 public typealias PlatformBundle = java.lang.Class<Any>
 #endif
 
-public struct SkipBundle : Hashable, RawRepresentable {
+public struct SkipBundle : RawRepresentable, Hashable {
     public let rawValue: PlatformBundle
 
     public init(rawValue: PlatformBundle) {
@@ -56,7 +56,7 @@ extension SkipBundle {
         }
     }
 
-    public func url(forResource: String, withExtension: String?, subdirectory: String?, localization: String?) -> URL? {
+    public func url(forResource: String, withExtension: String?, subdirectory: String?, localization: String?) -> SkipURL? {
         // similar behavior to: https://github.com/apple/swift-corelibs-foundation/blob/69ab3975ea636d1322ad19bbcea38ce78b65b26a/CoreFoundation/PlugIn.subproj/CFBundle_Resources.c#L1114
         var res = forResource
         if (withExtension != nil) {

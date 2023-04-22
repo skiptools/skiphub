@@ -13,7 +13,7 @@ public typealias PlatformDateFormatter = java.text.DateFormat
 #endif
 
 
-public struct SkipDateFormatter : Hashable, RawRepresentable {
+public struct SkipDateFormatter : RawRepresentable, Hashable {
     public let rawValue: PlatformDateFormatter
 
     public init(rawValue: PlatformDateFormatter) {

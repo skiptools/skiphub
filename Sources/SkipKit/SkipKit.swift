@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 @_exported import SkipFoundation
+@_exported import OSLog
 #endif
 
 internal func SkipKitInternalModuleName() -> String {

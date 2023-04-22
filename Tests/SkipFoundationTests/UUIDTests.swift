@@ -4,13 +4,10 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 import Foundation
-import OSLog
 import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class UUIDTests: XCTestCase {
-    fileprivate let logger: Logger = Logger(subsystem: "test", category: "UUIDTests")
-
     func testRandomUUID() throws {
         XCTAssertNotEqual(UUID(), UUID())
         XCTAssertNotEqual("", UUID().uuidString)

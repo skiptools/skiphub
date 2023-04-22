@@ -12,7 +12,7 @@ public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
 #endif
 
-public struct SkipData : Hashable, RawRepresentable {
+public struct SkipData : RawRepresentable, Hashable {
     public let rawValue: PlatformData
 
     public init(rawValue: PlatformData) {
@@ -28,11 +28,10 @@ public struct SkipData : Hashable, RawRepresentable {
 
 #else
 
-// SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: URL): String { return contentsOf.rawValue.readText() }
+// SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: SkipURL): String { return contentsOf.rawValue.readText() }
 
-// SKIP INSERT: public operator fun SkipData.Companion.invoke(contentsOf: URL): SkipData { return SkipData.contentsOfURL(url = contentsOf) }
+// SKIP INSERT: public operator fun SkipData.Companion.invoke(contentsOf: SkipURL): SkipData { return SkipData.contentsOfURL(url = contentsOf) }
 
-// SKXX INSERT: public fun Data(contentsOf: URL): SkipData { return SkipData.contentsOfURL(url = contentsOf) }
 
 /// A byte buffer in memory.
 ///
@@ -48,7 +47,7 @@ extension SkipData {
     }
 
     /// static init until constructor overload works
-    public static func contentsOfURL(url: URL) throws -> Data {
+    public static func contentsOfURL(url: SkipURL) throws -> Data {
 //        if url.isFileURL {
 //            return Data(java.io.File(url.path).readBytes())
 //        } else {
@@ -64,7 +63,7 @@ extension SkipData {
 }
 
 public extension String {
-    public static func `init`(contentsOfURL url: URL) throws -> String {
+    public static func `init`(contentsOfURL url: SkipURL) throws -> String {
         return url.rawValue.readText()
     }
 }

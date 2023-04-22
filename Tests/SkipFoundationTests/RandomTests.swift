@@ -4,7 +4,6 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 import Foundation
-import OSLog
 import XCTest
 #if !SKIP
 @testable import struct SkipFoundation.PseudoRandomNumberGenerator
@@ -12,8 +11,6 @@ import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class RandomTests: XCTestCase {
-    fileprivate let logger: Logger = Logger(subsystem: "test", category: "RandomNumberGeneratorTests")
-
     /// Verify that the system RNG is at least a little bit random.
     func testSystemRandomNumberGenerator() throws {
         var rng = SystemRandomNumberGenerator()

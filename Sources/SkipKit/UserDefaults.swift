@@ -10,11 +10,11 @@ public typealias UserDefaults = Foundation.UserDefaults
 public typealias UserDefaults = SkipUserDefaults
 #endif
 
-// let prefs: android.content.SharedPreferences = androidx.test.core.app.ApplicationProvider.getApplicationContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+// let prefs: android.content.SharedPreferences = androidContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
 
 #if SKIP
 
-public struct SkipUserDefaults : Hashable, RawRepresentable {
+public struct SkipUserDefaults : RawRepresentable, Hashable {
     public let rawValue: android.content.SharedPreferences
 
     public init(rawValue: android.content.SharedPreferences) {

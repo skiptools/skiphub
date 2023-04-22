@@ -12,7 +12,7 @@ public typealias NumberFormatter = SkipNumberFormatter
 public typealias PlatformNumberFormatter = java.text.NumberFormat
 #endif
 
-public struct SkipNumberFormatter : Hashable, RawRepresentable {
+public struct SkipNumberFormatter : RawRepresentable, Hashable {
     public let rawValue: PlatformNumberFormatter
 
     public init(rawValue: PlatformNumberFormatter) {

@@ -12,7 +12,7 @@ public typealias Calendar = SkipCalendar
 public typealias PlatformCalendar = java.util.Calendar
 #endif
 
-public struct SkipCalendar : Hashable, RawRepresentable {
+public struct SkipCalendar : RawRepresentable, Hashable {
     public let rawValue: PlatformCalendar
 
     public init(rawValue: PlatformCalendar) {

@@ -7,114 +7,24 @@ the following core packages:
 - SkipUnit: base testing support for Skip packages
 - SkipLib: the Swift standard library Kotlin support
 - SkipFoundation: Kotlin equivalents for a subset of Foundation
-- SkipKit: Skip platform for iOS and Android
+- SkipKit: Skip host support for Darwin and Android
 - SkipUI: Declarative user-interface module for iOS and Android based on SwiftUI and Jetpack Compose.
-
-Modules
-=======
-
-- System
-  - Crypto
-  - SQLite
-  - FileSystem
-  - Localization
-- Device
-  - Network
-  - NetInfo
-  - Clipboard
-  - Battery
-  - Location
-  - Brightness
-  - AsyncStorage
-  - BackgroundFetch
-  - Notifications
-  - SecureStore (Keychain + UserDefaults)
-- Periphireals
-  - Camera
-  - Print
-- Sensors
-  - Accelerometer
-  - Barometer
-  - Gyroscope
-  - DeviceMotion
-  - LightSensor
-  - Magnetometer
-  - Pedometer
-- Services
-  - Maps
-  - Speech
-  - Geocoding
-  - Sharing
-  - PlatformAuthentication
-  - SMS
-  - Cellular
-- LocalInfobase
-  - Calendar
-  - Contacts
-  - MediaLibrary
-- Application
-- Linking
-- TaskManager
-- AV
-- Audio
-- Video
-- VideoThumbnails
-- Asset
-- AuthSession
-- BarCodeScanner
-- BuildProperties
-- Constants
-- ErrorRecovery
-- FaceDetector
-- FlashList
-- Haptics
-- IntentLauncher
-- KeepAwake
-- LocalAuthentication
-- MailComposer
-- Reanimated
-- SafeAreaContext
-- ScreenCapture
-- ScreenOrientation
-- Screens
-- SharedElement
-- Skia
-- Stripe
-- Svg
-- SystemUI
-- TrackingTransparency
-- InAppPurchases
-- Updates
-- StoreReview
-- Font
-- Image
-- Picker
-- Slider
-- Checkbox
-- SegmentedControl
-- NavigationBar
-- ViewPager
-- DocumentPicker
-- BlurView
-- MaskedView
-- LinearGradient
-- GestureHandler
-- GLView
-- WebView
-- WebBrowser
-- DateTimePicker
-- ImageManipulator
-- ImagePicker
-- MapView
-- SplashScreen
-- StatusBar
-- Lottie
 
 
 SkipFoundation
 ===============
 
-# Implementation Status
+The types in `SkipFoundation` are limited to the subset of `swift-corelibs-foundation` types
+for which an equivalent exists in a standard Kotlin environment without incurring any additional dependencies.
+
+This means that types like `Date` (`java.util.Date`) and `Data` (`kotlin.ByteArray`) are provided,
+but types like `UserDefaults` and `NotificationCenter` must be implemented at a higher level
+like `SkipKit` that provies Android dependencies.
+
+Any occurances of `import Foundation` will be transpiled to `import skip.foundation.*` in Kotlin,
+and so it should not be necessary to import `SkipFoundation` directly from Swift.
+
+## SkipFoundation Implementation Status
 
 This document lays out the structure of the SkipFoundation project, and provides the current implementation status of each major feature area.
 
@@ -414,3 +324,106 @@ This document lays out the structure of the SkipFoundation project, and provides
     | `XMLNode`     | Unimplemented   | None          | `org.w3c.dom.Node`?                          |
     | `XMLParser`   | Unimplemented   | None          | `javax.xml.parsers.SAXParserFactory`?        |
     | `XMLParser`+  | Unimplemented   | None          | `javax.xml.parsers.DocumentBuilderFactory`?  |
+
+
+
+Modules
+=======
+
+- System
+  - Crypto
+  - SQLite
+  - FileSystem
+  - Localization
+- Device
+  - Network
+  - NetInfo
+  - Clipboard
+  - Battery
+  - Location
+  - Brightness
+  - AsyncStorage
+  - BackgroundFetch
+  - Notifications
+  - SecureStore (Keychain + UserDefaults)
+- Periphireals
+  - Camera
+  - Print
+- Sensors
+  - Accelerometer
+  - Barometer
+  - Gyroscope
+  - DeviceMotion
+  - LightSensor
+  - Magnetometer
+  - Pedometer
+- Services
+  - Maps
+  - Speech
+  - Geocoding
+  - Sharing
+  - PlatformAuthentication
+  - SMS
+  - Cellular
+- LocalInfobase
+  - Calendar
+  - Contacts
+  - MediaLibrary
+- Application
+- Linking
+- TaskManager
+- AV
+- Audio
+- Video
+- VideoThumbnails
+- Asset
+- AuthSession
+- BarCodeScanner
+- BuildProperties
+- Constants
+- ErrorRecovery
+- FaceDetector
+- FlashList
+- Haptics
+- IntentLauncher
+- KeepAwake
+- LocalAuthentication
+- MailComposer
+- Reanimated
+- SafeAreaContext
+- ScreenCapture
+- ScreenOrientation
+- Screens
+- SharedElement
+- Skia
+- Stripe
+- Svg
+- SystemUI
+- TrackingTransparency
+- InAppPurchases
+- Updates
+- StoreReview
+- Font
+- Image
+- Picker
+- Slider
+- Checkbox
+- SegmentedControl
+- NavigationBar
+- ViewPager
+- DocumentPicker
+- BlurView
+- MaskedView
+- LinearGradient
+- GestureHandler
+- GLView
+- WebView
+- WebBrowser
+- DateTimePicker
+- ImageManipulator
+- ImagePicker
+- MapView
+- SplashScreen
+- StatusBar
+- Lottie
+

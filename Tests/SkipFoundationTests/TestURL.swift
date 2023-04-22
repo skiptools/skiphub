@@ -3,12 +3,30 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-import SkipFoundation
+@testable import SkipFoundation
 import XCTest
 
-#if SKIP
+#if !SKIP
 
 // MARK: Shims for test support
+
+// The URL for this test case uses the internal SkipURL type to prove Foundation API compatibility
+// TODO: change from fileprivate to internal to share across all foundation test cases
+fileprivate typealias URL = SkipURL
+
+fileprivate typealias FoundationURL = Foundation.URL
+
+// shims to support API comptibility with SkipURL -> Foundation.URL
+
+fileprivate typealias FileManager = SkipFileManager
+
+fileprivate extension URLComponents {
+    func url(relativeTo url: SkipURL?) -> SkipURL? {
+        self.url(relativeTo: url?.foundationURL).flatMap({ .init(rawValue: $0 as PlatformURL) })
+    }
+}
+
+#else // SKIP
 
 // NSURL does not exist in Skip, but for the purposes of the test case, we pretend it is the same a Foundation.URL
 fileprivate typealias NSURL = SkipURL
@@ -21,12 +39,12 @@ fileprivate typealias NSError = java.lang.Exception
 fileprivate typealias NSString = String
 
 fileprivate func NSURL(string: String, relativeTo: SkipURL? = nil) -> SkipURL? {
-    return SkipURL(string: string, relativeTo: relativeTo)
+    return URL(string: string, relativeTo: relativeTo)
 }
 
-fileprivate func NSURL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDirectory: Bool? = nil) -> SkipURL {
-    return SkipURL(fileURLWithPath: path, relativeTo: relativeTo, isDirectory: isDirectory)
-}
+//fileprivate func NSURL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDirectory: Bool? = nil) -> SkipURL {
+//    return SkipURL(fileURLWithPath: path, relativeTo: relativeTo, isDirectory: isDirectory)
+//}
 
 fileprivate func strlen(_ string: String) -> Int {
     return string.count
@@ -36,10 +54,8 @@ fileprivate func strncmp(_ str1: String, _ str2: String) -> Int {
     return str1.toLowerCase() == str2.toLowerCase() ? 0 : 1
 }
 
-fileprivate let logger = Logger(subsystem: "test", category: "TestURL")
-
 fileprivate func NSLog(_ message: String) {
-    logger.info(message)
+    //logger.info(message)
 }
 
 fileprivate extension SkipURL {
@@ -48,7 +64,7 @@ fileprivate extension SkipURL {
     }
 
     func copy() -> NSURL {
-        NSURL(self)
+        SkipURL(self)
     }
 
     func isEqual(_ other: NSURL) -> Bool {
@@ -71,24 +87,10 @@ fileprivate func strerror(_ errno: Int32) -> String? {
 fileprivate func String(cString: String) -> String {
     return cString
 }
-
-#else
-fileprivate typealias FoundationURL = Foundation.URL
-fileprivate typealias URL = SkipURL
-
-// shims to support API comptibility with SkipURL -> Foundation.URL
-
-fileprivate typealias FileManager = SkipFileManager
-
-fileprivate extension URLComponents {
-    func url(relativeTo url: SkipURL?) -> SkipURL? {
-        self.url(relativeTo: url?.foundationURL).flatMap({ .init(rawValue: $0 as PlatformURL) })
-    }
-}
 #endif
 
 fileprivate extension String {
-    func write(to url: SkipURL, atomically: Bool, encoding: StringEncoding) throws {
+    func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
         #if !SKIP
         try write(to: url.foundationURL, atomically: atomically, encoding: encoding)
         #else
@@ -617,7 +619,7 @@ class TestURL : XCTestCase {
         // destination exists, so we create the destination to avoid having to
         // compare against /private in Darwin.
         try fileManager.createDirectory(at: writableTestDirectoryURL.appendingPathComponent("foo/bar"), withIntermediateDirectories: true)
-        try "".write(to: writableTestDirectoryURL.appendingPathComponent("foo/bar/baz"), atomically: true, encoding: StringEncoding.utf8)
+        try "".write(to: writableTestDirectoryURL.appendingPathComponent("foo/bar/baz"), atomically: true, encoding: String.Encoding.utf8)
 
         let url = URL(fileURLWithPath: "foo/bar/baz")
         let result = url.resolvingSymlinksInPath()
@@ -657,7 +659,7 @@ class TestURL : XCTestCase {
 
         let symbolicLink = writableTestDirectoryURL.appendingPathComponent("origin")
         let destination = writableTestDirectoryURL.appendingPathComponent("destination")
-        try "".write(to: destination, atomically: true, encoding: StringEncoding.utf8)
+        try "".write(to: destination, atomically: true, encoding: String.Encoding.utf8)
         try fileManager.createSymbolicLink(at: symbolicLink, withDestinationURL: destination)
 
         let result = symbolicLink.resolvingSymlinksInPath()
@@ -752,7 +754,7 @@ class TestURL : XCTestCase {
 
         nsURL = NSURL(string: "https://www.swift.org")!
         do {
-            let _ = try (.init(nsURL) as URL).checkResourceIsReachable()
+            let _ = try (.init(nsURL as PlatformURL) as URL).checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
             #if !SKIP
@@ -765,7 +767,7 @@ class TestURL : XCTestCase {
 
         nsURL = NSURL(fileURLWithPath: "/some_random_path")
         do {
-            let _ = try (.init(nsURL) as URL).checkResourceIsReachable()
+            let _ = try (.init(nsURL as PlatformURL) as URL).checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
             #if !SKIP

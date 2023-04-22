@@ -5,8 +5,10 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 @_exported import Foundation
-@_exported import OSLog
 #endif
+
+/// A runtime check for whether we are running in a JVM, which is based on whether Ints are 32 or 64 bit
+public let isJVM = Int.max == Int32.max
 
 internal func SkipFoundationInternalModuleName() -> String {
     return "SkipFoundation"

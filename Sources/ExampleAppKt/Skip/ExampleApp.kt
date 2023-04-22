@@ -16,11 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import skip.foundation.Logger
-import skip.foundation.info
-import skip.foundation.warning
 
-public val logger = Logger(subsystem = "activity", category = "ExampleApp")
+public val logger = skip.kit.Logger(subsystem = "activity", category = "ExampleApp")
 
 class ExampleApp : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

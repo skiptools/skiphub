@@ -8,15 +8,12 @@
 import WebKit
 #endif
 import Foundation
-import OSLog
 import XCTest
 
 // SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(sdk = [33])
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class JavaScriptTests : XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "TestJavaScript")
-
     func testJavaScript() throws {
         let webView = WebView()
         #if SKIP

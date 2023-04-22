@@ -6,7 +6,6 @@
 #if !SKIP
 @testable import SkipKit
 #endif
-import OSLog
 import Foundation
 import XCTest
 
@@ -15,10 +14,10 @@ import XCTest
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class SkipKitTests: XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "SkipKitTests")
-    
+
     func testSkipKit() throws {
         print("Running: testSkipKit…")
-        logger.log("running testSkipKit")
+        //logger.log("running testSkipKit")
 
         XCTAssertEqual(3.0 + 1.5, 9.0/2)
         XCTAssertEqual("SkipKit", SkipKitInternalModuleName())

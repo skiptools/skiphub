@@ -19,8 +19,16 @@ public struct PseudoRandomNumberGenerator : RandomNumberGenerator {
     private let addend: Int64 = 0xB
     private let mask: Int64 = (1 << 48) - 1
     public var seed: Int64
+    public let algorithm: Algorithm
 
-    public init(seed: Int64) {
+    public enum Algorithm {
+        case linearCongruential
+        //case mersenneTwister
+        //case xorShift
+    }
+
+    public init(algorithm: Algorithm = .linearCongruential, seed: Int64) {
+        self.algorithm = algorithm
         self.seed = (seed ^ multiplier) & mask
     }
 

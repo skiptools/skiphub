@@ -33,7 +33,7 @@ public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
 
 #endif
 
-public struct SkipDate : Hashable, RawRepresentable {
+public struct SkipDate : RawRepresentable, Hashable {
     public let rawValue: PlatformDate
 
     public init(rawValue: PlatformDate) {

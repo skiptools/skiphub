@@ -13,7 +13,7 @@ public typealias PlatformTimeZone = java.util.TimeZone
 #endif
 
 
-public struct SkipTimeZone : Hashable, RawRepresentable {
+public struct SkipTimeZone : RawRepresentable, Hashable {
     public let rawValue: PlatformTimeZone
 
     public init(rawValue: PlatformTimeZone) {

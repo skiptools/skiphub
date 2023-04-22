@@ -26,10 +26,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import skip.foundation.Logger
 
-
-val logger = Logger(subsystem = "skip", category = "SkipUI")
+val logger = skip.kit.Logger(subsystem = "skip", category = "SkipUI")
 
 class ModelObservableObject {
     var modelValue = 0

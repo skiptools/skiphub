@@ -4,7 +4,6 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 import SkipFoundation
-import OSLog
 import XCTest
 
 #if !SKIP
@@ -14,8 +13,6 @@ fileprivate typealias Map = Dictionary
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class BundleTests: XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "BundleTests")
-
     func testBundle() throws {
         if true {
             return // TODO: fix resources
@@ -24,7 +21,7 @@ final class BundleTests: XCTestCase {
         #if !SKIP
 
         let resourceURL: URL = try XCTUnwrap(Bundle.module.url(forResource: "textasset", withExtension: "txt", subdirectory: nil, localization: nil))
-        logger.info("resourceURL: \(resourceURL.absoluteString)")
+        //logger.info("resourceURL: \(resourceURL.absoluteString)")
 
         // Swift will be: Contents/Resources/ -- file:///~/Library/Developer/Xcode/DerivedData/DemoApp-ABCDEF/Build/Products/Debug/SkipFoundationTests.xctest/Contents/Resources/Skip_SkipFoundationTests.bundle/
         // Kotlin will be: file:/SRCDIR/Skip/kip/SkipFoundationTests/modules/SkipFoundation/build/tmp/kotlin-classes/debugUnitTest/skip/foundation/
@@ -62,7 +59,7 @@ final class BundleTests: XCTestCase {
         let dict = try XCTUnwrap(plist as? Map<String, String>)
 
         XCTAssertEqual("Oui", dict["Yes"])
-        logger.debug("KEYS: \(dict.keys)")
+        //logger.debug("KEYS: \(dict.keys)")
         XCTAssertEqual("Le \"même\" texte en anglais", dict["The \"same\" text in English"])
     }
 

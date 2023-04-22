@@ -11,21 +11,24 @@ public typealias PlatformFileManager = Foundation.FileManager
 public typealias FileManager = SkipFileManager
 #endif
 
+// SKIP DECLARE: public class SkipFileManager
 /// An interface to the file system compatible with ``Foundation.FileManager``
-public final class SkipFileManager {
-    #if SKIP
+class SkipFileManager {
+#if SKIP
     /// Returns the shared single file manager
     public static var `default` = SkipFileManager()
-    #else
-    public static var `default` = SkipFileManager(rawValue: FileManager.default)
+#else
+    static var `default` = SkipFileManager(rawValue: FileManager.default)
 
     init(rawValue: FileManager) {
         self.rawValue = rawValue
     }
 
     let rawValue: FileManager
-    #endif
+#endif
+}
 
+extension SkipFileManager {
     public func createSymbolicLink(at url: SkipURL, withDestinationURL destinationURL: SkipURL) throws {
         #if !SKIP
         return try rawValue.createSymbolicLink(at: url.foundationURL, withDestinationURL: destinationURL.foundationURL)
@@ -113,19 +116,6 @@ public final class SkipFileManager {
         }
         #endif
     }
-
-    #if SKIP
-    // SKIP REPLACE: data class UnableToDeleteFileError(val path: String) : java.io.IOException() { }
-    struct UnableToDeleteFileError : java.io.IOException {
-        let path: String
-    }
-
-    // SKIP REPLACE: data class UnableToCreateDirectory(val path: String) : java.io.IOException() { }
-    struct UnableToCreateDirectory : java.io.IOException {
-        let path: String
-    }
-
-    #endif
 }
 
 #if SKIP
@@ -146,6 +136,14 @@ public func NSUserName() -> String {
 
 public struct FileAttributeKey : RawRepresentable, Hashable {
     public let rawValue: String
+}
+
+struct UnableToDeleteFileError : java.io.IOException {
+    let path: String
+}
+
+struct UnableToCreateDirectory : java.io.IOException {
+    let path: String
 }
 
 #endif

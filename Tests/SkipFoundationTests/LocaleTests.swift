@@ -4,17 +4,14 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 import Foundation
-import OSLog
 import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 final class LocaleTests: XCTestCase {
-    fileprivate let logger: Logger = Logger(subsystem: "test", category: "LocaleTests")
-
     func testLanguageCodes() throws {
         let fr = Locale(identifier: "fr_FR")
         XCTAssertNotNil(fr)
-        logger.info("fr_FR: \(fr.identifier)")
+        //logger.info("fr_FR: \(fr.identifier)")
 
         #if SKIP
         XCTAssertEqual("fr_fr", fr.identifier)
@@ -29,7 +26,7 @@ final class LocaleTests: XCTestCase {
 //        XCTAssertEqual("chinois", fr.localizedString(forLanguageCode: "zh"))
 
         let zh = Locale(identifier: "zh_HK")
-        logger.info("zh_HK: \(zh.identifier)")
+        //logger.info("zh_HK: \(zh.identifier)")
         XCTAssertNotNil(zh)
 
         #if SKIP
