@@ -6,13 +6,17 @@
 #if !SKIP
 import struct Foundation.Data
 public typealias Data = Foundation.Data
-public typealias PlatformData = Foundation.NSData
+public typealias PlatformData = Foundation.Data
 #else
 public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
 #endif
 
-public struct SkipData : RawRepresentable, Hashable {
+public protocol SkipDataProtocol {
+    var rawValue: PlatformData { get }
+}
+
+public struct SkipData : RawRepresentable, Hashable, SkipDataProtocol {
     public let rawValue: PlatformData
 
     public init(rawValue: PlatformData) {
@@ -21,6 +25,10 @@ public struct SkipData : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformData) {
         self.rawValue = rawValue
+    }
+
+    public init(_ skipData: SkipData) {
+        self.rawValue = skipData.rawValue
     }
 }
 

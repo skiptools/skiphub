@@ -6,11 +6,6 @@
 import OSLog
 import XCTest
 
-#if DEBUG
-//import class SkipKit.SkipLogger
-//internal typealias Logger = SkipFoundation.SkipLogger
-#endif
-
 /// This test is a minimal example of `OSLog.Logger` being transpiled to use `skip.foundation.SkipLogger` on the Kotlin side.
 final class LoggerTests: XCTestCase {
     let logger = Logger(subsystem: "test", category: "LoggerTests")

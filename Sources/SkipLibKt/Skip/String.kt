@@ -47,9 +47,8 @@ fun String.dropFirst(n: Int = 1): String {
 	return this.drop(n)
 }
 
-fun String.dropLast(n: Int = 1): String {
-	//return this.dropLast(n)
-	return this.reversed().drop(n).reversed()
+fun String.dropLast(): String {
+	return this.dropLast(1)
 }
 
 fun String.firstIndex(of: String): Int? {

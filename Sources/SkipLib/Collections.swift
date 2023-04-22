@@ -382,3 +382,6 @@ public struct PrefixSequence<Base: Sequence> {
         Swift.fatalError()
     }
 }
+
+// References to "String.Index" are convert to "StringIndex" which is an integer in Kotlin
+public typealias StringIndex = Int

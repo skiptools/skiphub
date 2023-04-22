@@ -123,7 +123,7 @@ public struct GradleDriver {
     ///   - testResultPath: the relative path for the test output XML files
     ///   - exitHandler: the exit handler, which may want to permit a process failure in order to have time to parse the tests
     /// - Returns: an array of parsed test suites containing information about the test run
-    public func runTests(in workingDirectory: URL, module: String, check: Bool = false, daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, testResultPath: String = "build/test-results", exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
+    public func runTests(in workingDirectory: URL, module: String, check: Bool = false, daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, testResultPath: String = "build/test-results", exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
         var args = [
             check ? "check" : "test" // check will run the @Test funcs regardless of @Ignore, as well as other checks
         ]
@@ -135,6 +135,15 @@ public struct GradleDriver {
 
         // this can also be set in a top-level gradle.properties file, but we include it here for good measure
         args += ["-Pandroid.useAndroidX=true"]
+
+        // this allows multiple simultaneous gradle builds to take place
+        args += ["--parallel"]
+
+        // args += ["-Dorg.gradle.configureondemand=true"]
+
+        if noBuildCacheFlag {
+            args += ["--no-build-cache"]
+        }
 
         if rerunTasksFlag {
             args += ["--rerun-tasks"]

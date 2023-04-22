@@ -5,6 +5,10 @@
 // as published by the Free Software Foundation https://fsf.org
 package example.app
 
+import skip.foundation.*
+import skip.kit.*
+import skip.ui.*
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
-public val logger = skip.kit.Logger(subsystem = "activity", category = "ExampleApp")
+public val logger = Logger(subsystem = "activity", category = "ExampleApp")
 
 class ExampleApp : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

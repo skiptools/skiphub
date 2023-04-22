@@ -4,14 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-@testable import SkipKit
+@testable import SkipFoundation
 #endif
 import Foundation
 import OSLog
 import XCTest
 
-// SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
-// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class TestJSON : XCTestCase {
     fileprivate let logger = Logger(subsystem: "test", category: "TestJSON")
@@ -50,8 +48,14 @@ class TestJSON : XCTestCase {
         #endif
 
         #if SKIP
+        // Android's version of org.json:json is different
+        // try checkJSON("""
+        // {"a":[1,true,false,1.0E-5,"X"]}
+        // """)
+
+        // latest org.json:json
         try checkJSON("""
-        {"a":[1,true,false,1.0E-5,"X"]}
+        {"a":[1,true,false,0.00001,"X"]}
         """)
         #else
         try checkJSON("""
@@ -71,7 +75,7 @@ class TestJSON : XCTestCase {
 
         let plainString = try jsonObject.stringify(pretty: false, sorted: true)
 
-        XCTAssertEqual(plainString, #"{"age":30,"isEmployed":true,"name":"John Smith"}"#)
+        XCTAssertTrue(plainString == #"{"age":30,"isEmployed":true,"name":"John Smith"}"# || plainString == #"{"name":"John Smith","isEmployed":true,"age":30}"#, "Unexpected JSON: \(plainString)")
 
         let prettyString = try jsonObject.stringify(pretty: true, sorted: true)
 
@@ -79,11 +83,19 @@ class TestJSON : XCTestCase {
         // 1. We do not yet support sorted keys on Android (we'd need to override the JSONStringer, or make a recursive copy of the tree)
         // 2. Swift pretty output has spaces in front of the colons
         #if SKIP
+        // Android's version of org.json:json is different
+        // XCTAssertEqual(prettyString, """
+        // {
+        //   "age": 30,
+        //   "isEmployed": true,
+        //   "name": "John Smith"
+        // }
+        // """)
         XCTAssertEqual(prettyString, """
         {
-          "age": 30,
+          "name": "John Smith",
           "isEmployed": true,
-          "name": "John Smith"
+          "age": 30
         }
         """)
         #else

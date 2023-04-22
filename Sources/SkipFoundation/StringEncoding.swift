@@ -14,6 +14,15 @@ extension String {
     public func data(using: StringEncoding, allowLossyConversion: Bool) -> Data? {
         return try? Data(rawValue: toByteArray(using.rawValue))
     }
+
+    public var utf8: Data {
+        // note: this differs from Swift in that it is a Data, but both Data and String.UTF8View conform to Sequence where Element == UInt8
+        return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_8))
+    }
+
+    //public var utf16: Data {
+    //    return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_16))
+    //}
 }
 
 public struct StringEncoding : RawRepresentable, Hashable {
