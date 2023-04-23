@@ -20,18 +20,21 @@ public typealias OSLog = os.OSLog
 public typealias OSLogType = os.OSLogType
 #endif
 
+// SKIP DECLARE: public class SkipLogger
 /// Logger cover for versions before Logger was available (which coincides with Concurrency)
 ///
 /// - Note: Unlike other Foundation equivalent wrappers, `SkipLogger` cannot be exposed in
 /// in Swift because `os.Logger` cannot be wrapped, as their string interpolation functions
 /// must be literals.
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-public final class SkipLogger {
+internal class SkipLogger {
     #if SKIP
     let log: java.util.logging.Logger
+
     //let log: android.util.Log
-    // TODO: use reflection to see if android.util.Log is available and use that instead
-    // TODO: alernatively, implememnt a java.util.logging.Handler to pass logger calls through to android.util.Log
+
+    // TBD: we could use reflection to see if `android.util.Log` is available and use that instead, falling back to the `java.util.logging.Logger` implementation when not on Android
+    // private static let debugMethod: java.lang.reflect.Method? = try? Class.forName("android.util.Log").getMethod("d", String.self, String.self)
     #else
     let log: os.Logger
     #endif
