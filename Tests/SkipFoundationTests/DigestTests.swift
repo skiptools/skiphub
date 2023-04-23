@@ -14,7 +14,6 @@ final class DigestTests: XCTestCase {
     func testSHA256() {
         XCTAssertEqual("Hello World".utf8.sha256().hex(), "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e")
         XCTAssertEqual(Data("Hello World".utf8).sha256().hex(), "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e")
-        XCTAssertEqual(Data("Hello World".utf8).sha256().hex(upperCase: true), "A591A6D40BF420404A011733CFB7B190D62C65BF0BCDA32B57B277D9AD9F146E")
     }
 
     func testDigestHashSHA256() {

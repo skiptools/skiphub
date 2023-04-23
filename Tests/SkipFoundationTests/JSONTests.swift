@@ -12,7 +12,7 @@ import XCTest
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class TestJSON : XCTestCase {
-    fileprivate let logger = Logger(subsystem: "test", category: "TestJSON")
+    fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
     func checkJSON(_ json: String) throws {
         XCTAssertEqual(json, try JSONObject(json).stringify(pretty: false, sorted: true))

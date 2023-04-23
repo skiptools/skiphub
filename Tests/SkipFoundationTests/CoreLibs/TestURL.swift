@@ -831,7 +831,7 @@ class TestURL : XCTestCase {
         #if SKIP
         throw XCTSkip("TODO: port test")
         #endif
-        do {
+//        do {
             try FileManager.default.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
             var a = writableTestDirectoryURL.appendingPathComponent("a")
             #if SKIP
@@ -873,16 +873,16 @@ class TestURL : XCTestCase {
                 assertRelevantValuesAreEqual(in: newValues)
             }
             #endif
-        } catch {
-            #if !SKIP
-            if let error = error as? NSError {
-                print("error: \(error.description) - \(error.userInfo)")
-            } else {
-                print("error: \(error)")
-            }
-            #endif
-            throw error
-        }
+//        } catch {
+//            #if !SKIP
+//            if let error = error as? NSError {
+//                print("error: \(error.description) - \(error.userInfo)")
+//            } else {
+//                print("error: \(error)")
+//            }
+//            #endif
+//            throw error
+//        }
     }
 
     // MARK: -

@@ -164,12 +164,8 @@ public extension SkipData {
     }
 
     /// Convert the bytes into a hex string
-    public func hex(upperCase: Bool = false) -> String {
-        if upperCase {
-            return rawValue.hex().toUpperCase()
-        } else {
-            return rawValue.hex()
-        }
+    public func hex() -> String {
+        return rawValue.hex()
     }
 }
 
@@ -239,9 +235,8 @@ extension Sequence where Element == UInt8 {
     }
 
     /// Returns the contents of the Data as a hex string
-    /// - Parameter uppercase: whether to return the hex string with uppercase characters
-    public func hex(upperCase: Bool = false) -> String {
-        map { String(format: upperCase ? "%02X" : "%02x", $0) }.joined()
+    public func hex() -> String {
+        map { String(format: "%02x", $0) }.joined()
     }
 
     public func sha256() -> SHA256.Digest {
