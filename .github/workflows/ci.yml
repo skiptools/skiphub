@@ -91,56 +91,56 @@ jobs:
         run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || echo "Skip parallel tests failed so tests will be run individually"
 
       - name: SkipLib Swift Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibTests
       - name: SkipLib Kotlin Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationTests
       - name: SkipFoundation Kotlin Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
 
       - name: SkipKit Swift Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitTests
       - name: SkipKit Kotlin Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitKtTests
 
       - name: SkipUI Swift Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUITests
       - name: SkipUI Kotlin Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUIKtTests
 
       - name: ExampleLib Swift Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibTests
       - name: ExampleLib Kotlin Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibKtTests
 
       - name: ExampleApp Swift Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppTests
       - name: ExampleApp Kotlin Tests
-        id: env.SKIP_PARALLEL_PASSED != 'YES'
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
