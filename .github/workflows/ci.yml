@@ -86,72 +86,63 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-      - name: Swift Tests (iOS)
-        # disabled to speed up CI (adds ~5m)
-        # if: false
+      - name: Parallel Tests
         working-directory: skiphub
-        run: |
-          xcodebuild -showsdks
-          # note CONFIG Release/Debug needs to be capitalized for xcodebuild
-          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
-          # | xcpretty && exit ${PIPESTATUS[0]}
-
-      - name: Pre-build ${{ matrix.target }}
-        working-directory: skiphub
-        # the pre-build needs to take place because the Skip
-        # packages currently need to be built in order, but
-        # SPM will attempt to build the targets in parallel
-        # e.g.: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json: warning: error loading codebase for linkModuleName: SkipFoundation from: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json error: The file “SkipFoundation.skipcode.json” couldn’t be opened because there is no such file.
-
-        #if: false
-        run: |
-          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
+        run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || echo "Skip parallel tests failed so tests will be run individually"
 
       - name: SkipLib Swift Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibTests
       - name: SkipLib Kotlin Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationTests
       - name: SkipFoundation Kotlin Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
 
       - name: SkipKit Swift Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitTests
       - name: SkipKit Kotlin Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitKtTests
 
       - name: SkipUI Swift Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUITests
       - name: SkipUI Kotlin Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUIKtTests
 
       - name: ExampleLib Swift Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibTests
       - name: ExampleLib Kotlin Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibKtTests
 
       - name: ExampleApp Swift Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppTests
       - name: ExampleApp Kotlin Tests
+        id: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests
-
-      - name: Parallel Tests
-        working-directory: skiphub
-        run: swift test -c release --parallel || echo "PARALLEL TESTS FAILED"
 
       - name: Gradle Tests (Android)
         working-directory: skiphub
@@ -171,4 +162,10 @@ jobs:
           # TODO:
           #gradle "connected${{ env.CONFIG }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
 
-
+      - name: Swift Tests (iOS)
+        working-directory: skiphub
+        run: |
+          xcodebuild -showsdks
+          # note CONFIG Release/Debug needs to be capitalized for xcodebuild
+          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          # | xcpretty && exit ${PIPESTATUS[0]}
