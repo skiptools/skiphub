@@ -120,10 +120,13 @@ public struct GradleDriver {
     ///   - rerunTasks: whether to pass the "--rerun-tasks" flag
     ///   - workingDirectory: the directory in which to fork the gradle process
     ///   - module: the name of the module to test
-    ///   - testResultPath: the relative path for the test output XML files
     ///   - exitHandler: the exit handler, which may want to permit a process failure in order to have time to parse the tests
     /// - Returns: an array of parsed test suites containing information about the test run
-    public func runTests(in workingDirectory: URL, module: String, check: Bool = false, daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, testResultPath: String = "build/test-results", exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
+    public func runTests(in workingDirectory: URL, module: String, check: Bool = false, daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
+        // rather than the top-level "build" folder, we place the module in per-module .build/ sub-folder in order to enable concurrent testing as well as placing generated files in a typically-gitignored
+        let buildDir = ".build/\(module)"
+        let testResultPath = "\(buildDir)/test-results"
+
         var args = [
             check ? "check" : "test" // check will run the @Test funcs regardless of @Ignore, as well as other checks
         ]
@@ -133,11 +136,13 @@ public struct GradleDriver {
         // add in the project dir for explicitness (even though it is assumed from the current working directory as well)
         args += ["--project-dir", workingDirectory.path]
 
+        args += ["-PbuildDir=\(buildDir)"]
+
         // this can also be set in a top-level gradle.properties file, but we include it here for good measure
         args += ["-Pandroid.useAndroidX=true"]
 
         // this allows multiple simultaneous gradle builds to take place
-        args += ["--parallel"]
+        // args += ["--parallel"]
 
         // args += ["-Dorg.gradle.configureondemand=true"]
 
