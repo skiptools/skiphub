@@ -199,25 +199,39 @@ open class DigestFunction {
 
 import CryptoKit
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SymmetricKey = CryptoKit.SymmetricKey
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias HMAC = CryptoKit.HMAC
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias Insecure = CryptoKit.Insecure
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias MD5 = CryptoKit.Insecure.MD5
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias MD5Digest = CryptoKit.Insecure.MD5Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA1 = CryptoKit.Insecure.SHA1
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA1Digest = CryptoKit.Insecure.SHA1Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA256 = CryptoKit.SHA256
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA256Digest = CryptoKit.SHA256Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA384 = CryptoKit.SHA384
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA384Digest = CryptoKit.SHA384Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA512 = CryptoKit.SHA512
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SHA512Digest = CryptoKit.SHA512Digest
 
 
 /// A sequence that both `Data` and `String.UTF8View` conform to.
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 extension Sequence where Element == UInt8 {
     /// Returns this data as a base-64 encoded string
     public func base64() -> String {
@@ -230,17 +244,14 @@ extension Sequence where Element == UInt8 {
         map { String(format: upperCase ? "%02X" : "%02x", $0) }.joined()
     }
 
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha256() -> SHA256.Digest {
         SHA256.hash(data: Data(self))
     }
 
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha384() -> SHA384.Digest {
         SHA384.hash(data: Data(self))
     }
 
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha512() -> SHA512.Digest {
         SHA512.hash(data: Data(self))
     }
