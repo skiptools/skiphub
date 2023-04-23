@@ -10,9 +10,13 @@ public typealias LogMessage = String
 #else
 import os
 /// Non-skip `Logger` is an alias to `os.Logger`
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public typealias Logger = os.Logger
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public typealias LogMessage = os.OSLogMessage
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public typealias OSLog = os.OSLog
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public typealias OSLogType = os.OSLogType
 #endif
 
@@ -21,6 +25,7 @@ public typealias OSLogType = os.OSLogType
 /// - Note: Unlike other Foundation equivalent wrappers, `SkipLogger` cannot be exposed in
 /// in Swift because `os.Logger` cannot be wrapped, as their string interpolation functions
 /// must be literals.
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public final class SkipLogger {
     #if SKIP
     let log: java.util.logging.Logger
