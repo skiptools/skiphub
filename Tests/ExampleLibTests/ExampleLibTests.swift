@@ -12,7 +12,6 @@ import SkipLib
 
 final class ExampleLibTests: XCTestCase {
     func testExampleLib() throws {
-        XCTAssertEqual(3.0 + 1.5, 9.0/2)
         XCTAssertEqual("ExampleLib", ExampleLibInternalModuleName())
         XCTAssertEqual("ExampleLib", ExampleLibPublicModuleName())
         XCTAssertEqual("SkipLib", SkipLibPublicModuleName())
@@ -61,6 +60,19 @@ final class ExampleLibTests: XCTestCase {
         XCTAssertTrue(JavaScriptCore.JSValueIsDate(ctx, try js("new Date()")))
         XCTAssertTrue(JavaScriptCore.JSValueIsObject(ctx, try js(#"new Object()"#)))
 
+        XCTAssertTrue(JavaScriptCore.JSValueIsNumber(ctx, try js("""
+        function sumArray(arr) {
+          let sum = 0;
+          for (let i = 0; i < arr.length; i++) {
+            sum += arr[i];
+          }
+          return sum;
+        }
+
+        const largeArray = new Array(100000000).fill(1);
+        sumArray(largeArray);
+        """)))
+
         do {
             _ = try js("XXX")
             XCTFail("Expected error")
@@ -90,11 +102,15 @@ import JavaScriptCore
 /// Global pointer to the JSC library, equivalent to the Swift `JavaScriptCore` framework
 let JavaScriptCore: JavaScriptCoreLibrary = com.sun.jna.Native.load("JavaScriptCore", javaClass(JavaScriptCoreLibrary.self))
 
-typealias JSValueRef = com.sun.jna.Pointer
-typealias JSStringRef = com.sun.jna.Pointer
-typealias JSObjectRef = com.sun.jna.Pointer
-typealias JSContextRef = com.sun.jna.Pointer
+/// A JavaScript value. The base type for all JavaScript values, and polymorphic functions on them.
+typealias OpaqueJSValue = com.sun.jna.Pointer
 typealias JSValuePointer = com.sun.jna.ptr.PointerByReference
+
+typealias JSValueRef = OpaqueJSValue
+typealias JSStringRef = OpaqueJSValue
+typealias JSObjectRef = OpaqueJSValue
+typealias JSContextRef = OpaqueJSValue
+
 
 /// A partial implementation of the JavaScriptCore C interface exposed as a JNA library.
 protocol JavaScriptCoreLibrary : com.sun.jna.Library {
