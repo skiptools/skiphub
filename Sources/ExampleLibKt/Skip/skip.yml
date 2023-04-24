@@ -2,3 +2,11 @@
 
 #skip:
 #  package: 'example.lib'
+
+build:
+  contents:
+    - block: 'dependencies'
+      export: false
+      contents:
+        - 'implementation("net.java.dev.jna:jna:5.13.0")'
+        - 'implementation("org.webkit:android-jsc:r174650")'

@@ -11,14 +11,12 @@ import ExampleLib
 import SkipFoundation
 import SkipUI
 
-
+// SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class ExampleAppTests: XCTestCase {
     func testExampleApp() throws {
-        XCTAssertEqual(3, 1 + 2 + 0)
-//        XCTAssertEqual("ExampleApp", ExampleAppInternalModuleName())
-//        XCTAssertEqual("ExampleApp", ExampleAppPublicModuleName())
+        XCTAssertEqual("SkipUI", SkipUIPublicModuleName())
         XCTAssertEqual("ExampleLib", ExampleLibPublicModuleName())
         XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
-        XCTAssertEqual("SkipUI", SkipUIPublicModuleName())
     }
 }
