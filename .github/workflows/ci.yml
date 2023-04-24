@@ -88,7 +88,7 @@ jobs:
 
       - name: Parallel Tests
         working-directory: skiphub
-        run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || echo "Skip parallel tests failed so tests will be run individually"
+        run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
 
       - name: SkipLib Swift Tests
         if: env.SKIP_PARALLEL_PASSED != 'YES'
