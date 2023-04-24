@@ -124,56 +124,56 @@ jobs:
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
 
       - name: SkipLib Swift Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibTests
       - name: SkipLib Kotlin Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationTests
       - name: SkipFoundation Kotlin Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
 
       - name: SkipKit Swift Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitTests
       - name: SkipKit Kotlin Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitKtTests
 
       - name: SkipUI Swift Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUITests
       - name: SkipUI Kotlin Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUIKtTests
 
       - name: ExampleLib Swift Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibTests
       - name: ExampleLib Kotlin Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibKtTests
 
       - name: ExampleApp Swift Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppTests
       - name: ExampleApp Kotlin Tests
-        if: env.SKIP_FASTPASS
+        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
