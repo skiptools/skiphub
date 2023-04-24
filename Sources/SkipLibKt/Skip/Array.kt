@@ -43,6 +43,9 @@ class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Eleme
         _mutableStorage = ArrayList()
     }
 
+        //~~~
+//    init(repeating repeatedValue: Self.Element, count: Int)
+
     constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
         // Don't use another of our Sequence impls as internal storage because we'll double-sref() elements
         if (nocopy) {
