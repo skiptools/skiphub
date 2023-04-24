@@ -10,4 +10,4 @@ build:
       export: false
       contents:
         - 'implementation("org.json:json:20230227")'
-
+        - 'implementation("net.java.dev.jna:jna:5.13.0")'

@@ -70,6 +70,7 @@ class TestJSON : XCTestCase {
           "name": "John Smith"
         }
         """
+
         // note that unlike Swift JSON, the JSONObject key/values are in the same order as the document
         let jsonObject = try JSONObject(jsonString)
 
@@ -129,44 +130,5 @@ class TestJSON : XCTestCase {
         let _ = try JSONObject(bigString)
         //let prettyBigString = try prettyBigObject.stringify(pretty: true, sorted: true)
 
-    }
-}
-
-
-/// A Swift JSON parsing API to match the `org.json.JSONObject` Java API.
-public final class JSONObject {
-    #if SKIP
-    /// The internal JSON object, which is an `org.json.JSONObject` instance.
-    var json: org.json.JSONObject
-    #else
-    /// The internal JSON object, which will be either an `NSMutableDictionary` or an `NSMutableArray`
-    var json: Any
-    #endif
-
-    /// Parse the JSON using the system parser.
-    public init(_ json: String) throws {
-        #if SKIP
-        self.json = try org.json.JSONObject(json)
-        #else
-        self.json = try JSONSerialization.jsonObject(with: Data(json.utf8), options: [.mutableLeaves, .mutableContainers])
-        #endif
-    }
-}
-
-@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-public extension JSONObject {
-    /// Returns the JSON string representing this Object.
-    func stringify(pretty: Bool = false, sorted: Bool = false) throws -> String {
-        #if !SKIP
-        return String(data: try JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions([.withoutEscapingSlashes] + (pretty ? [.prettyPrinted] : []) + (sorted ? [.sortedKeys] : []))), encoding: .utf8) ?? ""
-        #else
-        // TODO: there isn't any simple way to output sorted keys, but we want to be able to support it for consistent output
-        // one way to support this would be to make a recurisve copy of the tree with clones of any JSONObject instances with their keys in sorted order; this would be expensive for large trees
-        if pretty {
-            return json.toString(2)
-        } else {
-            return json.toString()
-        }
-        #endif
     }
 }
