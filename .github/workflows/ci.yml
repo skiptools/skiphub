@@ -86,9 +86,9 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
+      # Attempt to run the tests in parallel mode.
+      # When successful this will bypass the individual framework tests.
       - name: Parallel Tests
-        # when it fails, seems to 
-        if: false
         working-directory: skiphub
         run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
 

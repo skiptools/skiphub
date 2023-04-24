@@ -112,19 +112,20 @@ public struct GradleDriver {
 
     /// Invokes the tests for the given gradle project.
     /// - Parameters:
+    ///   - workingDirectory: the directory in which to fork the gradle process
+    ///   - buildFolder: the directory in which the build contents are output (`--build-path SWIFTBUILD`)
+    ///   - module: the name of the module to test
     ///   - check: whether to run "grade check" or "gradle test"
     ///   - daemon: whether the enable the forking of a persistent gradle daemon that will make subsequent runs faster (e.g., 5 secs vs. 15 secs)
     ///   - failFast: whether to pass the "--fail-fast" flag
     ///   - continue: whether to permit failing tests to complete with the "--continue" flag
     ///   - offline: whether to pass the "--offline" flag
     ///   - rerunTasks: whether to pass the "--rerun-tasks" flag
-    ///   - workingDirectory: the directory in which to fork the gradle process
-    ///   - module: the name of the module to test
     ///   - exitHandler: the exit handler, which may want to permit a process failure in order to have time to parse the tests
     /// - Returns: an array of parsed test suites containing information about the test run
-    public func runTests(in workingDirectory: URL, module: String, check: Bool = false, daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
+    public func runTests(in workingDirectory: URL, buildFolder: String = ".build", module: String, check: Bool = false, daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
         // rather than the top-level "build" folder, we place the module in per-module .build/ sub-folder in order to enable concurrent testing as well as placing generated files in a typically-gitignored
-        let buildDir = ".build/\(module)"
+        let buildDir = "\(buildFolder)/\(module)"
         let testResultPath = "\(buildDir)/test-results"
 
         var args = [

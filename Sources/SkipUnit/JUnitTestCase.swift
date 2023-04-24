@@ -97,8 +97,11 @@ extension JUnitTestCase {
             let xcodeFolder = buildBaseFolder.appendingPathComponent("SourcePackages/plugins", isDirectory: true)
             return try findModuleFolder(in: xcodeFolder, extension: "output")
         } else {
-            // note that unlike Xcode, the local SPM outputs folder is just the package name without the ".output" suffix
-            return try findModuleFolder(in: URL(fileURLWithPath: ".build/plugins/outputs", isDirectory: true), extension: "")
+            // when run from the CLI with a custom --build-path, there seems to be no way to know where the gradle folder was output, so we need to also specify it as an environment variable:
+            // SWIFTBUILD=/tmp/swiftbuild swift test --build-path /tmp/swiftbuild
+            let buildBaseFolder = env["SWIFTBUILD"] ?? ".build"
+            // note that unlike Xcode, the local SPM output folder is just the package name without the ".output" suffix
+            return try findModuleFolder(in: URL(fileURLWithPath: buildBaseFolder + "/plugins/outputs", isDirectory: true), extension: "")
         }
 
         /// The only known way to figure out the package name asociated with the test's module is to brute-force search through the plugin output folders.
