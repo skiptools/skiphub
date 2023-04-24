@@ -87,8 +87,22 @@ jobs:
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
       - name: Parallel Tests
+        # when it fails, seems to 
+        if: false
         working-directory: skiphub
         run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+
+      - name: Pre-build ${{ matrix.target }}
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
+        working-directory: skiphub
+        # the pre-build needs to take place because the Skip
+        # packages currently need to be built in order, but
+        # SPM will attempt to build the targets in parallel
+        # e.g.: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json: warning: error loading codebase for linkModuleName: SkipFoundation from: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json error: The file “SkipFoundation.skipcode.json” couldn’t be opened because there is no such file.
+
+        #if: false
+        run: |
+          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
 
       - name: SkipLib Swift Tests
         if: env.SKIP_PARALLEL_PASSED != 'YES'
