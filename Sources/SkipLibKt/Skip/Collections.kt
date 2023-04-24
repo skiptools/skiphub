@@ -31,6 +31,11 @@ class IteratorProtocolIterator<Element>(val iter: IteratorProtocol<Element>): It
 interface Sequence<Element>: Iterable<Element> {
     fun makeIterator(): IteratorProtocol<Element>
 
+    // Add to transpiled custom sequences:
+    // override fun iterator(): Iterator<Element> {
+    //     return IteratorProtocolIterator(makeIterator())
+    // }
+
     val underestimatedCount: Int
         get() = 0
 
@@ -50,6 +55,11 @@ interface Sequence<Element>: Iterable<Element> {
 
     fun first(where: (Element) -> Boolean): Element? {
         return firstOrNull(where).sref()
+    }
+
+    fun contains(where: (Element) -> Boolean): Boolean {
+        forEach { if (where(it)) return true }
+        return false
     }
 
     // Warning: although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
@@ -75,24 +85,29 @@ interface Sequence<Element>: Iterable<Element> {
         return Array(mapNotNull(transform), nocopy = true)
     }
 
-    // Add to transpiled custom sequences:
-    // override fun iterator(): Iterator<Element> {
-    //     return IteratorProtocolIterator(makeIterator())
-    // }
+    fun sorted(): Array<Element> {
+        return Array(sortedWith(compareBy { it as Comparable<Element> }))
+    }
 }
 
 interface Collection<Element>: Sequence<Element> {
     val count: Int
         get() = count()
 
-    val isEmpty: Boolean
-        get() = count == 0
+//    val isEmpty: Boolean
+//        get() = count == 0
+
+    val first: Element?
+        get() = first()
 }
 
 interface BidirectionalCollection<Element>: Collection<Element> {
     fun last(where: (Element) -> Boolean): Element? {
         return lastOrNull(where).sref()
     }
+
+    val last: Element?
+        get() = last()
 }
 
 interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
@@ -105,62 +120,6 @@ interface MutableCollection<Element>: Collection<Element> {
 
 //~~~
 
-// Forward Swift's `count` property Kotlin's `count()` function
-val <T> Iterable<T>.count: Int
-	get() = this.count()
-
-// Forward Swift's `isEmpty` property Kotlin's `none()` function
-val <T> Iterable<T>.isEmpty: Boolean
-	get() = this.none()
-
 // Forward Swift's `lazy` property Kotlin's `asSequence()` function
 val <T> Iterable<T>.lazy: kotlin.sequences.Sequence<T>
     get() = this.asSequence()
-
-// Forward Swift's `reduce()` function to Kotlin's `fold()` function
-fun <T, R> kotlin.sequences.Sequence<T>.reduce(initial: R, operation: (acc: R, T) -> R): R {
-	return this.fold(initial, operation)
-}
-
-// Forward Swift's `first` property to Kotlin's `first()` function
-val <T> Iterable<T>.first: T
-	get() = this.first()
-
-fun <T> Iterable<T>.first(where: (acc: T) -> Boolean): T? {
-	for (element in this) {
-		if (where(element) == true) {
-			return element
-		}
-	}
-	return null
-}
-
-// Forward Swift's `last` property to Kotlin's `last()` function
-val <T> Array<T>.last: T
-	get() = this.last()
-
-fun <T> Iterable<T>.last(where: (acc: T) -> Boolean): T? {
-	for (element in this.reversed()) {
-		if (where(element) == true) {
-			return element
-		}
-	}
-	return null
-}
-
-fun <T> Iterable<T>.contains(where: (acc: T) -> Boolean): Boolean {
-	for (element in this) {
-		if (where(element) == true) {
-			return true
-		}
-	}
-	return false
-}
-
-fun <T : Comparable<T>> Iterable<T>.sorted(): Array<T> {
-	return Array(this.sortedWith(compareBy { it }))
-}
-
-interface RandomNumberGenerator {
-	fun next(): ULong
-}

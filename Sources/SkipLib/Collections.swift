@@ -131,7 +131,6 @@ extension Sequence {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
     public func contains(where predicate: (Element) throws -> Bool) rethrows -> Bool {
         Swift.fatalError()
     }
@@ -162,10 +161,10 @@ extension Sequence {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
-    public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
-        Swift.fatalError()
-    }
+//    @available(*, unavailable)
+//    public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
+//        Swift.fatalError()
+//    }
 
     @available(*, unavailable)
     public func joined() -> any Sequence<Element> /* FlattenSequence<Self> */ {
@@ -212,7 +211,6 @@ extension Sequence {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
     public func sorted() -> [Element] {
         Swift.fatalError()
     }
@@ -317,7 +315,6 @@ extension Collection {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
     public var first: Element? {
         Swift.fatalError()
     }
@@ -436,7 +433,6 @@ extension BidirectionalCollection {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
     public var last: Element? {
         Swift.fatalError()
     }
@@ -696,7 +692,7 @@ public struct Range<Bound>: RangeExpression /* CustomStringConvertible, CustomDe
     public let upperBound: Bound
 
     @available(*, unavailable)
-    public init(uncheckedBounds bounds: (lower: Bound, upper: Bound)) {
+    public init(uncheckedBounds bounds: (Bound, Bound)) {
         Swift.fatalError()
     }
 
@@ -854,6 +850,3 @@ public struct StrideToIterator<Element> {
 @available(*, unavailable)
 public struct UnfoldSequence<Element, State> {
 }
-
-// References to "String.Index" are convert to "StringIndex" which is an integer in Kotlin
-public typealias StringIndex = Int

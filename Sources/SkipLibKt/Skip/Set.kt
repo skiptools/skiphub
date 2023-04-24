@@ -22,7 +22,7 @@ fun <T> Set(elements: Array<T>): Set<T> {
 	return set
 }
 
-class Set<T>: MutableStruct, Iterable<T>, Hashable {
+class Set<T>: MutableStruct, BidirectionalCollection<T>, Iterable<T>, Hashable {
     private var storage: SetStorage<T>
     private var isStorageShared = false
 
@@ -50,13 +50,14 @@ class Set<T>: MutableStruct, Iterable<T>, Hashable {
     }
 
     override fun iterator(): Iterator<T> {
+        return IteratorProtocolIterator(makeIterator())
+    }
+
+    override fun makeIterator(): IteratorProtocol<T> {
         val storageIterator = storage.iterator()
-        return object: Iterator<T> {
-            override fun hasNext(): Boolean {
-                return storageIterator.hasNext()
-            }
-            override fun next(): T {
-                return storageIterator.next().sref()
+        return object: IteratorProtocol<T> {
+            override fun next(): T? {
+                return if (storageIterator.hasNext()) storageIterator.next() else null
             }
         }
     }
@@ -91,7 +92,7 @@ class Set<T>: MutableStruct, Iterable<T>, Hashable {
     }
 
 	fun isStrictSubset(of: Iterable<T>): Boolean {
-        return of.count > this.count && isSubset(of)
+        return of.count() > this.count && isSubset(of)
     }
 
     fun isSuperset(of: Iterable<T>): Boolean {
@@ -104,7 +105,7 @@ class Set<T>: MutableStruct, Iterable<T>, Hashable {
     }
 
     fun isStrictSuperset(of: Iterable<T>): Boolean {
-        return of.count < this.count && isSuperset(of)
+        return of.count() < this.count && isSuperset(of)
     }
 
 	fun isDisjoint(with: Iterable<T>): Boolean {
@@ -129,7 +130,7 @@ class Set<T>: MutableStruct, Iterable<T>, Hashable {
         return otherSet
 	}
 
-    val count: Int
+    override val count: Int
         get() = storage.count()
 
     val isEmpty: Boolean
