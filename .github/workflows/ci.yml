@@ -92,6 +92,21 @@ jobs:
         working-directory: skiphub
         run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
 
+      - name: Parallel Tests (2)
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
+        working-directory: skiphub
+        run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+
+      - name: Parallel Tests (3)
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
+        working-directory: skiphub
+        run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+
+      - name: Parallel Tests (4)
+        if: env.SKIP_PARALLEL_PASSED != 'YES'
+        working-directory: skiphub
+        run: swift test --parallel && echo 'SKIP_PARALLEL_PASSED=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+
       - name: Pre-build ${{ matrix.target }}
         if: env.SKIP_PARALLEL_PASSED != 'YES'
         working-directory: skiphub
