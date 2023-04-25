@@ -9,24 +9,21 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-// Support these lower-level Swift protocols to transpile code that may use them.
-// We move the majority of the API into extensions, however, to allow ourselves to communicate
-// e.g. default function parameter values to the type inference engine. We're also overly
-// non-specific with some parameter types and overly specific with some return types to simplify
-// type inference - we can rely on the Swift compiler to prevent any type mismatches
-
-
-public protocol IteratorProtocol<Element> {
-    associatedtype Element
-    mutating func next() -> Element?
-}
+// We move the majority of the API into extensions to facilitate Kotlin implementation and allow
+// ourselves to communicate e.g. default function parameter values to the type inference engine.
+// We're also overly non-specific with some parameter types and overly specific with some return
+// types to simplify type inference - we can rely on the Swift compiler to prevent any type mismatches
 
 public protocol Sequence<Element> {
     associatedtype Element
-    func makeIterator() -> any IteratorProtocol<Element>
 }
 
 extension Sequence {
+    @available(*, unavailable)
+    public func makeIterator() -> any IteratorProtocol<Element> {
+        Swift.fatalError()
+    }
+
     public var underestimatedCount: Int {
         Swift.fatalError()
     }
@@ -161,10 +158,10 @@ extension Sequence {
         Swift.fatalError()
     }
 
-//    @available(*, unavailable)
-//    public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
-//        Swift.fatalError()
-//    }
+    @available(*, unavailable)
+    public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
+        Swift.fatalError()
+    }
 
     @available(*, unavailable)
     public func joined() -> any Sequence<Element> /* FlattenSequence<Self> */ {
@@ -191,7 +188,6 @@ extension Sequence {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
     public func contains(_ element: Element) -> Bool {
         Swift.fatalError()
     }
@@ -539,7 +535,6 @@ extension RangeReplaceableCollection {
         Swift.fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func append(_ newElement: Element) {
         Swift.fatalError()
     }
@@ -790,6 +785,12 @@ public struct FlattenSequence<Element> {
 
 @available(*, unavailable)
 public struct IndexingIterator<Elements> {
+}
+
+@available(*, unavailable)
+public protocol IteratorProtocol<Element> {
+    associatedtype Element
+    mutating func next() -> Element?
 }
 
 @available(*, unavailable)

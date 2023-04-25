@@ -6,97 +6,98 @@
 package skip.lib
 
 // We convert array literals assigned to Set vars [...] into setOf(...)
-fun <T> setOf(vararg elements: T): Set<T> {
-	val set = Set<T>()
-	for (element in elements) {
-		set.insert(element)
-	}
-	return set
+fun <Element> setOf(vararg elements: Element): Set<Element> {
+    val storage = LinkedHashSet<Element>()
+    for (element in elements) {
+        storage.add(element.sref())
+    }
+    return Set(storage, nocopy = true)
 }
 
-fun <T> Set(elements: Array<T>): Set<T> {
-	val set = Set<T>()
-	for (element in elements) {
-		set.insert(element)
-	}
-	return set
-}
-
-class Set<T>: MutableStruct, BidirectionalCollection<T>, Iterable<T>, Hashable {
-    private var storage: SetStorage<T>
+class Set<Element>: Collection<Element>, MutableStruct {
     private var isStorageShared = false
+    private var _collectionStorage: LinkedHashSet<Element>
+
+    override val collectionStorage: kotlin.collections.Collection<Element>
+        get() = _collectionStorage
 
     constructor() {
-        storage = SetStorage()
+        _collectionStorage = LinkedHashSet()
     }
 
-    constructor(items: Iterable<T>) {
-        storage = SetStorage()
-        for (element in items) {
-			insert(element)
+    constructor(collection: Sequence<Element>, nocopy: Boolean = false) {
+        if (nocopy && collection is Set<Element>) {
+            // Share storage with the given set, marking it as shared in both
+            _collectionStorage = collection._collectionStorage
+            collection.isStorageShared = true
+            isStorageShared = true
+        } else {
+            _collectionStorage = LinkedHashSet()
+            _collectionStorage.addAll(collection.asiterable())
         }
     }
 
-    constructor(vararg elements: T) {
-        storage = SetStorage()
-        for (element in elements) {
-			insert(element)
-        }
-    }
-
-    private constructor(storage: SetStorage<T>) {
-        this.storage = storage
-        isStorageShared = true
-    }
-
-    override fun iterator(): Iterator<T> {
-        return IteratorProtocolIterator(makeIterator())
-    }
-
-    override fun makeIterator(): IteratorProtocol<T> {
-        val storageIterator = storage.iterator()
-        return object: IteratorProtocol<T> {
-            override fun next(): T? {
-                return if (storageIterator.hasNext()) storageIterator.next() else null
+    constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
+        if (nocopy && collection is LinkedHashSet<Element>) {
+            _collectionStorage = collection
+            isStorageShared = shared
+        } else {
+            _collectionStorage = LinkedHashSet()
+            if (nocopy) {
+                _collectionStorage.addAll(collection)
+            } else {
+                collection.forEach { _collectionStorage.add(it.sref()) }
             }
         }
     }
 
-    fun insert(element: T) {
-        copyStorageIfNeeded()
+    constructor(vararg elements: Element) {
+        val storage = LinkedHashSet<Element>()
+        for (element in elements) {
+            storage.add(element.sref())
+        }
+        _collectionStorage = storage
+    }
+
+    fun insert(element: Element): Tuple2<Boolean, Element> {
+        val indexOf = _collectionStorage.indexOf(element)
+        if (indexOf != -1) {
+            return Tuple2(false, _collectionStorage.elementAt(indexOf))
+        }
         willmutate()
-        storage.add(element.sref())
+        _collectionStorage.add(element.sref())
         didmutate()
+        return Tuple2(true, element)
     }
 
-    fun remove(element: T): Boolean {
-        copyStorageIfNeeded()
+    fun remove(element: Element): Boolean {
         willmutate()
-        val removed = storage.remove(element.sref())
+        val removed = _collectionStorage.remove(element)
         didmutate()
-		return removed
+        return removed
     }
 
-	fun intersection(other: Iterable<T>): Set<T> {
-		val result = Set<T>()
-		for (element in other) {
-			if (contains(element)) {
-				result.insert(element)
-			}
-		}
-		return result
-	}
-
-    fun isSubset(of: Iterable<T>): Boolean {
-        return Set(of).isSuperset(this)
+    fun union(other: Sequence<Element>): Set<Element> {
+        val union = _collectionStorage.union(other.iterableStorage)
+        return Set(union, nocopy = true)
     }
 
-	fun isStrictSubset(of: Iterable<T>): Boolean {
-        return of.count() > this.count && isSubset(of)
+    fun intersection(other: Sequence<Element>): Set<Element> {
+        val intersection = _collectionStorage.intersect(other.iterableStorage)
+        return Set(intersection, nocopy = true)
     }
 
-    fun isSuperset(of: Iterable<T>): Boolean {
-        for (element in of) {
+    fun isSubset(of: Sequence<Element>): Boolean {
+        val otherSet = of as? Set<Element> ?: Set(of, nocopy = true)
+        return otherSet.isSuperset(this)
+    }
+
+    fun isStrictSubset(of: Sequence<Element>): Boolean {
+        return of.iterableStorage.count() > count && isSubset(of)
+    }
+
+    fun isSuperset(of: Sequence<Element>): Boolean {
+        for (element in of.iterableStorage) {
             if (!contains(element)) {
                 return false
             }
@@ -104,37 +105,28 @@ class Set<T>: MutableStruct, BidirectionalCollection<T>, Iterable<T>, Hashable {
         return true
     }
 
-    fun isStrictSuperset(of: Iterable<T>): Boolean {
-        return of.count() < this.count && isSuperset(of)
+    fun isStrictSuperset(of: Sequence<Element>): Boolean {
+        return of.iterableStorage.count() < count && isSuperset(of)
     }
 
-	fun isDisjoint(with: Iterable<T>): Boolean {
-		for (element in with) {
-			if (contains(element)) {
-				return false
-			}
-		}
-		return true
-	}
+    fun isDisjoint(with: Sequence<Element>): Boolean {
+        for (element in with.iterableStorage) {
+            if (contains(element)) {
+                return false
+            }
+        }
+        return true
+    }
 
-	fun symmetricDifference(other: Iterable<T>): Set<T> {
-		val otherSet = Set<T>()
-		for (element in other) {
-			otherSet.insert(element)
-		}
-		for (element in this.storage) {
-			if (otherSet.remove(element) == false) {
-				otherSet.insert(element)
-			}
-		}
+    fun symmetricDifference(other: Sequence<Element>): Set<Element> {
+        val otherSet = other as? Set<Element> ?: Set(other)
+        for (element in _collectionStorage) {
+            if (otherSet.remove(element) == false) {
+                otherSet.insert(element)
+            }
+        }
         return otherSet
-	}
-
-    override val count: Int
-        get() = storage.count()
-
-    val isEmpty: Boolean
-        get() = storage.isEmpty()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -143,27 +135,14 @@ class Set<T>: MutableStruct, BidirectionalCollection<T>, Iterable<T>, Hashable {
         if (other as? Set<*> == null) {
             return false
         }
-        return other.storage == storage
+        return other.collectionStorage == collectionStorage
     }
+
+    // MutableStruct
 
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
     override fun scopy(): MutableStruct {
-        isStorageShared = true
-        return Set(storage = storage)
-    }
-
-    private fun copyStorageIfNeeded() {
-        if (isStorageShared) {
-            storage = SetStorage(storage)
-            isStorageShared = false
-        }
-    }
-
-    private class SetStorage<T>(): HashSet<T>() {
-        constructor(set: HashSet<T>) : this() {
-            addAll(set)
-        }
+        return Set(this, nocopy = true)
     }
 }
-

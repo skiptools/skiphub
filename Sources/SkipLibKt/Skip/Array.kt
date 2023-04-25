@@ -14,64 +14,86 @@ fun <Element> arrayOf(vararg elements: Element): Array<Element> {
     return Array(storage, nocopy = true)
 }
 
-class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Element>, MutableCollection<Element>, MutableStruct {
+class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollection<Element>, MutableCollection<Element>, MutableStruct {
     private var isStorageShared = false
-    private var _mutableStorage: MutableList<Element>? = null
-    private var _immutableStorage: List<Element>? = null
+    private var _mutableListStorage: MutableList<Element>? = null
+    private var _collectionStorage: List<Element>? = null
 
-    // Use for read operations
-    private val readStorage: List<Element>
-        get() = _mutableStorage ?: _immutableStorage!!
+    override val collectionStorage: kotlin.collections.Collection<Element>
+        get() = _mutableListStorage ?: _collectionStorage!!
 
-    // Use for write operations. Copies our internal storage as needed
-    private val writeStorage: MutableList<Element>
+    override val mutableListStorage: MutableList<Element>
         get() {
             if (!isStorageShared) {
-                var storage = _mutableStorage
+                var storage = _mutableListStorage
                 if (storage != null) {
                     return storage
                 }
             }
-            val storage = ArrayList(readStorage)
+            val storage = ArrayList(collectionStorage)
             isStorageShared = false
-            _mutableStorage = storage
-            _immutableStorage = null
+            _mutableListStorage = storage
+            _collectionStorage = null
             return storage
         }
 
-    constructor() {
-        _mutableStorage = ArrayList()
+    override fun willMutateStorage() {
+        willmutate()
     }
 
-        //~~~
-//    init(repeating repeatedValue: Self.Element, count: Int)
+    override fun didMutateStorage() {
+        didmutate()
+    }
 
-    constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
-        // Don't use another of our Sequence impls as internal storage because we'll double-sref() elements
+    constructor() {
+        _mutableListStorage = ArrayList()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    constructor(collection: Sequence<Element>, nocopy: Boolean = false, shared: Boolean = false) {
         if (nocopy) {
-            if (collection is Array<*>) {
+            if (collection is Array<Element>) {
                 // Share storage with the given array, marking it as shared in both
-                val storage = collection._mutableStorage
+                val storage = collection._mutableListStorage
                 if (storage != null) {
                     if (shared) {
                         collection.isStorageShared = true
                         isStorageShared = true
                     }
-                    _mutableStorage = storage as MutableList<Element>
+                    _mutableListStorage = storage
                 } else {
-                    _immutableStorage = collection._immutableStorage as List<Element>
+                    _collectionStorage= collection._collectionStorage
                 }
-            } else if (collection is MutableList<*>) {
-                _mutableStorage = collection as MutableList<Element>
+            } else if (collection is MutableListStorage<*>) {
+                _mutableListStorage = collection.mutableListStorage as MutableList<Element>
                 isStorageShared = shared
-            } else if (collection is List<*>) {
-                _immutableStorage = collection as List<Element>
+            } else if (collection is CollectionStorage<*>) {
+                val collectionStorage = collection.collectionStorage
+                if (collectionStorage is List<*>) {
+                    _collectionStorage = collectionStorage as List<Element>
+                }
             }
         }
-        if (_mutableStorage == null && _immutableStorage == null) {
+        if (_mutableListStorage == null && _collectionStorage == null) {
             val storage = ArrayList<Element>()
-            storage.addAll(collection)
-            _mutableStorage = storage
+            storage.addAll(collection.asiterable())
+            _mutableListStorage = storage
+        }
+    }
+
+    constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
+        if (nocopy) {
+            if (collection is MutableList<Element>) {
+                _mutableListStorage = collection
+                isStorageShared = shared
+            } else if (collection is List<Element>) {
+                _collectionStorage = collection
+            }
+        }
+        if (_mutableListStorage == null && _collectionStorage == null) {
+            val storage = ArrayList<Element>()
+            collection.forEach { storage.add(it.sref()) }
+            _mutableListStorage = storage
         }
     }
 
@@ -80,51 +102,13 @@ class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Eleme
         for (element in elements) {
             storage.add(element.sref())
         }
-        _mutableStorage = storage
+        _mutableListStorage = storage
     }
 
-    fun append(newElement: Element) {
-        add(newElement)
-    }
-
-    // Overrides
-
-    override val size: Int
-        get() = readStorage.size
-
-    override fun add(index: Int, element: Element) {
-        willmutate()
-        writeStorage.add(index, element.sref())
-        didmutate()
-    }
-
-    override fun removeAt(index: Int): Element {
-        willmutate()
-        val ret = writeStorage.removeAt(index)
-        didmutate()
-        return ret
-    }
-
-    override fun get(index: Int): Element {
-        return readStorage[index].sref({
-            set(index, it)
+    override operator fun get(position: Int): Element {
+        return collectionStorage.elementAt(position).sref({
+            set(position, it)
         })
-    }
-
-    override fun set(index: Int, element: Element): Element {
-        willmutate()
-        val ret = writeStorage.set(index, element.sref())
-        didmutate()
-        return ret
-    }
-
-    override fun makeIterator(): IteratorProtocol<Element> {
-        val iter = iterator()
-        return object: IteratorProtocol<Element> {
-            override fun next(): Element? {
-                return if (iter.hasNext()) iter.next() else null
-            }
-        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -134,7 +118,7 @@ class Array<Element>: AbstractMutableList<Element>, RandomAccessCollection<Eleme
         if (other as? Array<*> == null) {
             return false
         }
-        return other.readStorage == readStorage
+        return other.collectionStorage == collectionStorage
     }
 
     // MutableStruct

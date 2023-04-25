@@ -9,7 +9,7 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-public struct Array<Element>: RandomAccessCollection, RangeReplaceableCollection, MutableCollection {
+public struct Set<Element>: Collection {
     public init() {
         Swift.fatalError()
     }
@@ -18,4 +18,3 @@ public struct Array<Element>: RandomAccessCollection, RangeReplaceableCollection
         Swift.fatalError()
     }
 }
-

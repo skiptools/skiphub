@@ -5,37 +5,54 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-interface IteratorProtocol<Element> {
-    fun next(): Element?
-}
+// Called by our transpiled for-in loops. Allow #if SKIP blocks to use native Kotlin
+// collections by providing this function to native Iterables.
+fun <Element> Iterable<Element>.asiterable(): Iterable<Element> = this
 
-// A Kotlin iterator wrapped around an IteratorProtocol
-class IteratorProtocolIterator<Element>(val iter: IteratorProtocol<Element>): Iterator<Element> {
-    private var next = iter.next()
+// Use a Storage model wrapping an internal Kotlin iterable:
+// 1. Avoids API conflicts from our own collections implementing Kotlin collection interfaces
+// 2. Allows us to control when we sref() elements to be safe but efficient
 
-    override fun hasNext(): Boolean {
-        return next != null
-    }
+interface IterableStorage<Element> {
+    val iterableStorage: Iterable<Element>
 
-    override fun next(): Element {
-        val ret = next
-        if (ret != null) {
-            next = iter.next()
-            return ret
-        } else {
-            throw NoSuchElementException()
+    fun asiterable(): Iterable<Element> = object: Iterable<Element> {
+        override fun iterator(): Iterator<Element> {
+            val iter = iterableStorage.iterator()
+            return object: Iterator<Element> {
+                override fun hasNext(): Boolean {
+                    return iter.hasNext()
+                }
+
+                override fun next(): Element {
+                    return iter.next().sref()
+                }
+            }
         }
     }
 }
 
-interface Sequence<Element>: Iterable<Element> {
-    fun makeIterator(): IteratorProtocol<Element>
+interface CollectionStorage<Element>: IterableStorage<Element> {
+    val collectionStorage: kotlin.collections.Collection<Element>
 
-    // Add to transpiled custom sequences:
-    // override fun iterator(): Iterator<Element> {
-    //     return IteratorProtocolIterator(makeIterator())
-    // }
+    override val iterableStorage: Iterable<Element>
+        get() = collectionStorage
+}
 
+interface MutableListStorage<Element>: CollectionStorage<Element> {
+    val mutableListStorage: MutableList<Element>
+
+    override val collectionStorage: kotlin.collections.Collection<Element>
+        get() = mutableListStorage
+
+    fun willMutateStorage() {
+    }
+
+    fun didMutateStorage() {
+    }
+}
+
+interface Sequence<Element>: IterableStorage<Element> {
     val underestimatedCount: Int
         get() = 0
 
@@ -44,32 +61,34 @@ interface Sequence<Element>: Iterable<Element> {
     }
 
     fun <RE> map(transform: (Element) -> RE): Array<RE> {
-        return Array((this as Iterable<Element>).map(transform), nocopy = true)
+        return Array(iterableStorage.map(transform), nocopy = true)
     }
 
     fun filter(isIncluded: (Element) -> Boolean): Array<Element> {
-        return Array((this as Iterable<Element>).filter(isIncluded), nocopy = true)
+        return Array(iterableStorage.filter(isIncluded), nocopy = true)
     }
 
-    // Iterable.forEach does not need modification
+    fun forEach(body: (Element) -> Unit) {
+        iterableStorage.forEach(body)
+    }
 
     fun first(where: (Element) -> Boolean): Element? {
-        return firstOrNull(where).sref()
+        return iterableStorage.firstOrNull(where).sref()
     }
 
     fun contains(where: (Element) -> Boolean): Boolean {
-        forEach { if (where(it)) return true }
+        iterableStorage.forEach { if (where(it)) return true }
         return false
     }
 
-    // Warning: although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
+    // Warning: Although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
     // into our Kotlin call sites to differentiate between calls to the two reduce() functions. Do not change
     fun <R> reduce(initialResult: R, nextPartialResult: (R, Element) -> R): R {
-        return fold(initialResult, nextPartialResult)
+        return iterableStorage.fold(initialResult, nextPartialResult)
     }
 
     fun <R> reduce(unusedp: Nothing? = null, into: R, updateAccumulatingResult: (InOut<R>, Element) -> Unit): R {
-        return fold(into) { result, element ->
+        return iterableStorage.fold(into) { result, element ->
             var accResult = result
             val inoutAccResult = InOut<R>({ accResult }, { accResult = it })
             updateAccumulatingResult(inoutAccResult, element)
@@ -77,45 +96,65 @@ interface Sequence<Element>: Iterable<Element> {
         }
     }
 
-    fun <RE> flatMap(transform: (Element) -> Iterable<RE>): Array<RE> {
-        return Array((this as Iterable<Element>).flatMap(transform), nocopy = true)
+    fun <RE> flatMap(transform: (Element) -> Sequence<RE>): Array<RE> {
+        return Array(iterableStorage.flatMap { transform(it).iterableStorage }, nocopy = true)
     }
 
     fun <RE> compactMap(transform: (Element) -> RE?): Array<RE> {
-        return Array(mapNotNull(transform), nocopy = true)
+        return Array(iterableStorage.mapNotNull(transform), nocopy = true)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun sorted(): Array<Element> {
-        return Array(sortedWith(compareBy { it as Comparable<Element> }))
+        return Array(iterableStorage.sortedWith(compareBy { it as Comparable<Element> }), nocopy = true)
+    }
+
+    fun contains(element: Element): Boolean {
+        return iterableStorage.contains(element)
     }
 }
 
-interface Collection<Element>: Sequence<Element> {
-    val count: Int
-        get() = count()
+interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
+    operator fun get(position: Int): Element {
+        return collectionStorage.elementAt(position).sref()
+    }
 
-//    val isEmpty: Boolean
-//        get() = count == 0
+    val isEmpty: Boolean
+        get() = collectionStorage.size == 0
+
+    val count: Int
+        get() = collectionStorage.size
 
     val first: Element?
-        get() = first()
+        get() = collectionStorage.first().sref()
 }
 
 interface BidirectionalCollection<Element>: Collection<Element> {
     fun last(where: (Element) -> Boolean): Element? {
-        return lastOrNull(where).sref()
+        return collectionStorage.lastOrNull(where).sref()
     }
 
     val last: Element?
-        get() = last()
+        get() = collectionStorage.last().sref()
 }
 
 interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
-
 }
 
-interface MutableCollection<Element>: Collection<Element> {
+interface RangeReplaceableCollection<Element>: Collection<Element>, MutableListStorage<Element> {
+    fun append(newElement: Element) {
+        willMutateStorage()
+        mutableListStorage.add(newElement.sref())
+        didMutateStorage()
+    }
+}
 
+interface MutableCollection<Element>: Collection<Element>, MutableListStorage<Element> {
+    operator fun set(position: Int, element: Element) {
+        willMutateStorage()
+        mutableListStorage[position] = element.sref()
+        didMutateStorage()
+    }
 }
 
 //~~~

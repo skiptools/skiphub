@@ -9,50 +9,82 @@ package skip.lib
 // access members without calling sref() on them. So support sref() on the tuples themselves. Note that
 // because the tuples aren't mutable, we can ignore the onUpdate closures
 
-data class Tuple2<E0, E1>(val element0: E0, val element1: E1) {
+data class Tuple2<E0, E1>(private val e0: E0, private val e1: E1) {
+    val element0: E0
+        get() = e0.sref()
+    val element1: E1
+        get() = e1.sref()
+
     fun sref(onUpdate: ((Tuple2<E0, E1>) -> Unit)? = null): Tuple2<E0, E1> {
-        val e0 = element0.sref()
-        val e1 = element1.sref()
-        if (e0 !== element0 || e1 !== element1) {
+        val e0 = e0.sref()
+        val e1 = e1.sref()
+        if (e0 !== this.e0 || e1 !== this.e1) {
             return Tuple2(e0, e1)
         }
         return this
     }
 }
 
-data class Tuple3<E0, E1, E2>(val element0: E0, val element1: E1, val element2: E2) {
+data class Tuple3<E0, E1, E2>(private val e0: E0, private val e1: E1, private val e2: E2) {
+    val element0: E0
+        get() = e0.sref()
+    val element1: E1
+        get() = e1.sref()
+    val element2: E2
+        get() = e2.sref()
+
     fun sref(onUpdate: ((Tuple3<E0, E1, E2>) -> Unit)? = null): Tuple3<E0, E1, E2> {
-        val e0 = element0.sref()
-        val e1 = element1.sref()
-        val e2 = element2.sref()
-        if (e0 !== element0 || e1 !== element1 || e2 !== element2) {
+        val e0 = e0.sref()
+        val e1 = e1.sref()
+        val e2 = e2.sref()
+        if (e0 !== this.e0 || e1 !== this.e1 || e2 !== this.e2) {
             return Tuple3(e0, e1, e2)
         }
         return this
     }
 }
 
-data class Tuple4<E0, E1, E2, E3>(val element0: E0, val element1: E1, val element2: E2, val element3: E3) {
+data class Tuple4<E0, E1, E2, E3>(private val e0: E0, private val e1: E1, private val e2: E2, private val e3: E3) {
+    val element0: E0
+        get() = e0.sref()
+    val element1: E1
+        get() = e1.sref()
+    val element2: E2
+        get() = e2.sref()
+    val element3: E3
+        get() = e3.sref()
+
     fun sref(onUpdate: ((Tuple4<E0, E1, E2, E3>) -> Unit)? = null): Tuple4<E0, E1, E2, E3> {
-        val e0 = element0.sref()
-        val e1 = element1.sref()
-        val e2 = element2.sref()
-        val e3 = element3.sref()
-        if (e0 !== element0 || e1 !== element1 || e2 !== element2 || e3 !== element3) {
+        val e0 = e0.sref()
+        val e1 = e1.sref()
+        val e2 = e2.sref()
+        val e3 = e3.sref()
+        if (e0 !== this.e0 || e1 !== this.e1 || e2 !== this.e2 || e3 !== this.e3) {
             return Tuple4(e0, e1, e2, e3)
         }
         return this
     }
 }
 
-data class Tuple5<E0, E1, E2, E3, E4>(val element0: E0, val element1: E1, val element2: E2, val element3: E3, val element4: E4) {
+data class Tuple5<E0, E1, E2, E3, E4>(private val e0: E0, private val e1: E1, private val e2: E2, private val e3: E3, private val e4: E4) {
+    val element0: E0
+        get() = e0.sref()
+    val element1: E1
+        get() = e1.sref()
+    val element2: E2
+        get() = e2.sref()
+    val element3: E3
+        get() = e3.sref()
+    val element4: E4
+        get() = e4.sref()
+
     fun sref(onUpdate: ((Tuple5<E0, E1, E2, E3, E4>) -> Unit)? = null): Tuple5<E0, E1, E2, E3, E4> {
-        val e0 = element0.sref()
-        val e1 = element1.sref()
-        val e2 = element2.sref()
-        val e3 = element3.sref()
-        val e4 = element4.sref()
-        if (e0 !== element0 || e1 !== element1 || e2 !== element2 || e3 !== element3 || e4 !== element4) {
+        val e0 = e0.sref()
+        val e1 = e1.sref()
+        val e2 = e2.sref()
+        val e3 = e3.sref()
+        val e4 = e4.sref()
+        if (e0 !== this.e0 || e1 !== this.e1 || e2 !== this.e2 || e3 !== this.e3 || e4 !== this.e4) {
             return Tuple5(e0, e1, e2, e3, e4)
         }
         return this
