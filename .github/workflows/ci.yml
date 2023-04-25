@@ -72,12 +72,12 @@ jobs:
           path: skip
           repository: skiptools/skip
 
-      - name: Checkout SkipSource
+      - name: Checkout skiptool
         if: env.CONFIG == 'debug'
         uses: actions/checkout@v3
         with:
-          path: SkipSource
-          repository: skiptools/SkipSource
+          path: skiptool
+          repository: skiptools/skiptool
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Check skiptool (debug)

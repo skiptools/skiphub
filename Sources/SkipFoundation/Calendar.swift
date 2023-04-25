@@ -28,6 +28,7 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         self.rawValue = rawValue
     }
 
+    // SKIP DECLARE: val description: String
     var description: String {
         return rawValue.description
     }
