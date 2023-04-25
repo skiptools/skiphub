@@ -369,7 +369,8 @@ extension JUnitTestCase {
             print("JUNIT TEST SUITE: \(testSuite.name): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeTotal * 100.0) / 100.0)")
         }
 
-        print("JUNIT TEST SUITES (\(suiteTotal)): TESTS \(testsTotal) PASSED \(passTotal) FAILED \(failTotal) SKIPPED \(skipTotal) TIME \(round(timeTotal * 100.0) / 100.0)")
+        let passPercentage = Double(passTotal) / (testsTotal == 0 ? Double.nan : Double(testsTotal))
+        print("JUNIT TEST SUITES (\(suiteTotal)): TESTS \(testsTotal) PASSED \(passTotal) (\(round(passPercentage * 100))%) FAILED \(failTotal) SKIPPED \(skipTotal) TIME \(round(timeTotal * 100.0) / 100.0)")
 
     }
     #endif // os(macOS) || os(Linux)

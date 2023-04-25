@@ -8,8 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
-
 // This source file is part of the Swift.org open source project
 //
 // Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
@@ -22,6 +20,9 @@ import XCTest
 class TestByteCountFormatter : XCTestCase {
     
     func test_DefaultValues() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         XCTAssertEqual(formatter.allowedUnits, [])
         XCTAssertEqual(formatter.countStyle, ByteCountFormatter.CountStyle.file)
@@ -32,9 +33,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.isAdaptive, true)
         XCTAssertEqual(formatter.zeroPadsFractionDigits, false)
         XCTAssertEqual(formatter.formattingContext, Formatter.Context.unknown)
+        #endif // !SKIP
     }
     
     func test_zeroBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         
         XCTAssertEqual(formatter.string(fromByteCount: 0), "Zero KB")
@@ -48,9 +53,13 @@ class TestByteCountFormatter : XCTestCase {
         
         formatter.allowedUnits = .useGB
         XCTAssertEqual(formatter.string(fromByteCount: 0), "0 GB")
+        #endif // !SKIP
     }
     
     func test_oneByte() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         
         XCTAssertEqual(formatter.string(fromByteCount: 1), "1 byte")
@@ -78,9 +87,13 @@ class TestByteCountFormatter : XCTestCase {
         formatter.allowedUnits = .useGB
         XCTAssertEqual(formatter.string(fromByteCount: 1), "0.000000001 GB")
         
+        #endif // !SKIP
     }
     
     func test_allowedUnitsKBGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useKB, .useGB]
         
@@ -93,9 +106,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     
     func test_allowedUnitsMBGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useMB, .useGB]
         
@@ -108,9 +125,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     
     func test_adaptiveFalseAllowedUnitsKBMBGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useKB, .useMB, .useGB]
         formatter.isAdaptive = false
@@ -130,9 +151,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     
     func test_allowedUnitsKBMBGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useKB, .useMB, .useGB]
         XCTAssertEqual(formatter.string(fromByteCount: 55), "0 KB")
@@ -151,9 +176,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     
     func test_allowedUnitsBytesGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useBytes, .useGB]
         XCTAssertEqual(formatter.string(fromByteCount: 55), "55 bytes")
@@ -172,8 +201,12 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     func test_allowedUnitsGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = .useGB
         XCTAssertEqual(formatter.string(fromByteCount: 55), "0 GB")
@@ -192,8 +225,12 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     func test_adaptiveFalseAllowedUnitsGB() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = .useGB
         formatter.isAdaptive = false
@@ -213,9 +250,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 550000000000000), "550,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 5500000000000000), "5,500,000 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 55000000000000000), "55,000,000 GB")
+        #endif // !SKIP
     }
     
     func test_numberOnly() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.includesUnit = false
         
@@ -239,9 +280,13 @@ class TestByteCountFormatter : XCTestCase {
         
         formatter.allowedUnits = [.useMB, .useGB]
         XCTAssertEqual(formatter.string(fromByteCount: 550000000), "550")
+        #endif // !SKIP
     }
     
     func test_unitOnly() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.includesCount = false
         
@@ -265,9 +310,13 @@ class TestByteCountFormatter : XCTestCase {
         
         formatter.allowedUnits = [.useMB, .useGB]
         XCTAssertEqual(formatter.string(fromByteCount: 550000000), "MB")
+        #endif // !SKIP
     }
     
     func test_isAdaptiveFalse() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.isAdaptive = false
         
@@ -283,9 +332,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 123456789), "123 MB")
         XCTAssertEqual(formatter.string(fromByteCount: 1234567898), "1.23 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 12345678987), "12.3 GB")
+        #endif // !SKIP
     }
     
     func test_isAdaptiveTrue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         
         XCTAssertEqual(formatter.string(fromByteCount: 499), "499 bytes")
@@ -301,9 +354,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 1234567898), "1.23 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 12345678987), "12.35 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 999900000), "999.9 MB")
+        #endif // !SKIP
     }
     
     func test_zeroPadsFractionDigitsTrue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.zeroPadsFractionDigits = true
         
@@ -321,9 +378,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 123456789), "123.5 MB")
         XCTAssertEqual(formatter.string(fromByteCount: 1234567898), "1.23 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 12345678987), "12.35 GB")
+        #endif // !SKIP
     }
     
     func test_isAdaptiveFalseZeroPadsFractionDigitsTrue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.zeroPadsFractionDigits = true
         formatter.isAdaptive = false
@@ -342,9 +403,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 123456789), "123 MB")
         XCTAssertEqual(formatter.string(fromByteCount: 1234567898), "1.23 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 12345678987), "12.3 GB")
+        #endif // !SKIP
     }
     
     func test_countStyleDecimal() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.countStyle = .decimal
         
@@ -360,9 +425,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 123456789), "123.5 MB")
         XCTAssertEqual(formatter.string(fromByteCount: 1234567898), "1.23 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 12345678987), "12.35 GB")
+        #endif // !SKIP
     }
     
     func test_countStyleBinary() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         formatter.countStyle = .binary
         
@@ -378,9 +447,13 @@ class TestByteCountFormatter : XCTestCase {
         XCTAssertEqual(formatter.string(fromByteCount: 123456789), "117.7 MB")
         XCTAssertEqual(formatter.string(fromByteCount: 1234567898), "1.15 GB")
         XCTAssertEqual(formatter.string(fromByteCount: 12345678987), "11.5 GB")
+        #endif // !SKIP
     }
     
     func test_largeByteValues() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         
         formatter.allowedUnits = .useTB
@@ -410,9 +483,13 @@ class TestByteCountFormatter : XCTestCase {
         
         formatter.allowedUnits = .useYBOrHigher
         XCTAssertEqual(formatter.string(fromByteCount: 9223372036854775807), "0.00000922 YB")
+        #endif // !SKIP
     }
     
     func test_negativeByteValues() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ByteCountFormatter()
         
         XCTAssertEqual(formatter.string(fromByteCount: -1), "-1 byte")
@@ -449,9 +526,13 @@ class TestByteCountFormatter : XCTestCase {
         
         formatter.allowedUnits = .useYBOrHigher
         XCTAssertEqual(formatter.string(fromByteCount: Int64.min), "-0 YB")
+        #endif // !SKIP
     }
     
     func test_unarchivingFixtures() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        for fixture in [Fixtures.byteCountFormatterDefault, Fixtures.byteCountFormatterAllFieldsSet] {
 //            let expectation = try fixture.make()
 //            try fixture.loadEach { (formatter, variant) in
@@ -466,6 +547,7 @@ class TestByteCountFormatter : XCTestCase {
 //                XCTAssertEqual(formatter.isAdaptive,                 expectation.isAdaptive)
 //            }
 //        }
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -498,5 +580,4 @@ class TestByteCountFormatter : XCTestCase {
     
 }
 
-#endif
 
