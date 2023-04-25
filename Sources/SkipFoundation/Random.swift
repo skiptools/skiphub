@@ -78,6 +78,10 @@ extension RandomNumberGenerator {
 public typealias PlatformPseudoRandomNumberGenerator = java.util.Random
 public typealias PlatformSystemRandomNumberGenerator = java.security.SecureRandom
 
+public protocol RandomNumberGenerator {
+    mutating func next() -> UInt64
+}
+
 public struct SystemRandomNumberGenerator : RawRepresentable, RandomNumberGenerator {
     public let rawValue: PlatformSystemRandomNumberGenerator
 
