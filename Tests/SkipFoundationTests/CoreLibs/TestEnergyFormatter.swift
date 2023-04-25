@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -36,37 +35,56 @@ class TestEnergyFormatter: XCTestCase {
     #endif // SKIP
     
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "en_US")
         formatter.isForFoodEnergyUse = false
         super.setUp()
+        #endif // !SKIP
     }
 
     func test_stringFromJoulesJoulesRegion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "de_DE")
         XCTAssertEqual(formatter.string(fromJoules: -100000), "-100 kJ")
         XCTAssertEqual(formatter.string(fromJoules: -1), "-0,001 kJ")
         XCTAssertEqual(formatter.string(fromJoules: 100000000), "100.000 kJ")
+        #endif // !SKIP
     }
     
     
     func test_stringFromJoulesCaloriesRegion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(formatter.string(fromJoules: -10000), "-2.39 kcal")
         XCTAssertEqual(formatter.string(fromJoules: 0.00001), "0 cal")
         XCTAssertEqual(formatter.string(fromJoules: 0.0001), "0 cal")
         XCTAssertEqual(formatter.string(fromJoules: 1), "0.239 cal")
         XCTAssertEqual(formatter.string(fromJoules: 10000), "2.39 kcal")
+        #endif // !SKIP
     }
     
     func test_stringFromJoulesCaloriesRegionFoodEnergyUse() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.isForFoodEnergyUse = true
         XCTAssertEqual(formatter.string(fromJoules: -1), "-0 Cal")
         XCTAssertEqual(formatter.string(fromJoules: 0.001), "0 cal")
         XCTAssertEqual(formatter.string(fromJoules: 0.1), "0.024 cal")
         XCTAssertEqual(formatter.string(fromJoules: 1), "0.239 cal")
         XCTAssertEqual(formatter.string(fromJoules: 10000), "2.39 Cal")
+        #endif // !SKIP
     }
     
     func test_stringFromValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.unitStyle = .long
         XCTAssertEqual(formatter.string(fromValue: 0.002, unit: .kilojoule),"0.002 kilojoules")
         XCTAssertEqual(formatter.string(fromValue:0, unit: .joule), "0 joules")
@@ -85,9 +103,13 @@ class TestEnergyFormatter: XCTestCase {
         formatter.isForFoodEnergyUse = false
         XCTAssertEqual(formatter.string(fromValue: 5.3, unit: .kilocalorie), "5.3 kcal")
         XCTAssertEqual(formatter.string(fromValue: 873.2345, unit: .calorie), "873.234 cal")
+        #endif // !SKIP
     }
     
     func test_unitStringFromJoules() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var unit = EnergyFormatter.Unit.joule
         XCTAssertEqual(formatter.unitString(fromJoules: -100000, usedUnit: &unit), "kcal")
         XCTAssertEqual(unit, .kilocalorie)
@@ -122,9 +144,13 @@ class TestEnergyFormatter: XCTestCase {
         
         XCTAssertEqual(formatter.unitString(fromJoules: 1000.01, usedUnit: &unit), "kJ")
         XCTAssertEqual(unit, .kilojoule)
+        #endif // !SKIP
     }
     
     func test_unitStringFromValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.isForFoodEnergyUse = true
         formatter.unitStyle = .long
         XCTAssertEqual(formatter.unitString(fromValue: 1, unit: .kilocalorie), "Calories")
@@ -149,9 +175,9 @@ class TestEnergyFormatter: XCTestCase {
         formatter.unitStyle = .short
         XCTAssertEqual(formatter.unitString(fromValue: 0.00000001, unit: .calorie), "cal")
         XCTAssertEqual(formatter.unitString(fromValue: 123456, unit: .joule), "J")
+        #endif // !SKIP
     }
 
 }
 
-#endif
 

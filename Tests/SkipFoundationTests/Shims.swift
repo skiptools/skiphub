@@ -15,6 +15,18 @@ import XCTest
 
 // MARK: Foundation Stubs
 
+internal protocol DateIntervalFormatter {
+}
+
+internal protocol DataProtocol {
+}
+
+internal struct EnergyFormatter {
+}
+
+internal protocol FileHandle {
+}
+
 internal class URLSession {
     class ResponseDisposition {
     }

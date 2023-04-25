@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -48,6 +47,9 @@ class TestDateFormatter: XCTestCase {
     #endif // SKIP
     
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let symbolDictionaryOne = ["eraSymbols" : ["BC", "AD"],
                              "monthSymbols" : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -105,6 +107,7 @@ class TestDateFormatter: XCTestCase {
         XCTAssertEqual(f.gregorianStartDate, Date(timeIntervalSince1970: -12219292800))
         XCTAssertFalse(f.doesRelativeDateFormatting)
         
+        #endif // !SKIP
     }
     
     // ShortStyle
@@ -112,6 +115,9 @@ class TestDateFormatter: XCTestCase {
     // ------  --------------  --------
     // en_US   M/d/yy h:mm a   12/25/15 12:00 AM
     func test_dateStyleShort() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let timestamps = [
             -31536000 : "1/1/69, 12:00 AM" , 0.0 : "1/1/70, 12:00 AM", 31536000 : "1/1/71, 12:00 AM",
@@ -138,6 +144,7 @@ class TestDateFormatter: XCTestCase {
             XCTAssertEqual(sf, stringResult)
         }
         
+        #endif // !SKIP
     }
     
     // MediumStyle
@@ -145,6 +152,9 @@ class TestDateFormatter: XCTestCase {
     // ------  --------------        ------------
     // en_US   MMM d, y, h:mm:ss a   Dec 25, 2015, 12:00:00 AM
     func test_dateStyleMedium() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let timestamps = [
             -31536000 : "Jan 1, 1969, 12:00:00 AM" , 0.0 : "Jan 1, 1970, 12:00:00 AM", 31536000 : "Jan 1, 1971, 12:00:00 AM",
@@ -169,6 +179,7 @@ class TestDateFormatter: XCTestCase {
 //            XCTAssertEqual(sf, stringResult)
         }
         
+        #endif // !SKIP
     }
     
     
@@ -177,6 +188,9 @@ class TestDateFormatter: XCTestCase {
     // ------  --------------                 -----------------
     // en_US   MMMM d, y 'at' h:mm:ss a zzz   December 25, 2015 at 12:00:00 AM GMT
     func test_dateStyleLong() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let timestamps = [
             -31536000 : "January 1, 1969 at 12:00:00 AM GMT" , 0.0 : "January 1, 1970 at 12:00:00 AM GMT", 31536000 : "January 1, 1971 at 12:00:00 AM GMT",
@@ -201,6 +215,7 @@ class TestDateFormatter: XCTestCase {
             XCTAssertEqual(sf, stringResult)
         }
         
+        #endif // !SKIP
     }
     
     // FullStyle
@@ -208,6 +223,9 @@ class TestDateFormatter: XCTestCase {
     // ------  --------------                       -------------------------
     // en_US   EEEE, MMMM d, y 'at' h:mm:ss a zzzz  Friday, December 25, 2015 at 12:00:00 AM Greenwich Mean Time
     func test_dateStyleFull() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
 #if os(macOS) // timestyle .full is currently broken on Linux, the timezone should be 'Greenwich Mean Time' not 'GMT'
         let timestamps: [TimeInterval:String] = [
@@ -237,6 +255,7 @@ class TestDateFormatter: XCTestCase {
             XCTAssertEqual(sf, stringResult)
         }
 #endif
+        #endif // !SKIP
     }
     
     // Custom Style
@@ -244,6 +263,9 @@ class TestDateFormatter: XCTestCase {
     // ------  --------------                        -------------------------
     // en_US   EEEE, MMMM d, y 'at' hh:mm:ss a zzzz  Friday, December 25, 2015 at 12:00:00 AM Greenwich Mean Time
     func test_customDateFormat() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let timestamps = [
              // Negative time offsets are still buggy on macOS
              -31536000 : "Wednesday, January 1, 1969 at 12:00:00 AM GMT", 0.0 : "Thursday, January 1, 1970 at 12:00:00 AM Greenwich Mean Time",
@@ -295,9 +317,13 @@ class TestDateFormatter: XCTestCase {
         f.dateFormat = "dd-MM-yyyy"
         XCTAssertEqual(f.string(from: testDate), "11-03-2016")
         
+        #endif // !SKIP
     }
 
     func test_setLocalizedDateFormatFromTemplate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let locale = Locale(identifier: DEFAULT_LOCALE)
         let template = "EEEE MMMM d y hhmmss a zzzz"
 
@@ -307,9 +333,13 @@ class TestDateFormatter: XCTestCase {
 
         let dateFormat = DateFormatter.dateFormat(fromTemplate: template, options: 0, locale: locale)
         XCTAssertEqual(f.dateFormat, dateFormat)
+        #endif // !SKIP
     }
 
     func test_dateFormatString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let f = DateFormatter()
         f.locale = Locale(identifier: DEFAULT_LOCALE)
         f.timeZone = TimeZone(abbreviation: DEFAULT_TIMEZONE)
@@ -349,9 +379,13 @@ class TestDateFormatter: XCTestCase {
             
             XCTAssertEqual(f.dateFormat, dateFormat)
         }
+        #endif // !SKIP
     }
 
     func test_setLocaleToNil() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let f = DateFormatter()
         // Locale should be the current one by default
         XCTAssertEqual(f.locale, .current)
@@ -364,18 +398,26 @@ class TestDateFormatter: XCTestCase {
         // A nil locale should not crash a subsequent operation
         let result: String? = f.string(from: Date())
         XCTAssertNotNil(result)
+        #endif // !SKIP
     }
 
     func test_setTimeZoneToNil() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let f = DateFormatter()
         // Time zone should be the system one by default.
         XCTAssertEqual(f.timeZone, NSTimeZone.system)
         f.timeZone = nil
         // Time zone should go back to the system one.
         XCTAssertEqual(f.timeZone, NSTimeZone.system)
+        #endif // !SKIP
     }
 
     func test_setTimeZone() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Test two different time zones. Should ensure that if one
         // happens to be TimeZone.current, we still get a valid test.
         let newYork = TimeZone(identifier: "America/New_York")!
@@ -391,9 +433,13 @@ class TestDateFormatter: XCTestCase {
         // Case 2: Los Angeles
         f.timeZone = losAngeles
         XCTAssertEqual(f.timeZone, losAngeles)
+        #endif // !SKIP
     }
 
     func test_expectedTimeZone() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let newYork = TimeZone(identifier: "America/New_York")!
         let losAngeles = TimeZone(identifier: "America/Los_Angeles")!
 
@@ -423,9 +469,13 @@ class TestDateFormatter: XCTestCase {
         // Case 3: Los Angeles
         f.timeZone = losAngeles
         XCTAssertEqual(f.string(from: now), losAngeles.abbreviation())
+        #endif // !SKIP
     }
 
     func test_dateFrom() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "UTC")
         formatter.dateFormat = "yyyy-MM-dd"
@@ -447,9 +497,13 @@ class TestDateFormatter: XCTestCase {
         XCTAssertNil(formatter.date(from: "2018-03-09"))
         let d2 = try XCTUnwrap(formatter.date(from: "2018-03-09T10:25:16+01:00"))
         XCTAssertEqual(d2.description, "2018-03-09 09:25:16 +0000")
+        #endif // !SKIP
     }
     
     func test_dateParseAndFormatWithJapaneseCalendar() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = DateFormatter()
         
         formatter.locale = Locale(identifier: "ja_JP")
@@ -481,9 +535,13 @@ class TestDateFormatter: XCTestCase {
             let dateString = formatter.string(from: Date(timeIntervalSince1970: 1556719800)) // May 1st, 2019, 11:10 PM (JST)
             XCTAssertEqual(dateString, "令和元年5月1日 23:10")
         }
+        #endif // !SKIP
     }
 
     func test_orderOfPropertySetters() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         // This produces a .count factorial number of arrays
         func combinations<T>(of a: [T]) -> [[T]] {
@@ -541,10 +599,14 @@ class TestDateFormatter: XCTestCase {
                 XCTFail("\(formattedString) != \(expected) using settings applied in order \(applied)")
             }
         }
+        #endif // !SKIP
     }
 
     // Confirm that https://bugs.swift.org/browse/SR-14108 is fixed.
     func test_copy_sr14108() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let date = Date(timeIntervalSinceReferenceDate: 0)
 
         let original = DateFormatter()
@@ -566,8 +628,8 @@ class TestDateFormatter: XCTestCase {
         XCTAssertNotEqual(original.locale, copied.locale)
         XCTAssertEqual(original.string(from: date), "2001-01-01 00:00:00 GMT")
         XCTAssertEqual(copied.string(from: date), "2001/01/01 09:00:00+09:00")
+        #endif // !SKIP
     }
 }
 
-#endif
 

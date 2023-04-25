@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -19,8 +18,9 @@ import XCTest
 // See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
-
+#if !SKIP
 import Dispatch
+#endif
 
 class TestFileManager : XCTestCase {
 #if os(Windows)
@@ -30,6 +30,9 @@ class TestFileManager : XCTestCase {
 #endif
 
     func test_NSTemporaryDirectory() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if os(Windows)
         let validPathSeps: [Character] = ["\\", "/"]
         #else
@@ -38,9 +41,13 @@ class TestFileManager : XCTestCase {
         
         let tempDir = NSTemporaryDirectory()
         XCTAssertTrue(validPathSeps.contains(where: { tempDir.hasSuffix(String($0)) }), "Temporary directory path must end with path separator")
+        #endif // !SKIP
     }
 
     func test_createDirectory() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
         
@@ -66,9 +73,13 @@ class TestFileManager : XCTestCase {
             XCTFail("Failed to clean up file")
         }
         
+        #endif // !SKIP
     }
     
     func test_createFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testfile\(NSUUID().uuidString)"
         
@@ -113,9 +124,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up file")
         }
+        #endif // !SKIP
     }
 
     func test_creatingDirectoryWithShortIntermediatePath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fileManager = FileManager.default
         let cwd = fileManager.currentDirectoryPath
         fileManager.changeCurrentDirectoryPath(NSTemporaryDirectory())
@@ -129,9 +144,13 @@ class TestFileManager : XCTestCase {
             XCTFail("Failed to create and clean up directory")
         }
         fileManager.changeCurrentDirectoryPath(cwd)
+        #endif // !SKIP
     }
 
     func test_moveFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testfile\(NSUUID().uuidString)"
         let path2 = NSTemporaryDirectory() + "testfile2\(NSUUID().uuidString)"
@@ -151,9 +170,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to move file: \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_fileSystemRepresentation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = "☃"
         let result = FileManager.default.fileSystemRepresentation(withPath: str)
         XCTAssertEqual(UInt8(bitPattern: result[0]), 0xE2)
@@ -163,9 +186,13 @@ class TestFileManager : XCTestCase {
 #if false && !DARWIN_COMPATIBILITY_TESTS // auto-released by Darwin's Foundation
         result.deallocate()
 #endif
+        #endif // !SKIP
     }
 
     func test_fileExists() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let tmpDir = fm.temporaryDirectory.appendingPathComponent("testFileExistsDir")
         let testFile = tmpDir.appendingPathComponent("testFile")
@@ -214,9 +241,13 @@ class TestFileManager : XCTestCase {
             XCTFail(String(describing: error))
         }
         try? fm.removeItem(atPath: tmpDir.path)
+        #endif // !SKIP
     }
 
     func test_isReadableFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_isReadableFile\(NSUUID().uuidString)"
         defer {
@@ -242,9 +273,13 @@ class TestFileManager : XCTestCase {
         } catch let e {
             XCTFail("\(e)")
         }
+        #endif // !SKIP
     }
 
     func test_isWritableFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_isWritableFile\(NSUUID().uuidString)"
         defer {
@@ -265,9 +300,13 @@ class TestFileManager : XCTestCase {
         } catch let e {
             XCTFail("\(e)")
         }
+        #endif // !SKIP
     }
 
     func test_isExecutableFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_isExecutableFile\(NSUUID().uuidString)"
         let exePath = path + ".exe"
@@ -300,9 +339,13 @@ class TestFileManager : XCTestCase {
         } catch let e {
             XCTFail("\(e)")
         }
+        #endif // !SKIP
     }
 
     func test_isDeletableFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
 
         do {
@@ -328,9 +371,13 @@ class TestFileManager : XCTestCase {
 
         // test against known undeletable file
         XCTAssertFalse(fm.isDeletableFile(atPath: "/dev/null"))
+        #endif // !SKIP
     }
 
     func test_fileAttributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_fileAttributes\(NSUUID().uuidString)"
 
@@ -400,9 +447,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up files")
         }
+        #endif // !SKIP
     }
     
     func test_fileSystemAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory()
         
@@ -434,9 +485,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("\(error)")
         }
+        #endif // !SKIP
     }
     
     func test_setFileAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let path = NSTemporaryDirectory() + "test_setFileAttributes\(NSUUID().uuidString)"
         let fm = FileManager.default
         
@@ -477,9 +532,13 @@ class TestFileManager : XCTestCase {
             XCTFail("Setting permissions of non-existent file should throw")
         } catch {
         }
+        #endif // !SKIP
     }
     
     func test_pathEnumerator() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let testDirName = "testdir\(NSUUID().uuidString)"
         let basePath = NSTemporaryDirectory() + "\(testDirName)"
@@ -554,9 +613,13 @@ class TestFileManager : XCTestCase {
         } else {
             XCTFail()
         }
+        #endif // !SKIP
     }
     
     func test_directoryEnumerator() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let basePath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)/"
         let hiddenDir1 = basePath + "subdir1/subdir2/.hiddenDir/"
@@ -710,9 +773,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail()
         }
+        #endif // !SKIP
     }
     
     func test_contentsOfDirectoryAtPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let testDirName = "testdir\(NSUUID().uuidString)"
         let path = NSTemporaryDirectory() + "\(testDirName)"
@@ -754,9 +821,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up files")
         }
+        #endif // !SKIP
     }
     
     func test_subpathsOfDirectoryAtPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testdir"
         let path2 = NSTemporaryDirectory() + "testdir/sub"
@@ -807,15 +878,23 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up files")
         }
+        #endif // !SKIP
     }
 
     private func directoryExists(atPath path: String) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var isDir: ObjCBool = false
         let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
         return exists && isDir.boolValue
+        #endif // !SKIP
     }
 
     func test_copyItemAtPathToPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let srcPath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
         let destPath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
@@ -902,9 +981,13 @@ class TestFileManager : XCTestCase {
         } catch {
             // ignore
         }
+        #endif // !SKIP
     }
 
     func test_linkItemAtPathToPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let basePath = NSTemporaryDirectory() + "linkItemAtPathToPath/"
         let srcPath = basePath + "testdir\(NSUUID().uuidString)"
@@ -983,9 +1066,13 @@ class TestFileManager : XCTestCase {
             XCTFail("\(error)")
         }
         XCTAssertNil(try? fm.linkItem(atPath: srcLink, toPath: destLink), "Creating link where one already exists")
+        #endif // !SKIP
     }
     
     func test_resolvingSymlinksInPath() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try withTemporaryDirectory { (temporaryDirectoryURL, _) in
             // Initialization
             var baseURL = temporaryDirectoryURL
@@ -1049,18 +1136,26 @@ class TestFileManager : XCTestCase {
             XCTAssertEqual(resolvedURL_D.lastPathComponent, link1URL.lastPathComponent)
             #endif
         }
+        #endif // !SKIP
     }
 
     func test_homedirectoryForUser() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let filemanger = FileManager.default
         #if !os(iOS)
         XCTAssertNil(filemanger.homeDirectory(forUser: "someuser"))
         XCTAssertNil(filemanger.homeDirectory(forUser: ""))
         XCTAssertNotNil(filemanger.homeDirectoryForCurrentUser)
         #endif
+        #endif // !SKIP
     }
     
     func test_temporaryDirectoryForUser() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let filemanger = FileManager.default
         let tmpDir = filemanger.temporaryDirectory
         let tmpFileUrl = tmpDir.appendingPathComponent("test.bin")
@@ -1078,9 +1173,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Unable to write a file to the temporary directory: \(tmpDir), err: \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_mountedVolumeURLs() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if !os(iOS)
         guard let volumes = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys:[], options: []) else {
             XCTFail("mountedVolumeURLs returned nil")
@@ -1109,9 +1208,13 @@ class TestFileManager : XCTestCase {
         XCTAssertTrue(visibleVolumes.count < volumes.count)
 #endif
 #endif
+        #endif // !SKIP
     }
 
     func test_contentsEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let tmpParentDirURL = URL(fileURLWithPath: NSTemporaryDirectory() + "test_contentsEqualdir", isDirectory: true)
         let testDir1 = tmpParentDirURL.appendingPathComponent("testDir1")
@@ -1266,9 +1369,13 @@ class TestFileManager : XCTestCase {
         try? data.write(to: dataFile1)
         XCTAssertFalse(fm.contentsEqual(atPath: dataFile1.path, andPath: dataFile2.path))
         XCTAssertFalse(fm.contentsEqual(atPath: testDir1.path, andPath: testDir2.path))
+        #endif // !SKIP
     }
 
     func test_setInvalidFileAttributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let path = "\(NSTemporaryDirectory())test_setInvalidFileAttributes\(NSUUID().uuidString)"
         let FM = FileManager.default
 
@@ -1284,9 +1391,13 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("\(error)")
         }
+        #endif // !SKIP
     }
 
     func test_copyItemsPermissions() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let tmpDir = fm.temporaryDirectory.appendingPathComponent("test_copyItemsPermissions")
         try fm.createDirectory(at: tmpDir, withIntermediateDirectories: true)
@@ -1328,19 +1439,27 @@ class TestFileManager : XCTestCase {
 
         try fm.setAttributes([ .posixPermissions: 0o411], ofItemAtPath: srcFile.path)
         try testCopy()
+        #endif // !SKIP
     }
     
 #if XXX && !DEPLOYMENT_RUNTIME_OBJC && !os(Android) // XDG tests require swift-corelibs-foundation
     
     #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT // These are white box tests for the internals of XDG parsing:
     func test_xdgStopgapsCoverAllConstants() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let stopgaps = _XDGUserDirectory.stopgapDefaultDirectoryURLs
         for directory in _XDGUserDirectory.allDirectories {
             XCTAssertNotNil(stopgaps[directory])
         }
+        #endif // !SKIP
     }
     
     func test_parseXDGConfiguration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let home = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
         
         let assertConfigurationProduces = { (configuration: String, paths: [_XDGUserDirectory: String]) in
@@ -1406,9 +1525,13 @@ PICTURES=Pictures
     DESKTOP=/home/Desktop
 This configuration file has an invalid syntax.
 """, [:])
+        #endif // !SKIP
     }
     
     func test_xdgURLSelection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let home = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
         
         let configuration = _XDGUserDirectory.userDirectories(fromConfiguration:
@@ -1443,6 +1566,7 @@ VIDEOS=StopgapVideos
         assertSameAbsolutePath(_XDGUserDirectory.desktop.url(userConfiguration: configuration, osDefaultConfiguration: osDefaults, stopgaps: stopgaps), home.appendingPathComponent("UserDesktop"))
         assertSameAbsolutePath(_XDGUserDirectory.publicShare.url(userConfiguration: configuration, osDefaultConfiguration: osDefaults, stopgaps: stopgaps), home.appendingPathComponent("SystemPublicShare"))
         assertSameAbsolutePath(_XDGUserDirectory.music.url(userConfiguration: configuration, osDefaultConfiguration: osDefaults, stopgaps: stopgaps), home.appendingPathComponent("StopgapMusic"))
+        #endif // !SKIP
     }
     #endif // NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     
@@ -1450,6 +1574,9 @@ VIDEOS=StopgapVideos
 
     #if XXX && !os(Android)
     func printPathByRunningHelper(withConfiguration config: String, method: String, identifier: String) throws -> String {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = UUID().uuidString
         let path = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("org.swift.Foundation.XDGTestHelper").appendingPathComponent(uuid)
         try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
@@ -1473,9 +1600,13 @@ VIDEOS=StopgapVideos
                                       environment: environment)
         
         return stdout.trimmingCharacters(in: CharacterSet.newlines)
+        #endif // !SKIP
     }
     
     func assertFetchingPath(withConfiguration config: String, identifier: String, yields path: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for method in [ "NSSearchPath", "FileManagerDotURLFor", "FileManagerDotURLsFor" ] {
             do {
                 let found = try printPathByRunningHelper(withConfiguration: config, method: method, identifier: identifier)
@@ -1484,9 +1615,13 @@ VIDEOS=StopgapVideos
                 XCTFail("Failed with method \(method), configuration \(config), identifier \(identifier), equal to \(path), error \(error)")
             }
         }
+        #endif // !SKIP
     }
     
     func test_fetchXDGPathsFromHelper() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let prefix = NSHomeDirectory() + "/_Foundation_Test_"
         
         let configuration = """
@@ -1506,11 +1641,15 @@ VIDEOS=StopgapVideos
 //        assertFetchingPath(withConfiguration: configuration, identifier: "music", yields: "\(prefix)/Music")
 //        assertFetchingPath(withConfiguration: configuration, identifier: "pictures", yields: "\(prefix)/Pictures")
 //        assertFetchingPath(withConfiguration: configuration, identifier: "videos", yields: "\(prefix)/Videos")
+        #endif // !SKIP
     }
     #endif // !os(Android)
 #endif // !DEPLOYMENT_RUNTIME_OBJC
 
     func test_emptyFilename() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
 
         // Some of these tests will throw an NSException on Darwin which would be normally be
@@ -1633,9 +1772,13 @@ VIDEOS=StopgapVideos
         // Not Implemented - XCTAssertNil(fm.componentsToDisplay(forPath: ""))
         // Not Implemented - XCTAssertEqual(fm.displayName(atPath: ""), "")
         #endif
+        #endif // !SKIP
     }
     
     func test_getRelationship() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         /* a/
            a/b
            a/bb
@@ -1672,9 +1815,13 @@ VIDEOS=StopgapVideos
         
         try fm.getRelationship(&relationship, ofDirectoryAt: a_b_d, toItemAt: a)
 //        XCTAssertEqual(relationship, .same)
+        #endif // !SKIP
     }
     
     func test_displayNames() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         /* a/
            a/Test.localized (with a ./.localized/ subdirectory and strings file);
            a/Test.localized/b
@@ -1755,9 +1902,13 @@ VIDEOS=StopgapVideos
             XCTAssertEqual(components.last, "b")
         }
         
+        #endif // !SKIP
     }
     
     func test_getItemReplacementDirectory() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try FileManager.default.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
         let a = writableTestDirectoryURL.appendingPathComponent("a")
         try Data().write(to: a)
@@ -1775,9 +1926,13 @@ VIDEOS=StopgapVideos
         // To avoid races, Darwin always creates the directory even if create: false. Check this is the case.
         XCTAssertNotNil(try? FileManager.default.attributesOfItem(atPath: whereAt.path))
         try? FileManager.default.removeItem(at: whereAt)
+        #endif // !SKIP
     }
     
     func test_replacement() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let a = writableTestDirectoryURL.appendingPathComponent("a")
 
@@ -1900,9 +2055,13 @@ VIDEOS=StopgapVideos
             try fm._replaceItem(at: a, withItemAt: b, backupItemName: backupItemName, options: options, allowPlatformSpecificSyscalls: false)
         }
         #endif
+        #endif // !SKIP
     }
 
     func test_windowsPaths() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fm = FileManager.default
         let tmpPath = writableTestDirectoryURL.path
         do {
@@ -1953,6 +2112,7 @@ VIDEOS=StopgapVideos
         for path in paths {
 //            try checkPath(path: path)
         }
+        #endif // !SKIP
     }
 
     /**
@@ -1961,6 +2121,9 @@ VIDEOS=StopgapVideos
      - Bug: [SR-12272](https://bugs.swift.org/browse/SR-12272)
      */
     func test_concurrentGetItemReplacementDirectory() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fileManager = FileManager.default
 
         let operationCount = 10
@@ -1996,20 +2159,30 @@ VIDEOS=StopgapVideos
                 XCTFail("One of the concurrent calls to get the item replacement directory failed: \(error)")
             }
         }
+        #endif // !SKIP
     }
     
     // -----
-    
+
+    #if !SKIP
     var writableTestDirectoryURL: URL!
+    #endif
     
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         super.setUp()
         
         let pid = ProcessInfo.processInfo.processIdentifier
         writableTestDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("org.swift.TestFoundation.TestFileManager.\(pid)")
+        #endif // !SKIP
     }
     
     override func tearDown() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if let directoryURL = writableTestDirectoryURL,
            (try? FileManager.default.attributesOfItem(atPath: directoryURL.path)) != nil {
             do {
@@ -2020,6 +2193,7 @@ VIDEOS=StopgapVideos
         }
         
         super.tearDown()
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -2086,5 +2260,4 @@ VIDEOS=StopgapVideos
     #endif // SKIP
 }
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 class TestDimension: XCTestCase {
 
     func test_encodeDecode() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let original = Dimension(symbol: "symbol", converter: UnitConverterLinear(coefficient: 1.0))
 
         let encodedData = NSMutableData()
@@ -34,6 +36,7 @@ class TestDimension: XCTestCase {
 
         XCTAssertNotNil(decoded)
         XCTAssertEqual(original, decoded)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -45,5 +48,4 @@ class TestDimension: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

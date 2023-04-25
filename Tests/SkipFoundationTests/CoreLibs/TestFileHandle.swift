@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -19,7 +18,9 @@ import XCTest
 // See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
+#if !SKIP
 import Dispatch
+#endif
 #if os(Windows)
 import WinSDK
 #endif
@@ -28,7 +29,8 @@ import WinSDK
 class TestFileHandle : XCTestCase {
     var allHandles: [FileHandle] = []
     var allTemporaryFileURLs: [URL] = []
-    
+
+    #if !SKIP
     let content: Data = {
         return """
         CHAPTER I.
@@ -65,10 +67,15 @@ class TestFileHandle : XCTestCase {
         The Author, by an extraordinary stratagem, prevents an invasion--A high
         title of honor is conferred upon him--Ambassadors arrive from the
         emperor of Blefuscu, and sue for peace
-        """.data(using: .utf8)!
+        """.data(using: String.Encoding.utf8)!
     }()
+    #endif
 
+    #if !SKIP
     func createTemporaryFile(containing data: Data = Data()) -> URL {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
 
         allTemporaryFileURLs.append(url)
@@ -76,9 +83,14 @@ class TestFileHandle : XCTestCase {
         expectDoesNotThrow({ try data.write(to: url) }, "Couldn't create file at \(url.path) for testing")
 
         return url
+        #endif // !SKIP
     }
-
+    #endif
+    
     func createFileHandle() -> FileHandle {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = createTemporaryFile(containing: content)
 
         var fh: FileHandle?
@@ -86,9 +98,13 @@ class TestFileHandle : XCTestCase {
 
         allHandles.append(fh!)
         return fh!
+        #endif // !SKIP
     }
 
     func createFileHandleForUpdating() -> FileHandle {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = createTemporaryFile(containing: content)
 
         var fh: FileHandle!
@@ -96,10 +112,14 @@ class TestFileHandle : XCTestCase {
 
         allHandles.append(fh)
         return fh
+        #endif // !SKIP
     }
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func createFileHandleForSeekErrors() -> FileHandle {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if os(Windows)
         var hReadPipe: HANDLE? = INVALID_HANDLE_VALUE
         var hWritePipe: HANDLE? = INVALID_HANDLE_VALUE
@@ -124,12 +144,18 @@ class TestFileHandle : XCTestCase {
         allHandles.append(fh)
         return fh
 #endif
+        #endif // !SKIP
     }
 #endif
 
+    #if !SKIP
     let seekError = NSError(domain: NSCocoaErrorDomain, code: NSFileReadUnknownError, userInfo: [ NSUnderlyingErrorKey: NSError(domain: NSPOSIXErrorDomain, code: Int(ESPIPE), userInfo: [:])])
-    
+    #endif
+
     func createFileHandleForReadErrors() -> FileHandle {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Create a file handle where calling read returns -1.
         // Accomplish this by creating one for a directory.
 #if os(Windows)
@@ -156,15 +182,21 @@ class TestFileHandle : XCTestCase {
 #endif
         allHandles.append(fh)
         return fh
+        #endif // !SKIP
     }
     
+#if !SKIP
 #if os(Windows)
     let readError = NSError(domain: NSCocoaErrorDomain, code: NSFileReadUnknownError, userInfo: [ NSUnderlyingErrorKey: NSError(domain: "org.swift.Foundation.WindowsError", code: 1, userInfo: [:])])
 #else
     let readError = NSError(domain: NSCocoaErrorDomain, code: NSFileReadUnknownError, userInfo: [ NSUnderlyingErrorKey: NSError(domain: NSPOSIXErrorDomain, code: Int(EISDIR), userInfo: [:])])
 #endif
-    
+#endif
+
     override func tearDown() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for handle in allHandles {
             print("Closing \(handle)…")
             try? handle.close()
@@ -177,17 +209,25 @@ class TestFileHandle : XCTestCase {
         
         allHandles = []
         allTemporaryFileURLs = []
+        #endif // !SKIP
     }
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func testHandleCreationAndCleanup() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _ = createFileHandle()
         _ = createFileHandleForSeekErrors()
         _ = createFileHandleForReadErrors()
+        #endif // !SKIP
     }
 #endif
 
     func testReadUpToCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         
         // Zero:
@@ -228,9 +268,13 @@ class TestFileHandle : XCTestCase {
 //        expectThrows(readError, {
 //            _ = try createFileHandleForReadErrors().read(upToCount: 1)
 //        }, "Must throw when encountering a read error")
+        #endif // !SKIP
     }
     
     func testReadToEnd() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         
         // To end:
@@ -249,9 +293,13 @@ class TestFileHandle : XCTestCase {
 //        expectThrows(readError, {
 //            _ = try createFileHandleForReadErrors().readToEnd()
 //        }, "Must throw when encountering a read error")
+        #endif // !SKIP
     }
 
     func testOffset() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && !os(Windows)
         // One byte at a time:
         let handle = createFileHandle()
@@ -271,9 +319,13 @@ class TestFileHandle : XCTestCase {
             _ = try createFileHandleForSeekErrors().offset()
         }, "Must throw when encountering a seek error")
 #endif
+        #endif // !SKIP
     }
 
     func performWriteTest<T: DataProtocol>(with data: T, expecting expectation: Data? = nil) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = createTemporaryFile()
 
         var maybeFH: FileHandle?
@@ -289,19 +341,31 @@ class TestFileHandle : XCTestCase {
         expectDoesNotThrow({ readData = try Data(contentsOf: url) }, "Must be able to read data")
 
         expectEqual(readData, expectation ?? content, "The content must be the same")
+        #endif // !SKIP
     }
     
     func testWritingWithData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         performWriteTest(with: content)
+        #endif // !SKIP
     }
     
     func testWritingWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         content.withUnsafeBytes { (buffer) in
             performWriteTest(with: buffer)
         }
+        #endif // !SKIP
     }
     
     func testWritingWithMultiregionData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var expectation = Data()
         expectation.append(content)
         expectation.append(content)
@@ -328,15 +392,23 @@ class TestFileHandle : XCTestCase {
             
             performWriteTest(with: longMultiregion, expecting: expectation)
         }
+        #endif // !SKIP
     }
 
     func test_constants() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(FileHandle.readCompletionNotification.rawValue, "NSFileHandleReadCompletionNotification",
                        "\(FileHandle.readCompletionNotification.rawValue) is not equal to NSFileHandleReadCompletionNotification")
+        #endif // !SKIP
     }
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func test_nullDevice() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fh = FileHandle.nullDevice
 
         XCTAssertFalse(fh._isPlatformHandleValid)
@@ -353,10 +425,14 @@ class TestFileHandle : XCTestCase {
         fh.write(Data([1,2]))
         fh.seek(toFileOffset: 0)
         XCTAssertEqual(fh.readDataToEndOfFile().count, 0)
+        #endif // !SKIP
     }
 #endif
 
     func test_truncateFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url: URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: false)
         _ = FileManager.default.createFile(atPath: url.path, contents: Data())
         defer { _ = try? FileManager.default.removeItem(at: url) }
@@ -393,9 +469,13 @@ class TestFileHandle : XCTestCase {
         let data = fh.readDataToEndOfFile()
         XCTAssertEqual(data.count, 10)
         XCTAssertEqual(data, Data([0, 0, 0, 0, 0, 1, 2, 3, 4, 5]))
+        #endif // !SKIP
     }
 
     func test_truncate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // `func truncate(atOffset offset: UInt64) throws` is introduced in Swift 5.
         // See also https://bugs.swift.org/browse/SR-11922
         
@@ -431,37 +511,53 @@ class TestFileHandle : XCTestCase {
         let data = fh.readDataToEndOfFile()
         XCTAssertEqual(data.count, 10)
         XCTAssertEqual(data, Data([0, 0, 0, 0, 0, 1, 2, 3, 4, 5]))
+        #endif // !SKIP
     }
     
     func test_readabilityHandlerCloseFileRace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for _ in 0..<10 {
             let handle = createFileHandle()
             handle.readabilityHandler = { _ = $0.offsetInFile }
             handle.closeFile()
             Thread.sleep(forTimeInterval: 0.001)
         }
+        #endif // !SKIP
     }
     
     func test_readabilityHandlerCloseFileRaceWithError() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for _ in 0..<10 {
             let handle = createFileHandle()
             handle.readabilityHandler = { _ = try? $0.offset() }
             try handle.close()
             Thread.sleep(forTimeInterval: 0.001)
         }
+        #endif // !SKIP
     }
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func test_fileDescriptor() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         XCTAssertTrue(handle._isPlatformHandleValid, "File descriptor after opening should be valid")
 
         try handle.close()
         XCTAssertFalse(handle._isPlatformHandleValid, "File descriptor after closing should not be valid")
+        #endif // !SKIP
     }
 #endif
 
     func test_availableData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         
         let availableData = handle.availableData
@@ -469,9 +565,13 @@ class TestFileHandle : XCTestCase {
         
         let eofData = handle.availableData
         XCTAssertTrue(eofData.isEmpty, "Should return empty data for EOF")
+        #endif // !SKIP
     }
     
     func test_readToEndOfFileInBackgroundAndNotify() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         let done = expectation(forNotification: .NSFileHandleReadToEndOfFileCompletion, object: handle, notificationCenter: .default) { (notification) -> Bool in
             XCTAssertEqual(notification.userInfo as? [String: AnyHashable], [NSFileHandleNotificationDataItem: self.content], "User info was incorrect")
@@ -481,9 +581,13 @@ class TestFileHandle : XCTestCase {
         handle.readToEndOfFileInBackgroundAndNotify()
         
         wait(for: [done], timeout: 10)
+        #endif // !SKIP
     }
     
     func test_readToEndOfFileAndNotify() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         var readSomeData = false
         
@@ -506,9 +610,13 @@ class TestFileHandle : XCTestCase {
         
         wait(for: [done], timeout: 10)
         XCTAssertTrue(readSomeData, "At least some data must've been read")
+        #endif // !SKIP
     }
     
     func test_readToEndOfFileAndNotify_readError() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandleForReadErrors()
         
         let done = expectation(forNotification: FileHandle.readCompletionNotification, object: handle, notificationCenter: .default) { (notification) -> Bool in
@@ -529,9 +637,13 @@ class TestFileHandle : XCTestCase {
         handle.readInBackgroundAndNotify()
         
         wait(for: [done], timeout: 10)
+        #endif // !SKIP
     }
     
     func test_waitForDataInBackgroundAndNotify() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let handle = createFileHandle()
         let done = expectation(forNotification: .NSFileHandleDataAvailable, object: handle, notificationCenter: .default) { (notification) in
             let count = notification.userInfo?.count ?? 0
@@ -542,9 +654,13 @@ class TestFileHandle : XCTestCase {
         handle.waitForDataInBackgroundAndNotify()
         
         wait(for: [done], timeout: 10)
+        #endif // !SKIP
     }
     
     func test_readWriteHandlers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for _ in 0..<100 {
             let pipe = Pipe()
             let write = pipe.fileHandleForWriting
@@ -582,10 +698,14 @@ class TestFileHandle : XCTestCase {
             XCTAssertEqual(result, .success, "Waiting on the semaphore should not have had time to time out")
             XCTAssertTrue(notificationReceived, "Notification should be sent")
         }
+        #endif // !SKIP
     }
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && !os(Windows)
     func test_closeOnDealloc() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try withTemporaryDirectory() { (url, path) in
             let data = try XCTUnwrap("hello".data(using: .utf8))
 
@@ -614,10 +734,14 @@ class TestFileHandle : XCTestCase {
                 XCTAssertNoThrow(try fh2.write(contentsOf: data))
             }
         }
+        #endif // !SKIP
     }
 #endif
 
     func testSynchronizeOnSpecialFile() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        // .synchronize() on a special file shouldnt fail
 //#if os(Windows)
 //        let fh = try XCTUnwrap(FileHandle(forWritingAtPath: "CON"))
@@ -627,6 +751,7 @@ class TestFileHandle : XCTestCase {
 //        let fh = try XCTUnwrap(FileHandle(forWritingAtPath: "/dev/stdout"))
 //#endif
 //        XCTAssertNoThrow(try fh.synchronize())
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -673,5 +798,4 @@ class TestFileHandle : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

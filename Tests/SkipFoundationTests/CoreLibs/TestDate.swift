@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -20,11 +19,15 @@ import XCTest
 //
 
 func dateWithString(_ str: String) -> Date {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
     let formatter = DateFormatter()
     formatter.calendar = Calendar(identifier: .gregorian)
     formatter.locale = Locale(identifier: "en_US")
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
     return formatter.date(from: str)! as Date
+        #endif // !SKIP
 }
 
 class TestDate : XCTestCase {
@@ -55,95 +58,150 @@ class TestDate : XCTestCase {
     #endif // SKIP
     
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Date()
         XCTAssert(d.timeIntervalSince1970 != 0)
         XCTAssert(d.timeIntervalSinceReferenceDate != 0)
+        #endif // !SKIP
     }
 
     func test_descriptionWithLocale() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = NSDate(timeIntervalSince1970: 0)
         XCTAssertEqual(d.description(with: nil), "1970-01-01 00:00:00 +0000")
         XCTAssertFalse(d.description(with: Locale(identifier: "ja_JP")).isEmpty)
+        #endif // !SKIP
     }
     
     func test_InitTimeIntervalSince1970() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d = Date(timeIntervalSince1970: ti)
         XCTAssert(d.timeIntervalSince1970 == ti)
+        #endif // !SKIP
     }
     
     func test_InitTimeIntervalSinceSinceDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = Date(timeInterval: ti, since: d1)
         XCTAssertNotNil(d2.timeIntervalSince1970 == d1.timeIntervalSince1970 + ti)
+        #endif // !SKIP
     }
     
     func test_TimeIntervalSinceSinceDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = Date(timeInterval: ti, since: d1)
         XCTAssertEqual(d2.timeIntervalSince(d1), ti)
+        #endif // !SKIP
     }
     
     func test_DistantFuture() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Date.distantFuture
         let now = Date()
         XCTAssertGreaterThan(d, now)
+        #endif // !SKIP
     }
     
     func test_DistantPast() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let now = Date()
         let d = Date.distantPast
 
         XCTAssertLessThan(d, now)
+        #endif // !SKIP
     }
     
     func test_DateByAddingTimeInterval() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = d1 + ti
         XCTAssertNotNil(d2.timeIntervalSince1970 == d1.timeIntervalSince1970 + ti)
+        #endif // !SKIP
     }
     
     func test_EarlierDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = d1 + ti
         XCTAssertLessThan(d1, d2)
+        #endif // !SKIP
     }
     
     func test_LaterDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = d1 + ti
         XCTAssertGreaterThan(d2, d1)
+        #endif // !SKIP
     }
     
     func test_Compare() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = d1 + ti
         XCTAssertEqual(d1.compare(d2), .orderedAscending)
+        #endif // !SKIP
     }
     
     func test_IsEqualToDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ti: TimeInterval = 1
         let d1 = Date()
         let d2 = d1 + ti
         let d3 = d1 + ti
         XCTAssertEqual(d2, d3)
+        #endif // !SKIP
     }
 
     func test_timeIntervalSinceReferenceDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d1 = Date().timeIntervalSinceReferenceDate
         let sinceReferenceDate = Date.timeIntervalSinceReferenceDate
         let d2 = Date().timeIntervalSinceReferenceDate
         XCTAssertTrue(d1 <= sinceReferenceDate)
         XCTAssertTrue(d2 >= sinceReferenceDate)
+        #endif // !SKIP
     }
     
     func test_recreateDateComponentsFromDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let components = DateComponents(calendar: Calendar(identifier: .gregorian),
                                         timeZone: .current,
                                         era: 1,
@@ -175,9 +233,13 @@ class TestDate : XCTestCase {
 
         // Quarter is currently not supported by UCalendar C API, returns 0
         XCTAssertEqual(recreatedComponents.quarter, 0)
+        #endif // !SKIP
     }
 
     func test_Hashing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let values: [Date] = [
             dateWithString("2010-05-17 14:49:47 -0700"),
             dateWithString("2011-05-17 14:49:47 -0700"),
@@ -188,28 +250,36 @@ class TestDate : XCTestCase {
             dateWithString("2010-05-17 14:49:48 -0700"),
         ]
         checkHashable(values, equalityOracle: { $0 == $1 })
+        #endif // !SKIP
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_advancedBy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let date1 = dateWithString("2010-05-17 14:49:47 -0000")
         let date2 = dateWithString("2010-05-18 14:49:47 -0000")
 
         XCTAssertEqual(date1.advanced(by: 86400), date2)
         XCTAssertEqual(date2.advanced(by: -86400), date1)
         XCTAssertEqual(date1.advanced(by: 0), date1)
+        #endif // !SKIP
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_distanceTo() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let date1 = dateWithString("2010-05-17 14:49:47 -0000")
         let date2 = dateWithString("2010-05-18 14:49:47 -0000")
 
         XCTAssertEqual(date1.distance(to: date2), 86400)
         XCTAssertEqual(date2.distance(to: date1), -86400)
         XCTAssertEqual(date1.distance(to: date1), 0)
+        #endif // !SKIP
     }
 }
 
-#endif
 

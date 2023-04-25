@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 class TestDateComponents: XCTestCase {
 
     func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let c1 = DateComponents(year: 2018, month: 8, day: 1)
         let c2 = DateComponents(year: 2018, month: 8, day: 1)
 
@@ -106,9 +108,13 @@ class TestDateComponents: XCTestCase {
             byMutating: \DateComponents.weekdayOrdinal,
             throughValues: integers)
         // isLeapMonth does not have enough values to test it here.
+        #endif // !SKIP
     }
 
     func test_isValidDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // SR-11569
         let calendarTimeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
         let dateComponentsTimeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 3600))
@@ -127,6 +133,7 @@ class TestDateComponents: XCTestCase {
         dc.second = 5
         dc.nanosecond = 6
         XCTAssertTrue(dc.isValidDate)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -139,5 +146,4 @@ class TestDateComponents: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 
