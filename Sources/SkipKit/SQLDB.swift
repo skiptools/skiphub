@@ -71,7 +71,7 @@ public final class Connection {
     public func execute(sql: String, params: [SQLValue] = []) throws {
         #if SKIP
         let bindArgs = params.map { $0.toBindArg() }
-        db.execSQL(sql, bindArgs.toTypedArray())
+        db.execSQL(sql, bindArgs.toList().toTypedArray())
         #else
         if params.isEmpty {
             // no-param single-shot exec convenience
@@ -278,8 +278,8 @@ public final class Cursor {
         self.connection = connection
 
         #if SKIP
-        let bindArgs = params.map { $0.toBindString() }
-        self.cursor = connection.db.rawQuery(SQL, bindArgs.toTypedArray())
+        let bindArgs: [String?] = params.map { $0.toBindString() }
+        self.cursor = connection.db.rawQuery(SQL, bindArgs.toList().toTypedArray())
         #else
         try connection.check(resultOf: sqlite3_prepare_v2(connection.handle, SQL, -1, &handle, nil))
         for (index, param) in params.enumerated() {
