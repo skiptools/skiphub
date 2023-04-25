@@ -25,6 +25,8 @@ val Long.Companion.min: Long get() = Long.MIN_VALUE
 val ULong.Companion.max: ULong get() = ULong.MAX_VALUE
 val ULong.Companion.min: ULong get() = ULong.MIN_VALUE
 
+val Double.isNaN: Boolean get() = isNaN()
+
 fun Int(number: Number): Int = number.toInt()
 fun Byte(number: Number): Byte = number.toInt().toByte()
 fun Short(number: Number): Short = number.toInt().toShort()

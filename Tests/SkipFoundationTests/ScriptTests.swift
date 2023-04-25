@@ -14,16 +14,64 @@ import XCTest
 #if !SKIP
 // MARK: Shims for API parity
 fileprivate typealias JSContext = SkipJSContext
+fileprivate typealias JSValue = SkipJSValue
 #endif
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class ScriptTests : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "ScriptTests")
 
+    fileprivate final class JSEvalException : Error {
+        var exception: JSValue?
+
+        init(exception: JSValue? = nil) {
+            self.exception = exception
+        }
+    }
+
     func testJSCAPIHigh() throws {
         let ctx = try XCTUnwrap(JSContext())
-        let value = ctx.evaluateScript("1 + 2.3")
-        XCTAssertEqual(3.3, value?.toDouble())
+        let num = try XCTUnwrap(ctx.evaluateScript("1 + 2.3"))
+        
+        XCTAssertEqual(3.3, num.toDouble())
+        XCTAssertEqual("3.3", num.toString())
+
+        func eval(_ script: String) throws -> JSValue {
+            let result = ctx.evaluateScript(script)
+            if let exception = ctx.exception {
+                throw JSEvalException(exception: exception)
+            }
+            if let result = result {
+                return result
+            } else {
+                throw JSEvalException()
+            }
+        }
+
+        XCTAssertEqual("q", ctx.evaluateScript("'q'")?.toString())
+        XCTAssertEqual("Ƕe110", try eval(#"'Ƕ'+"e"+1+1+0"#).toString())
+
+        XCTAssertEqual(true, try eval("[] + {}").isString)
+        XCTAssertEqual("[object Object]", try eval("[] + {}").toString())
+
+        XCTAssertEqual(true, try eval("[] + []").isString)
+        XCTAssertEqual(true, try eval("{} + {}").isNumber)
+        XCTAssertEqual(true, try eval("{} + {}").toDouble().isNaN)
+
+        XCTAssertEqual(true, try eval("{} + []").isNumber)
+        XCTAssertEqual(0.0, try eval("{} + []").toDouble())
+
+        XCTAssertEqual(true, try eval("1.0 === 1.0000000000000001").toBool())
+
+        XCTAssertEqual(",,,,,,,,,,,,,,,", try eval("Array(16)").toString())
+        XCTAssertEqual("watwatwatwatwatwatwatwatwatwatwatwatwatwatwat", try eval("Array(16).join('wat')").toString())
+        XCTAssertEqual("wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1", try eval("Array(16).join('wat' + 1)").toString())
+        XCTAssertEqual("NaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaN Batman!", try eval("Array(16).join('wat' - 1) + ' Batman!'").toString())
+
+        XCTAssertEqual(1, try eval("let y = {}; y[[]] = 1; Object.keys(y)").toArray().count)
+
+        XCTAssertEqual(10.0, try eval("['10', '10', '10'].map(parseInt)").toArray().first as? Double)
+        XCTAssertEqual(2.0, try eval("['10', '10', '10'].map(parseInt)").toArray().last as? Double)
     }
 
     func testJSCAPILow() throws {

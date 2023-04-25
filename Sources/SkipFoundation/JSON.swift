@@ -10,7 +10,7 @@ let PlatformJSONNull = NSNull()
 #else
 public typealias PlatformJSONObject = org.json.JSONObject
 public typealias PlatformJSONArray = org.json.JSONArray
-let PlatformJSONNull = org.json.JSONObject.NULL
+let PlatformJSONNull: Any = org.json.JSONObject.NULL
 #endif
 
 #if SKIP
