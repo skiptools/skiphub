@@ -12,6 +12,17 @@ import XCTest
 // Stand-in types for test case compilation
 
 #if SKIP
+
+// MARK: Foundation Stubs
+
+internal struct CharacterSet {
+}
+
+internal struct AttributedString {
+}
+
+// MARK: Foundation NextStep Stubs
+
 internal class NSObject {
 }
 
@@ -28,14 +39,17 @@ internal class NSData : NSObject {
 internal class NSMutableData : NSData {
 }
 
-internal struct AttributedString {
-}
-
 internal class NSAttributedString : NSObject {
 }
 
 internal class NSMutableAttributedString : NSAttributedString {
 
+}
+
+internal class NSCharacterSet : NSObject {
+}
+
+internal class NSMutableCharacterSet : NSCharacterSet {
 }
 
 

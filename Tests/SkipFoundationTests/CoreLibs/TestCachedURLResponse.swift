@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,9 @@ import XCTest
 
 class TestCachedURLResponse : XCTestCase {
     func test_copy() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -35,9 +37,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertEqual(cachedResponse.data, copiedResponse.data)
         XCTAssertEqual(cachedResponse.userInfo?.keys, copiedResponse.userInfo?.keys)
         XCTAssertEqual(cachedResponse.storagePolicy, copiedResponse.storagePolicy)
+        #endif // !SKIP
     }
 
     func test_initDefaultUserInfoAndStoragePolicy() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -48,9 +54,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertEqual(data, cachedResponse.data)
         XCTAssertNil(cachedResponse.userInfo)
         XCTAssertEqual(.allowed, cachedResponse.storagePolicy)
+        #endif // !SKIP
     }
 
     func test_initDefaultUserInfo() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -62,9 +72,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertEqual(data, cachedResponse.data)
         XCTAssertNil(cachedResponse.userInfo)
         XCTAssertEqual(storagePolicy, cachedResponse.storagePolicy)
+        #endif // !SKIP
     }
 
     func test_initWithoutDefaults() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -77,9 +91,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertEqual(data, cachedResponse.data)
         XCTAssertEqual(userInfo.keys, cachedResponse.userInfo?.keys)
         XCTAssertEqual(storagePolicy, cachedResponse.storagePolicy)
+        #endif // !SKIP
     }
 
     func test_equalWithTheSameInstance() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -89,9 +107,13 @@ class TestCachedURLResponse : XCTestCase {
         let cachedResponse = CachedURLResponse(response: response, data: data, userInfo: userInfo, storagePolicy: storagePolicy)
 
         XCTAssertTrue(cachedResponse.isEqual(cachedResponse))
+        #endif // !SKIP
     }
 
     func test_equalWithUnrelatedObject() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -101,9 +123,13 @@ class TestCachedURLResponse : XCTestCase {
         let cachedResponse = CachedURLResponse(response: response, data: data, userInfo: userInfo, storagePolicy: storagePolicy)
 
         XCTAssertFalse(cachedResponse.isEqual(NSObject()))
+        #endif // !SKIP
     }
 
     func test_equalCheckingResponse() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url1 = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url1, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -124,9 +150,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertFalse(cachedResponse2.isEqual(cachedResponse1))
         //XCTAssertTrue(cachedResponse1.isEqual(cachedResponse3))
         //XCTAssertTrue(cachedResponse3.isEqual(cachedResponse1))
+        #endif // !SKIP
     }
 
     func test_equalCheckingData() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes1: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -147,9 +177,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertFalse(cachedResponse2.isEqual(cachedResponse1))
         //XCTAssertTrue(cachedResponse1.isEqual(cachedResponse3))
         //XCTAssertTrue(cachedResponse3.isEqual(cachedResponse1))
+        #endif // !SKIP
     }
 
     func test_equalCheckingStoragePolicy() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -168,9 +202,13 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertFalse(cachedResponse2.isEqual(cachedResponse1))
         //XCTAssertTrue(cachedResponse1.isEqual(cachedResponse3))
         //XCTAssertTrue(cachedResponse3.isEqual(cachedResponse1))
+        #endif // !SKIP
     }
 
     func test_hash() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url1 = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url1, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
         let bytes1: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -199,6 +237,7 @@ class TestCachedURLResponse : XCTestCase {
         //XCTAssertEqual(cachedResponse1.hash, cachedResponse2.hash)
         XCTAssertNotEqual(cachedResponse1.hash, cachedResponse3.hash)
         XCTAssertNotEqual(cachedResponse2.hash, cachedResponse3.hash)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -219,5 +258,4 @@ class TestCachedURLResponse : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

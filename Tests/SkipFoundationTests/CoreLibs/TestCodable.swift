@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,7 @@ import XCTest
 
 // MARK: - Helper Functions
 
+#if !SKIP
 private func makePersonNameComponents(namePrefix: String? = nil,
                                       givenName: String? = nil,
                                       middleName: String? = nil,
@@ -36,7 +36,9 @@ private func makePersonNameComponents(namePrefix: String? = nil,
     result.nickname = nickname
     return result
 }
+#endif
 
+#if !SKIP
 func expectRoundTripEquality<T : Codable>(of value: T, encode: (T) throws -> Data, decode: (Data) throws -> T) throws where T : Equatable  {
     do {
         let data = try encode(value)
@@ -46,7 +48,9 @@ func expectRoundTripEquality<T : Codable>(of value: T, encode: (T) throws -> Dat
         }
     }
 }
+#endif // !SKIP
 
+#if !SKIP
 func expectRoundTripEqualityThroughJSON<T : Codable>(for value: T) throws where T : Equatable {
     let inf = "INF", negInf = "-INF", nan = "NaN"
     let encode = { (_ value: T) throws -> Data in
@@ -67,7 +71,9 @@ func expectRoundTripEqualityThroughJSON<T : Codable>(for value: T) throws where 
 
     try expectRoundTripEquality(of: value, encode: encode, decode: decode)
 }
+#endif
 
+#if !SKIP
 // MARK: - Helper Types
 // A wrapper around a UUID that will allow it to be encoded at the top level of an encoder.
 struct UUIDCodingWrapper : Codable, Equatable {
@@ -78,21 +84,31 @@ struct UUIDCodingWrapper : Codable, Equatable {
     }
 
     static func ==(_ lhs: UUIDCodingWrapper, _ rhs: UUIDCodingWrapper) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.value == rhs.value
+        #endif // !SKIP
     }
 }
+#endif
 
 // MARK: - Tests
 class TestCodable : XCTestCase {
 
+    #if !SKIP
     // MARK: - PersonNameComponents
     lazy var personNameComponentsValues: [PersonNameComponents] = [
         makePersonNameComponents(givenName: "John", familyName: "Appleseed"),
         makePersonNameComponents(givenName: "John", familyName: "Appleseed", nickname: "Johnny"),
         makePersonNameComponents(namePrefix: "Dr.", givenName: "Jane", middleName: "A.", familyName: "Appleseed", nameSuffix: "Esq.", nickname: "Janie")
     ]
+    #endif
 
     func test_PersonNameComponents_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for components in personNameComponentsValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: components)
@@ -100,8 +116,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(components)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - UUID
     lazy var uuidValues: [UUID] = [
         UUID(),
@@ -109,8 +127,12 @@ class TestCodable : XCTestCase {
         UUID(uuidString: "e621e1f8-c36c-495a-93fc-0c247a3e6e5f")!,
         UUID(uuid: uuid_t(0xe6,0x21,0xe1,0xf8,0xc3,0x6c,0x49,0x5a,0x93,0xfc,0x0c,0x24,0x7a,0x3e,0x6e,0x5f))
     ]
+    #endif
 
     func test_UUID_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for uuid in uuidValues {
             // We have to wrap the UUID since we cannot have a top-level string.
             do {
@@ -119,6 +141,7 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(uuid)")
             }
         }
+        #endif // !SKIP
     }
 
     // MARK: - URL
@@ -131,6 +154,9 @@ class TestCodable : XCTestCase {
     ]
 
     func test_URL_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for url in urlValues {
             do {
                 // Wrap in an array as URL is not a top-level type.
@@ -139,16 +165,22 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(url)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - NSRange
     lazy var nsrangeValues: [NSRange] = [
         NSRange(),
         NSRange(location: 0, length: Int.max),
         NSRange(location: NSNotFound, length: 0),
         ]
+    #endif
 
     func test_NSRange_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for range in nsrangeValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: range)
@@ -156,6 +188,7 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(range)")
             }
         }
+        #endif // !SKIP
     }
 
     // MARK: - Locale
@@ -171,6 +204,9 @@ class TestCodable : XCTestCase {
     ]
 
     func test_Locale_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for locale in localeValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: locale)
@@ -178,16 +214,22 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(locale)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - IndexSet
     lazy var indexSetValues: [IndexSet] = [
         IndexSet(),
         IndexSet(integer: 42),
         IndexSet(integersIn: 0 ..< Int.max)
     ]
+    #endif
 
     func test_IndexSet_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for indexSet in indexSetValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: indexSet)
@@ -195,8 +237,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(indexSet)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - IndexPath
     lazy var indexPathValues: [IndexPath] = [
         IndexPath(), // empty
@@ -204,8 +248,12 @@ class TestCodable : XCTestCase {
         IndexPath(indexes: [1, 2]), // pair
         IndexPath(indexes: [3, 4, 5, 6, 7, 8]), // array
     ]
+    #endif
 
     func test_IndexPath_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for indexPath in indexPathValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: indexPath)
@@ -213,6 +261,7 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(indexPath)")
             }
         }
+        #endif // !SKIP
     }
 
 //    // MARK: - AffineTransform
@@ -243,6 +292,7 @@ class TestCodable : XCTestCase {
 //        }
 //    }
 
+    #if !SKIP
     // MARK: - Decimal
     lazy var decimalValues: [Decimal] = [
         Decimal.leastFiniteMagnitude,
@@ -252,8 +302,12 @@ class TestCodable : XCTestCase {
         Decimal.pi,
         Decimal()
     ]
+    #endif
 
     func test_Decimal_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for decimal in decimalValues {
             do {
                 // Wrap in an array as Decimal is not a top-level type.
@@ -262,8 +316,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(decimal)")
             }
         }
+        #endif // !SKIP
     }
     
+    #if !SKIP
     // MARK: - CGPoint
     lazy var cgpointValues: [CGPoint] = [
         CGPoint(),
@@ -273,8 +329,12 @@ class TestCodable : XCTestCase {
         // Disabled due to limit on magnitude in JSON. See SR-5346
         // CGPoint(x: .greatestFiniteMagnitude, y: .greatestFiniteMagnitude),
     ]
-    
+    #endif
+
     func test_CGPoint_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for point in cgpointValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: point)
@@ -282,8 +342,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(point)")
             }
         }
+        #endif // !SKIP
     }
     
+    #if !SKIP
     // MARK: - CGSize
     lazy var cgsizeValues: [CGSize] = [
         CGSize(),
@@ -293,8 +355,12 @@ class TestCodable : XCTestCase {
         // Disabled due to limit on magnitude in JSON. See SR-5346
         // CGSize(width: .greatestFiniteMagnitude, height: .greatestFiniteMagnitude),
     ]
-    
+    #endif
+
     func test_CGSize_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for size in cgsizeValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: size)
@@ -302,8 +368,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(size)")
             }
         }
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     // MARK: - CGRect
     lazy var cgrectValues: [CGRect] = [
         CGRect(),
@@ -314,8 +382,12 @@ class TestCodable : XCTestCase {
         // Disabled due to limit on magnitude in JSON. See SR-5346
         // CGRect.infinite
     ]
-    
+    #endif
+
     func test_CGRect_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for rect in cgrectValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: rect)
@@ -323,8 +395,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(rect)")
             }
         }
+        #endif // !SKIP
     }
     
+    #if !SKIP
     // MARK: - CharacterSet
     lazy var characterSetValues: [CharacterSet] = [
         .controlCharacters,
@@ -344,8 +418,12 @@ class TestCodable : XCTestCase {
         .newlines,
         CharacterSet(charactersIn: "abcd")
     ]
+    #endif
     
     func test_CharacterSet_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for characterSet in characterSetValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: characterSet)
@@ -353,8 +431,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(characterSet)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - TimeZone
     lazy var timeZoneValues: [TimeZone] = {
         var values = [
@@ -368,8 +448,12 @@ class TestCodable : XCTestCase {
         // values.append(TimeZone.current)
         return values
     }()
+    #endif
 
     func test_TimeZone_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for timeZone in timeZoneValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: timeZone)
@@ -377,8 +461,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(timeZone)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - Calendar
     lazy var calendarValues: [Calendar] = {
         var values = [
@@ -406,8 +492,12 @@ class TestCodable : XCTestCase {
 
         return values
     }()
+    #endif
 
     func test_Calendar_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for calendar in calendarValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: calendar)
@@ -415,8 +505,10 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error) for \(calendar)")
             }
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - DateComponents
     lazy var dateComponents: Set<Calendar.Component> = [
         .era,
@@ -436,8 +528,12 @@ class TestCodable : XCTestCase {
         .nanosecond,
         .quarter,
     ]
+    #endif
 
     func test_DateComponents_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var calendar = Calendar(identifier: .gregorian)
         // Custom timeZone set to work around [SR-5598] bug, which occurs on Linux, and breaks equality after
         // serializing and deserializing TimeZone.current
@@ -449,10 +545,14 @@ class TestCodable : XCTestCase {
         } catch {
             XCTFail("\(error)")
         }
+        #endif // !SKIP
     }
 
     // MARK: - Measurement
     func test_Measurement_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             try expectRoundTripEqualityThroughJSON(for: Measurement(value: 42, unit: UnitAcceleration.metersPerSecondSquared))
             try expectRoundTripEqualityThroughJSON(for: Measurement(value: 42, unit: UnitMass.kilograms))
@@ -460,8 +560,10 @@ class TestCodable : XCTestCase {
         } catch {
             XCTFail("\(error)")
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - URLComponents
     lazy var urlComponentsValues: [URLComponents] = [
         URLComponents(),
@@ -548,8 +650,12 @@ class TestCodable : XCTestCase {
             return components
         }()
     ]
+    #endif
 
     func test_URLComponents_JSON() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for (components) in urlComponentsValues {
             do {
                 try expectRoundTripEqualityThroughJSON(for: components)
@@ -557,6 +663,7 @@ class TestCodable : XCTestCase {
                 XCTFail("\(error)")
             }
         }
+        #endif // !SKIP
     }
 }
 
@@ -587,5 +694,4 @@ extension TestCodable {
     #endif // SKIP
 }
 
-#endif
 
