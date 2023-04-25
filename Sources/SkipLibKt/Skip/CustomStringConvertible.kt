@@ -9,6 +9,8 @@ package skip.lib
 // as a protocol because there is no way to make existing Kotlin types (e.g. kotlin.Int) conform to new protocols
 typealias CustomStringConvertible = Any
 
+// Handle builtin types by defaulting all description calls to toString(). For types that implement a custom
+// description property, the transpiler synthesizes a toString() override to return their property value
 val Any.description: String
     get() = toString()
 
