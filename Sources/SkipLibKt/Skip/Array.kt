@@ -76,7 +76,7 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         }
         if (_mutableListStorage == null && _collectionStorage == null) {
             val storage = ArrayList<Element>()
-            storage.addAll(collection.asiterable())
+            storage.addAll(collection)
             _mutableListStorage = storage
         }
     }

@@ -33,7 +33,7 @@ class Set<Element>: Collection<Element>, MutableStruct {
             isStorageShared = true
         } else {
             _collectionStorage = LinkedHashSet()
-            _collectionStorage.addAll(collection.asiterable())
+            _collectionStorage.addAll(collection)
         }
     }
 

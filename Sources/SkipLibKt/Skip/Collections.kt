@@ -5,28 +5,20 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-// Called by our transpiled for-in loops. Allow #if SKIP blocks to use native Kotlin
-// collections by providing this function to native Iterables.
-fun <Element> Iterable<Element>.asiterable(): Iterable<Element> = this
+// Use a Storage model wrapping an internal Kotlin iterable to be able to control when we sref() efficiently
 
-// Use a Storage model wrapping an internal Kotlin iterable:
-// 1. Avoids API conflicts from our own collections implementing Kotlin collection interfaces
-// 2. Allows us to control when we sref() elements to be safe but efficient
-
-interface IterableStorage<Element> {
+interface IterableStorage<Element>: Iterable<Element> {
     val iterableStorage: Iterable<Element>
 
-    fun asiterable(): Iterable<Element> = object: Iterable<Element> {
-        override fun iterator(): Iterator<Element> {
-            val iter = iterableStorage.iterator()
-            return object: Iterator<Element> {
-                override fun hasNext(): Boolean {
-                    return iter.hasNext()
-                }
+    override fun iterator(): Iterator<Element> {
+        val iter = iterableStorage.iterator()
+        return object: Iterator<Element> {
+            override fun hasNext(): Boolean {
+                return iter.hasNext()
+            }
 
-                override fun next(): Element {
-                    return iter.next().sref()
-                }
+            override fun next(): Element {
+                return iter.next().sref()
             }
         }
     }
