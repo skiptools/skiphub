@@ -8,8 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
-
 // This source file is part of the Swift.org open source project
 //
 // Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
@@ -19,10 +17,14 @@ import XCTest
 // See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
+#if !SKIP
 import CoreFoundation
-
+#endif
 
 internal func testBundle() -> Bundle {
+    #if SKIP
+    throw XCTSkip("TODO")
+    #else
     #if DARWIN_COMPATIBILITY_TESTS
     for bundle in Bundle.allBundles {
         if let bundleId = bundle.bundleIdentifier, bundleId == "org.swift.DarwinCompatibilityTests", bundle.resourcePath != nil {
@@ -33,6 +35,7 @@ internal func testBundle() -> Bundle {
     #else
     return Bundle.module
     #endif
+    #endif // !SKIP
 }
 
 
@@ -45,18 +48,27 @@ extension Bundle {
 
 
 internal func testBundleName() -> String? {
+    #if SKIP
+    throw XCTSkip("TODO")
+    #else
     // Either 'TestFoundation' or 'DarwinCompatibilityTests'
     return testBundle().infoDictionary?["CFBundleName"] as? String
+    #endif // !SKIP
 }
 
 internal func xdgTestHelperURL() -> URL {
+    #if SKIP
+    throw XCTSkip("TODO")
+    #else
     guard let url = testBundle().url(forAuxiliaryExecutable: "xdgTestHelper") else {
         fatalError("Cant find xdgTestHelper")
     }
     return url
+    #endif // !SKIP
 }
 
 
+#if !SKIP
 class BundlePlayground {
     enum ExecutableType: CaseIterable {
         case library
@@ -169,6 +181,7 @@ class BundlePlayground {
         }
     }
     
+    #if !SKIP
     let bundleName: String
     let bundleExtension: String
     let resourceFilenames: [String]
@@ -201,8 +214,12 @@ class BundlePlayground {
             return nil
         }
     }
-    
+    #endif
+
     private func _create() -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Make sure the directory is uniquely named
         
         let temporaryDirectory = FileManager.default.temporaryDirectory.appendingPathComponent("TestFoundation_Playground_" + UUID().uuidString)
@@ -341,23 +358,34 @@ class BundlePlayground {
         
         self.playgroundPath = temporaryDirectory.path
         return true
+        #endif // !SKIP
     }
     
     func destroy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard let path = self.playgroundPath else { return }
         self.playgroundPath = nil
 
         try? FileManager.default.removeItem(atPath: path)
+        #endif // !SKIP
     }
     
+    #if !SKIP
     deinit {
         assert(playgroundPath == nil, "All playgrounds should have .destroy() invoked on them before they go out of scope.")
     }
+    #endif
 }
+#endif
 
 class TestBundle : XCTestCase {
 
     func test_paths() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bundle = testBundle()
         
         // bundlePath
@@ -384,9 +412,13 @@ class TestBundle : XCTestCase {
 //        #if false && !DARWIN_COMPATIBILITY_TESTS
 //        XCTAssertNil(bundle.appStoreReceiptURL)
 //        #endif
+        #endif // !SKIP
     }
     
     func test_resources() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bundle = testBundle()
         
         // bad resources
@@ -404,9 +436,13 @@ class TestBundle : XCTestCase {
         XCTAssertEqual(testPlist.path, bundle.url(forResource: "Test", withExtension: "plist", subdirectory: nil)?.path)
         XCTAssertEqual(testPlist.path, bundle.path(forResource: "Test", ofType: "plist"))
         XCTAssertEqual(testPlist.path, bundle.path(forResource: "Test", ofType: "plist", inDirectory: nil))
+        #endif // !SKIP
     }
     
     func test_infoPlist() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bundle = testBundle()
         
         // bundleIdentifier
@@ -430,16 +466,22 @@ class TestBundle : XCTestCase {
         
         // localizedInfoDictionary
         XCTAssertNil(bundle.localizedInfoDictionary) // FIXME: Add a localized Info.plist for testing
+        #endif // !SKIP
     }
     
     func test_localizations() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bundle = testBundle()
         
         //XCTAssertEqual(["en"], bundle.localizations)
         XCTAssertEqual(["en"], bundle.preferredLocalizations)
         XCTAssertEqual(["en"], Bundle.preferredLocalizations(from: ["en", "pl", "es"]))
+        #endif // !SKIP
     }
     
+    #if !SKIP
     private let _bundleName = "MyBundle"
     private let _bundleExtension = "bundle"
     private let _bundleResourceNames = ["hello.world", "goodbye.world", "swift.org"]
@@ -449,6 +491,9 @@ class TestBundle : XCTestCase {
     private let _auxiliaryExecutable = "auxiliaryExecutable"
     
     private func _setupPlayground(layout: BundlePlayground.Layout) -> BundlePlayground? {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return BundlePlayground(bundleName: _bundleName,
                                 bundleExtension: _bundleExtension,
                                 resourceFilenames: _bundleResourceNames,
@@ -456,22 +501,35 @@ class TestBundle : XCTestCase {
                                 subdirectoryResourcesFilenames: [ "\(_main).\(_type)" ],
                                 auxiliaryExecutableName: _auxiliaryExecutable,
                                 layout: layout)
+        #endif // !SKIP
     }
     
     private func _withEachPlaygroundLayout(execute: (BundlePlayground) throws -> Void) rethrows {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for layout in BundlePlayground.Layout.allApplicable {
             if let playground = _setupPlayground(layout: layout) {
                 try execute(playground)
                 playground.destroy()
             }
         }
+        #endif // !SKIP
     }
     
     private func _cleanupPlayground(_ location: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try? FileManager.default.removeItem(atPath: location)
+        #endif // !SKIP
     }
-    
+    #endif
+
     func test_URLsForResourcesWithExtension() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _withEachPlaygroundLayout { (playground) in
             let bundle = Bundle(path: playground.bundlePath)!
             XCTAssertNotNil(bundle)
@@ -483,12 +541,17 @@ class TestBundle : XCTestCase {
             let path = bundle.path(forResource: _main, ofType: _type, inDirectory: _subDirectory)
             XCTAssertNotNil(path)
         }
+        #endif // !SKIP
     }
     
     func test_bundleLoad() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let bundle = testBundle()
 //        let _ = bundle.load()
 //        XCTAssertTrue(bundle.isLoaded)
+        #endif // !SKIP
     }
     
     func test_bundleLoadWithError() {
@@ -510,8 +573,12 @@ class TestBundle : XCTestCase {
     }
     
     func test_bundleWithInvalidPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bundleInvalid = Bundle(path: NSTemporaryDirectory() + "test.playground")
         XCTAssertNil(bundleInvalid)
+        #endif // !SKIP
     }
     
     func test_bundlePreflight() {
@@ -544,6 +611,9 @@ class TestBundle : XCTestCase {
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func test_bundleReverseBundleLookup() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _withEachPlaygroundLayout { (playground) in
             #if !os(Windows)
             if playground.layout.isFreestanding {
@@ -561,19 +631,28 @@ class TestBundle : XCTestCase {
             XCTAssertNotNil(bundle)
             XCTAssertEqual(bundle?.bundlePath, playground.bundlePath)
         }
+        #endif // !SKIP
     }
 
     func test_mainBundleExecutableURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let maybeURL = Bundle.main.executableURL
         XCTAssertNotNil(maybeURL)
         guard let url = maybeURL else { return }
         
         XCTAssertEqual(url.path, ProcessInfo.processInfo._processPath)
+        #endif // !SKIP
     }
 #endif
     
     func test_bundleForClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         //XCTAssertEqual(testBundle(), Bundle(for: type(of: self)))
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -604,6 +683,4 @@ class TestBundle : XCTestCase {
     }
     #endif // SKIP
 }
-
-#endif
 
