@@ -76,4 +76,8 @@ public extension String {
     }
 }
 
+public func String(data: SkipData, encoding: StringEncoding) -> String? {
+    String(data.rawValue, encoding.rawValue)
+}
+
 #endif

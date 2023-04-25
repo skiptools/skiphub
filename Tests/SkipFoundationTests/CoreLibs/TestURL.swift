@@ -8,7 +8,7 @@ import XCTest
 
 #if !SKIP
 
-// MARK: Shims for test support
+// MARK: Shims for API parity
 
 // The URL for this test case uses the internal SkipURL type to prove Foundation API compatibility
 // TODO: change from fileprivate to internal to share across all foundation test cases

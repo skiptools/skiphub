@@ -12,7 +12,7 @@ import JavaScriptCore
 import XCTest
 
 #if !SKIP
-// MARK: Shims for test support
+// MARK: Shims for API parity
 fileprivate typealias JSContext = SkipJSContext
 #endif
 
