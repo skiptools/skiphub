@@ -23,6 +23,7 @@ import CoreFoundation
 
 class TestNSArray : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestNSArray) -> () throws -> Void)] {
         var tests: [(String, (TestNSArray) -> () throws -> Void)] = [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -67,6 +68,7 @@ class TestNSArray : XCTestCase {
 
         return tests
     }
+    #endif // SKIP
     
     func test_BasicConstruction() {
         let array = NSArray()

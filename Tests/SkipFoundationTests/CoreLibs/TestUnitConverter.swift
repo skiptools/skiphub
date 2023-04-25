@@ -21,6 +21,7 @@ import XCTest
 
 class TestUnitConverter: XCTestCase {
     
+    #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestUnitConverter) -> () throws -> Void)] {
         return [
@@ -30,6 +31,7 @@ class TestUnitConverter: XCTestCase {
             ("test_equality", test_equality),
         ]
     }
+    #endif // SKIP
     
     func test_baseUnit() {
         XCTAssertEqual(UnitAcceleration.baseUnit().symbol,

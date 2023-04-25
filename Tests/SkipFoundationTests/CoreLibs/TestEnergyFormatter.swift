@@ -22,6 +22,7 @@ import XCTest
 class TestEnergyFormatter: XCTestCase {
     let formatter: EnergyFormatter = EnergyFormatter()
     
+    #if !SKIP
     static var allTests: [(String, (TestEnergyFormatter) -> () throws -> Void)] {
         return [
             ("test_stringFromJoulesJoulesRegion", test_stringFromJoulesJoulesRegion),
@@ -32,6 +33,7 @@ class TestEnergyFormatter: XCTestCase {
             ("test_unitStringFromJoules", test_unitStringFromJoules)
         ]
     }
+    #endif // SKIP
     
     override func setUp() {
         formatter.numberFormatter.locale = Locale(identifier: "en_US")

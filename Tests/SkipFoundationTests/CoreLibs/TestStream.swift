@@ -269,6 +269,7 @@ class TestStream : XCTestCase {
         XCTAssertEqual(.error, outputStream!.streamStatus)
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestStream) -> () throws -> Void)] {
         var tests: [(String, (TestStream) -> () throws -> Void)] = [
             ("test_InputStreamWithData", test_InputStreamWithData),
@@ -289,6 +290,7 @@ class TestStream : XCTestCase {
         #endif
         return tests
     }
+    #endif // SKIP
     
     private func createTestFile(_ path: String, _contents: Data) -> String? {
         let tempDir = NSTemporaryDirectory() + "TestFoundation_Playground_" + NSUUID().uuidString + "/"

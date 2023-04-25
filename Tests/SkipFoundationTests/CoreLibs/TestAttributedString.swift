@@ -8,7 +8,7 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP // TODO: SkipUI cover of https://developer.android.com/reference/kotlin/androidx/compose/ui/text/AnnotatedString
+// TODO: SkipUI cover of https://developer.android.com/reference/kotlin/androidx/compose/ui/text/AnnotatedString
 
 //===----------------------------------------------------------------------===//
 //
@@ -30,12 +30,20 @@ final class TestAttributedString: XCTestCase {
     // MARK: - Enumeration Tests
 
     func testEmptyEnumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for _ in AttributedString().runs {
             XCTFail("Empty AttributedString should not enumerate any attributes")
         }
+        #endif // !SKIP
     }
 
+    #if !SKIP
     func verifyAttributes<T>(_ runs: AttributedString.Runs.AttributesSlice1<T>, string: AttributedString, expectation: [(String, T.Value?)]) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Test that the attribute is correct when iterating through attribute runs
         var expectIterator = expectation.makeIterator()
         for (attribute, range) in runs {
@@ -53,9 +61,15 @@ final class TestAttributedString: XCTestCase {
             XCTAssertEqual(attribute, expected.1, "Attribute of run did not match expectation")
         }
         XCTAssertNil(expectIterator.next(), "Additional runs expected but not found")
+        #endif // !SKIP
     }
+    #endif
 
+    #if !SKIP
     func verifyAttributes<T, U>(_ runs: AttributedString.Runs.AttributesSlice2<T, U>, string: AttributedString, expectation: [(String, T.Value?, U.Value?)]) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Test that the attributes are correct when iterating through attribute runs
         var expectIterator = expectation.makeIterator()
         for (attribute, attribute2, range) in runs {
@@ -75,9 +89,14 @@ final class TestAttributedString: XCTestCase {
             XCTAssertEqual(attribute2, expected.2, "Attribute of run did not match expectation")
         }
         XCTAssertNil(expectIterator.next(), "Additional runs expected but not found")
+        #endif // !SKIP
     }
-
+    #endif
+    
     func testSimpleEnumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello", attributes: AttributeContainer().testInt(1))
         attrStr += " "
         attrStr += AttributedString("World", attributes: AttributeContainer().testDouble(2.0))
@@ -108,9 +127,13 @@ final class TestAttributedString: XCTestCase {
         verifyAttributes(attrView[\.testDouble], string: attrStr, expectation: [("Hello ", nil), ("World", 2.0)])
         verifyAttributes(attrView[\.testString], string: attrStr, expectation: [("Hello World", nil)])
         verifyAttributes(attrView[\.testInt, \.testDouble], string: attrStr, expectation: [("Hello", 1, nil), (" ", nil, nil), ("World", nil, 2.0)])
+        #endif // !SKIP
     }
 
     func testSliceEnumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello", attributes: AttributeContainer().testInt(1))
         attrStr += AttributedString(" ")
         attrStr += AttributedString("World", attributes: AttributeContainer().testDouble(2.0))
@@ -143,27 +166,39 @@ final class TestAttributedString: XCTestCase {
         verifyAttributes(attrView[\.testDouble], string: attrStr, expectation: [("lo ", nil), ("Wo", 2.0)])
         verifyAttributes(attrView[\.testString], string: attrStr, expectation: [("lo Wo", nil)])
         verifyAttributes(attrView[\.testInt, \.testDouble], string: attrStr, expectation: [("lo", 1, nil), (" ", nil, nil), ("Wo", nil, 2.0)])
+        #endif // !SKIP
     }
 
     // MARK: - Attribute Tests
 
     func testSimpleAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("Foo", attributes: AttributeContainer().testInt(42))
         let (value, range) = attrStr.runs[\.testInt][attrStr.startIndex]
         XCTAssertEqual(value, 42)
         XCTAssertEqual(range, attrStr.startIndex ..< attrStr.endIndex)
+        #endif // !SKIP
     }
 
     func testConstructorAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // TODO: Re-evaluate whether we want these.
         let attrStr = AttributedString("Hello", attributes: AttributeContainer().testString("Helvetica").testInt(2))
         var expected = AttributedString("Hello")
         expected.testString = "Helvetica"
         expected.testInt = 2
         XCTAssertEqual(attrStr, expected)
+        #endif // !SKIP
     }
 
     func testAddAndRemoveAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attr : Int = 42
         let attr2 : Double = 1.0
         var attrStr = AttributedString("Test")
@@ -177,9 +212,13 @@ final class TestAttributedString: XCTestCase {
 
         let expected2 = AttributedString("Test", attributes: AttributeContainer().testInt(attr))
         XCTAssertEqual(attrStr, expected2)
+        #endif // !SKIP
     }
 
     func testAddingAndRemovingAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let container = AttributeContainer().testInt(1).testDouble(2.2)
         let attrStr = AttributedString("Test").mergingAttributes(container)
         let expected = AttributedString("Test", attributes: AttributeContainer().testInt(1).testDouble(2.2))
@@ -187,9 +226,13 @@ final class TestAttributedString: XCTestCase {
         var doubleRemoved = attrStr
         doubleRemoved.testDouble = nil
         XCTAssertEqual(doubleRemoved, AttributedString("Test", attributes: AttributeContainer().testInt(1)))
+        #endif // !SKIP
     }
     
     func testScopedAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("Hello, world", attributes: AttributeContainer().testInt(2).testDouble(3.4))
         XCTAssertEqual(str.test.testInt, 2)
         XCTAssertEqual(str.test.testDouble, 3.4)
@@ -203,9 +246,13 @@ final class TestAttributedString: XCTestCase {
         XCTAssertNil(str.test.testBool)
         XCTAssertNotNil(str[range].test.testBool)
         XCTAssertTrue(str[range].test.testBool!)
+        #endif // !SKIP
     }
 
     func testRunAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("String", attributes: .init().testString("test1"))
         str += "None"
         str += AttributedString("String+Int", attributes: .init().testString("test2").testInt(42))
@@ -215,11 +262,15 @@ final class TestAttributedString: XCTestCase {
         XCTAssertEqual(attributes[0], .init().testString("test1"))
         XCTAssertEqual(attributes[1], .init())
         XCTAssertEqual(attributes[2], .init().testString("test2").testInt(42))
+        #endif // !SKIP
     }
 
     // MARK: - Comparison Tests
 
     func testAttributedStringEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(AttributedString(), AttributedString())
         XCTAssertEqual(AttributedString("abc"), AttributedString("abc"))
         XCTAssertEqual(AttributedString("abc", attributes: AttributeContainer().testInt(1)), AttributedString("abc", attributes: AttributeContainer().testInt(1)))
@@ -243,9 +294,13 @@ final class TestAttributedString: XCTestCase {
         b += AttributedString("def", attributes: AttributeContainer().testInt(2))
         b += "ghijkl"
         XCTAssertNotEqual(a, b)
+        #endif // !SKIP
     }
 
     func testAttributedSubstringEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let emptyStr = AttributedString("01234567890123456789")
 
         let index0 = emptyStr.characters.startIndex
@@ -273,9 +328,13 @@ final class TestAttributedString: XCTestCase {
         XCTAssertNotEqual(emptyStr[index0 ..< index10], singleAttrStr[index0 ..< index20])
 
         XCTAssertTrue(emptyStr[index0 ..< index5] == AttributedString("01234"))
+        #endif // !SKIP
     }
     
     func testRunEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello", attributes: AttributeContainer().testInt(1))
         attrStr += AttributedString(" ")
         attrStr += AttributedString("World", attributes: AttributeContainer().testInt(2))
@@ -310,9 +369,13 @@ final class TestAttributedString: XCTestCase {
         
         // A runs collection of the same order but different run lengths
         XCTAssertNotEqual(attrStr.runs, attrStr3.runs)
+        #endif // !SKIP
     }
     
     func testSubstringRunEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello", attributes: AttributeContainer().testInt(1))
         attrStr += AttributedString(" ")
         attrStr += AttributedString("World", attributes: AttributeContainer().testInt(2))
@@ -339,28 +402,40 @@ final class TestAttributedString: XCTestCase {
         let rangeE = attrStr.startIndex ..< attrStr.endIndex
         let rangeF = attrStr2.characters.index(attrStr2.startIndex, offsetBy: 3) ..< attrStr2.characters.index(attrStr2.startIndex, offsetBy: 14)
         XCTAssertEqual(attrStr[rangeE].runs, attrStr2[rangeF].runs)
+        #endif // !SKIP
     }
 
     // MARK: - Mutation Tests
 
     func testDirectMutationCopyOnWrite() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("ABC")
         let copy = attrStr
         attrStr += "D"
 
         XCTAssertEqual(copy, AttributedString("ABC"))
         XCTAssertNotEqual(attrStr, copy)
+        #endif // !SKIP
     }
 
     func testAttributeMutationCopyOnWrite() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("ABC")
         let copy = attrStr
         attrStr.testInt = 1
 
         XCTAssertNotEqual(attrStr, copy)
+        #endif // !SKIP
     }
 
     func testSliceAttributeMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attr : Int = 42
         let attr2 : Double = 1.0
 
@@ -377,9 +452,13 @@ final class TestAttributedString: XCTestCase {
         XCTAssertEqual(attrStr, expected)
 
         XCTAssertNotEqual(copy, attrStr)
+        #endif // !SKIP
     }
 
     func testEnumerationAttributeMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("A", attributes: AttributeContainer().testInt(1))
         attrStr += AttributedString("B", attributes: AttributeContainer().testDouble(2.0))
         attrStr += AttributedString("C", attributes: AttributeContainer().testInt(3))
@@ -394,9 +473,13 @@ final class TestAttributedString: XCTestCase {
         expected += AttributedString("B", attributes: AttributeContainer().testDouble(2.0))
         expected += "C"
         XCTAssertEqual(expected, attrStr)
+        #endif // !SKIP
     }
 
     func testMutateMultipleAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("A", attributes: AttributeContainer().testInt(1).testBool(true))
         attrStr += AttributedString("B", attributes: AttributeContainer().testInt(1).testDouble(2))
         attrStr += AttributedString("C", attributes: AttributeContainer().testDouble(2).testBool(false))
@@ -461,9 +544,13 @@ final class TestAttributedString: XCTestCase {
         changeRange1expected += AttributedString("B", attributes: AttributeContainer().testInt(1).testBool(true))
         changeRange1expected += AttributedString("C", attributes: AttributeContainer().testDouble(2).testBool(false))
         XCTAssertEqual(changeRange1expected, changeRange1)
+        #endif // !SKIP
     }
 
     func testMutateAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("A", attributes: AttributeContainer().testInt(1).testBool(true))
         attrStr += AttributedString("B", attributes: AttributeContainer().testInt(1).testDouble(2))
         attrStr += AttributedString("C", attributes: AttributeContainer().testDouble(2).testBool(false))
@@ -522,9 +609,13 @@ final class TestAttributedString: XCTestCase {
         changeRange2expected += AttributedString("B", attributes: AttributeContainer().testInt(1).testDouble(2))
         changeRange2expected += AttributedString("C", attributes: AttributeContainer().testInt(1).testDouble(2).testBool(false))
         XCTAssertEqual(changeRange2expected, changeRange2)
+        #endif // !SKIP
     }
 
     func testReplaceAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("A", attributes: AttributeContainer().testInt(1).testBool(true))
         attrStr += AttributedString("B", attributes: AttributeContainer().testInt(1).testDouble(2))
         attrStr += AttributedString("C", attributes: AttributeContainer().testDouble(2).testBool(false))
@@ -561,10 +652,14 @@ final class TestAttributedString: XCTestCase {
         changeDifferent1expected += AttributedString("B", attributes: AttributeContainer().testInt(1).testDouble(2))
         changeDifferent1expected += AttributedString("C", attributes: AttributeContainer().testDouble(43))
         XCTAssertEqual(changeDifferent1expected, changeDifferent1)
+        #endif // !SKIP
     }
  
     
     func testSliceMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello World", attributes: AttributeContainer().testInt(1))
         let start = attrStr.characters.index(attrStr.startIndex, offsetBy: 6)
         attrStr.replaceSubrange(start ..< attrStr.characters.index(start, offsetBy:5), with: AttributedString("Goodbye", attributes: AttributeContainer().testInt(2)))
@@ -573,9 +668,13 @@ final class TestAttributedString: XCTestCase {
         expected += AttributedString("Goodbye", attributes: AttributeContainer().testInt(2))
         XCTAssertEqual(attrStr, expected)
         XCTAssertNotEqual(attrStr, AttributedString("Hello Goodbye", attributes: AttributeContainer().testInt(1)))
+        #endif // !SKIP
     }
     
     func testOverlappingSliceMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello, world!")
         attrStr[attrStr.range(of: "Hello")!].testInt = 1
         attrStr[attrStr.range(of: "world")!].testInt = 2
@@ -588,42 +687,62 @@ final class TestAttributedString: XCTestCase {
         expected += AttributedString("rld", attributes: AttributeContainer().testInt(2))
         expected += AttributedString("!")
         XCTAssertEqual(attrStr, expected)
+        #endif // !SKIP
     }
 
     func testCharacters_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello World", attributes: AttributeContainer().testInt(1))
         attrStr.characters.replaceSubrange(attrStr.range(of: " ")!, with: " Good ")
 
         let expected = AttributedString("Hello Good World", attributes: AttributeContainer().testInt(1))
         XCTAssertEqual(expected, attrStr)
+        #endif // !SKIP
     }
 
     func testCharactersMutation_append() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello World", attributes: AttributeContainer().testInt(1))
         attrStr.characters.append(contentsOf: " Goodbye")
 
         let expected = AttributedString("Hello World Goodbye", attributes: AttributeContainer().testInt(1))
         XCTAssertEqual(expected, attrStr)
+        #endif // !SKIP
     }
 
     func testUnicodeScalars_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("La Cafe\u{301}", attributes: AttributeContainer().testInt(1))
         let unicode = attrStr.unicodeScalars
         attrStr.unicodeScalars.replaceSubrange(unicode.index(unicode.startIndex, offsetBy: 3) ..< unicode.index(unicode.startIndex, offsetBy: 7), with: "Ole".unicodeScalars)
 
         let expected = AttributedString("La Ole\u{301}", attributes: AttributeContainer().testInt(1))
         XCTAssertEqual(expected, attrStr)
+        #endif // !SKIP
     }
 
     func testUnicodeScalarsMutation_append() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Cafe", attributes: AttributeContainer().testInt(1))
         attrStr.unicodeScalars.append("\u{301}")
 
         let expected = AttributedString("Cafe\u{301}", attributes: AttributeContainer().testInt(1))
         XCTAssertEqual(expected, attrStr)
+        #endif // !SKIP
     }
 
     func testSubCharacterAttributeSetting() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Cafe\u{301}", attributes: AttributeContainer().testInt(1))
         let cafRange = attrStr.characters.startIndex ..< attrStr.characters.index(attrStr.characters.startIndex, offsetBy: 3)
         let eRange = cafRange.upperBound ..< attrStr.unicodeScalars.index(after: cafRange.upperBound)
@@ -636,9 +755,13 @@ final class TestAttributedString: XCTestCase {
         expected += AttributedString("e", attributes: AttributeContainer().testInt(1).testDouble(2.5))
         expected += AttributedString("\u{301}", attributes: AttributeContainer().testInt(1).testDouble(3.5))
         XCTAssertEqual(expected, attrStr)
+        #endif // !SKIP
     }
     
     func testReplaceSubrange_rangeExpression() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello World", attributes: AttributeContainer().testInt(1))
         
         // Test with PartialRange, which conforms to RangeExpression but is not a Range
@@ -648,9 +771,13 @@ final class TestAttributedString: XCTestCase {
         var expected = AttributedString("Goodbye")
         expected += AttributedString(" World", attributes: AttributeContainer().testInt(1))
         XCTAssertEqual(attrStr, expected)
+        #endif // !SKIP
     }
     
     func testSettingAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Hello World", attributes: .init().testInt(1))
         attrStr += AttributedString(". My name is Foundation!", attributes: .init().testBool(true))
         
@@ -658,9 +785,13 @@ final class TestAttributedString: XCTestCase {
         
         let expected = AttributedString("Hello World. My name is Foundation!", attributes: .init().testBool(false))
         XCTAssertEqual(result, expected)
+        #endif // !SKIP
     }
     
     func testAddAttributedString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("Hello ", attributes: .init().testInt(1))
         let attrStr2 = AttributedString("World", attributes: .init().testInt(2))
         let original = attrStr // AttributedString(attrStr)
@@ -682,9 +813,13 @@ final class TestAttributedString: XCTestCase {
                 i += 1
             }
         }
+        #endif // !SKIP
     }
 
     func testReplaceSubrangeWithSubstrings() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseString = AttributedString("A", attributes: .init().testInt(1))
         + AttributedString("B", attributes: .init().testInt(2))
         + AttributedString("C", attributes: .init().testInt(3))
@@ -712,9 +847,13 @@ final class TestAttributedString: XCTestCase {
         + AttributedString("D", attributes: .init().testInt(4))
 
         XCTAssertEqual(targetString, expected)
+        #endif // !SKIP
     }
     
     func assertStringIsCoalesced(_ str: AttributedString) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var prev: AttributedString.Runs.Run?
         for run in str.runs {
             if let prev = prev {
@@ -723,9 +862,13 @@ final class TestAttributedString: XCTestCase {
             }
             prev = run
         }
+        #endif // !SKIP
     }
     
     func testCoalescing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = AttributedString("Hello", attributes: .init().testInt(1))
         let appendSame = str + AttributedString("World", attributes: .init().testInt(1))
         let appendDifferent = str + AttributedString("World", attributes: .init().testInt(2))
@@ -783,17 +926,25 @@ final class TestAttributedString: XCTestCase {
         str10[str10.characters.index(after: str10.startIndex) ..< str10.characters.index(before: str10.endIndex)].testInt = 1
         assertStringIsCoalesced(str10)
         XCTAssertEqual(str10.runs.count, 1)
+        #endif // !SKIP
     }
     
     func testReplaceWithEmptyElements() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("Hello, world")
         let range = str.startIndex ..< str.characters.index(str.startIndex, offsetBy: 5)
         str.characters.replaceSubrange(range, with: [])
         
         XCTAssertEqual(str, AttributedString(", world"))
+        #endif // !SKIP
     }
     
     func testDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = AttributedString("A", attributes: .init().testInt(1))
         + AttributedString("B", attributes: .init().testInt(2))
         + AttributedString("C", attributes: .init().testInt(3))
@@ -822,9 +973,13 @@ E {
         
         let runsDesc = String(describing: string.runs)
         XCTAssertEqual(runsDesc, expected)
+        #endif // !SKIP
     }
     
     func testContainerDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cont = AttributeContainer().testBool(false).testInt(1).testDouble(2.0).testString("3")
         
         let desc = String(describing: cont)
@@ -836,9 +991,13 @@ E {
         XCTAssertTrue(desc.contains("\tTestInt = 1\n"))
         XCTAssertTrue(desc.contains("\tTestString = 3\n"))
         XCTAssertTrue(desc.contains("\tTestBool = false\n"))
+        #endif // !SKIP
     }
     
     func testRunAndSubstringDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = AttributedString("A", attributes: .init().testInt(1))
         + AttributedString("B", attributes: .init().testInt(2))
         + AttributedString("C", attributes: .init().testInt(3))
@@ -873,9 +1032,13 @@ E {
         
         let subDescs = string.runs.map() { String(describing: string[$0.range]) }
         XCTAssertEqual(subDescs, expected)
+        #endif // !SKIP
     }
     
     func testReplacingAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("Hello", attributes: .init().testInt(2))
         str += AttributedString("World", attributes: .init().testString("Test"))
         
@@ -886,9 +1049,13 @@ E {
         var expected = AttributedString("Hello", attributes: .init().testBool(false))
         expected += AttributedString("World", attributes: .init().testString("Test"))
         XCTAssertEqual(result, expected)
+        #endif // !SKIP
     }
     
     func testScopedAttributeContainer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("Hello, world")
         
         XCTAssertNil(str.test.testInt)
@@ -922,9 +1089,13 @@ E {
         XCTAssertNil(str.testBool)
         XCTAssertEqual(str[otherRange].test.testBool, true)
         XCTAssertEqual(str[otherRange].testBool, true)
+        #endif // !SKIP
     }
     
     func testMergeAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let originalAttributes = AttributeContainer.testInt(2).testBool(true)
         let newAttributes = AttributeContainer.testString("foo")
         let overlappingAttributes = AttributeContainer.testInt(3).testDouble(4.3)
@@ -934,9 +1105,13 @@ E {
         XCTAssertEqual(str.mergingAttributes(newAttributes, mergePolicy: .keepCurrent), AttributedString("Hello, world", attributes: newAttributes.testInt(2).testBool(true)))
         XCTAssertEqual(str.mergingAttributes(overlappingAttributes, mergePolicy: .keepNew), AttributedString("Hello, world", attributes: overlappingAttributes.testBool(true)))
         XCTAssertEqual(str.mergingAttributes(overlappingAttributes, mergePolicy: .keepCurrent), AttributedString("Hello, world", attributes: originalAttributes.testDouble(4.3)))
+        #endif // !SKIP
     }
     
     func testMergeAttributeContainers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let originalAttributes = AttributeContainer.testInt(2).testBool(true)
         let newAttributes = AttributeContainer.testString("foo")
         let overlappingAttributes = AttributeContainer.testInt(3).testDouble(4.3)
@@ -945,20 +1120,28 @@ E {
         XCTAssertEqual(originalAttributes.merging(newAttributes, mergePolicy: .keepCurrent), newAttributes.testInt(2).testBool(true))
         XCTAssertEqual(originalAttributes.merging(overlappingAttributes, mergePolicy: .keepNew), overlappingAttributes.testBool(true))
         XCTAssertEqual(originalAttributes.merging(overlappingAttributes, mergePolicy: .keepCurrent), originalAttributes.testDouble(4.3))
+        #endif // !SKIP
     }
     
     func testChangingSingleCharacterUTF8Length() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrstr = AttributedString("\u{1F3BA}\u{1F3BA}") // UTF-8 Length of 8
         attrstr.characters[attrstr.startIndex] = "A" // Changes UTF-8 Length to 5
         XCTAssertEqual(attrstr.runs.count, 1)
         let runRange = attrstr.runs.first!.range
         let substring = String(attrstr[runRange].characters)
         XCTAssertEqual(substring, "A\u{1F3BA}")
+        #endif // !SKIP
     }
     
     // MARK: - Substring Tests
     
     func testSubstringBase() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = AttributedString("Hello World", attributes: .init().testInt(1))
         var substr = str[str.startIndex ..< str.characters.index(str.startIndex, offsetBy: 5)]
         XCTAssertEqual(substr.base, str)
@@ -970,9 +1153,13 @@ E {
         XCTAssertEqual(str2[range].base, str2)
         str2[range].testInt = 3
         XCTAssertEqual(str2[range].base, str2)
+        #endif // !SKIP
     }
     
     func testSubstringGetAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = AttributedString("Hello World", attributes: .init().testInt(1))
         let range = str.startIndex ..< str.characters.index(str.startIndex, offsetBy: 5)
         XCTAssertEqual(str[range].testInt, 1)
@@ -983,9 +1170,13 @@ E {
         let range2 = str2.startIndex ..< str2.characters.index(str2.startIndex, offsetBy: 5)
         XCTAssertNil(str2[range2].testInt)
         XCTAssertNil(str2[range2].testBool)
+        #endif // !SKIP
     }
     
     func testSubstringDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("Hello", attributes: .init().testInt(2))
         str += " "
         str += AttributedString("World", attributes: .init().testInt(3))
@@ -994,9 +1185,13 @@ E {
             let desc = str[run.range].description
             XCTAssertFalse(desc.isEmpty)
         }
+        #endif // !SKIP
     }
     
     func testSubstringEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = AttributedString("")
         let range = str.startIndex ..< str.endIndex
         _ = range
@@ -1008,17 +1203,23 @@ E {
 //        XCTAssertNotEqual(substringA, substringB)
 //        XCTAssertEqual(substringA, substringA)
 //        XCTAssertEqual(substringB, substringB)
+        #endif // !SKIP
     }
 
     // MARK: - Coding Tests
-    
+
+    #if !SKIP
     struct CodableType : Codable {
         // One of potentially many different values being encoded:
         @CodableConfiguration(from: \.test)
         var attributedString = AttributedString()
     }
+    #endif
 
     func testJSONEncoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encoder = JSONEncoder()
         var attrStr = AttributedString("Hello", attributes: AttributeContainer().testBool(true).testString("blue").testInt(1))
         attrStr += AttributedString(" World", attributes: AttributeContainer().testInt(2).testDouble(3.0).testString("http://www.apple.com"))
@@ -1029,9 +1230,13 @@ E {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(CodableType.self, from: json)
         XCTAssertEqual(decoded.attributedString, attrStr)
+        #endif // !SKIP
     }
     
     func testDecodingThenConvertingToNSAttributedString() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encoder = JSONEncoder()
         var attrStr = AttributedString("Hello", attributes: AttributeContainer().testBool(true))
         attrStr += AttributedString(" World", attributes: AttributeContainer().testInt(2))
@@ -1043,9 +1248,13 @@ E {
         let decodedns = try NSAttributedString(decoded.attributedString, including: AttributeScopes.TestAttributes.self)
         let ns = try NSAttributedString(attrStr, including: AttributeScopes.TestAttributes.self)
         XCTAssertEqual(ns, decodedns)
+        #endif // !SKIP
     }
     
     func testCustomAttributeCoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct MyAttributes : AttributeScope {
             var customCodable : AttributeScopes.TestAttributes.CustomCodableAttribute
         }
@@ -1065,9 +1274,13 @@ E {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(CodableType.self, from: json)
         XCTAssertEqual(decoded.attributedString, attrStr)
+        #endif // !SKIP
     }
     
     func testCustomCodableTypeWithCodableAttributedString() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct MyType : Codable, Equatable {
             var other: NonCodableType
             var str: AttributedString
@@ -1104,9 +1317,13 @@ E {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(MyType.self, from: data)
         XCTAssertEqual(type, decoded)
+        #endif // !SKIP
     }
     
     func testCodingErrorsPropogateUpToCallSite() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         enum CustomAttribute : CodableAttributedStringKey {
             typealias Value = String
             static var name = "CustomAttribute"
@@ -1134,9 +1351,13 @@ E {
         XCTAssertThrowsError(try encoder.encode(Obj(str: str)), "Attribute encoding error did not throw at call site") { err in
             XCTAssert(err is TestError, "Encoding did not throw the proper error")
         }
+        #endif // !SKIP
     }
     
     func testEncodeWithPartiallyCodableScope() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         enum NonCodableAttribute : AttributedStringKey {
             typealias Value = Int
             static var name = "NonCodableAttributes"
@@ -1161,9 +1382,13 @@ E {
         var expected = str
         expected[NonCodableAttribute.self] = nil
         XCTAssertEqual(decoded.str, expected)
+        #endif // !SKIP
     }
 
     func testAutomaticCoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct Obj : Codable, Equatable {
             @CodableConfiguration(from: AttributeScopes.TestAttributes.self) var attrStr = AttributedString()
             @CodableConfiguration(from: AttributeScopes.TestAttributes.self) var optAttrStr : AttributedString? = nil
@@ -1209,10 +1434,14 @@ E {
             XCTAssertEqual(decoded, val)
         }
 
+        #endif // !SKIP
     }
 
 
     func testManualCoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct Obj : Codable, Equatable {
             var attrStr : AttributedString
             var optAttrStr : AttributedString?
@@ -1281,9 +1510,13 @@ E {
             XCTAssertEqual(decoded, val)
         }
         
+        #endif // !SKIP
     }
     
     func testDecodingCorruptedData() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let jsonStrings = [
             "{\"attributedString\": 2}",
             "{\"attributedString\": []}",
@@ -1308,9 +1541,13 @@ E {
                 XCTAssertTrue(err is DecodingError, "Decoding threw an error that was not a DecodingError")
             }
         }
+        #endif // !SKIP
     }
     
     func testCodableRawRepresentableAttribute() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct Attribute : CodableAttributedStringKey {
             static let name = "MyAttribute"
             enum Value: String, Codable, Hashable {
@@ -1336,9 +1573,13 @@ E {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(Object.self, from: encoded)
         XCTAssertEqual(decoded.str[Attribute.self], .two)
+        #endif // !SKIP
     }
 
     func testContainerEncoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct ContainerContainer : Codable {
             @CodableConfiguration(from: AttributeScopes.TestAttributes.self) var container = AttributeContainer()
         }
@@ -1350,9 +1591,13 @@ E {
         let decoded = try decoder.decode(ContainerContainer.self, from: data)
 
         XCTAssertEqual(obj.container, decoded.container)
+        #endif // !SKIP
     }
     
     func testDefaultAttributesCoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct DefaultContainer : Codable, Equatable {
             var str : AttributedString
         }
@@ -1363,11 +1608,15 @@ E {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(DefaultContainer.self, from: encoded)
         XCTAssertEqual(cont, decoded)
+        #endif // !SKIP
     }
     
     // MARK: - Conversion Tests
     
     func testConversionToObjC() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var ourString = AttributedString("Hello", attributes: AttributeContainer().testInt(2))
         ourString += AttributedString(" ")
         ourString += AttributedString("World", attributes: AttributeContainer().testString("Courier"))
@@ -1376,9 +1625,13 @@ E {
         theirString.addAttributes([.testInt: NSNumber(value: 2)], range: NSMakeRange(0, 5))
         theirString.addAttributes([.testString: "Courier"], range: NSMakeRange(6, 5))
         XCTAssertEqual(theirString, ourObjCString)
+        #endif // !SKIP
     }
     
     func testConversionFromObjC() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let nsString = NSMutableAttributedString(string: "Hello!")
         let rangeA = NSMakeRange(0, 3)
         let rangeB = NSMakeRange(3, 3)
@@ -1389,9 +1642,13 @@ E {
         string.testString = "Courier"
         string += AttributedString("lo!", attributes: AttributeContainer().testBool(true))
         XCTAssertEqual(string, convertedString)
+        #endif // !SKIP
     }
     
     func testRoundTripConversion_boxed() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct MyCustomType : Hashable {
             var num: Int
             var str: String
@@ -1413,9 +1670,13 @@ E {
         let converted = try AttributedString(nsString, including: MyCustomScope.self)
         
         XCTAssertEqual(converted[MyCustomAttribute.self], customVal)
+        #endif // !SKIP
     }
 
     func testRoundTripConversion_customConversion() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct MyCustomType : Hashable { }
 
         enum MyCustomAttribute : ObjectiveCConvertibleAttributedStringKey {
@@ -1439,9 +1700,13 @@ E {
 
         let converted = try AttributedString(nsString, including: MyCustomScope.self)
         XCTAssertEqual(converted[MyCustomAttribute.self], customVal)
+        #endif // !SKIP
     }
 
     func testIncompleteConversionFromObjC() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct TestStringAttributeOnly : AttributeScope {
             var testString: AttributeScopes.TestAttributes.TestStringAttribute // Missing TestBoolAttribute
         }
@@ -1456,9 +1721,13 @@ E {
         var expected = AttributedString("Hel", attributes: AttributeContainer().testString("Courier"))
         expected += AttributedString("lo!")
         XCTAssertEqual(converted, expected)
+        #endif // !SKIP
     }
     
     func testIncompleteConversionToObjC() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct TestStringAttributeOnly : AttributeScope {
             var testString: AttributeScopes.TestAttributes.TestStringAttribute // Missing TestBoolAttribute
         }
@@ -1469,9 +1738,13 @@ E {
         
         let attrs = converted.attributes(at: 0, effectiveRange: nil)
         XCTAssertFalse(attrs.keys.contains(.testBool))
+        #endif // !SKIP
     }
     
     func testConversionNestedScope() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct SuperScope : AttributeScope {
             var subscope : SubScope
             var testString: AttributeScopes.TestAttributes.TestStringAttribute
@@ -1491,9 +1764,13 @@ E {
         var expected = AttributedString("Hel", attributes: AttributeContainer().testString("Courier"))
         expected += AttributedString("lo!", attributes: AttributeContainer().testBool(true))
         XCTAssertEqual(converted, expected)
+        #endif // !SKIP
     }
     
     func testConversionAttributeContainers() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let container = AttributeContainer.testInt(2).testDouble(3.1).testString("Hello")
         
         let dictionary = try Dictionary(container, including: \.test)
@@ -1510,9 +1787,13 @@ E {
         
         let container2 = try AttributeContainer(dictionary, including: \.test)
         XCTAssertEqual(container, container2)
+        #endif // !SKIP
     }
     
     func testConversionFromInvalidObjectiveCValueTypes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let nsStr = NSAttributedString(string: "Hello", attributes: [.testInt : "I am not an Int"])
         XCTAssertThrowsError(try AttributedString(nsStr, including: AttributeScopes.TestAttributes.self))
         
@@ -1537,9 +1818,13 @@ E {
         
         let nsStr2 = NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key(ConvertibleAttribute.name) : 12345])
         XCTAssertThrowsError(try AttributedString(nsStr2, including: Scope.self))
+        #endif // !SKIP
     }
     
     func testConversionToUTF16() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Ensure that we're correctly using UTF16 offsets with NSAS and UTF8 offsets with AS without mixing the two
         let multiByteCharacters = ["\u{2029}", "\u{1D11E}", "\u{1D122}", "\u{1F91A}\u{1F3FB}"]
 
@@ -1556,10 +1841,14 @@ E {
 //            let convertedNSStr = try NSAttributedString(attrStr, including: AttributeScopes.TestAttributes.self)
 //            XCTAssertEqual(nsStr, convertedNSStr)
         }
+        #endif // !SKIP
     }
     
     #if os(macOS)
     func testConversionWithoutScope() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Ensure simple conversion works (no errors when loading AppKit/UIKit/SwiftUI)
         let attrStr = AttributedString()
         let nsStr = NSAttributedString(attrStr)
@@ -1664,16 +1953,24 @@ E {
         _ = str
 //        let result = try? NSAttributedString(str, scope: Scope.self, options: .dropThrowingAttributes) // The same call that the no-scope initializer will make
 //        XCTAssertEqual(result, NSAttributedString(string: "Hello", attributes: [NSAttributedString.Key("TestInt") : 2]))
+        #endif // !SKIP
     }
     #endif
     
     func testConversionIncludingOnly() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = AttributedString("Hello, world", attributes: .init().testInt(2).link(URL(string: "http://apple.com")!))
         let nsStr = try NSAttributedString(str, including: \.test)
         XCTAssertEqual(nsStr, NSAttributedString(string: "Hello, world", attributes: [.testInt: 2]))
+        #endif // !SKIP
     }
     
     func testConversionCoalescing() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let nsStr = NSMutableAttributedString("Hello, world")
         nsStr.setAttributes([.link : NSURL(string: "http://apple.com")!, .testInt : NSNumber(integerLiteral: 2)], range: NSRange(location: 0, length: 6))
         nsStr.setAttributes([.testInt : NSNumber(integerLiteral: 2)], range: NSRange(location: 6, length: 6))
@@ -1682,18 +1979,26 @@ E {
         XCTAssertEqual(attrStr.runs.first!.range, attrStr.startIndex ..< attrStr.endIndex)
         XCTAssertEqual(attrStr.testInt, 2)
         XCTAssertNil(attrStr.link)
+        #endif // !SKIP
     }
 
     // MARK: - View Tests
 
     func testCharViewIndexing_backwardsFromEndIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testString = AttributedString("abcdefghi")
         let testChars = testString.characters
         let testIndex = testChars.index(testChars.endIndex, offsetBy: -1)
         XCTAssertEqual(testChars[testIndex], "i")
+        #endif // !SKIP
     }
 
     func testAttrViewIndexing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("A")
         attrStr += "B"
         attrStr += "C"
@@ -1709,16 +2014,24 @@ E {
         }
         XCTAssertEqual(i, 1)
         XCTAssertEqual(attrStrRuns.count, 1)
+        #endif // !SKIP
     }
     
     func testUnicodeScalarsViewIndexing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("Cafe\u{301}", attributes: AttributeContainer().testInt(1))
         let unicode = attrStr.unicodeScalars
         XCTAssertEqual(unicode[unicode.index(before: unicode.endIndex)], "\u{301}")
         XCTAssertEqual(unicode[unicode.index(unicode.endIndex, offsetBy: -2)], "e")
+        #endif // !SKIP
     }
     
     func testUnicodeScalarsSlicing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("Cafe\u{301}", attributes: AttributeContainer().testInt(1))
         let range = attrStr.startIndex ..< attrStr.endIndex
         let substringScalars = attrStr[range].unicodeScalars
@@ -1737,11 +2050,15 @@ E {
             indexB = slicedScalars.index(after: indexB)
             indexExpect = expected.index(after: indexExpect)
         }
+        #endif // !SKIP
     }
 
     // MARK: - Other Tests
     
     func testInitWithSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected = AttributedString("Hello World", attributes: AttributeContainer().testInt(2))
         let sequence: [Character] = ["H", "e", "l", "l", "o", " ", "W", "o", "r", "l", "d"]
         
@@ -1754,9 +2071,13 @@ E {
         
         let attrStr3 = AttributedString(sequence, attributes: AttributeContainer().testInt(2))
         XCTAssertEqual(attrStr3, expected)
+        #endif // !SKIP
     }
     
     func testLongestEffectiveRangeOfAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("Abc")
         str += AttributedString("def", attributes: AttributeContainer.testInt(2).testString("World"))
         str += AttributedString("ghi", attributes: AttributeContainer.testInt(2).testBool(true))
@@ -1769,9 +2090,13 @@ E {
         
         XCTAssertEqual(value, 2)
         XCTAssertEqual(range, expectedRange)
+        #endif // !SKIP
     }
     
     func testAttributeContainer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = AttributeContainer().testBool(true).testInt(1)
         XCTAssertEqual(container.testBool, true)
         XCTAssertNil(container.testString)
@@ -1785,9 +2110,13 @@ E {
 
         container.testBool = nil
         XCTAssertNil(container.testBool)
+        #endif // !SKIP
     }
     
     func testAttributeContainerEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let containerA = AttributeContainer().testInt(2).testString("test")
         let containerB = AttributeContainer().testInt(2).testString("test")
         let containerC = AttributeContainer().testInt(3).testString("test")
@@ -1799,9 +2128,13 @@ E {
         XCTAssertNotEqual(containerB, containerC)
         XCTAssertNotEqual(containerC, containerD)
         XCTAssertEqual(containerD, containerE)
+        #endif // !SKIP
     }
 
     func testAttributeContainerSetOnSubstring() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let container = AttributeContainer().testBool(true).testInt(1)
 
         var attrString = AttributedString("Hello world", attributes: container)
@@ -1813,25 +2146,37 @@ E {
         let run = runs[ runs.startIndex ]
         XCTAssertEqual(String(attrString.characters[run.range]), "Hell")
         XCTAssertEqual(run.testString, "yellow")
+        #endif // !SKIP
     }
 
     func testSlice() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("Hello World")
         let chars = attrStr.characters
         let start = chars.index(chars.startIndex, offsetBy: 6)
         let slice = attrStr[start ..< chars.index(start, offsetBy:5)]
         XCTAssertEqual(AttributedString(slice), AttributedString("World"))
+        #endif // !SKIP
     }
 
     func testCreateStringsFromCharactersWithUnicodeScalarIndexes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr = AttributedString("Caf", attributes: AttributeContainer().testString("a"))
         attrStr += AttributedString("e", attributes: AttributeContainer().testString("b"))
         attrStr += AttributedString("\u{301}", attributes: AttributeContainer().testString("c"))
         let strs = attrStr.runs.map { String(attrStr.characters[$0.range]) }
         XCTAssertEqual(strs, ["Caf", "e", "\u{301}"])
+        #endif // !SKIP
     }
 
     func testSettingAttributeOnSlice() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrString = AttributedString("This is a string.")
         var range = attrString.startIndex ..< attrString.characters.index(attrString.startIndex, offsetBy: 1)
         var myInt = 1
@@ -1862,9 +2207,13 @@ E {
         let startIndex = attrString.startIndex
         attrString.characters[startIndex] = "D"
         XCTAssertEqual(attrString.characters[startIndex], "D")
+        #endif // !SKIP
     }
 
     func testExpressibleByStringLiteral() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let variable : AttributedString = "Test"
         XCTAssertEqual(variable, AttributedString("Test"))
 
@@ -1872,9 +2221,13 @@ E {
             XCTAssertEqual(str, AttributedString("Test"))
         }
         takesAttrStr("Test")
+        #endif // !SKIP
     }
     
     func testHashing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("Hello, world.", attributes: .init().testInt(2).testBool(false))
         let attrStr2 = AttributedString("Hello, world.", attributes: .init().testInt(2).testBool(false))
         
@@ -1887,9 +2240,13 @@ E {
         XCTAssertEqual(attrStr, attrStr2)
         XCTAssertEqual(dictionary[attrStr], 456)
         XCTAssertEqual(dictionary[attrStr2], 456)
+        #endif // !SKIP
     }
     
     func testUTF16String() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let multiByteCharacters = ["\u{2029}", "\u{1D11E}", "\u{1D122}", "\u{1F91A}\u{1F3FB}"]
         
         for str in multiByteCharacters {
@@ -1900,9 +2257,13 @@ E {
             XCTAssertTrue(attrStr.runs == attrStr.runs)
 //            XCTAssertEqual(attrStr._guts.runs[0].length, 1 + str.utf8.count)
         }
+        #endif // !SKIP
     }
 
     func testPlusOperators() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ab = AttributedString("a") + AttributedString("b")
         XCTAssertEqual(ab, AttributedString("ab"))
 
@@ -1923,9 +2284,13 @@ E {
         var abc_lit = ab
         abc_lit += "c"
         XCTAssertEqual(abc_lit, abc)
+        #endif // !SKIP
     }
 
     func testSearch() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testString = AttributedString("abcdefghi")
         XCTAssertNil(testString.range(of: "baba"))
 
@@ -1968,9 +2333,13 @@ E {
 
         XCTAssertNil(testString.range(of: "bcd", options: [.anchored]))
         XCTAssertNil(testString.range(of: "abc", options: [.anchored, .backwards]))
+        #endif // !SKIP
     }
 
     func testSubstringSearch() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fullString = AttributedString("___abcdefghi___")
         let testString = fullString[ fullString.range(of: "abcdefghi")! ]
         XCTAssertNil(testString.range(of: "baba"))
@@ -2014,9 +2383,13 @@ E {
 
         XCTAssertNil(testString.range(of: "bcd", options: [.anchored]))
         XCTAssertNil(testString.range(of: "abc", options: [.anchored, .backwards]))
+        #endif // !SKIP
     }
 
     func testIndexConversion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("ABCDE")
         let str = "ABCDE"
 
@@ -2028,9 +2401,13 @@ E {
 
         let reconvertedAttrStrIdex = AttributedString.Index(strIdx, within: attrStr)!
         XCTAssertEqual(attrStr.characters[reconvertedAttrStrIdex], "C")
+        #endif // !SKIP
     }
 
     func testRangeConversion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrStr = AttributedString("ABCDE")
         let nsAS = NSAttributedString("ABCDE")
         let str = "ABCDE"
@@ -2046,9 +2423,13 @@ E {
         let attrStrR_reconverted2 = Range(nsASR, in: attrStr)!
         XCTAssertEqual(attrStr[attrStrR_reconverted1].string, "BCD")
         XCTAssertEqual(attrStr[attrStrR_reconverted2].string, "BCD")
+        #endif // !SKIP
     }
     
     func testScopedCopy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("A")
         str += AttributedString("B", attributes: .init().testInt(2))
         str += AttributedString("C", attributes: .init().link(URL(string: "http://apple.com")!))
@@ -2083,18 +2464,26 @@ E {
         XCTAssertEqual(AttributedString(str[range], including: \.foundation), expected)
         
         XCTAssertEqual(AttributedString(str[range], including: None.self), AttributedString("BC"))
+        #endif // !SKIP
     }
 
     func testAssignDifferentSubstring() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr1 = AttributedString("ABCDE")
         let attrStr2 = AttributedString("XYZ")
 
         attrStr1[ attrStr1.range(of: "BCD")! ] = attrStr2[ attrStr2.range(of: "X")! ]
 
         XCTAssertEqual(attrStr1, "AXE")
+        #endif // !SKIP
     }
 
     func testCOWDuringSubstringMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func frobnicate(_ sub: inout AttributedSubstring) {
             var new = sub
             new.foregroundColor = .blue
@@ -2106,10 +2495,14 @@ E {
 
         let expected = AttributedString("A") + AttributedString("BCD", attributes: .init().foregroundColor(.blue).backgroundColor(.black)) + AttributedString("E")
         XCTAssertEqual(attrStr, expected)
+        #endif // !SKIP
     }
 
 #if false // This causes an intentional fatalError(), which we can't test for yet, so unfortunately this test can't be enabled.
     func testReassignmentDuringMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func frobnicate(_ sub: inout AttributedSubstring) {
             let other = AttributedString("XYZ")
             sub = other[ other.range(of: "X")! ]
@@ -2118,18 +2511,26 @@ E {
         frobnicate(&attrStr[ attrStr.range(of: "BCD")! ])
 
         XCTAssertEqual(attrStr, "AXE")
+        #endif // !SKIP
     }
 #endif
 
     func testAssignDifferentCharacterView() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr1 = AttributedString("ABC", attributes: .init().foregroundColor(.black)) + AttributedString("DE", attributes: .init().foregroundColor(.white))
         let attrStr2 = AttributedString("XYZ", attributes: .init().foregroundColor(.blue))
 
         attrStr1.characters = attrStr2.characters
         XCTAssertEqual(attrStr1, AttributedString("XYZ", attributes: .init().foregroundColor(.black)))
+        #endif // !SKIP
     }
 
     func testCOWDuringCharactersMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func frobnicate(_ chars: inout AttributedString.CharacterView) {
             var new = chars
             new.replaceSubrange(chars.startIndex ..< chars.endIndex, with: "XYZ")
@@ -2139,17 +2540,25 @@ E {
         frobnicate(&attrStr.characters)
 
         XCTAssertEqual(attrStr, AttributedString("XYZ", attributes: .init().foregroundColor(.black)))
+        #endif // !SKIP
     }
 
     func testAssignDifferentUnicodeScalarView() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var attrStr1 = AttributedString("ABC", attributes: .init().foregroundColor(.black)) + AttributedString("DE", attributes: .init().foregroundColor(.white))
         let attrStr2 = AttributedString("XYZ", attributes: .init().foregroundColor(.blue))
 
         attrStr1.unicodeScalars = attrStr2.unicodeScalars
         XCTAssertEqual(attrStr1, AttributedString("XYZ", attributes: .init().foregroundColor(.black)))
+        #endif // !SKIP
     }
 
     func testCOWDuringUnicodeScalarsMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func frobnicate(_ chars: inout AttributedString.CharacterView) {
             var new = chars
             new.replaceSubrange(chars.startIndex ..< chars.endIndex, with: "XYZ")
@@ -2159,11 +2568,15 @@ E {
         frobnicate(&attrStr.characters)
 
         XCTAssertEqual(attrStr, AttributedString("XYZ", attributes: .init().foregroundColor(.black)))
+        #endif // !SKIP
     }
 
 
 #if false
     func testAttributeFixing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str =
             AttributedString("This is a mis") +
             AttributedString("pel", attributes: AttributeContainer().misspelled(true)) +
@@ -2176,9 +2589,11 @@ E {
             AttributedString("mispelled", attributes: AttributeContainer().misspelled(true)) +
             AttributedString(" word")
         XCTAssertEqual(str, expected)
+        #endif // !SKIP
     }
 #endif
     
+    #if !SKIP
     static var allTests: [(String, (TestAttributedString) -> () throws -> Void)] {
         var tests = [
             ("testEmptyEnumeration", testEmptyEnumeration),
@@ -2285,9 +2700,11 @@ E {
 
         return tests
     }
+    #endif // SKIP
 
 }
 
+#if !SKIP
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 fileprivate extension AttributedString {
     var string : String {
@@ -2304,4 +2721,3 @@ fileprivate extension AttributedSubstring {
     }
 }
 #endif
-

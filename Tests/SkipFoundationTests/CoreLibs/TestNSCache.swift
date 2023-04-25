@@ -21,6 +21,7 @@ import XCTest
 
 class TestNSCache : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestNSCache) -> () throws -> Void)] {
         return [
             ("test_setWithUnmutableKeys", test_setWithUnmutableKeys),
@@ -32,6 +33,7 @@ class TestNSCache : XCTestCase {
             ("test_objectCorrectlyReleased", test_objectCorrectlyReleased)
         ]
     }
+    #endif // SKIP
     
     func test_setWithUnmutableKeys() {
         let cache = NSCache<NSString, NSString>()

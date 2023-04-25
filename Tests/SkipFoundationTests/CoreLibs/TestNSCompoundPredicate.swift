@@ -21,6 +21,7 @@ import XCTest
 
 class TestNSCompoundPredicate: XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestNSCompoundPredicate) -> () throws -> Void)] {
         return [
             ("test_NotPredicate", test_NotPredicate),
@@ -34,6 +35,7 @@ class TestNSCompoundPredicate: XCTestCase {
             ("test_AndPredicateShortCircuits", test_AndPredicateShortCircuits),
         ]
     }
+    #endif // SKIP
 
     private func eval(_ predicate: NSPredicate, object: NSObject = NSObject()) -> Bool {
         return predicate.evaluate(with: object, substitutionVariables: nil)

@@ -21,6 +21,7 @@ import XCTest
 
 class TestHTTPCookie: XCTestCase {
 
+    #if !SKIP
     static var allTests: [(String, (TestHTTPCookie) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -47,6 +48,7 @@ class TestHTTPCookie: XCTestCase {
             ("test_httpCookieWithSubstring", test_httpCookieWithSubstring),
         ]
     }
+    #endif // SKIP
 
     func test_BasicConstruction() {
         let invalidVersionZeroCookie = HTTPCookie(properties: [

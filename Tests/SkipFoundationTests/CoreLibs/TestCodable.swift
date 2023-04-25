@@ -561,6 +561,7 @@ class TestCodable : XCTestCase {
 }
 
 extension TestCodable {
+    #if !SKIP
     static var allTests: [(String, (TestCodable) -> () throws -> Void)] {
         return [
             ("test_PersonNameComponents_JSON", test_PersonNameComponents_JSON),
@@ -583,6 +584,7 @@ extension TestCodable {
             ("test_URLComponents_JSON", test_URLComponents_JSON),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

@@ -29,6 +29,7 @@ func dateWithString(_ str: String) -> Date {
 
 class TestDate : XCTestCase {
     
+    #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestDate) -> () throws -> Void)] {
         return [
@@ -51,6 +52,7 @@ class TestDate : XCTestCase {
             ("test_distanceTo", test_distanceTo),
         ]
     }
+    #endif // SKIP
     
     func test_BasicConstruction() {
         let d = Date()

@@ -271,17 +271,65 @@ extension JUnitTestCase {
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    private func reportTestResults(_ testSuites: [GradleDriver.TestSuite], _ dir: URL) {
+    private func reportTestResults(_ testSuites: [GradleDriver.TestSuite], _ dir: URL, showStreams: Bool = true) {
+
+        // do one intial pass to show the stdout and stderror
+        if showStreams {
+            for testSuite in testSuites {
+                // all the stdout/stderr is batched together for all test tests, so output it all at the end
+                // and line up the spaced with the "GRADLE TEST CASE" line describing the test
+                if let systemOut = testSuite.systemOut {
+                    print("JUNIT TEST STDOUT: \(testSuite.name):")
+                    let prefix = "STDOUT> "
+                    print(prefix + systemOut.split(separator: "\n").joined(separator: "\n" + prefix))
+                }
+                if let systemErr = testSuite.systemErr {
+                    print("JUNIT TEST STDERR: \(testSuite.name):")
+                    let prefix = "STDERR> "
+                    print(prefix + systemErr.split(separator: "\n").joined(separator: "\n" + prefix))
+                }
+            }
+        }
+
+        var passTotal = 0, failTotal = 0, skipTotal = 0, suiteTotal = 0, testsTotal = 0
+        var timeTotal = 0.0
+
         // parse the test result XML files and convert test failures into XCTIssues with links to the failing source and line
         for testSuite in testSuites {
-            for testCase in testSuite.testCases {
-                var msg = ""
-                msg += className + "."
-                // Jupiter test case names are like "testSystemRandomNumberGenerator$SkipFoundation()"
-                msg += testCase.name.split(separator: "$").first?.description ?? testCase.name
-                msg += " (" + testCase.time.description + ") " // add in the time for profiling
+            suiteTotal += 1
+            var pass = 0, fail = 0, skip = 0
+            var time = 0.0
+            defer {
+                passTotal += pass
+                failTotal += fail
+                skipTotal += skip
+                timeTotal += time
+            }
 
-                print("GRADLE TEST CASE", testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
+            for testCase in testSuite.testCases {
+                testsTotal += 1
+                if testCase.skipped {
+                    skip += 1
+                } else if testCase.failures.isEmpty {
+                    pass += 1
+                } else {
+                    fail += 1
+                }
+                time += testCase.time
+
+                var msg = ""
+
+                // msg += className + "." // putting the class name in makes the string long
+
+                // Jupiter test case names are like "testSystemRandomNumberGenerator$SkipFoundation()"
+                let testName = testCase.name.split(separator: "$").first?.description ?? testCase.name
+                msg += testName
+
+                if !testCase.skipped {
+                    msg += " (" + testCase.time.description + ") " // add in the time for profiling
+                }
+
+                print("JUNIT TEST", testCase.skipped ? "SKIPPED" : testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
                 // add a failure for each reported failure
                 for failure in testCase.failures {
                     // TODO: extract the file path and report the failing file abd line to xcode
@@ -318,17 +366,11 @@ extension JUnitTestCase {
                 }
             }
 
-            // all the stdout/stderr is batched together for all test tests, so output it all at the end
-            // and line up the spaced with the "GRADLE TEST CASE" line describing the test
-            if let systemOut = testSuite.systemOut {
-                let prefix = "STDOUT> "
-                print(prefix + systemOut.split(separator: "\n").joined(separator: "\n" + prefix))
-            }
-            if let systemErr = testSuite.systemErr {
-                let prefix = "STDERR> "
-                print(prefix + systemErr.split(separator: "\n").joined(separator: "\n" + prefix))
-            }
+            print("JUNIT TEST SUITE: \(testSuite.name): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeTotal * 100.0) / 100.0)")
         }
+
+        print("JUNIT TEST SUITES (\(suiteTotal)): TESTS \(testsTotal) PASSED \(passTotal) FAILED \(failTotal) SKIPPED \(skipTotal) TIME \(round(timeTotal * 100.0) / 100.0)")
+
     }
     #endif // os(macOS) || os(Linux)
 

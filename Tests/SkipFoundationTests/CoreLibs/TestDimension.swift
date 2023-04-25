@@ -36,11 +36,13 @@ class TestDimension: XCTestCase {
         XCTAssertEqual(original, decoded)
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestDimension) -> () throws -> Void)] {
         return [
             ("test_encodeDecode", test_encodeDecode),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

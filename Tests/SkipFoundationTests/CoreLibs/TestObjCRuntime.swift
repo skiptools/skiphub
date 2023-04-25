@@ -31,6 +31,7 @@ struct SwiftStruct {}
 enum SwiftEnum {}
 
 class TestObjCRuntime: XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestObjCRuntime) -> () throws -> Void)] {
         var tests: [(String, (TestObjCRuntime) -> () throws -> Void)] = [
             ("testStringFromClass", testStringFromClass),
@@ -43,6 +44,7 @@ class TestObjCRuntime: XCTestCase {
         
         return tests
     }
+    #endif // SKIP
 
     func testStringFromClass() {
         let name = testBundleName()

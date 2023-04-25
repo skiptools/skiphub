@@ -31,6 +31,7 @@ import XCTest
 
 class TestURLProtectionSpace : XCTestCase {
 
+    #if !SKIP
     static var allTests: [(String, (TestURLProtectionSpace) -> () throws -> Void)] {
         var tests: [(String, (TestURLProtectionSpace) -> () throws -> ())] = [
             ("test_description", test_description),
@@ -45,6 +46,7 @@ class TestURLProtectionSpace : XCTestCase {
         
         return tests
     }
+    #endif // SKIP
 
     func test_description() {
         var space = URLProtectionSpace(

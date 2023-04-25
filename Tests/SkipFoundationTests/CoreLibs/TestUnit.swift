@@ -100,12 +100,14 @@ class TestUnit: XCTestCase {
         testEquality(ofDimensionSubclass: UnitVolume.self)
     }
 
+    #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestUnit) -> () throws -> Void)] {
         return [
             ("test_equality", test_equality),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

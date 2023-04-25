@@ -21,6 +21,7 @@ import XCTest
 
 class TestNSPredicate: XCTestCase {
 
+    #if !SKIP
     static var allTests : [(String, (TestNSPredicate) -> () throws -> Void)] {
         return [
             ("test_BooleanPredicate", test_BooleanPredicate),
@@ -34,6 +35,7 @@ class TestNSPredicate: XCTestCase {
             ("test_copy", test_copy),
         ]
     }
+    #endif // SKIP
 
     func test_BooleanPredicate() {
         let truePredicate = NSPredicate(value: true)

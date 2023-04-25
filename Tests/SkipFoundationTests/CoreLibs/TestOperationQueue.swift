@@ -22,6 +22,7 @@ import XCTest
 import Dispatch
 
 class TestOperationQueue : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestOperationQueue) -> () throws -> Void)] {
         return [
             ("test_OperationPriorities", test_OperationPriorities),
@@ -57,6 +58,7 @@ class TestOperationQueue : XCTestCase {
             ("test_BlockOperationAddExecutionBlock", test_BlockOperationAddExecutionBlock),
         ]
     }
+    #endif // SKIP
     
     func test_OperationCount() {
         let queue = OperationQueue()

@@ -46,6 +46,7 @@ private func assertEqual(_ rect: CGRect,
 
 class TestNSGeometry : XCTestCase {
 
+    #if !SKIP
     static var allTests: [(String, (TestNSGeometry) -> () throws -> Void)] {
         return [
             ("test_CGFloat_BasicConstruction", test_CGFloat_BasicConstruction),
@@ -98,6 +99,7 @@ class TestNSGeometry : XCTestCase {
             ("test_DecodeGarbageFromNSString", test_DecodeGarbageFromNSString),
         ]
     }
+    #endif // SKIP
 
     func test_CGFloat_BasicConstruction() {
         XCTAssertEqual(CGFloat().native, 0.0)

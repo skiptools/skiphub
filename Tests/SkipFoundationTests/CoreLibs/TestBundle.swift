@@ -576,6 +576,7 @@ class TestBundle : XCTestCase {
         //XCTAssertEqual(testBundle(), Bundle(for: type(of: self)))
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestBundle) -> () throws -> Void)] {
         var tests: [(String, (TestBundle) -> () throws -> Void)] = [
             ("test_paths", test_paths),
@@ -601,6 +602,7 @@ class TestBundle : XCTestCase {
         
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

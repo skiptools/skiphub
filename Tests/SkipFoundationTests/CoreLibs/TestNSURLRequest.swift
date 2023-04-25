@@ -21,6 +21,7 @@ import XCTest
 
 class TestNSURLRequest : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestNSURLRequest) -> () throws -> Void)] {
         return [
             ("test_construction", test_construction),
@@ -40,6 +41,7 @@ class TestNSURLRequest : XCTestCase {
             ("test_validLineFoldedHeaderValues", test_validLineFoldedHeaderValues),
         ]
     }
+    #endif // SKIP
     
     let url = URL(string: "http://swift.org")!
     

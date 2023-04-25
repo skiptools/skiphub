@@ -22,6 +22,7 @@ import XCTest
 class TestMassFormatter: XCTestCase {
     let formatter: MassFormatter = MassFormatter()
     
+    #if !SKIP
     static var allTests: [(String, (TestMassFormatter) -> () throws -> Void)] {
         return [
             ("test_stringFromKilogramsImperialRegion", test_stringFromKilogramsImperialRegion),
@@ -32,6 +33,7 @@ class TestMassFormatter: XCTestCase {
             ("test_unitStringFromValue", test_unitStringFromValue),
         ]
     }
+    #endif // SKIP
     
     override func setUp() {
         formatter.numberFormatter.locale = Locale(identifier: "en_US")

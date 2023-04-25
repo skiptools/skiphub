@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestPropertyListSerialization : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestPropertyListSerialization) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -28,6 +29,7 @@ class TestPropertyListSerialization : XCTestCase {
 	    ("test_decodeEmptyData", test_decodeEmptyData),
         ]
     }
+    #endif // SKIP
     
     func test_BasicConstruction() {
         let dict = NSMutableDictionary(capacity: 0)

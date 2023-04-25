@@ -269,6 +269,7 @@ class TestNSDictionary : XCTestCase {
         XCTAssertEqual(dictionary[3 as NSNumber] as? String, "k")
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestNSDictionary) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -286,6 +287,7 @@ class TestNSDictionary : XCTestCase {
             ("test_sharedKeySets", test_sharedKeySets),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

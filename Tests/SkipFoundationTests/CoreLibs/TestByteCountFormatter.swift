@@ -468,6 +468,7 @@ class TestByteCountFormatter : XCTestCase {
 //        }
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestByteCountFormatter) -> () throws -> Void)] {
         return [
             ("test_DefaultValues", test_DefaultValues),
@@ -493,6 +494,7 @@ class TestByteCountFormatter : XCTestCase {
             ("test_unarchivingFixtures", test_unarchivingFixtures),
         ]
     }
+    #endif // SKIP
     
 }
 

@@ -736,6 +736,7 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestXMLDocument) -> () throws -> Void)] {
         return [
             ("test_basicCreation", test_basicCreation),
@@ -773,6 +774,7 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
             ("test_parsingCDataSections", test_parsingCDataSections),
         ]
     }
+    #endif // SKIP
 }
 
 fileprivate extension XMLNode {

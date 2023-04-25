@@ -257,6 +257,7 @@ class TestURLCache : XCTestCase {
     
     // -----
     
+    #if !SKIP
     static var allTests: [(String, (TestURLCache) -> () throws -> Void)] {
         return [
             ("testStorageRoundtrip", testStorageRoundtrip),
@@ -271,6 +272,7 @@ class TestURLCache : XCTestCase {
             ("testStoringTwiceOnlyHasOneEntry", testStoringTwiceOnlyHasOneEntry),
         ]
     }
+    #endif // SKIP
     
     // -----
     

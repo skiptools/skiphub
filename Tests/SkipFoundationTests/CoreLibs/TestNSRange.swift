@@ -21,6 +21,7 @@ import XCTest
 
 class TestNSRange : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestNSRange) -> () throws -> Void)] {
         return [
             ("test_NSRangeFromString", test_NSRangeFromString ),
@@ -36,6 +37,7 @@ class TestNSRange : XCTestCase {
             ("test_hashing", test_hashing),
         ]
     }
+    #endif // SKIP
 
     func test_NSRangeFromString() {
         let emptyRangeStrings = [

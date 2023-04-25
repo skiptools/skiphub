@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNSNumberBridging : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSNumberBridging) -> () throws -> Void)] {
         return [
             ("testNSNumberBridgeFromInt8", testNSNumberBridgeFromInt8),
@@ -39,6 +40,7 @@ class TestNSNumberBridging : XCTestCase {
             ("testNSNumberToBool", testNSNumberToBool),
         ]
     }
+    #endif // SKIP
 
     func testFloat(_ lhs: Float?, _ rhs: Float?, file: String = #file, line: UInt = #line) {
         let message = "\(file):\(line) \(String(describing: lhs)) != \(String(describing: rhs)) Float"

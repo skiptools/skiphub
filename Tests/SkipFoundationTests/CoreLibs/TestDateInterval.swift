@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestDateInterval: XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestDateInterval) -> () throws -> Void)] {
         return [
             ("test_defaultInitializer", test_defaultInitializer),
@@ -37,6 +38,7 @@ class TestDateInterval: XCTestCase {
             ("test_hashing", test_hashing),
         ]
     }
+    #endif // SKIP
 
     func test_defaultInitializer() {
         let dateInterval = DateInterval()

@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNotificationQueue : XCTestCase {
+    #if !SKIP
     static var allTests : [(String, (TestNotificationQueue) -> () throws -> Void)] {
         return [
             ("test_defaultQueue", test_defaultQueue),
@@ -34,6 +35,7 @@ class TestNotificationQueue : XCTestCase {
             ("test_postIdleToDefaultQueue", test_postIdleToDefaultQueue),
         ]
     }
+    #endif // SKIP
 
     func test_defaultQueue() {
         let defaultQueue1 = NotificationQueue.default

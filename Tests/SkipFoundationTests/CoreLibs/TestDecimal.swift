@@ -1535,6 +1535,7 @@ class TestDecimal: XCTestCase {
         }
     }
 
+    #if !SKIP
     static var allTests : [(String, (TestDecimal) -> () throws -> Void)] {
         return [
             ("test_NSDecimalNumberInit", test_NSDecimalNumberInit),
@@ -1572,6 +1573,7 @@ class TestDecimal: XCTestCase {
             ("test_intValue", test_intValue),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

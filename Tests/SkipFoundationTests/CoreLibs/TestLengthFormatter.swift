@@ -22,6 +22,7 @@ import XCTest
 class TestLengthFormatter: XCTestCase {
     let formatter: LengthFormatter = LengthFormatter()
     
+    #if !SKIP
     static var allTests: [(String, (TestLengthFormatter) -> () throws -> Void)] {
         return [
             ("test_stringFromMetersUS", test_stringFromMetersUS),
@@ -33,6 +34,7 @@ class TestLengthFormatter: XCTestCase {
             ("test_unitStringFromValue", test_unitStringFromValue)
         ]
     }
+    #endif // SKIP
 
     override func setUp() {
         formatter.numberFormatter.locale = Locale(identifier: "en_US")

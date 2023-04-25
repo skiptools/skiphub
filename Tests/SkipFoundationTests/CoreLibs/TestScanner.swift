@@ -526,6 +526,7 @@ class TestScanner : XCTestCase {
         XCTAssertNil(Scanner(string: "foo").locale)
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestScanner) -> () throws -> Void)] {
         return [
             ("testScanFloatingPoint", testScanFloatingPoint),
@@ -542,6 +543,7 @@ class TestScanner : XCTestCase {
             ("testLocalizedScanner", testLocalizedScanner),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

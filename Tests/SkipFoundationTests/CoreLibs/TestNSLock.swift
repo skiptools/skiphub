@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNSLock: XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSLock) -> () throws -> Void)] {
         return [
 
@@ -29,6 +30,7 @@ class TestNSLock: XCTestCase {
             
         ]
     }
+    #endif // SKIP
 
 
     func test_lockWait() {

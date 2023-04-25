@@ -404,13 +404,16 @@ public struct GradleDriver {
         public var classname: String
         /// The amount of time it took the test case to run
         public var time: TimeInterval
+        /// Whether the test was skipped by throwing `XCTSkip` (`org.junit.AssumptionViolatedException`)
+        public var skipped: Bool
         /// The failures, if any
         public var failures: [TestFailure]
 
-        public init(name: String, classname: String, time: TimeInterval, failures: [TestFailure]) {
+        public init(name: String, classname: String, time: TimeInterval, skipped: Bool, failures: [TestFailure]) {
             self.name = name
             self.classname = classname
             self.time = time
+            self.skipped = skipped
             self.failures = failures
         }
 
@@ -434,6 +437,15 @@ public struct GradleDriver {
             self.name = testCaseName
             self.classname = classname
             self.time = duration
+
+            var skipped = false
+            for child in element.children ?? [] {
+                if child.name == "skipped" {
+                    skipped = true
+                }
+            }
+
+            self.skipped = skipped
 
             var testFailures: [TestFailure] = []
             func addTestFailure(for element: XMLElement) throws {

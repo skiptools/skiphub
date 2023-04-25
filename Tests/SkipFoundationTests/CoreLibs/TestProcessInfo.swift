@@ -171,6 +171,7 @@ class TestProcessInfo : XCTestCase {
 #endif
 
 
+    #if !SKIP
     static var allTests: [(String, (TestProcessInfo) -> () throws -> Void)] {
         var tests: [(String, (TestProcessInfo) -> () throws -> ())] = [
             ("test_operatingSystemVersion", test_operatingSystemVersion ),
@@ -185,6 +186,7 @@ class TestProcessInfo : XCTestCase {
 
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

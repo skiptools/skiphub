@@ -776,6 +776,7 @@ class TestIndexPath: XCTestCase {
         }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestIndexPath) -> () throws -> Void)] {
         return [
             ("testEmpty", testEmpty),
@@ -831,6 +832,7 @@ class TestIndexPath: XCTestCase {
             ("testLoadedValuesMatch", testLoadedValuesMatch),
         ]
     }
+    #endif // SKIP
 
 }
 

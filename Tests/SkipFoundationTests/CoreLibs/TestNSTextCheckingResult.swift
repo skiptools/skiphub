@@ -144,6 +144,7 @@ class TestNSTextCheckingResult: XCTestCase {
         }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestNSTextCheckingResult) -> () throws -> Void)] {
         return [
             ("test_textCheckingResult", test_textCheckingResult),
@@ -153,6 +154,7 @@ class TestNSTextCheckingResult: XCTestCase {
             ("test_loadedVauesMatch", test_loadedVauesMatch),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

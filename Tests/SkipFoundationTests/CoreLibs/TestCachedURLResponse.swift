@@ -201,6 +201,7 @@ class TestCachedURLResponse : XCTestCase {
         XCTAssertNotEqual(cachedResponse2.hash, cachedResponse3.hash)
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestCachedURLResponse) -> () throws -> Void)] {
         return [
             ("test_copy", test_copy),
@@ -215,6 +216,7 @@ class TestCachedURLResponse : XCTestCase {
             ("test_hash", test_hash),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

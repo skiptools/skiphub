@@ -1282,6 +1282,7 @@ class TestIndexSet : XCTestCase {
         XCTAssertEqual(sample9.hashValue, sample10.hashValue)
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestIndexSet) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -1333,6 +1334,7 @@ class TestIndexSet : XCTestCase {
             ("testHashValue", testHashValue),
         ]
     }
+    #endif // SKIP
     
 }
 

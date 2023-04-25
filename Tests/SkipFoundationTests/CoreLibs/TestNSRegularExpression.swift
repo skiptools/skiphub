@@ -21,6 +21,7 @@ import XCTest
 
 class TestNSRegularExpression : XCTestCase {
     
+    #if !SKIP
     static var allTests : [(String, (TestNSRegularExpression) -> () throws -> Void)] {
         return [
             ("test_simpleRegularExpressions", test_simpleRegularExpressions),
@@ -34,6 +35,7 @@ class TestNSRegularExpression : XCTestCase {
             ("test_conflictingNamedGroups", test_conflictingNamedGroups),
         ]
     }
+    #endif // SKIP
 
     func simpleRegularExpressionTestWithPattern(_ patternString: String, target searchString: String, looking: Bool, match: Bool, file: StaticString = #file, line: UInt = #line) {
         do {

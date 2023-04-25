@@ -24,6 +24,7 @@ class TestDateFormatter: XCTestCase {
     let DEFAULT_LOCALE = "en_US_POSIX"
     let DEFAULT_TIMEZONE = "GMT"
     
+    #if !SKIP
     static var allTests : [(String, (TestDateFormatter) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -44,6 +45,7 @@ class TestDateFormatter: XCTestCase {
             ("test_copy_sr14108", test_copy_sr14108),
         ]
     }
+    #endif // SKIP
     
     func test_BasicConstruction() {
         

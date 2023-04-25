@@ -21,6 +21,7 @@ import XCTest
 
 class TestURLCredential : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestURLCredential) -> () throws -> Void)] {
         return [
                    ("test_construction", test_construction),
@@ -28,6 +29,7 @@ class TestURLCredential : XCTestCase {
                    ("test_NSCoding", test_NSCoding)
         ]
     }
+    #endif // SKIP
     
     func test_construction() {
         let credential = URLCredential(user: "swiftUser", password: "swiftPassword", persistence: .forSession)

@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNSNumber : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSNumber) -> () throws -> Void)] {
         return [
             ("test_NumberWithBool", test_NumberWithBool ),
@@ -51,6 +52,7 @@ class TestNSNumber : XCTestCase {
             ("test_hash", test_hash),
         ]
     }
+    #endif // SKIP
     
     func test_NumberWithBool() {
         XCTAssertEqual(NSNumber(value: true).boolValue, true)

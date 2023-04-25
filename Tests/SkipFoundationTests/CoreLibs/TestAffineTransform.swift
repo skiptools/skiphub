@@ -8,8 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
-
 #if !os(iOS)
 
 // This source file is part of the Swift.org open source project
@@ -34,6 +32,7 @@ public struct Vector {
 class TestAffineTransform: XCTestCase {
     private let accuracyThreshold: CGFloat = 0.001
 
+    #if !SKIP
     @available(*, deprecated)
     static var allTests: [(String, (TestAffineTransform) -> () throws -> Void)] {
         return [
@@ -58,10 +57,12 @@ class TestAffineTransform: XCTestCase {
             ("testNSCoding", testNSCoding),
         ]
     }
+    #endif // SKIP
 }
  
 // MARK: - Helper
 
+#if !SKIP
 extension TestAffineTransform {
     func check(
         vector: Vector,
@@ -131,11 +132,15 @@ extension TestAffineTransform {
         )
     }
 }
+#endif
 
 // MARK: - Construction
 
 extension TestAffineTransform {
     func testConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let transform = AffineTransform(
             m11: 1, m12: 2,
             m21: 3, m22: 4,
@@ -148,6 +153,7 @@ extension TestAffineTransform {
         XCTAssertEqual(transform.m22, 4)
         XCTAssertEqual(transform.tX , 5)
         XCTAssertEqual(transform.tY , 6)
+        #endif // !SKIP
     }
 }
 
@@ -155,6 +161,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testBridging() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let transform = AffineTransform(
             m11: 1, m12: 2,
             m21: 3, m22: 4,
@@ -168,6 +177,7 @@ extension TestAffineTransform {
 //        #endif
         
         XCTAssertEqual(nsTransform as AffineTransform, transform)
+        #endif // !SKIP
     }
 }
 
@@ -175,6 +185,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testEqualityHashing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let samples = [
             AffineTransform(m11: 1.5, m12: 2.0, m21: 3.0, m22: 4.0, tX: 5.0, tY: 6.0),
             AffineTransform(m11: 1.0, m12: 2.5, m21: 3.0, m22: 4.0, tX: 5.0, tY: 6.0),
@@ -199,6 +212,7 @@ extension TestAffineTransform {
 //                XCTAssertNotEqual(sample.hashValue, otherSample.hashValue)
             }
         }
+        #endif // !SKIP
     }
 }
 
@@ -206,6 +220,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testVectorTransformations() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         // To transform a given size with coordinates w and h,
         // we do:
@@ -259,6 +276,7 @@ extension TestAffineTransform {
             // [     100             70       ]
             mapsToSize: CGSize(width: 100, height: 70)
         )
+        #endif // !SKIP
     }
 }
 
@@ -266,6 +284,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testIdentityConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Check that the transform matrix is the identity:
         // [ 1 0 0 ]
         // [ 0 1 0 ]
@@ -279,15 +300,20 @@ extension TestAffineTransform {
         XCTAssertEqual(AffineTransform(), identity)
         XCTAssertEqual(AffineTransform.identity, identity)
 //        XCTAssertEqual(NSAffineTransform().affineTransform, identity)
+        #endif // !SKIP
     }
     
     func testIdentity() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         check(
             vector: Vector(dx: 25, dy: 10),
             withTransform: .identity,
             mapsToPoint: CGPoint(x: 25, y: 10),
             mapsToSize: CGSize(width: 25, height: 10)
         )
+        #endif // !SKIP
     }
 }
 
@@ -295,6 +321,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testTranslationConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let translatedIdentity: AffineTransform = {
             var transform = AffineTransform.identity
             transform.translate(x: 15, y: 20)
@@ -314,9 +343,13 @@ extension TestAffineTransform {
         XCTAssertEqual(translatedIdentity, translation)
         _ = nsTranslation
 //        XCTAssertEqual(nsTranslation.affineTransform, translation)
+        #endif // !SKIP
     }
     
     func testTranslation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         check(
             vector: Vector(dx: 10, dy: 10),
             withTransform: AffineTransform(
@@ -358,6 +391,7 @@ extension TestAffineTransform {
             mapsToPoint: CGPoint(x: 3, y: 2),
             mapsToSize: CGSize(width: -2, height: -3)
         )
+        #endif // !SKIP
     }
 }
 
@@ -365,6 +399,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testScalingConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Distinct x/y Components
         
         let scaledIdentity: AffineTransform = {
@@ -414,9 +451,13 @@ extension TestAffineTransform {
         XCTAssertEqual(sameScaledIdentity, sameScaling)
         _ = sameNSScaling
 //        XCTAssertEqual(sameNSScaling.affineTransform, sameScaling)
+        #endif // !SKIP
     }
 
     func testScaling() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         check(
             vector: Vector(dx: 10, dy: 10),
             withTransform: AffineTransform(
@@ -458,6 +499,7 @@ extension TestAffineTransform {
             mapsToPoint: CGPoint(x: 20, y: 0),
             mapsToSize: CGSize(width: 20, height: 0)
         )
+        #endif // !SKIP
     }
 }
 
@@ -465,6 +507,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testRotationConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseRotation = AffineTransform(
             rotationByRadians: .pi
         )
@@ -519,9 +564,13 @@ extension TestAffineTransform {
             transform.rotate(byDegrees: 180)
             return transform
         }() as NSAffineTransform as AffineTransform)
+        #endif // !SKIP
     }
     
     func testRotation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         check(
             vector: Vector(dx: 10, dy: 15),
             withTransform: AffineTransform(rotationByDegrees: 0),
@@ -575,6 +624,7 @@ extension TestAffineTransform {
             mapsToPoint: CGPoint(x: -10, y: -15),
             mapsToSize: CGSize(width: -10, height: -15)
         )
+        #endif // !SKIP
     }
 }
 
@@ -582,6 +632,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testTranslationScaling() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        check(
 //            vector: Vector(dx: 1, dy: 3),
 //            // Translate by (2, 0) then scale by (5, -5)
@@ -614,9 +667,13 @@ extension TestAffineTransform {
 //            mapsToPoint: CGPoint(x: -15, y: 15),
 //            mapsToSize: CGSize(width: -15, height: 5)
 //        )
+        #endif // !SKIP
     }
     
     func testTranslationRotation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        check(
 //            vector: Vector(dx: 10, dy: 10),
 //            // Translate by (20, -5) then rotate by 90º
@@ -646,9 +703,13 @@ extension TestAffineTransform {
 //            mapsToPoint: CGPoint(x: 10, y: 5),
 //            mapsToSize: CGSize(width: -10, height: -10)
 //        )
+        #endif // !SKIP
     }
     
     func testScalingRotation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        check(
 //            vector: Vector(dx: 20, dy: 5),
 //            // Scale by (0.5, 3) then rotate by -90º
@@ -678,6 +739,7 @@ extension TestAffineTransform {
 //            mapsToPoint: CGPoint(x: 15, y: 10),
 //            mapsToSize: CGSize(width: 15, height: 10)
 //        )
+        #endif // !SKIP
     }
 }
 
@@ -685,6 +747,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testInversion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let transforms = [
             AffineTransform(translationByX: -30, byY: 40),
             AffineTransform(rotationByDegrees: 30),
@@ -718,6 +783,7 @@ extension TestAffineTransform {
             mapsToPoint: CGPoint(x: 10, y: 10),
             mapsToSize: CGSize(width: 10, height: 10)
         )
+        #endif // !SKIP
     }
 }
 
@@ -725,6 +791,9 @@ extension TestAffineTransform {
 
 extension TestAffineTransform {
     func testPrependTransform() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         check(
             vector: Vector(dx: 10, dy: 15),
             withTransform: {
@@ -752,9 +821,13 @@ extension TestAffineTransform {
             mapsToPoint: CGPoint(x: 30, y: 30),
             mapsToSize: CGSize(width: 20, height: 30)
         )
+        #endif // !SKIP
     }
     
     func testAppendTransform() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         check(
             vector: Vector(dx: 10, dy: 15),
             withTransform: {
@@ -782,6 +855,7 @@ extension TestAffineTransform {
             mapsToPoint: CGPoint(x: 40, y: 30),
             mapsToSize: CGSize(width: 20, height: 30)
         )
+        #endif // !SKIP
     }
 }
 
@@ -790,6 +864,9 @@ extension TestAffineTransform {
 extension TestAffineTransform {
     @available(*, deprecated)
     func testNSCoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let transform = AffineTransform(
             m11: 1, m12: 2,
             m21: 3, m22: 4,
@@ -827,10 +904,9 @@ extension TestAffineTransform {
             nsTransform, nsRecoveredTransform,
             "Archived then unarchived `NSAffineTransform` must be equal."
         )
+        #endif // !SKIP
     }
 }
-
-#endif
 
 #endif
 

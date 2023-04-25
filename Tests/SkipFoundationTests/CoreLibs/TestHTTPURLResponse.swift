@@ -261,6 +261,7 @@ class TestHTTPURLResponse: XCTestCase {
         XCTAssertEqual(responseA.suggestedFilename, responseB.suggestedFilename, "Archived then unarchived http url response must be equal.")
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestHTTPURLResponse) -> () throws -> Void)] {
         return [
             ("test_URL_and_status_1", test_URL_and_status_1),
@@ -298,6 +299,7 @@ class TestHTTPURLResponse: XCTestCase {
             ("test_NSCoding", test_NSCoding),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

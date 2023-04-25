@@ -90,6 +90,7 @@ public class UserClass : NSObject, NSSecureCoding {
 }
 
 class TestNSKeyedArchiver : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSKeyedArchiver) -> () throws -> Void)] {
         return [
             ("test_archive_array", test_archive_array),
@@ -116,6 +117,7 @@ class TestNSKeyedArchiver : XCTestCase {
             ("test_archiveRootObject_URLRequest()", test_archiveRootObject_URLRequest),
         ]
     }
+    #endif // SKIP
 
     private func test_archive(_ encode: (NSKeyedArchiver) -> Bool,
                               decode: (NSKeyedUnarchiver) -> Bool) {

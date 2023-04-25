@@ -313,6 +313,7 @@ class TestNSAttributedString : XCTestCase {
 //        }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestNSAttributedString) -> () throws -> Void)] {
         return [
             ("test_initWithString", test_initWithString),
@@ -329,6 +330,7 @@ class TestNSAttributedString : XCTestCase {
             ("test_unarchivingFixtures", test_unarchivingFixtures),
         ]
     }
+    #endif // SKIP
     
 }
 

@@ -27,6 +27,7 @@ class TestJSONSerialization : XCTestCase {
         .utf32LittleEndian, .utf32BigEndian
     ]
 
+    #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestJSONSerialization) -> () throws -> Void)] {
         return JSONObjectWithDataTests
@@ -34,6 +35,7 @@ class TestJSONSerialization : XCTestCase {
             + isValidJSONObjectTests
             + serializationTests
     }
+    #endif // SKIP
     
 }
 

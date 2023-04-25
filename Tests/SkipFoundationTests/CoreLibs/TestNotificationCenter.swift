@@ -21,6 +21,7 @@ import XCTest
 //
 
 class TestNotificationCenter : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNotificationCenter) -> () throws -> Void)] {
         return [
             ("test_defaultCenter", test_defaultCenter),
@@ -35,6 +36,7 @@ class TestNotificationCenter : XCTestCase {
             ("test_observeOnSpecificQueuePostFromUnrelatedQueue", test_observeOnSpecificQueuePostFromUnrelatedQueue),
         ]
     }
+    #endif // SKIP
     
     func test_defaultCenter() {
         let defaultCenter1 = NotificationCenter.default

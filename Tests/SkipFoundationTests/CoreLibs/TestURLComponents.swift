@@ -291,6 +291,7 @@ class TestURLComponents: XCTestCase {
         XCTAssertEqual(c6?.percentEncodedPath, "/foo/b%20r")
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestURLComponents) -> () throws -> Void)] {
         return [
             ("test_queryItems", test_queryItems),
@@ -306,6 +307,7 @@ class TestURLComponents: XCTestCase {
             ("test_percentEncodedPath", test_percentEncodedPath),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

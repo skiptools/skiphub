@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNSValue : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSValue) -> () throws -> Void)] {
         return [
             ( "test_valueWithLong", test_valueWithLong ),
@@ -34,6 +35,7 @@ class TestNSValue : XCTestCase {
             ( "test_isEqual", test_isEqual ),
         ]
     }
+    #endif // SKIP
     
     func test_valueWithCGPoint() {
         #if !os(iOS)

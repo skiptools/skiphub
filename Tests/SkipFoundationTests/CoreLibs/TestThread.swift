@@ -163,6 +163,7 @@ class TestThread : XCTestCase {
 //        XCTAssertTrue(allowedOversleepRange.contains(oversleep3), "Oversleep \(oversleep3) is not in expected range \(allowedOversleepRange)")
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestThread) -> () throws -> Void)] {
         let tests: [(String, (TestThread) -> () throws -> Void)] = [
             ("test_currentThread", test_currentThread),
@@ -187,6 +188,7 @@ class TestThread : XCTestCase {
 
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

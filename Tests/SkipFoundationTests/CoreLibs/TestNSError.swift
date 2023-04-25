@@ -24,6 +24,7 @@ struct SwiftCustomNSError: Error, CustomNSError {
 
 class TestNSError : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestNSError) -> () throws -> Void)] {
         var tests: [(String, (TestNSError) -> () throws -> Void)] = [
             ("test_LocalizedError_errorDescription", test_LocalizedError_errorDescription),
@@ -49,6 +50,7 @@ class TestNSError : XCTestCase {
         
         return tests
     }
+    #endif // SKIP
     
     func test_LocalizedError_errorDescription() {
         struct Error : LocalizedError {

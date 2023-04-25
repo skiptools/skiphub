@@ -1230,6 +1230,7 @@ class TestNumberFormatter: XCTestCase {
 //        __assert(\.format, original: "#,##0%;0％;#,##0%", copy: "#,##0.###;0;#,##0.###")
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestNumberFormatter) -> () throws -> Void)] {
         return [
             ("test_defaultPropertyValues", test_defaultPropertyValues),
@@ -1295,6 +1296,7 @@ class TestNumberFormatter: XCTestCase {
             ("test_copy", test_copy),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

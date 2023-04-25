@@ -21,6 +21,7 @@ import XCTest
 
 class TestUUID : XCTestCase {
     
+    #if !SKIP
     static var allTests: [(String, (TestUUID) -> () throws -> Void)] {
         return [
             ("test_UUIDEquality", test_UUIDEquality),
@@ -31,6 +32,7 @@ class TestUUID : XCTestCase {
             ("test_hash", test_hash),
         ]
     }
+    #endif // SKIP
     
     func test_UUIDEquality() {
         let uuidA = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")

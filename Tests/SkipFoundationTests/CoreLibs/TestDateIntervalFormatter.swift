@@ -289,6 +289,7 @@ class TestDateIntervalFormatter: XCTestCase {
 //        }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestDateIntervalFormatter) -> () throws -> Void)] {
         var tests: [(String, (TestDateIntervalFormatter) -> () throws -> Void)] = [
             ("testStringFromDateToDateAcrossThreeBillionSeconds", testStringFromDateToDateAcrossThreeBillionSeconds),
@@ -314,6 +315,7 @@ class TestDateIntervalFormatter: XCTestCase {
         
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

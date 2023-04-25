@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNSKeyedUnarchiver : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSKeyedUnarchiver) -> () throws -> Void)] {
         return [
             ("test_unarchive_array", test_unarchive_array),
@@ -34,6 +35,7 @@ class TestNSKeyedUnarchiver : XCTestCase {
             ("test_unarchive_uuid", test_unarchive_uuid),
         ]
     }
+    #endif // SKIP
     
     private enum SecureTest {
         case skip

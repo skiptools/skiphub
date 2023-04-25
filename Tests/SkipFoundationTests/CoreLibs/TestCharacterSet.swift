@@ -383,6 +383,7 @@ class TestCharacterSet : XCTestCase {
         }
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestCharacterSet) -> () throws -> Void)] {
         return [
             ("testBasicConstruction", testBasicConstruction),
@@ -410,6 +411,7 @@ class TestCharacterSet : XCTestCase {
             ("test_codingRoundtrip", test_codingRoundtrip),
         ]
     }
+    #endif // SKIP
     
     
 }

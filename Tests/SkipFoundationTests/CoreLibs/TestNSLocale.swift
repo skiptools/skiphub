@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestNSLocale : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestNSLocale) -> () throws -> Void)] {
         return [
             ("test_constants", test_constants),
@@ -30,6 +31,7 @@ class TestNSLocale : XCTestCase {
             ("test_localeProperties", test_localeProperties),
         ]
     }
+    #endif // SKIP
 
     func test_Identifier() {
         // Current locale identifier should not be empty

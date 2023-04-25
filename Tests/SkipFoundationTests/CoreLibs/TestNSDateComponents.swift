@@ -281,6 +281,7 @@ class TestNSDateComponents: XCTestCase {
         XCTAssertEqual(Calendar.current.compare(d2, to: d1, toGranularity: .weekday), .orderedDescending)
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestNSDateComponents) -> () throws -> Void)] {
         return [
             ("test_hash", test_hash),
@@ -290,6 +291,7 @@ class TestNSDateComponents: XCTestCase {
             ("test_currentCalendar", test_currentCalendar),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

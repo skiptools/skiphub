@@ -300,6 +300,7 @@ class TestCalendar: XCTestCase {
         }
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestCalendar) -> () throws -> Void)] {
         return [
             ("test_allCalendars", test_allCalendars),
@@ -322,6 +323,7 @@ class TestCalendar: XCTestCase {
             ("test_nextDate", test_nextDate),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

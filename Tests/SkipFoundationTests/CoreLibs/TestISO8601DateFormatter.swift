@@ -361,6 +361,7 @@ class TestISO8601DateFormatter: XCTestCase {
         XCTAssertTrue(copied.formatOptions.contains(.withFractionalSeconds))
     }
     
+    #if !SKIP
     static var allTests : [(String, (TestISO8601DateFormatter) -> () throws -> Void)] {
         
         return [
@@ -372,6 +373,7 @@ class TestISO8601DateFormatter: XCTestCase {
             ("test_copy", test_copy),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

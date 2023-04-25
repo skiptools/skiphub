@@ -541,6 +541,7 @@ class TestURLCredentialStorage : XCTestCase {
     }
     
     
+    #if !SKIP
     static var allTests: [(String, (TestURLCredentialStorage) -> () throws -> Void)] {
         var tests: [(String, (TestURLCredentialStorage) -> () throws -> Void)] = [
             ("test_storageStartsEmpty", test_storageStartsEmpty),
@@ -581,6 +582,7 @@ class TestURLCredentialStorage : XCTestCase {
         
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

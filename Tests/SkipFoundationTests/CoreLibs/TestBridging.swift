@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -20,14 +19,17 @@ import XCTest
 //
 
 
+#if !SKIP
 struct StructWithDescriptionAndDebugDescription:
     CustomStringConvertible, CustomDebugStringConvertible
 {
     var description: String { "description" }
     var debugDescription: String { "debugDescription" }
 }
+#endif
 
 class TestBridging : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestBridging) -> () throws -> Void)] {
         return [
             ("testBridgedDescription", testBridgedDescription),
@@ -35,8 +37,12 @@ class TestBridging : XCTestCase {
             ("testConstantsImmortal", testConstantsImmortal),
         ]
     }
+    #endif // SKIP
 
     func testBridgedDescription() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if canImport(Foundation) && canImport(SwiftFoundation)
         /*
           Do not test this on Darwin.
@@ -68,16 +74,24 @@ class TestBridging : XCTestCase {
 //        XCTAssertEqual("description", c.description)
 //        XCTAssertEqual("description", c.debugDescription)
         #endif
+        #endif // !SKIP
     }
 
     func testDynamicCast() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Covers https://github.com/apple/swift-corelibs-foundation/pull/2500
         class TestClass {}
         let anyArray: Any = [TestClass()]
         XCTAssertNotNil(anyArray as? NSObject)
+        #endif // !SKIP
     }
 
     func testConstantsImmortal() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func release(_ ptr: UnsafeRawPointer, count: Int) {
             let object: Unmanaged<NSNumber> = Unmanaged.fromOpaque(ptr)
             for _ in 0..<count {
@@ -103,8 +117,8 @@ class TestBridging : XCTestCase {
 
         XCTAssertEqual(trueRefCount, truePtr.advanced(by: 1).pointee)
         XCTAssertEqual(falseRefCount, falsePtr.advanced(by: 1).pointee)
+        #endif // !SKIP
     }
 }
 
-#endif
 

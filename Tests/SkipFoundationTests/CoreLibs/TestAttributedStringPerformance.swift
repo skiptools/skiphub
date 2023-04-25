@@ -8,8 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
-
 //===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
@@ -31,38 +29,57 @@ final class TestAttributedStringPerformance: XCTestCase {
     static let runWithNSAttributedString = false
     
     func createLongString() -> AttributedString {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString(String(repeating: "a", count: 10000), attributes: AttributeContainer().testInt(1))
         str += AttributedString(String(repeating: "b", count: 10000), attributes: AttributeContainer().testInt(2))
         str += AttributedString(String(repeating: "c", count: 10000), attributes: AttributeContainer().testInt(3))
         return str
+        #endif // !SKIP
     }
     
     func createManyAttributesString() -> AttributedString {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = AttributedString("a")
         for i in 0..<10000 {
             str += AttributedString("a", attributes: AttributeContainer().testInt(i))
         }
         return str
+        #endif // !SKIP
     }
     
     func createLongNSString() -> NSMutableAttributedString {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = NSMutableAttributedString(string: String(repeating: "a", count: 10000), attributes: [.testInt: NSNumber(1)])
         str.append(NSMutableAttributedString(string: String(repeating: "b", count: 10000), attributes: [.testInt: NSNumber(2)]))
         str.append(NSMutableAttributedString(string: String(repeating: "c", count: 10000), attributes: [.testInt: NSNumber(3)]))
         return str
+        #endif // !SKIP
     }
     
     func createManyAttributesNSString() -> NSMutableAttributedString {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = NSMutableAttributedString(string: "a")
         for i in 0..<10000 {
             str.append(NSAttributedString(string: "a", attributes: [.testInt: NSNumber(value: i)]))
         }
         return str
+        #endif // !SKIP
     }
     
     // MARK: - String Manipulation
     
     func testInsertIntoLongString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createLongString()
         let idx = str.characters.index(str.startIndex, offsetBy: str.characters.count / 2)
         let toInsert = AttributedString(String(repeating: "c", count: str.characters.count))
@@ -78,9 +95,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str.insert(toInsert, at: idx)
             }
         }
+        #endif // !SKIP
     }
     
     func testReplaceSubrangeOfLongString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createLongString()
         let start = str.characters.index(str.startIndex, offsetBy: str.characters.count / 2)
         let range = start ... str.characters.index(start, offsetBy: 10)
@@ -99,11 +120,15 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str.replaceSubrange(range, with: toInsert)
             }
         }
+        #endif // !SKIP
     }
     
     // MARK: - Attribute Manipulation
     
     func testSetAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createManyAttributesString()
         let strNS = createManyAttributesNSString()
         
@@ -114,9 +139,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str.testDouble = 1.5
             }
         }
+        #endif // !SKIP
     }
     
     func testGetAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = createManyAttributesString()
         let strNS = createManyAttributesNSString()
         
@@ -129,9 +158,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 let _ = str.testDouble
             }
         }
+        #endif // !SKIP
     }
     
     func testSetAttributeSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createManyAttributesString()
         let range = str.characters.index(str.startIndex, offsetBy: str.characters.count / 2)...
         
@@ -145,9 +178,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str[range].testDouble = 1.5
             }
         }
+        #endif // !SKIP
     }
     
     func testGetAttributeSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = createManyAttributesString()
         let range = str.characters.index(str.startIndex, offsetBy: str.characters.count / 2)...
         
@@ -163,9 +200,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 let _ = str[range].testDouble
             }
         }
+        #endif // !SKIP
     }
     
     func testModifyAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = createManyAttributesString()
         let strNS = createManyAttributesNSString()
         
@@ -184,9 +225,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 }
             }
         }
+        #endif // !SKIP
     }
     
     func testReplaceAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createManyAttributesString()
         let old = AttributeContainer().testInt(100)
         let new = AttributeContainer().testDouble(100.5)
@@ -205,9 +250,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str.replaceAttributes(old, with: new)
             }
         }
+        #endif // !SKIP
     }
     
     func testMergeMultipleAttributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createManyAttributesString()
         let new = AttributeContainer().testDouble(1.5).testString("test")
         
@@ -221,9 +270,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str.mergeAttributes(new)
             }
         }
+        #endif // !SKIP
     }
     
     func testSetMultipleAttributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var str = createManyAttributesString()
         let new = AttributeContainer().testDouble(1.5).testString("test")
         
@@ -238,11 +291,15 @@ final class TestAttributedStringPerformance: XCTestCase {
                 str.setAttributes(new)
             }
         }
+        #endif // !SKIP
     }
     
     // MARK: - Attribute Enumeration
     
     func testEnumerateAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = createManyAttributesString()
         let strNS = createManyAttributesNSString()
         
@@ -257,9 +314,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 }
             }
         }
+        #endif // !SKIP
     }
     
     func testEnumerateAttributesSlice() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = createManyAttributesString()
         let strNS = createManyAttributesNSString()
         
@@ -274,11 +335,15 @@ final class TestAttributedStringPerformance: XCTestCase {
                 }
             }
         }
+        #endif // !SKIP
     }
     
     // MARK: - NSAS Conversion
     
     func testConvertToNSAS() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard !TestAttributedStringPerformance.runWithNSAttributedString else {
             throw XCTSkip("Test disabled for NSAS")
         }
@@ -288,9 +353,13 @@ final class TestAttributedStringPerformance: XCTestCase {
         self.measure {
             let _ = try! NSAttributedString(str, including: AttributeScopes.TestAttributes.self)
         }
+        #endif // !SKIP
     }
     
     func testConvertFromNSAS() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard !TestAttributedStringPerformance.runWithNSAttributedString else {
             throw XCTSkip("Test disabled for NSAS")
         }
@@ -301,11 +370,15 @@ final class TestAttributedStringPerformance: XCTestCase {
         self.measure {
             let _ = try! AttributedString(ns, including: AttributeScopes.TestAttributes.self)
         }
+        #endif // !SKIP
     }
     
     // MARK: - Encoding and Decoding
     
     func testEncode() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct CodableType: Codable {
             @CodableConfiguration(from: AttributeScopes.TestAttributes.self)
             var str = AttributedString()
@@ -324,9 +397,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 let _ = try! encoder.encode(codableType)
             }
         }
+        #endif // !SKIP
     }
     
     func testDecode() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct CodableType: Codable {
             @CodableConfiguration(from: AttributeScopes.TestAttributes.self)
             var str = AttributedString()
@@ -353,11 +430,15 @@ final class TestAttributedStringPerformance: XCTestCase {
                 let _ = try! decoder.decode(CodableType.self, from: data)
             }
         }
+        #endif // !SKIP
     }
     
     // MARK: - Other
     
     func testCreateLongString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         self.measure {
             if TestAttributedStringPerformance.runWithNSAttributedString {
                 let _ = createLongNSString()
@@ -365,9 +446,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 let _ = createLongString()
             }
         }
+        #endif // !SKIP
     }
     
     func testCreateManyAttributesString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         self.measure {
             if TestAttributedStringPerformance.runWithNSAttributedString {
                 let _ = createManyAttributesNSString()
@@ -375,9 +460,13 @@ final class TestAttributedStringPerformance: XCTestCase {
                 let _ = createManyAttributesString()
             }
         }
+        #endif // !SKIP
     }
     
     func testEquality() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard !TestAttributedStringPerformance.runWithNSAttributedString else {
             throw XCTSkip("Test disabled for NSAS")
         }
@@ -388,9 +477,13 @@ final class TestAttributedStringPerformance: XCTestCase {
         self.measure {
             _ = str == str2
         }
+        #endif // !SKIP
     }
     
     func testSubstringEquality() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard !TestAttributedStringPerformance.runWithNSAttributedString else {
             throw XCTSkip("Test disabled for NSAS")
         }
@@ -404,8 +497,10 @@ final class TestAttributedStringPerformance: XCTestCase {
         self.measure {
             _ = substring == substring2
         }
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     static var allTests: [(String, (TestAttributedStringPerformance) -> () throws -> Void)] {
         return [
             ("testInsertIntoLongString", testInsertIntoLongString),
@@ -430,7 +525,7 @@ final class TestAttributedStringPerformance: XCTestCase {
             ("testSubstringEquality", testSubstringEquality)
         ]
     }
+    #endif
 }
 
-#endif
 

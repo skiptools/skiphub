@@ -1542,6 +1542,7 @@ fileprivate struct JSON: Equatable {
 // MARK: - Run Tests
 
 extension TestJSONEncoder {
+    #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static var allTests: [(String, (TestJSONEncoder) -> () throws -> Void)] {
         return [
@@ -1602,6 +1603,7 @@ extension TestJSONEncoder {
             ("test_SR17581_codingEmptyDictionaryWithNonstringKeyDoesRoundtrip", test_SR17581_codingEmptyDictionaryWithNonstringKeyDoesRoundtrip),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

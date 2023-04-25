@@ -278,6 +278,7 @@ class TestTimeZone: XCTestCase {
         XCTAssertTrue(eukv.isDaylightSavingTime(for: dateDST))
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestTimeZone) -> () throws -> Void)] {
         var tests: [(String, (TestTimeZone) -> () throws -> Void)] = [
             ("test_abbreviation", test_abbreviation),
@@ -308,6 +309,7 @@ class TestTimeZone: XCTestCase {
         
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

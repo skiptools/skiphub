@@ -629,6 +629,7 @@ class TestFileHandle : XCTestCase {
 //        XCTAssertNoThrow(try fh.synchronize())
     }
 
+    #if !SKIP
     static var allTests : [(String, (TestFileHandle) -> () throws -> ())] {
         var tests: [(String, (TestFileHandle) -> () throws -> ())] = [
             ("testReadUpToCount", testReadUpToCount),
@@ -669,6 +670,7 @@ class TestFileHandle : XCTestCase {
 
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

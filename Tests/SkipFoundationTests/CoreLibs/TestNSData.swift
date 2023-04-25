@@ -192,6 +192,7 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestNSData) -> () throws -> Void)] {
         return [
             ("testBasicConstruction", testBasicConstruction),
@@ -560,6 +561,7 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             ("test_Data_decreaseCount", test_Data_decreaseCount),
         ]
     }
+    #endif // SKIP
     
     func test_writeToURLOptions() {
         let saveData = try! Data(contentsOf: testBundle().url(forResource: "Test", withExtension: "plist")!)

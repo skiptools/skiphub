@@ -2022,6 +2022,7 @@ VIDEOS=StopgapVideos
         super.tearDown()
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestFileManager) -> () throws -> Void)] {
         var tests: [(String, (TestFileManager) -> () throws -> Void)] = [
             ("test_createDirectory", test_createDirectory ),
@@ -2082,6 +2083,7 @@ VIDEOS=StopgapVideos
 
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

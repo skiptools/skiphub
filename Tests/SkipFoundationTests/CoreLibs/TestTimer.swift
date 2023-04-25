@@ -20,6 +20,7 @@ import XCTest
 //
 
 class TestTimer : XCTestCase {
+    #if !SKIP
     static var allTests : [(String, (TestTimer) -> () throws -> Void)] {
         return [
             ("test_timerInit", test_timerInit),
@@ -28,6 +29,7 @@ class TestTimer : XCTestCase {
             ("test_timerInvalidate", test_timerInvalidate),
         ]
     }
+    #endif // SKIP
     
     func test_timerInit() {
         let fireDate = Date()

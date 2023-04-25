@@ -398,6 +398,7 @@ class TestHTTPCookieStorage: XCTestCase {
         XCTAssertEqual(result, [cookie, cookie3, cookie2])
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestHTTPCookieStorage) -> () throws -> Void)] {
         return [
             ("test_sharedCookieStorageAccessedFromMultipleThreads", test_sharedCookieStorageAccessedFromMultipleThreads),
@@ -412,6 +413,7 @@ class TestHTTPCookieStorage: XCTestCase {
             ("test_sorting", test_sorting),
         ]
     }
+    #endif // SKIP
 
 }
 

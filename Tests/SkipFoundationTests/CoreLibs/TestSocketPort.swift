@@ -118,6 +118,7 @@ class TestSocketPort : XCTestCase {
 //        }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestSocketPort) -> () throws -> Void)] {
         return [
             ("testRemoteSocketPortsAreUniqued", testRemoteSocketPortsAreUniqued),
@@ -125,6 +126,7 @@ class TestSocketPort : XCTestCase {
             ("testSendingOneMessageRemoteToLocal", testSendingOneMessageRemoteToLocal),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

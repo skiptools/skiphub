@@ -1794,6 +1794,7 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(str?.isEmpty, true)
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestNSString) -> () throws -> Void)] {
         var tests = [
             ("test_initData", test_initData),
@@ -1885,6 +1886,7 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 #endif
         return tests
     }
+    #endif // SKIP
 }
 
 #endif

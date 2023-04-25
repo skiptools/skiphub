@@ -308,6 +308,7 @@ class TestNSSet : XCTestCase {
         }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestNSSet) -> () throws -> Void)] {
         return [
             ("test_BasicConstruction", test_BasicConstruction),
@@ -330,6 +331,7 @@ class TestNSSet : XCTestCase {
             ("test_loadedValuesMatch", test_loadedValuesMatch),
         ]
     }
+    #endif // SKIP
     
 }
 

@@ -22,7 +22,8 @@ import XCTest
 //
 
 class TestUserDefaults : XCTestCase {
-	static var allTests : [(String, (TestUserDefaults) -> () throws -> ())] {
+    #if !SKIP
+    static var allTests : [(String, (TestUserDefaults) -> () throws -> ())] {
 		return [
 			("test_createUserDefaults", test_createUserDefaults ),
 			("test_getRegisteredDefaultItem", test_getRegisteredDefaultItem ),
@@ -48,6 +49,7 @@ class TestUserDefaults : XCTestCase {
 			("test_persistentDomain", test_persistentDomain ),
 		]
 	}
+        #endif // SKIP
 
 	func test_createUserDefaults() {
 		let defaults = UserDefaults.standard

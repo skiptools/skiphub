@@ -888,6 +888,7 @@ class TestNSCalendar: XCTestCase {
         }
     }
     
+    #if !SKIP
     static var allTests: [(String, (TestNSCalendar) -> () throws -> Void)] {
         return [
             ("test_initWithCalendarIdentifier", test_initWithCalendarIdentifier),
@@ -920,6 +921,7 @@ class TestNSCalendar: XCTestCase {
             ("test_enumerateDatesStartingAfterDate_ensureStrictlyIncreasingResults_minuteSecondClearing", test_enumerateDatesStartingAfterDate_ensureStrictlyIncreasingResults_minuteSecondClearing),
         ]
     }
+    #endif // SKIP
 }
 
 #endif

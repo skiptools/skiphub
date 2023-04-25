@@ -22,6 +22,7 @@ import XCTest
 import Dispatch
 
 class TestProgress : XCTestCase {
+    #if !SKIP
     static var allTests: [(String, (TestProgress) -> () throws -> Void)] {
         return [
             ("test_totalCompletedChangeAffectsFractionCompleted", test_totalCompletedChangeAffectsFractionCompleted),
@@ -41,6 +42,7 @@ class TestProgress : XCTestCase {
             ("test_userInfo", test_userInfo),
         ]
     }
+    #endif // SKIP
     
     func test_totalCompletedChangeAffectsFractionCompleted() {
         let parent = Progress(parent: nil)
