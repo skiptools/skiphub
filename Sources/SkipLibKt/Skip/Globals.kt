@@ -7,15 +7,6 @@ package skip.lib
 
 import kotlin.reflect.*
 
-// Convert the Swift `description` to Java's `toString()`
-val Any.description: String
-	get() = this.toString()
-
-val Any.debugDescription: String
-	get() = this.toString()
-
-// Global functions:
-
 fun fatalError(message: String = "fatalError"): Nothing = error(message)
 
 fun type(of: Any): KClass<*> {
