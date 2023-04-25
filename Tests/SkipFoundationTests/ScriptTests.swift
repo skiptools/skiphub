@@ -30,7 +30,6 @@ class ScriptTests : XCTestCase {
     }
 
     func testJSCAPIHigh() throws {
-        #if !SKIP // debug crashing on CI
         let ctx = try XCTUnwrap(JSContext())
         let num = try XCTUnwrap(ctx.evaluateScript("1 + 2.3"))
         
@@ -52,6 +51,7 @@ class ScriptTests : XCTestCase {
         XCTAssertEqual("q", ctx.evaluateScript("'q'")?.toString())
         XCTAssertEqual("Ƕe110", try eval(#"'Ƕ'+"e"+1+1+0"#).toString())
 
+        #if !SKIP // debug crashing on CI
         XCTAssertEqual(true, try eval("[] + {}").isString)
         XCTAssertEqual("[object Object]", try eval("[] + {}").toString())
 

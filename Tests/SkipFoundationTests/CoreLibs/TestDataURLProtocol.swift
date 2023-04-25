@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,51 +21,80 @@ import XCTest
 
 class DataURLTestDelegate: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
 
+    #if !SKIP
     var callbacks: [String] = []
     let expectation: XCTestExpectation?
     var data: Data?
     var error: Error?
     var response: URLResponse?
+    #endif
 
-
+    #if !SKIP
     init(expectation: XCTestExpectation?) {
         self.expectation = expectation
     }
-
+    #endif
+    
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         callbacks.append(#function)
         self.error = error
         expectation?.fulfill()
+        #endif // !SKIP
     }
 
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        callbacks.append(#function)
-        self.error = error
-    }
+    // testProjectGradle():  The following declarations have the same JVM signature (urlSession$SkipFoundation(Lskip/foundation/URLSession;Lskip/lib/Error;)V):
+    //func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    //    #if SKIP
+    //    throw XCTSkip("TODO")
+    //    #else
+    //    callbacks.append(#function)
+    //    self.error = error
+    //    #endif // !SKIP
+    //}
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         callbacks.append(#function)
         self.data = data
+        #endif // !SKIP
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         callbacks.append(#function)
         self.response = response
         completionHandler(.allow)
+        #endif // !SKIP
     }
 
     func urlSession(_ session: URLSession, didFailWithError error: Error) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         callbacks.append(#function)
         self.error = error
+        #endif // !SKIP
     }
 }
 
 
 class TestDataURLProtocol: XCTestCase {
 
+    #if !SKIP
     typealias ResponseProperties = (expectedContentLength: Int64, mimeType: String?, textEncodingName: String?)
+    #endif
 
     private func run(with url: URL) -> DataURLTestDelegate {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expect = expectation(description: url.absoluteString)
         let delegate = DataURLTestDelegate(expectation: expect)
         let config = URLSessionConfiguration.default
@@ -76,9 +104,13 @@ class TestDataURLProtocol: XCTestCase {
         task.resume()
         wait(for: [expect], timeout: 200000)
         return delegate
+        #endif // !SKIP
     }
 
     func test_validURIs() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tests: [(String, String, ResponseProperties)] = [
             ("data:,123", "123", (expectedContentLength: 3, mimeType: "text/plain", textEncodingName: nil)),
             ("data:;charset=utf-8;base64,8J+RqOKAjfCfkajigI3wn5Gn4oCN8J+Rpw==", "👨‍👨‍👧‍👧", (expectedContentLength: 25, mimeType: "text/plain", textEncodingName: "utf-8")),
@@ -140,9 +172,13 @@ class TestDataURLProtocol: XCTestCase {
                 XCTFail("\(urlString) missing URLResponse")
             }
         }
+        #endif // !SKIP
     }
 
     func test_invalidURIs() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tests = [
             "data://blah",
             "data:%2c123",
@@ -158,6 +194,7 @@ class TestDataURLProtocol: XCTestCase {
 //            XCTAssertEqual(["urlSession(_:task:didCompleteWithError:)"], delegate.callbacks)
 //            XCTAssertNil(delegate.response, "Unexpected URLResponse for \(urlString)")
         }
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -171,5 +208,4 @@ class TestDataURLProtocol: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

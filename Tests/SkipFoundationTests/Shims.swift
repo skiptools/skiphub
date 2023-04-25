@@ -15,15 +15,39 @@ import XCTest
 
 // MARK: Foundation Stubs
 
-internal struct CharacterSet {
+internal class URLSession {
+    class ResponseDisposition {
+    }
 }
 
-internal struct AttributedString {
+internal protocol URLResponse {
 }
 
-// MARK: Foundation NextStep Stubs
 
-internal class NSObject {
+internal protocol URLSessionTask {
+}
+
+internal protocol URLSessionDataTask : URLSessionTask {
+}
+
+internal protocol URLSessionTaskDelegate {
+}
+
+internal protocol URLSessionDataDelegate {
+}
+
+internal protocol CharacterSet {
+}
+
+internal protocol AttributedString {
+}
+
+// MARK: NextStep Foundation Stubs
+
+internal protocol NSObjectProtocol {
+}
+
+internal class NSObject : NSObjectProtocol {
 }
 
 //internal class NSString : NSObject {
