@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -51,6 +50,9 @@ class TestHTTPCookie: XCTestCase {
     #endif // SKIP
 
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let invalidVersionZeroCookie = HTTPCookie(properties: [
             .name: "TestCookie",
             .value: "Test value @#$%^$&*",
@@ -114,9 +116,13 @@ class TestHTTPCookie: XCTestCase {
         XCTAssertEqual(versionZeroCookieWithInvalidVersionOneProps?.portList, [NSNumber(value: 443)])
         XCTAssert(versionZeroCookieWithInvalidVersionOneProps?.isSecure == true)
         XCTAssert(versionZeroCookieWithInvalidVersionOneProps?.version == 0)
+        #endif // !SKIP
     }
 
     func test_RequestHeaderFields() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let noCookies: [HTTPCookie] = []
         XCTAssertNil(HTTPCookie.requestHeaderFields(with: noCookies)["Cookie"])
 
@@ -137,9 +143,13 @@ class TestHTTPCookie: XCTestCase {
 
         let basicCookieString = HTTPCookie.requestHeaderFields(with: basicCookies)["Cookie"]
         XCTAssertEqual(basicCookieString, "TestCookie1=testValue1; TestCookie2=testValue2")
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeader1cookie() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["header1":"value1",
                       "Set-Cookie": "fr=anjd&232; Max-Age=7776000; path=/; domain=.example.com; secure; httponly",
                       "header2":"value2",
@@ -148,15 +158,23 @@ class TestHTTPCookie: XCTestCase {
         XCTAssertEqual(cookies.count, 1)
         XCTAssertEqual(cookies[0].name, "fr")
         XCTAssertEqual(cookies[0].value, "anjd&232")
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeader0cookies() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["header1":"value1", "header2":"value2", "header3":"value3"]
         let cookies =  HTTPCookie.cookies(withResponseHeaderFields: header, for: URL(string: "http://example.com")!)
         XCTAssertEqual(cookies.count, 0)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeader2cookies() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["header1":"value1",
                       "Set-Cookie": "fr=a&2@#; Max-Age=1186000; path=/; domain=.example.com; secure, xd=plm!@#;path=/;domain=.example2.com", 
                       "header2":"value2",
@@ -165,9 +183,13 @@ class TestHTTPCookie: XCTestCase {
         XCTAssertEqual(cookies.count, 2)
         XCTAssertTrue(cookies[0].isSecure)
         XCTAssertFalse(cookies[1].isSecure)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderNoDomain() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header =  ["header1":"value1",
                        "Set-Cookie": "fr=anjd&232; expires=Wed, 21 Sep 2016 05:33:00 GMT; path=/; secure; httponly",
                        "header2":"value2",
@@ -186,9 +208,13 @@ class TestHTTPCookie: XCTestCase {
         } else {
             XCTFail("Unable to parse the given date from the formatter")
         }
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderNoPathNoDomain() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["header1":"value1",
                       "Set-Cookie": "fr=tx; expires=Wed, 21-Sep-2016 05:33:00 GMT; Max-Age=7776000; secure; httponly", 
                       "header2":"value2",
@@ -196,33 +222,53 @@ class TestHTTPCookie: XCTestCase {
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: URL(string: "https://example.com")!)
         XCTAssertEqual(cookies[0].domain, "example.com")
         XCTAssertEqual(cookies[0].path, "/")
+        #endif // !SKIP
     }
     
     func test_cookiesWithResponseHeaderNoNameValue() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": ";attr1=value1"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 0)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderNoName() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "=value1;attr2=value2"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 0)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderEmptyName() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "   =value1;attr2=value2"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 0)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderNoValue() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "name;attr2=value2"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 0)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderAttributeWithoutNameIsIgnored() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "name=value;Comment=value1;   =value2;CommentURL=value3"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 1)
@@ -230,9 +276,13 @@ class TestHTTPCookie: XCTestCase {
         XCTAssertEqual(cookies[0].value, "value")
         XCTAssertEqual(cookies[0].comment, "value1")
 //        XCTAssertEqual(cookies[0].commentURL, try XCTUnwrap(URL(string: "value3")))
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderValuelessAttributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "name=value;Secure;Comment;Discard;CommentURL;HttpOnly"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 1)
@@ -243,9 +293,13 @@ class TestHTTPCookie: XCTestCase {
 //        XCTAssertNil(cookies[0].comment)
 //        XCTAssertNil(cookies[0].commentURL)
         XCTAssertTrue(cookies[0].isHTTPOnly)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderValuedAttributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // The attributes that do not need value will be ignored if they have
         // a value.
         let header = ["Set-Cookie": "name=value;Secure=1;Discard=TRUE;HttpOnly=Yes"]
@@ -256,24 +310,36 @@ class TestHTTPCookie: XCTestCase {
 //        XCTAssertFalse(cookies[0].isSecure)
 //        XCTAssertFalse(cookies[0].isSessionOnly)
 //        XCTAssertFalse(cookies[0].isHTTPOnly)
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderInvalidPath() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "name=value;Path=This/is/not/a/valid/path"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 1)
 //        XCTAssertEqual(cookies[0].path, "/")
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderWithEqualsInValue() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "name=v=a=l=u=e;attr1=value1;attr2=value2"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
         XCTAssertEqual(cookies.count, 1)
         XCTAssertEqual(cookies[0].name, "name")
         XCTAssertEqual(cookies[0].value, "v=a=l=u=e")
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderSecondCookieInvalidToken() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let header = ["Set-Cookie": "n=v; Comment=real value, tok@en=second; CommentURL=https://example.com/second"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: header, for: try XCTUnwrap(URL(string: "https://example.com")))
 //        XCTAssertEqual(cookies.count, 1)
@@ -281,9 +347,13 @@ class TestHTTPCookie: XCTestCase {
         XCTAssertEqual(cookies[0].value, "v")
 //        XCTAssertEqual(cookies[0].comment, "real value, tok@en=second")
 //        XCTAssertEqual(cookies[0].commentURL, try XCTUnwrap(URL(string: "https://example.com/second")))
+        #endif // !SKIP
     }
 
     func test_cookiesWithExpiresAsLastAttribute() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: [
             "Set-Cookie": "AAA=111; path=/; domain=.example.com; expires=Sun, 16-Aug-2025 22:39:54 GMT, BBB=222; path=/; domain=.example.com; HttpOnly; expires=Sat, 15-Feb-2014 22:39:54 GMT"
         ], for: try XCTUnwrap(URL(string: "http://www.example.com/")))
@@ -292,9 +362,13 @@ class TestHTTPCookie: XCTestCase {
         XCTAssertEqual(cookies[0].value, "111")
         XCTAssertEqual(cookies[1].name, "BBB")
         XCTAssertEqual(cookies[1].value, "222")
+        #endif // !SKIP
     }
 
     func test_cookiesWithResponseHeaderTrimsNames() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let cookies = HTTPCookie.cookies(withResponseHeaderFields: [
                 "Set-Cookie": "AAA =1; path=/; domain=.example.com; expires=Sun, 16-Aug-2025 22:39:54 GMT, BBB=2; path=/; domain=.example.com; HttpOnly; expires=Sat, 15-Feb-2014 22:39:54 GMT"
@@ -316,9 +390,13 @@ class TestHTTPCookie: XCTestCase {
             XCTAssertEqual(cookies[1].name, "BBB")
             XCTAssertEqual(cookies[1].value, "2")
         }
+        #endif // !SKIP
     }
 
     func test_cookieDomainCanonicalization() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let headers = [
                 "Set-Cookie": "PREF=a=b; expires=\(formattedCookieTime(sinceNow: 100))); path=/; domain=eXample.com"
@@ -363,9 +441,13 @@ class TestHTTPCookie: XCTestCase {
             XCTAssertEqual(cookies.count, 1)
             XCTAssertEqual(cookies.first?.domain, "1.2.3.4")
         }
+        #endif // !SKIP
     }
 
     func test_cookieExpiresDateFormats() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testDate = Date(timeIntervalSince1970: 1577881800)
         let cookieString =
             """
@@ -385,24 +467,32 @@ class TestHTTPCookie: XCTestCase {
             XCTAssertEqual(cookie.domain, ".swift.org")
             XCTAssertEqual(cookie.path, "/")
         }
+        #endif // !SKIP
     }
 
     func test_httpCookieWithSubstring() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cookie = HTTPCookie(properties: [.domain: ".", .path: "/", .name: "davesy".dropLast(), .value: "Jonesy".dropLast()])
         if let cookie = cookie {
             XCTAssertEqual(cookie.name, "daves")
         } else {
             XCTFail("Unable to create cookie with substring")
         }
+        #endif // !SKIP
     }
 
     private func formattedCookieTime(sinceNow seconds: TimeInterval) -> String {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let f = DateFormatter()
         f.timeZone = TimeZone(abbreviation: "GMT")
         f.dateFormat = "EEEE',' dd'-'MMM'-'yy HH':'mm':'ss z"
         return f.string(from: Date(timeIntervalSinceNow: seconds))
+        #endif // !SKIP
     }
 }
 
-#endif
 

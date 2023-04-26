@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -34,6 +33,9 @@ class TestHost: XCTestCase {
     
     // SR-6391
     func test_addressesDoNotGrow() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let local = Host.current()
         let localAddressesFirst = local.addresses
         let localAddressesSecond = local.addresses
@@ -48,9 +50,13 @@ class TestHost: XCTestCase {
         let swiftAddressesFirst = swift.addresses
         let swiftAddressesSecond = swift.addresses
         XCTAssertEqual(swiftAddressesSecond.count, swiftAddressesFirst.count)
+        #endif // !SKIP
     }
 
     func test_isEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let host0 = Host(address: "8.8.8.8")
         let host1 = Host(address: "8.8.8.8")
         XCTAssertTrue(host0.isEqual(to: host1))
@@ -64,18 +70,22 @@ class TestHost: XCTestCase {
 
         let google = Host(name: "google.com")
         XCTAssertFalse(swift0.isEqual(to: google))
+        #endif // !SKIP
     }
 
     // SR-14197
     func test_localNamesNonEmpty() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let local = Host.current()
         XCTAssertTrue(local.names.count > 0)
 
         let swift = Host(name: "localhost")
         XCTAssertTrue(swift.names.count > 0)
+        #endif // !SKIP
     }
 #endif
 }
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -36,35 +35,54 @@ class TestMassFormatter: XCTestCase {
     #endif // SKIP
     
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "en_US")
         formatter.isForPersonMassUse = false
         super.setUp()
+        #endif // !SKIP
     }
     
     func test_stringFromKilogramsImperialRegion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(formatter.string(fromKilograms: -100), "-220.462 lb")
         XCTAssertEqual(formatter.string(fromKilograms: 0.00001), "0 oz")
         XCTAssertEqual(formatter.string(fromKilograms: 0.0001), "0.004 oz")
         XCTAssertEqual(formatter.string(fromKilograms: 1), "2.205 lb")
         XCTAssertEqual(formatter.string(fromKilograms: 100), "220.462 lb")
+        #endif // !SKIP
     }
     
     func test_stringFromKilogramsMetricRegion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "de_DE")
         XCTAssertEqual(formatter.string(fromKilograms: -100), "-100 kg")
         XCTAssertEqual(formatter.string(fromKilograms: -1), "-1 kg")
         XCTAssertEqual(formatter.string(fromKilograms: 1000), "1.000 kg")
+        #endif // !SKIP
     }
     
     func test_stringFromKilogramsMetricRegionPersonMassUse() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "en_GB")
         formatter.isForPersonMassUse = true
         XCTAssertEqual(formatter.string(fromKilograms: -100), "-100 kg")
         XCTAssertEqual(formatter.string(fromKilograms: -1), "-1 kg")
         XCTAssertEqual(formatter.string(fromKilograms: 1000), "1,000 kg")
+        #endif // !SKIP
     }
     
     func test_stringFromValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.unitStyle = .long
         XCTAssertEqual(formatter.string(fromValue: 0.002, unit: .kilogram),"0.002 kilograms")
         XCTAssertEqual(formatter.string(fromValue: 0, unit: .stone), "0 stones")
@@ -82,9 +100,13 @@ class TestMassFormatter: XCTestCase {
         XCTAssertEqual(formatter.string(fromValue: 2.4, unit: .stone), "2 st, 5.6 lb")
         XCTAssertEqual(formatter.string(fromValue: 2.0, unit: .stone), "2 st")
         XCTAssertEqual(formatter.string(fromValue: 123456.78, unit: .stone), "123,456 st, 10.92 lb")
+        #endif // !SKIP
     }
     
 	func test_unitStringFromKilograms() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var unit = MassFormatter.Unit.kilogram
         
         // imperial
@@ -119,9 +141,13 @@ class TestMassFormatter: XCTestCase {
         
         XCTAssertEqual(formatter.unitString(fromKilograms: 1.001, usedUnit: &unit), "kg")
         XCTAssertEqual(unit, .kilogram)
+        #endif // !SKIP
     }
     
     func test_unitStringFromValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.unitStyle = .long
         XCTAssertEqual(formatter.unitString(fromValue: 0.002, unit: .kilogram), "kilograms")
         XCTAssertEqual(formatter.unitString(fromValue: 0.100, unit: .gram), "grams")
@@ -142,8 +168,8 @@ class TestMassFormatter: XCTestCase {
         XCTAssertEqual(formatter.unitString(fromValue: 2.000, unit: .pound), "lb")
         XCTAssertEqual(formatter.unitString(fromValue: 2.002, unit: .ounce), "oz")
         XCTAssertEqual(formatter.unitString(fromValue: 2.002, unit: .stone), "st")
+        #endif // !SKIP
     }
 }
 
-#endif
 

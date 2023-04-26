@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -19,22 +18,35 @@ import XCTest
 // See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
+#if !SKIP
 struct TopLevelObjectWrapper<T: Codable & Equatable>: Codable, Equatable {
     var value: T
 
     static func ==(lhs: TopLevelObjectWrapper, rhs: TopLevelObjectWrapper) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.value == rhs.value
+        #endif // !SKIP
+        #endif // !SKIP
     }
 
     init(_ value: T) {
         self.value = value
     }
 }
+#endif
 
 class TestJSONEncoder : XCTestCase {
 
     // MARK: - Encoding Top-Level fragments
     func test_encodingTopLevelFragments() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         func _testFragment<T: Codable & Equatable>(value: T, fragment: String) {
             let data: Data
@@ -65,78 +77,126 @@ class TestJSONEncoder : XCTestCase {
         _testFragment(value: "test", fragment: "\"test\"")
         let v: Int? = nil
         _testFragment(value: v, fragment: "null")
+        #endif // !SKIP
     }
 
     // MARK: - Encoding Top-Level Empty Types
     func test_encodingTopLevelEmptyStruct() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let empty = EmptyStruct()
         _testRoundTrip(of: empty, expectedJSON: _jsonEmptyDictionary)
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelEmptyClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let empty = EmptyClass()
         _testRoundTrip(of: empty, expectedJSON: _jsonEmptyDictionary)
+        #endif // !SKIP
     }
 
     // MARK: - Encoding Top-Level Single-Value Types
     func test_encodingTopLevelSingleValueEnum() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _testRoundTrip(of: Switch.off)
         _testRoundTrip(of: Switch.on)
 
         _testRoundTrip(of: TopLevelArrayWrapper(Switch.off))
         _testRoundTrip(of: TopLevelArrayWrapper(Switch.on))
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelSingleValueStruct() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _testRoundTrip(of: Timestamp(3141592653))
         _testRoundTrip(of: TopLevelArrayWrapper(Timestamp(3141592653)))
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelSingleValueClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _testRoundTrip(of: Counter())
         _testRoundTrip(of: TopLevelArrayWrapper(Counter()))
+        #endif // !SKIP
     }
 
     // MARK: - Encoding Top-Level Structured Types
     func test_encodingTopLevelStructuredStruct() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Address is a struct type with multiple fields.
         let address = Address.testValue
         _testRoundTrip(of: address)
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelStructuredClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Person is a class with multiple fields.
         let expectedJSON = "{\"name\":\"Johnny Appleseed\",\"email\":\"appleseed@apple.com\"}".data(using: .utf8)!
         let person = Person.testValue
         _testRoundTrip(of: person, expectedJSON: expectedJSON)
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelStructuredSingleStruct() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Numbers is a struct which encodes as an array through a single value container.
         let numbers = Numbers.testValue
         _testRoundTrip(of: numbers)
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelStructuredSingleClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Mapping is a class which encodes as a dictionary through a single value container.
         let mapping = Mapping.testValue
         _testRoundTrip(of: mapping)
+        #endif // !SKIP
     }
 
     func test_encodingTopLevelDeepStructuredType() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Company is a type with fields which are Codable themselves.
         let company = Company.testValue
         _testRoundTrip(of: company)
+        #endif // !SKIP
     }
 
     // MARK: - Output Formatting Tests
     func test_encodingOutputFormattingDefault() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectedJSON = "{\"name\":\"Johnny Appleseed\",\"email\":\"appleseed@apple.com\"}".data(using: .utf8)!
         let person = Person.testValue
         _testRoundTrip(of: person, expectedJSON: expectedJSON)
+        #endif // !SKIP
     }
 
     func test_encodingOutputFormattingPrettyPrinted() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectedJSON = "{\n  \"name\" : \"Johnny Appleseed\",\n  \"email\" : \"appleseed@apple.com\"\n}".data(using: .utf8)!
         let person = Person.testValue
         _testRoundTrip(of: person, expectedJSON: expectedJSON, outputFormatting: [.prettyPrinted])
@@ -245,9 +305,13 @@ class TestJSONEncoder : XCTestCase {
   }
 ]
 """)
+        #endif // !SKIP
     }
 
     func test_encodingOutputFormattingSortedKeys() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectedJSON = "{\"email\":\"appleseed@apple.com\",\"name\":\"Johnny Appleseed\"}".data(using: .utf8)!
         let person = Person.testValue
 #if os(macOS) || DARWIN_COMPATIBILITY_TESTS
@@ -257,9 +321,13 @@ class TestJSONEncoder : XCTestCase {
 #else
         _testRoundTrip(of: person, expectedJSON: expectedJSON, outputFormatting: [.sortedKeys])
 #endif
+        #endif // !SKIP
     }
 
     func test_encodingOutputFormattingPrettyPrintedSortedKeys() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectedJSON = "{\n  \"email\" : \"appleseed@apple.com\",\n  \"name\" : \"Johnny Appleseed\"\n}".data(using: .utf8)!
         let person = Person.testValue
 #if os(macOS) || DARWIN_COMPATIBILITY_TESTS
@@ -269,15 +337,23 @@ class TestJSONEncoder : XCTestCase {
 #else
         _testRoundTrip(of: person, expectedJSON: expectedJSON, outputFormatting: [.prettyPrinted, .sortedKeys])
 #endif
+        #endif // !SKIP
     }
 
     // MARK: - Date Strategy Tests
     func test_encodingDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // We can't encode a top-level Date, so it'll be wrapped in an array.
         _testRoundTrip(of: TopLevelArrayWrapper(Date()))
+        #endif // !SKIP
     }
 
     func test_encodingDateSecondsSince1970() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Cannot encode an arbitrary number of seconds since we've lost precision since 1970.
         let seconds = 1000.0
         let expectedJSON = "[1000]".data(using: .utf8)!
@@ -287,9 +363,13 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dateEncodingStrategy: .secondsSince1970,
                        dateDecodingStrategy: .secondsSince1970)
+        #endif // !SKIP
     }
 
     func test_encodingDateMillisecondsSince1970() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Cannot encode an arbitrary number of seconds since we've lost precision since 1970.
         let seconds = 1000.0
         let expectedJSON = "[1000000]".data(using: .utf8)!
@@ -299,9 +379,13 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dateEncodingStrategy: .millisecondsSince1970,
                        dateDecodingStrategy: .millisecondsSince1970)
+        #endif // !SKIP
     }
 
     func test_encodingDateISO8601() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = .withInternetDateTime
 
@@ -314,9 +398,13 @@ class TestJSONEncoder : XCTestCase {
                        dateEncodingStrategy: .iso8601,
                        dateDecodingStrategy: .iso8601)
 
+        #endif // !SKIP
     }
 
     func test_encodingDateFormatted() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         formatter.timeStyle = .full
@@ -329,9 +417,13 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dateEncodingStrategy: .formatted(formatter),
                        dateDecodingStrategy: .formatted(formatter))
+        #endif // !SKIP
     }
 
     func test_encodingDateCustom() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let timestamp = Date()
 
         // We'll encode a number instead of a date.
@@ -347,9 +439,13 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dateEncodingStrategy: .custom(encode),
                        dateDecodingStrategy: .custom(decode))
+        #endif // !SKIP
     }
 
     func test_encodingDateCustomEmpty() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let timestamp = Date()
 
         // Encoding nothing should encode an empty keyed container ({}).
@@ -362,18 +458,26 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dateEncodingStrategy: .custom(encode),
                        dateDecodingStrategy: .custom(decode))
+        #endif // !SKIP
     }
 
     // MARK: - Data Strategy Tests
     func test_encodingBase64Data() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([0xDE, 0xAD, 0xBE, 0xEF])
 
         // We can't encode a top-level Data, so it'll be wrapped in an array.
         let expectedJSON = "[\"3q2+7w==\"]".data(using: .utf8)!
         _testRoundTrip(of: TopLevelArrayWrapper(data), expectedJSON: expectedJSON)
+        #endif // !SKIP
     }
 
     func test_encodingCustomData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // We'll encode a number instead of data.
         let encode = { (_ data: Data, _ encoder: Encoder) throws -> Void in
             var container = encoder.singleValueContainer()
@@ -387,9 +491,13 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dataEncodingStrategy: .custom(encode),
                        dataDecodingStrategy: .custom(decode))
+        #endif // !SKIP
     }
 
     func test_encodingCustomDataEmpty() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Encoding nothing should encode an empty keyed container ({}).
         let encode = { (_: Data, _: Encoder) throws -> Void in }
         let decode = { (_: Decoder) throws -> Data in return Data() }
@@ -400,10 +508,14 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: expectedJSON,
                        dataEncodingStrategy: .custom(encode),
                        dataDecodingStrategy: .custom(decode))
+        #endif // !SKIP
     }
 
     // MARK: - Non-Conforming Floating Point Strategy Tests
     func test_encodingNonConformingFloats() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _testEncodeFailure(of: TopLevelArrayWrapper(Float.infinity))
         _testEncodeFailure(of: TopLevelArrayWrapper(-Float.infinity))
         _testEncodeFailure(of: TopLevelArrayWrapper(Float.nan))
@@ -411,9 +523,13 @@ class TestJSONEncoder : XCTestCase {
         _testEncodeFailure(of: TopLevelArrayWrapper(Double.infinity))
         _testEncodeFailure(of: TopLevelArrayWrapper(-Double.infinity))
         _testEncodeFailure(of: TopLevelArrayWrapper(Double.nan))
+        #endif // !SKIP
     }
 
     func test_encodingNonConformingFloatStrings() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy = .convertToString(positiveInfinity: "INF", negativeInfinity: "-INF", nan: "NaN")
         let decodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy = .convertFromString(positiveInfinity: "INF", negativeInfinity: "-INF", nan: "NaN")
 
@@ -447,28 +563,40 @@ class TestJSONEncoder : XCTestCase {
                        expectedJSON: "[\"NaN\"]".data(using: .utf8)!,
                        nonConformingFloatEncodingStrategy: encodingStrategy,
                        nonConformingFloatDecodingStrategy: decodingStrategy)
+        #endif // !SKIP
     }
 
     // MARK: - Encoder Features
     func test_nestedContainerCodingPaths() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encoder = JSONEncoder()
         do {
             let _ = try encoder.encode(NestedContainersTestType())
         } catch {
             XCTFail("Caught error during encoding nested container types: \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_superEncoderCodingPaths() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encoder = JSONEncoder()
         do {
             let _ = try encoder.encode(NestedContainersTestType(testSuperEncoder: true))
         } catch {
             XCTFail("Caught error during encoding nested container types: \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_notFoundSuperDecoder() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct NotFoundSuperDecoderTestType: Decodable {
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -485,10 +613,14 @@ class TestJSONEncoder : XCTestCase {
         } catch {
             XCTFail("Caught error during decoding empty super decoder: \(error)")
         }
+        #endif // !SKIP
     }
 
     // MARK: - Test encoding and decoding of built-in Codable types
     func test_codingOfBool() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Bool(true), toAndFrom: "true")
         test_codingOf(value: Bool(false), toAndFrom: "false")
 
@@ -555,50 +687,90 @@ class TestJSONEncoder : XCTestCase {
         } else {
             XCTFail("Could not decode 'true' as a Bool")
         }
+        #endif // !SKIP
     }
 
     func test_codingOfNil() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let x: Int? = nil
         test_codingOf(value: x, toAndFrom: "null")
+        #endif // !SKIP
     }
 
     func test_codingOfInt8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Int8(-42), toAndFrom: "-42")
+        #endif // !SKIP
     }
 
     func test_codingOfUInt8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: UInt8(42), toAndFrom: "42")
+        #endif // !SKIP
     }
 
     func test_codingOfInt16() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Int16(-30042), toAndFrom: "-30042")
+        #endif // !SKIP
     }
 
     func test_codingOfUInt16() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: UInt16(30042), toAndFrom: "30042")
+        #endif // !SKIP
     }
 
     func test_codingOfInt32() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Int32(-2000000042), toAndFrom: "-2000000042")
+        #endif // !SKIP
     }
 
     func test_codingOfUInt32() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: UInt32(2000000042), toAndFrom: "2000000042")
+        #endif // !SKIP
     }
 
     func test_codingOfInt64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if !arch(arm)
         test_codingOf(value: Int64(-9000000000000000042), toAndFrom: "-9000000000000000042")
 #endif
+        #endif // !SKIP
     }
 
     func test_codingOfUInt64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if !arch(arm)
         test_codingOf(value: UInt64(9000000000000000042), toAndFrom: "9000000000000000042")
 #endif
+        #endif // !SKIP
     }
 
     func test_codingOfInt() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let intSize = MemoryLayout<Int>.size
         switch intSize {
         case 4: // 32-bit
@@ -612,9 +784,13 @@ class TestJSONEncoder : XCTestCase {
         default:
             XCTFail("Unexpected UInt size: \(intSize)")
         }
+        #endif // !SKIP
     }
 
     func test_codingOfUInt() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uintSize = MemoryLayout<UInt>.size
         switch uintSize {
         case 4: // 32-bit
@@ -628,40 +804,64 @@ class TestJSONEncoder : XCTestCase {
         default:
             XCTFail("Unexpected UInt size: \(uintSize)")
         }
+        #endif // !SKIP
     }
 
     func test_codingOfFloat() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Float(1.5), toAndFrom: "1.5")
 
         // Check value too large fails to decode.
         XCTAssertThrowsError(try JSONDecoder().decode(Float.self, from: "1e100".data(using: .utf8)!))
+        #endif // !SKIP
     }
 
     func test_codingOfDouble() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Double(1.5), toAndFrom: "1.5")
 
         // Check value too large fails to decode.
         XCTAssertThrowsError(try JSONDecoder().decode(Double.self, from: "100e323".data(using: .utf8)!))
+        #endif // !SKIP
     }
 
     func test_codingOfDecimal() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: Decimal.pi, toAndFrom: "3.14159265358979323846264338327950288419")
 
         // Check value too large fails to decode.
 //        XCTAssertThrowsError(try JSONDecoder().decode(Decimal.self, from: "100e200".data(using: .utf8)!))
+        #endif // !SKIP
     }
 
     func test_codingOfString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: "Hello, world!", toAndFrom: "\"Hello, world!\"")
+        #endif // !SKIP
     }
 
     func test_codingOfURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_codingOf(value: URL(string: "https://swift.org")!, toAndFrom: "\"https://swift.org\"")
+        #endif // !SKIP
     }
 
 
     // UInt and Int
     func test_codingOfUIntMinMax() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         struct MyValue: Encodable {
             let int64Min = Int64.min
@@ -685,9 +885,13 @@ class TestJSONEncoder : XCTestCase {
         } catch {
             XCTFail(String(describing: error))
         }
+        #endif // !SKIP
     }
 
     func test_encodeDecodeNumericTypesBaseline() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct NumericTypesStruct: Codable, Equatable {
             let int8Value: Int8
             let uint8Value: UInt8
@@ -745,9 +949,13 @@ class TestJSONEncoder : XCTestCase {
 
         let destination2 = try JSONDecoder().decode(NumericTypesStruct.self, from: Data(json.utf8))
         XCTAssertEqual(source, destination2)
+        #endif // !SKIP
     }
 
     func test_numericLimits() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct DataStruct: Codable {
             let int8Value: Int8?
             let uint8Value: UInt8?
@@ -850,9 +1058,13 @@ class TestJSONEncoder : XCTestCase {
         testErrorThrown("Double", "-.1", errorMessage: "The given data was not valid JSON.")
         testErrorThrown("Int32", "+1", errorMessage: "The given data was not valid JSON.")
         testErrorThrown("Int", ".012", errorMessage: "The given data was not valid JSON.")
+        #endif // !SKIP
     }
 
     func test_snake_case_encoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct MyTestData: Codable, Equatable {
             let thisIsAString: String
             let thisIsABool: Bool
@@ -923,9 +1135,13 @@ class TestJSONEncoder : XCTestCase {
         decoder.dateDecodingStrategy = .iso8601
         let decodedData = try decoder.decode(MyTestData.self, from: encodedData)
         XCTAssertEqual(data, decodedData)
+        #endif // !SKIP
     }
 
     func test_dictionary_snake_case_decoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let snakeCaseJSONData = """
@@ -938,9 +1154,13 @@ class TestJSONEncoder : XCTestCase {
         let decodedDictionary = try decoder.decode([String: [String: Int]].self, from: snakeCaseJSONData)
         let expectedDictionary = ["snake_case_key": ["nested_dictionary": 1]]
         XCTAssertEqual(decodedDictionary, expectedDictionary)
+        #endif // !SKIP
     }
 
     func test_dictionary_snake_case_encoding() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
         let camelCaseDictionary = ["camelCaseKey": ["nested_dictionary": 1]]
@@ -950,18 +1170,26 @@ class TestJSONEncoder : XCTestCase {
             return
         }
         XCTAssertEqual(jsonObject, camelCaseDictionary)
+        #endif // !SKIP
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_OutputFormattingValues() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(JSONEncoder.OutputFormatting.prettyPrinted.rawValue, 1)
         if #available(OSX 10.13, *) {
             XCTAssertEqual(JSONEncoder.OutputFormatting.sortedKeys.rawValue, 2)
         }
         XCTAssertEqual(JSONEncoder.OutputFormatting.withoutEscapingSlashes.rawValue, 8)
+        #endif // !SKIP
     }
 
     func test_SR17581_codingEmptyDictionaryWithNonstringKeyDoesRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         struct Something: Codable {
             struct Key: Codable, Hashable {
                 var x: String
@@ -992,20 +1220,30 @@ class TestJSONEncoder : XCTestCase {
         let data = try JSONEncoder().encode(toEncode)
         let result = try JSONDecoder().decode(Something.self, from: data)
         XCTAssertEqual(result.dict.count, 0)
+        #endif // !SKIP
     }
 
+    #if !SKIP
     // MARK: - Helper Functions
     private var _jsonEmptyDictionary: Data {
-        return "{}".data(using: .utf8)!
+        return "{}".data(using: String.Encoding.utf8)!
     }
+    #endif
 
+    #if !SKIP
     private func _testEncodeFailure<T : Encodable>(of value: T) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let _ = try JSONEncoder().encode(value)
             XCTFail("Encode of top-level \(T.self) was expected to fail.")
         } catch {}
+        #endif // !SKIP
     }
+    #endif
 
+    #if !SKIP
     private func _testRoundTrip<T>(of value: T,
                                    expectedJSON json: Data? = nil,
                                    outputFormatting: JSONEncoder.OutputFormatting = [],
@@ -1015,6 +1253,9 @@ class TestJSONEncoder : XCTestCase {
                                    dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .base64,
                                    nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy = .throw,
                                    nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy = .throw) where T : Codable, T : Equatable {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var payload: Data! = nil
         do {
             let encoder = JSONEncoder()
@@ -1065,19 +1306,29 @@ class TestJSONEncoder : XCTestCase {
         } catch {
             XCTFail("Failed to decode \(T.self) from JSON: \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_codingOf<T: Codable & Equatable>(value: T, toAndFrom stringValue: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         _testRoundTrip(of: TopLevelObjectWrapper(value),
                        expectedJSON: "{\"value\":\(stringValue)}".data(using: .utf8)!)
 
         _testRoundTrip(of: TopLevelArrayWrapper(value),
                        expectedJSON: "[\(stringValue)]".data(using: .utf8)!)
+        #endif // !SKIP
     }
+    #endif
 }
 
+#if !SKIP
 // MARK: - Helper Global Functions
 func expectEqualPaths(_ lhs: [CodingKey?], _ rhs: [CodingKey?], _ prefix: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
     if lhs.count != rhs.count {
         XCTFail("\(prefix) [CodingKey?].count mismatch: \(lhs.count) != \(rhs.count)")
         return
@@ -1117,6 +1368,7 @@ func expectEqualPaths(_ lhs: [CodingKey?], _ rhs: [CodingKey?], _ prefix: String
                        key2.stringValue,
                        "\(prefix) CodingKey.stringValue mismatch: \(type(of: key1))('\(key1.stringValue)') != \(type(of: key2))('\(key2.stringValue)')")
     }
+        #endif // !SKIP
 }
 
 // MARK: - Test Types
@@ -1125,13 +1377,21 @@ func expectEqualPaths(_ lhs: [CodingKey?], _ rhs: [CodingKey?], _ prefix: String
 // MARK: - Empty Types
 fileprivate struct EmptyStruct : Codable, Equatable {
     static func ==(_ lhs: EmptyStruct, _ rhs: EmptyStruct) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return true
+        #endif // !SKIP
     }
 }
 
 fileprivate class EmptyClass : Codable, Equatable {
     static func ==(_ lhs: EmptyClass, _ rhs: EmptyClass) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return true
+        #endif // !SKIP
     }
 }
 
@@ -1150,11 +1410,15 @@ fileprivate enum Switch : Codable {
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         switch self {
         case .off: try container.encode(false)
         case .on:  try container.encode(true)
         }
+        #endif // !SKIP
     }
 }
 
@@ -1172,12 +1436,20 @@ fileprivate struct Timestamp : Codable, Equatable {
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         try container.encode(self.value)
+        #endif // !SKIP
     }
 
     static func ==(_ lhs: Timestamp, _ rhs: Timestamp) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.value == rhs.value
+        #endif // !SKIP
     }
 }
 
@@ -1193,12 +1465,20 @@ fileprivate final class Counter : Codable, Equatable {
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         try container.encode(self.count)
+        #endif // !SKIP
     }
 
     static func ==(_ lhs: Counter, _ rhs: Counter) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs === rhs || lhs.count == rhs.count
+        #endif // !SKIP
     }
 }
 
@@ -1220,11 +1500,15 @@ fileprivate struct Address : Codable, Equatable {
     }
 
     static func ==(_ lhs: Address, _ rhs: Address) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.street == rhs.street &&
             lhs.city == rhs.city &&
             lhs.state == rhs.state &&
             lhs.zipCode == rhs.zipCode &&
             lhs.country == rhs.country
+        #endif // !SKIP
     }
 
     static var testValue: Address {
@@ -1253,9 +1537,13 @@ fileprivate class Person : Codable, Equatable {
     }
 
     static func ==(_ lhs: Person, _ rhs: Person) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.name == rhs.name &&
             lhs.email == rhs.email &&
             lhs.website == rhs.website
+        #endif // !SKIP
     }
 
     static var testValue: Person {
@@ -1274,7 +1562,11 @@ fileprivate struct Company : Codable, Equatable {
     }
 
     static func ==(_ lhs: Company, _ rhs: Company) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.address == rhs.address && lhs.employees == rhs.employees
+        #endif // !SKIP
     }
 
     static var testValue: Company {
@@ -1284,6 +1576,7 @@ fileprivate struct Company : Codable, Equatable {
 
 // MARK: - Helper Types
 
+#if !SKIP
 /// A key type which can take on any string or integer value.
 /// This needs to mirror _JSONKey.
 fileprivate struct _TestKey : CodingKey {
@@ -1305,6 +1598,7 @@ fileprivate struct _TestKey : CodingKey {
     self.intValue = index
   }
 }
+#endif
 
 /// Wraps a type T so that it can be encoded at the top level of a payload.
 fileprivate struct TopLevelArrayWrapper<T> : Codable, Equatable where T : Codable, T : Equatable {
@@ -1315,8 +1609,12 @@ fileprivate struct TopLevelArrayWrapper<T> : Codable, Equatable where T : Codabl
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.unkeyedContainer()
         try container.encode(value)
+        #endif // !SKIP
     }
 
     init(from decoder: Decoder) throws {
@@ -1326,7 +1624,11 @@ fileprivate struct TopLevelArrayWrapper<T> : Codable, Equatable where T : Codabl
     }
 
     static func ==(_ lhs: TopLevelArrayWrapper<T>, _ rhs: TopLevelArrayWrapper<T>) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.value == rhs.value
+        #endif // !SKIP
     }
 }
 
@@ -1334,8 +1636,12 @@ fileprivate struct FloatNaNPlaceholder : Codable, Equatable {
     init() {}
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         try container.encode(Float.nan)
+        #endif // !SKIP
     }
 
     init(from decoder: Decoder) throws {
@@ -1347,7 +1653,11 @@ fileprivate struct FloatNaNPlaceholder : Codable, Equatable {
     }
 
     static func ==(_ lhs: FloatNaNPlaceholder, _ rhs: FloatNaNPlaceholder) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return true
+        #endif // !SKIP
     }
 }
 
@@ -1355,8 +1665,12 @@ fileprivate struct DoubleNaNPlaceholder : Codable, Equatable {
     init() {}
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         try container.encode(Double.nan)
+        #endif // !SKIP
     }
 
     init(from decoder: Decoder) throws {
@@ -1368,7 +1682,11 @@ fileprivate struct DoubleNaNPlaceholder : Codable, Equatable {
     }
 
     static func ==(_ lhs: DoubleNaNPlaceholder, _ rhs: DoubleNaNPlaceholder) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return true
+        #endif // !SKIP
     }
 }
 
@@ -1387,12 +1705,20 @@ struct Numbers : Codable, Equatable {
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         try container.encode(values)
+        #endif // !SKIP
     }
 
     static func ==(_ lhs: Numbers, _ rhs: Numbers) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs.values == rhs.values
+        #endif // !SKIP
     }
 
     static var testValue: Numbers {
@@ -1414,12 +1740,20 @@ fileprivate final class Mapping : Codable, Equatable {
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var container = encoder.singleValueContainer()
         try container.encode(values)
+        #endif // !SKIP
     }
 
     static func ==(_ lhs: Mapping, _ rhs: Mapping) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return lhs === rhs || lhs.values == rhs.values
+        #endif // !SKIP
     }
 
     static var testValue: Mapping {
@@ -1447,6 +1781,9 @@ struct NestedContainersTestType : Encodable {
     }
 
     func encode(to encoder: Encoder) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if self.testSuperEncoder {
             var topLevelContainer = encoder.container(keyedBy: TopLevelCodingKeys.self)
             expectEqualPaths(encoder.codingPath, [], "Top-level Encoder's codingPath changed.")
@@ -1460,9 +1797,13 @@ struct NestedContainersTestType : Encodable {
         } else {
             _testNestedContainers(in: encoder, baseCodingPath: [])
         }
+        #endif // !SKIP
     }
 
     func _testNestedContainers(in encoder: Encoder, baseCodingPath: [CodingKey?]) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         expectEqualPaths(encoder.codingPath, baseCodingPath, "New encoder has non-empty codingPath.")
 
         // codingPath should not change upon fetching a non-nested container.
@@ -1515,6 +1856,7 @@ struct NestedContainersTestType : Encodable {
             expectEqualPaths(secondLevelContainer.codingPath, baseCodingPath + [TopLevelCodingKeys.b], "Second-level unkeyed container's codingPath changed.")
             expectEqualPaths(thirdLevelContainerUnkeyed.codingPath, baseCodingPath + [TopLevelCodingKeys.b, _TestKey(index: 1)], "New third-level unkeyed container had unexpected codingPath.")
         }
+        #endif // !SKIP
     }
 }
 
@@ -1528,6 +1870,9 @@ fileprivate struct JSON: Equatable {
     }
 
     static func ==(lhs: JSON, rhs: JSON) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         switch (lhs.jsonObject, rhs.jsonObject) {
         case let (lhs, rhs) as ([AnyHashable: Any], [AnyHashable: Any]):
             return NSDictionary(dictionary: lhs) == NSDictionary(dictionary: rhs)
@@ -1536,8 +1881,10 @@ fileprivate struct JSON: Equatable {
         default:
             return false
         }
+        #endif // !SKIP
     }
 }
+#endif
 
 // MARK: - Run Tests
 
@@ -1606,5 +1953,4 @@ extension TestJSONEncoder {
     #endif // SKIP
 }
 
-#endif
 

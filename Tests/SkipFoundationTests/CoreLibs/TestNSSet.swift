@@ -268,6 +268,7 @@ class TestNSSet : XCTestCase {
         XCTAssertTrue(description.contains("    3333"))
     }
     
+    #if !SKIP
     let setFixtures = [
         Fixtures.setOfNumbers,
         Fixtures.setEmpty,
@@ -283,6 +284,7 @@ class TestNSSet : XCTestCase {
         Fixtures.countedSetOfNumbersAppearingSeveralTimes,
         Fixtures.countedSetEmpty,
     ]
+    #endif
     
     func test_codingRoundtrip() throws {
         for fixture in setFixtures {

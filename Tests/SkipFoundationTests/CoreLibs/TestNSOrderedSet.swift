@@ -489,6 +489,7 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(work.lastObject as? String, krow.firstObject as? String)
     }
 
+    #if !SKIP
     let fixtures = [
         Fixtures.orderedSetEmpty,
         Fixtures.orderedSetOfNumbers
@@ -498,6 +499,7 @@ class TestNSOrderedSet : XCTestCase {
         Fixtures.mutableOrderedSetEmpty,
         Fixtures.mutableOrderedSetOfNumbers
     ]
+    #endif
     
     func test_codingRoundtrip() throws {
         for fixture in fixtures {

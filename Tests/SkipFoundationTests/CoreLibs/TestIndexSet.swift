@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,9 @@ import XCTest
 
 class TestIndexSet : XCTestCase {
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = IndexSet()
         let set2 = IndexSet(integersIn: 4..<11)
         XCTAssertEqual(set.count, 0)
@@ -39,9 +41,13 @@ class TestIndexSet : XCTestCase {
         XCTAssertEqual(set3.firstIndex, 2)
         XCTAssertEqual(set3.lastIndex, 10)
         
+        #endif // !SKIP
     }
 
     func test_copy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let range: NSRange = NSRange(location: 3, length: 4)
         let array : [Int] = [1,2,3,4,5,6,7,8,9,10]
         let indexSet = NSMutableIndexSet()
@@ -61,9 +67,13 @@ class TestIndexSet : XCTestCase {
         let mutableIndexSetCopy = mutableIndexSet.copy() as! NSIndexSet
         XCTAssertFalse(mutableIndexSetCopy === mutableIndexSet)
         XCTAssertTrue(mutableIndexSetCopy.isEqual(to: mutableIndexSet._bridgeToSwift()))
+        #endif // !SKIP
     }
 
     func test_enumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = IndexSet(integersIn: 4..<11)
         var result = Array<Int>()
         for idx in set {
@@ -89,18 +99,26 @@ class TestIndexSet : XCTestCase {
             result.append(idx)
         }
         XCTAssertEqual(result, [2, 5, 7, 8, 9, 11, 13, 14])
+        #endif // !SKIP
     }
     
     func test_sequenceType() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = IndexSet(integersIn: 4..<11)
         var result = Array<Int>()
         for idx in set {
             result.append(idx)
         }
         XCTAssertEqual(result, [4, 5, 6, 7, 8, 9, 10])
+        #endif // !SKIP
     }
     
     func test_removal() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var removalSet = NSMutableIndexSet(indexesIn: NSRange(location: 0, length: 10))
         removalSet.remove(0)
         removalSet.remove(in: NSRange(location: 9, length: 5))
@@ -144,9 +162,13 @@ class TestIndexSet : XCTestCase {
         // Removing non-existent elements has no effect
         removalSet.remove(IndexSet(integersIn: 0..<2))
         XCTAssertTrue(removalSet.isEqual(to: expected))
+        #endif // !SKIP
     }
     
     func test_addition() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let testSetA = NSMutableIndexSet(index: 0)
         testSetA.add(5)
@@ -208,9 +230,13 @@ class TestIndexSet : XCTestCase {
             i += 1
         }
     
+        #endif // !SKIP
     }
     
     func test_setAlgebra() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         var is1, is2, expected: IndexSet
         
@@ -247,11 +273,15 @@ class TestIndexSet : XCTestCase {
             XCTAssertTrue(is1 == is1.intersection(is2))
         }
         
+        #endif // !SKIP
     }
     
     
     
     func testEnumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let someIndexes = IndexSet(integersIn: 3...4)
         let first = someIndexes.startIndex
         let last = someIndexes.endIndex
@@ -270,9 +300,13 @@ class TestIndexSet : XCTestCase {
         XCTAssertEqual(2, count)
         XCTAssertEqual(3, firstValue)
         XCTAssertEqual(4, secondValue)
+        #endif // !SKIP
     }
     
     func testSubsequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<3)
         someIndexes.insert(integersIn: 10..<20)
         
@@ -291,9 +325,13 @@ class TestIndexSet : XCTestCase {
             count += 1
         }
         XCTAssertEqual(count, 10)
+        #endif // !SKIP
     }
     
     func testIndexRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<3)
         someIndexes.insert(integersIn: 10..<20)
         
@@ -320,9 +358,13 @@ class TestIndexSet : XCTestCase {
         
         let empty = IndexSet()
         XCTAssertTrue(empty.indexRange(in: 1..<3).isEmpty)
+        #endif // !SKIP
     }
     
     func testMutation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<3)
         someIndexes.insert(3)
         someIndexes.insert(4)
@@ -352,9 +394,13 @@ class TestIndexSet : XCTestCase {
         someIndexes.remove(integersIn: 200..<202)
         XCTAssertEqual(6, someIndexes.count)
         XCTAssertEqual(0, someIndexes.count(in: 200..<202))
+        #endif // !SKIP
     }
     
     func testContainsAndIntersects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let someIndexes = IndexSet(integersIn: 1..<10)
         
         XCTAssertTrue(someIndexes.contains(integersIn: 1..<10))
@@ -388,9 +434,13 @@ class TestIndexSet : XCTestCase {
         XCTAssertFalse(someIndexes.intersects(integersIn: 0..<0))
         XCTAssertFalse(someIndexes.intersects(integersIn: 10...12))
         XCTAssertFalse(someIndexes.intersects(integersIn: 10..<12))
+        #endif // !SKIP
     }
 
     func testContainsIndexSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet()
         someIndexes.insert(integersIn: 1..<2)
         someIndexes.insert(integersIn: 100..<200)
@@ -424,9 +474,13 @@ class TestIndexSet : XCTestCase {
         XCTAssertTrue(emptySet.contains(integersIn: emptySet))
         XCTAssertTrue(someIndexes.contains(integersIn: emptySet))
         XCTAssertFalse(emptySet.contains(integersIn: someIndexes))
+        #endif // !SKIP
     }
     
     func testIteration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(15)
@@ -465,9 +519,13 @@ class TestIndexSet : XCTestCase {
             count += 1
         }
         XCTAssertEqual(8, count)
+        #endif // !SKIP
     }
     
     func testRangeIteration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(15)
@@ -492,9 +550,13 @@ class TestIndexSet : XCTestCase {
             }
         }
         XCTAssertEqual(3, count)
+        #endif // !SKIP
     }
     
     func testSubrangeIteration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 2..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(integersIn: 15..<20)
@@ -552,9 +614,13 @@ class TestIndexSet : XCTestCase {
             count += 1
         }
         XCTAssertEqual(0, count)
+        #endif // !SKIP
     }
     
     func testSlicing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 2..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(integersIn: 15..<20)
@@ -588,9 +654,13 @@ class TestIndexSet : XCTestCase {
         
         let largeSlice = someIndexes[someIndexes.indexRange(in: 0..<100000)]
         XCTAssertEqual(someIndexes.count, largeSlice.count)
+        #endif // !SKIP
     }
     
     func testEmptyIteration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var empty = IndexSet()
         let start = empty.startIndex
         let end = empty.endIndex
@@ -625,9 +695,13 @@ class TestIndexSet : XCTestCase {
             count += 1
         }
         XCTAssertEqual(count, 0)
+        #endif // !SKIP
     }
     
     func testSubsequences() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(15)
@@ -651,9 +725,13 @@ class TestIndexSet : XCTestCase {
             count += 1
         }
         XCTAssertEqual(count, 4)
+        #endif // !SKIP
     }
     
     func testFiltering() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(15)
@@ -670,18 +748,26 @@ class TestIndexSet : XCTestCase {
         
         let resultInRange = someIndexes.filteredIndexSet(in: 0..<16, includeInteger: { _ in return true } )
         XCTAssertEqual(resultInRange.count, someIndexes.count)
+        #endif // !SKIP
     }
     
     func testFilteringRanges() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(15)
         
         let resultArray = someIndexes.rangeView.filter { $0.count > 1 }
         XCTAssertEqual(resultArray.count, 2)
+        #endif // !SKIP
     }
     
     func testShift() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var someIndexes = IndexSet(integersIn: 1..<5)
         someIndexes.insert(integersIn: 8..<11)
         someIndexes.insert(15)
@@ -704,9 +790,13 @@ class TestIndexSet : XCTestCase {
         
         // But the last value should have, again
         XCTAssertEqual(lastValue + 2, someIndexes.last!)
+        #endif // !SKIP
     }
     
     func testSymmetricDifference() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var is1 : IndexSet
         var is2 : IndexSet
         var expected : IndexSet
@@ -806,9 +896,13 @@ class TestIndexSet : XCTestCase {
             is2 = IndexSet([0, 1, 2])
             XCTAssertEqual(IndexSet(integer: 1), is1.symmetricDifference(is2))
         }
+        #endif // !SKIP
     }
     
     func testIntersection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var is1 : IndexSet
         var is2 : IndexSet
         var expected : IndexSet
@@ -883,9 +977,13 @@ class TestIndexSet : XCTestCase {
             is2 = IndexSet([0, 1, 2])
             XCTAssertEqual(is1, is1.intersection(is2))
         }
+        #endif // !SKIP
     }
     
     func testUnion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var is1 : IndexSet
         var is2 : IndexSet
         var expected : IndexSet
@@ -1014,9 +1112,13 @@ class TestIndexSet : XCTestCase {
             XCTAssertEqual(expected, u1)
             XCTAssertEqual(expected, u2)
         }
+        #endif // !SKIP
     }
     
     func test_findIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var i = IndexSet()
         
         // Verify nil result for empty sets
@@ -1045,12 +1147,16 @@ class TestIndexSet : XCTestCase {
         
         XCTAssertEqual(nil, i.integerLessThanOrEqualTo(4))
         XCTAssertEqual(5, i.integerLessThanOrEqualTo(5))
+        #endif // !SKIP
     }
     
     // MARK: -
     // MARK: Performance Testing
     
     func largeIndexSet() -> IndexSet {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var result = IndexSet()
         
         for i in 1..<10000 {
@@ -1060,9 +1166,13 @@ class TestIndexSet : XCTestCase {
         }
         
         return result
+        #endif // !SKIP
     }
     
     func testIndexingPerformance() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         /*
         let set = largeIndexSet()
         self.measureBlock {
@@ -1074,9 +1184,13 @@ class TestIndexSet : XCTestCase {
             }
         }
         */
+        #endif // !SKIP
     }
     
     func test_AnyHashableContainingIndexSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let values: [IndexSet] = [
             IndexSet([0, 1]),
             IndexSet([0, 1, 2]),
@@ -1088,9 +1202,13 @@ class TestIndexSet : XCTestCase {
         XCTAssert(IndexSet.self == type(of: anyHashables[2].base))
         XCTAssertNotEqual(anyHashables[0], anyHashables[1])
         XCTAssertEqual(anyHashables[1], anyHashables[2])
+        #endif // !SKIP
     }
     
     func test_AnyHashableCreatedFromNSIndexSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let values: [NSIndexSet] = [
             NSIndexSet(index: 0),
             NSIndexSet(index: 1),
@@ -1102,13 +1220,21 @@ class TestIndexSet : XCTestCase {
         XCTAssert(IndexSet.self == type(of: anyHashables[2].base))
         XCTAssertNotEqual(anyHashables[0], anyHashables[1])
         XCTAssertEqual(anyHashables[1], anyHashables[2])
+        #endif // !SKIP
     }
     
     func test_unconditionallyBridgeFromObjectiveC() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(IndexSet(), IndexSet._unconditionallyBridgeFromObjectiveC(nil))
+        #endif // !SKIP
     }
 
     func testInsertNonOverlapping() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1122,9 +1248,13 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 1000..<2000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
     func testInsertOverlapping() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1139,9 +1269,13 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 10000..<20000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
     func testInsertOverlappingExtend() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1155,9 +1289,13 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 1000..<2000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
     func testInsertOverlappingMultiple() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1172,9 +1310,13 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 10000..<20000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
     func testRemoveNonOverlapping() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1188,9 +1330,13 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 1000..<2000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
     func testRemoveOverlapping() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1204,9 +1350,13 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 1500..<2000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
     func testRemoveSplitting() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var tested = IndexSet()
         tested.insert(integersIn: 1..<2)
         tested.insert(integersIn: 100..<200)
@@ -1221,8 +1371,10 @@ class TestIndexSet : XCTestCase {
         expected.insert(integersIn: 1000..<2000)
 
         XCTAssertEqual(tested, expected)
+        #endif // !SKIP
     }
 
+    #if !SKIP
     let fixtures: [TypedFixture<NSIndexSet>] = [
         Fixtures.indexSetEmpty,
         Fixtures.indexSetOneRange,
@@ -1233,26 +1385,38 @@ class TestIndexSet : XCTestCase {
         Fixtures.mutableIndexSetOneRange,
         Fixtures.mutableIndexSetManyRanges,
     ]
+    #endif
     
     func testCodingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
             try fixture.assertValueRoundtripsInCoder()
         }
         for fixture in mutableFixtures {
             try fixture.assertValueRoundtripsInCoder()
         }
+        #endif // !SKIP
     }
     
     func testLoadedValuesMatch() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
 //            try fixture.assertLoadedValuesMatch()
         }
         for fixture in mutableFixtures {
             try fixture.assertLoadedValuesMatch()
         }
+        #endif // !SKIP
     }
     
     func testHashValue() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var sample1 = IndexSet()
         sample1.insert(integersIn: 1..<2)
         sample1.insert(integersIn: 100..<200)
@@ -1280,6 +1444,7 @@ class TestIndexSet : XCTestCase {
         let sample9 = IndexSet()
         let sample10 = IndexSet()
         XCTAssertEqual(sample9.hashValue, sample10.hashValue)
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -1338,5 +1503,4 @@ class TestIndexSet : XCTestCase {
     
 }
 
-#endif
 

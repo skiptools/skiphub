@@ -109,11 +109,13 @@ class TestNSTextCheckingResult: XCTestCase {
         }
     }
     
+    #if !SKIP
     let fixtures = [
         Fixtures.textCheckingResultSimpleRegex,
         Fixtures.textCheckingResultExtendedRegex,
         Fixtures.textCheckingResultComplexRegex,
     ]
+    #endif
     
     private func areEqual(_ lhs: NSTextCheckingResult, _ rhs: NSTextCheckingResult) -> Bool {
         guard lhs.resultType == rhs.resultType else { return false }

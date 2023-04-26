@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -37,12 +36,19 @@ class TestLengthFormatter: XCTestCase {
     #endif // SKIP
 
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "en_US")
         formatter.isForPersonHeightUse = false
         super.setUp()
+        #endif // !SKIP
     }
     
     func test_stringFromMetersUS() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(formatter.string(fromMeters:-100000), "-62.137 mi")
         XCTAssertEqual(formatter.string(fromMeters: -1), "-0.001 mi")
         XCTAssertEqual(formatter.string(fromMeters: 0.00001), "0 in")
@@ -56,9 +62,13 @@ class TestLengthFormatter: XCTestCase {
 //        XCTAssertEqual(formatter.string(fromMeters: 1000000), "621.373 mi")
 //        XCTAssertEqual(formatter.string(fromMeters: 10000000), "6,213.727 mi")
 //        XCTAssertEqual(formatter.string(fromMeters: 100000000), "62,137.274 mi")
+        #endif // !SKIP
     }
     
     func test_stringFromMetersUSPersonHeight() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.isForPersonHeightUse = true
 //        XCTAssertEqual(formatter.string(fromMeters: -100000), "-328,083 ft, 11.874 in")
 //        XCTAssertEqual(formatter.string(fromMeters: -1), "-3 ft, 3.37 in")
@@ -70,9 +80,13 @@ class TestLengthFormatter: XCTestCase {
         XCTAssertEqual(formatter.string(fromMeters: 1), "3 ft, 3.37 in")
         XCTAssertEqual(formatter.string(fromMeters: 10), "32 ft, 9.701 in")
 //        XCTAssertEqual(formatter.string(fromMeters: 100000000), "328,083,989 ft, 6.016 in")
+        #endif // !SKIP
     }
     
     func test_stringFromMetersMetric() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "en_GB")
         XCTAssertEqual(formatter.string(fromMeters: -10000), "-10 km")
         XCTAssertEqual(formatter.string(fromMeters: -1), "-0.001 km")
@@ -88,9 +102,13 @@ class TestLengthFormatter: XCTestCase {
         XCTAssertEqual(formatter.string(fromMeters: 1000000), "1,000 km")
         XCTAssertEqual(formatter.string(fromMeters: 10000000), "10,000 km")
         XCTAssertEqual(formatter.string(fromMeters: 100000000), "100,000 km")
+        #endif // !SKIP
     }
     
     func test_stringFromMetersMetricPersonHeight() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.numberFormatter.locale = Locale(identifier: "en_GB")
         formatter.isForPersonHeightUse = true
         XCTAssertEqual(formatter.string(fromMeters: -1), "-100 cm")
@@ -98,9 +116,13 @@ class TestLengthFormatter: XCTestCase {
         XCTAssertEqual(formatter.string(fromMeters: 0.1), "10 cm")
         XCTAssertEqual(formatter.string(fromMeters: 10), "1,000 cm")
         XCTAssertEqual(formatter.string(fromMeters: 1000000), "100,000,000 cm")
+        #endif // !SKIP
     }
     
     func test_stringFromValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.unitStyle = .long
         XCTAssertEqual(formatter.string(fromValue: 0.002, unit: .millimeter),"0.002 millimeters")
         XCTAssertEqual(formatter.string(fromValue:0, unit: .centimeter), "0 centimeters")
@@ -118,9 +140,13 @@ class TestLengthFormatter: XCTestCase {
         formatter.isForPersonHeightUse = false
         XCTAssertEqual(formatter.string(fromValue: 5.3, unit: .millimeter), "5.3 mm")
         XCTAssertEqual(formatter.string(fromValue: 873.2345, unit: .centimeter), "873.234 cm")
+        #endif // !SKIP
     }
     
     func test_unitStringFromMeters() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var unit = LengthFormatter.Unit.meter
         XCTAssertEqual(formatter.unitString(fromMeters: -100000, usedUnit: &unit), "mi")
         XCTAssertEqual(unit, .mile)
@@ -160,9 +186,13 @@ class TestLengthFormatter: XCTestCase {
         
         XCTAssertEqual(formatter.unitString(fromMeters: 100000000, usedUnit: &unit), "mi")
         XCTAssertEqual(unit, .mile)
+        #endif // !SKIP
     }
     
     func test_unitStringFromValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         formatter.unitStyle = .long
         XCTAssertEqual(formatter.unitString(fromValue: 0.002, unit: .millimeter), "millimeters")
         XCTAssertEqual(formatter.unitString(fromValue: 0, unit: .centimeter), "centimeters")
@@ -179,8 +209,8 @@ class TestLengthFormatter: XCTestCase {
         formatter.isForPersonHeightUse = false
         XCTAssertEqual(formatter.unitString(fromValue: 5.3, unit: .millimeter), "mm")
         XCTAssertEqual(formatter.unitString(fromValue: 873.2345, unit: .centimeter), "cm")
+        #endif // !SKIP
     }
 }
 
-#endif
 

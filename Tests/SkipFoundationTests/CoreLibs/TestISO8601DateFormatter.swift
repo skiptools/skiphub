@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 class TestISO8601DateFormatter: XCTestCase {
     
     func test_stringFromDate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm:ss.SSSS zzz"
         let dateString = "2016/10/08 22:31:00.0713 GMT"
@@ -155,11 +157,15 @@ class TestISO8601DateFormatter: XCTestCase {
 
         isoFormatter.formatOptions = [.withDay, .withWeekOfYear, .withMonth, .withTimeZone, .withColonSeparatorInTimeZone, .withDashSeparatorInDate]
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "10-W40-06-07:00")
+        #endif // !SKIP
     }
     
     
     
     func test_dateFromString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let f = ISO8601DateFormatter()
         var result = f.date(from: "2016-10-08T00:00:00Z")
@@ -183,11 +189,15 @@ class TestISO8601DateFormatter: XCTestCase {
         result = f.date(from: "12345")
         XCTAssertNil(result)
 
+        #endif // !SKIP
     }
     
     
     
     func test_stringFromDateClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm zzz"
@@ -315,31 +325,49 @@ class TestISO8601DateFormatter: XCTestCase {
 
         formatOptions = [.withDay, .withWeekOfYear, .withMonth, .withTimeZone, .withColonSeparatorInTimeZone, .withDashSeparatorInDate]
         XCTAssertEqual(ISO8601DateFormatter.string(from: someDateTime, timeZone: pstTimeZone, formatOptions: formatOptions), "10-W40-06-07:00")
+        #endif // !SKIP
     }
 
+    #if !SKIP
     let fixtures = [
         Fixtures.iso8601FormatterDefault,
         Fixtures.iso8601FormatterOptionsSet
     ]
+    #endif
     
     func areEqual(_ a: ISO8601DateFormatter, _ b: ISO8601DateFormatter) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return a.formatOptions == b.formatOptions &&
             a.timeZone.identifier == b.timeZone.identifier
+        #endif // !SKIP
     }
     
     func test_codingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
             try fixture.assertValueRoundtripsInCoder(secureCoding: true, matchingWith: areEqual(_:_:))
         }
+        #endif // !SKIP
     }
     
     func test_loadingFixtures() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
 //            try fixture.assertLoadedValuesMatch(areEqual(_:_:))
         }
+        #endif // !SKIP
     }
 
     func test_copy() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let original = ISO8601DateFormatter()
         original.timeZone = try XCTUnwrap(TimeZone(identifier: "GMT"))
         original.formatOptions = [
@@ -359,6 +387,7 @@ class TestISO8601DateFormatter: XCTestCase {
 //        XCTAssertNotEqual(copied.formatOptions, original.formatOptions)
 //        XCTAssertFalse(original.formatOptions.contains(.withFractionalSeconds))
         XCTAssertTrue(copied.formatOptions.contains(.withFractionalSeconds))
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -376,5 +405,4 @@ class TestISO8601DateFormatter: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

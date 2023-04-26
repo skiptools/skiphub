@@ -24,6 +24,21 @@ internal protocol DataProtocol {
 internal struct EnergyFormatter {
 }
 
+internal struct LengthFormatter {
+}
+
+internal struct MassFormatter {
+}
+
+internal protocol HTTPCookieStorage {
+}
+
+internal protocol ISO8601DateFormatter {
+}
+
+internal protocol IndexSet {
+}
+
 internal protocol FileHandle {
 }
 

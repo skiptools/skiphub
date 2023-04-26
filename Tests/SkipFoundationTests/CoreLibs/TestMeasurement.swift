@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -36,6 +35,9 @@ class CustomUnit: Unit {
 
 class TestMeasurement: XCTestCase {
     func testHashing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let lengths: [[Measurement<UnitLength>]] = [
             [
                 Measurement(value: 5, unit: UnitLength.kilometers),
@@ -80,33 +82,45 @@ class TestMeasurement: XCTestCase {
         ]
         checkHashable(custom, equalityOracle: { $0 == $1 })
 #endif
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     let fixtures = [
         Fixtures.zeroMeasurement,
         Fixtures.lengthMeasurement,
         Fixtures.frequencyMeasurement,
         Fixtures.angleMeasurement,
     ]
+    #endif
 
     func testCodingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
             try fixture.assertValueRoundtripsInCoder()
         }
+        #endif // !SKIP
     }
     
     func testLoadedValuesMatch() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
 //            try fixture.assertLoadedValuesMatch()
         }
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     static let allTests = [
         ("testHashing", testHashing),
         ("testCodingRoundtrip", testCodingRoundtrip),
         ("testLoadedValuesMatch", testLoadedValuesMatch),
     ]
+    #endif
 }
 
-#endif
 

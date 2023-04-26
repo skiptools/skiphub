@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -29,12 +28,19 @@ class TestHTTPCookieStorage: XCTestCase {
     }
 
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Delete any cookies in the storage
         cookieStorage(for: .shared).removeCookies(since: Date(timeIntervalSince1970: 0))
         cookieStorage(for: .groupContainer("test")).removeCookies(since: Date(timeIntervalSince1970: 0))
+        #endif // !SKIP
     }
 
     func test_sharedCookieStorageAccessedFromMultipleThreads() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let q = DispatchQueue.global()
         let syncQ = DispatchQueue(label: "TestHTTPCookieStorage.syncQ")
         var allCookieStorages: [HTTPCookieStorage] = []
@@ -53,56 +59,92 @@ class TestHTTPCookieStorage: XCTestCase {
         let cookieStorages = syncQ.sync { allCookieStorages }
         let mySharedCookieStore = HTTPCookieStorage.shared
         XCTAssertTrue(cookieStorages.reduce(true, { $0 && $1 === mySharedCookieStore }), "\(cookieStorages)")
+        #endif // !SKIP
     }
 
     func test_BasicStorageAndRetrieval() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         basicStorageAndRetrieval(with: .shared)
         basicStorageAndRetrieval(with: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func test_deleteCookie() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         deleteCookie(with: .shared)
         deleteCookie(with: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func test_removeCookies() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         removeCookies(with: .shared)
         removeCookies(with: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func test_cookiesForURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         setCookiesForURL(with: .shared)
         checkCookiesForURL(with: .shared)
 
         setCookiesForURL(with: .groupContainer("test"))
         checkCookiesForURL(with: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func test_cookiesForURLWithMainDocumentURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         setCookiesForURLWithMainDocumentURL(with: .shared)
         setCookiesForURLWithMainDocumentURL(with: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func test_descriptionCookie() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         checkCookieDescription(for: .shared)
         checkCookieDescription(for: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func test_cookieDomainMatching() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         checkCookieDomainMatching(for: .shared)
         checkCookieDomainMatching(for: .groupContainer("test"))
+        #endif // !SKIP
     }
 
     func cookieStorage(for type: StorageType) -> HTTPCookieStorage {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         switch type {
         case .shared:
             return HTTPCookieStorage.shared
         case .groupContainer(let identifier):
             return HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: identifier)
         }
+        #endif // !SKIP
     }
 
     func basicStorageAndRetrieval(with storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
 
         let simpleCookie = HTTPCookie(properties: [
@@ -145,9 +187,13 @@ class TestHTTPCookieStorage: XCTestCase {
 
         storage.setCookie(simpleCookie2)
         XCTAssertEqual(storage.cookies!.count, 2)
+        #endif // !SKIP
     }
 
     func deleteCookie(with storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
 
         let simpleCookie2 = HTTPCookie(properties: [
@@ -172,9 +218,13 @@ class TestHTTPCookieStorage: XCTestCase {
         XCTAssertEqual(storage.cookies!.count, 1)
         storage.deleteCookie(simpleCookie2)
         XCTAssertEqual(storage.cookies!.count, 0)
+        #endif // !SKIP
     }
 
     func removeCookies(with storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
         let past = Date(timeIntervalSinceReferenceDate: Date().timeIntervalSinceReferenceDate - 120)
         let future = Date(timeIntervalSinceReferenceDate: Date().timeIntervalSinceReferenceDate + 120)
@@ -191,9 +241,13 @@ class TestHTTPCookieStorage: XCTestCase {
         XCTAssertEqual(storage.cookies!.count, 1)
         storage.removeCookies(since: past)
         XCTAssertEqual(storage.cookies!.count, 0)
+        #endif // !SKIP
     }
 
     func setCookiesForURL(with storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
         let url = URL(string: "https://swift.org")
         let simpleCookie = HTTPCookie(properties: [
@@ -213,15 +267,23 @@ class TestHTTPCookieStorage: XCTestCase {
 
         storage.setCookies([simpleCookie, simpleCookie1], for: url, mainDocumentURL: nil)
         XCTAssertEqual(storage.cookies!.count, 1)
+        #endif // !SKIP
     }
 
     func checkCookiesForURL(with storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
         let url = URL(string: "https://swift.org")
         XCTAssertEqual(storage.cookies(for: url!)!.count, 1)
+        #endif // !SKIP
     }
 
     func setCookiesForURLWithMainDocumentURL(with storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
         storage.cookieAcceptPolicy = .onlyFromMainDocumentDomain
         let url = URL(string: "https://swift.org/downloads")
@@ -244,9 +306,13 @@ class TestHTTPCookieStorage: XCTestCase {
         ])!
         storage.setCookies([simpleCookie1], for: url1, mainDocumentURL: mainUrl)
         XCTAssertEqual(storage.cookies(for: url1!)!.count, 0)
+        #endif // !SKIP
     }
 
     func checkCookieDescription(for storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
         guard let cookies = storage.cookies else {
             XCTFail("No cookies")
@@ -274,9 +340,13 @@ class TestHTTPCookieStorage: XCTestCase {
             return
         }
         XCTAssertEqual(storage.description, "<NSHTTPCookieStorage cookies count:\(cookies1.count)>")
+        #endif // !SKIP
     }
 
     func checkCookieDomainMatching(for storageType: StorageType) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = cookieStorage(for: storageType)
 
         let simpleCookie1 = HTTPCookie(properties: [   // swift.org domain only
@@ -317,9 +387,13 @@ class TestHTTPCookieStorage: XCTestCase {
         XCTAssertEqual(Set(storage.cookies(for: bugsSwiftOrgUrl)!), Set([simpleCookie2, simpleCookie3]))
         XCTAssertEqual(storage.cookies(for: exampleComUrl)!, [])
         XCTAssertEqual(storage.cookies(for: superSwiftOrgUrl)!, [])
+        #endif // !SKIP
     }
 
     func test_cookieInXDGSpecPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if XXX && !os(Android) && !DARWIN_COMPATIBILITY_TESTS && !os(Windows)// No XDG on native Foundation
         //Test without setting the environment variable
         let testCookie = HTTPCookie(properties: [
@@ -361,9 +435,13 @@ class TestHTTPCookieStorage: XCTestCase {
         XCTAssertEqual(terminationReason, Process.TerminationReason.exit)
         try? fm.removeItem(atPath: testPath)
 #endif
+        #endif // !SKIP
     }
     
     func test_sorting() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = HTTPCookieStorage.shared
         let url = URL(string: "https://swift.org")
         let cookie = HTTPCookie(properties: [
@@ -396,6 +474,7 @@ class TestHTTPCookieStorage: XCTestCase {
         ])
         
         XCTAssertEqual(result, [cookie, cookie3, cookie2])
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -417,5 +496,4 @@ class TestHTTPCookieStorage: XCTestCase {
 
 }
 
-#endif
 

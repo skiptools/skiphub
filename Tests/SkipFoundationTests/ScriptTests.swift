@@ -51,7 +51,6 @@ class ScriptTests : XCTestCase {
         XCTAssertEqual("q", ctx.evaluateScript("'q'")?.toString())
         XCTAssertEqual("Ƕe110", try eval(#"'Ƕ'+"e"+1+1+0"#).toString())
 
-        #if !SKIP // debug crashing on CI
         XCTAssertEqual(true, try eval("[] + {}").isString)
         XCTAssertEqual("[object Object]", try eval("[] + {}").toString())
 
@@ -69,6 +68,7 @@ class ScriptTests : XCTestCase {
         XCTAssertEqual("wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1wat1", try eval("Array(16).join('wat' + 1)").toString())
         XCTAssertEqual("NaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaNNaN Batman!", try eval("Array(16).join('wat' - 1) + ' Batman!'").toString())
 
+        #if !SKIP // debug crashing on CI
         XCTAssertEqual(1, try eval("let y = {}; y[[]] = 1; Object.keys(y)").toArray().count)
 
         XCTAssertEqual(10.0, try eval("['10', '10', '10'].map(parseInt)").toArray().first as? Double)
