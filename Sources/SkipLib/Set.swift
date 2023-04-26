@@ -17,4 +17,8 @@ public struct Set<Element>: Collection {
     public init<S: Sequence<Element>>(_ sequence: S) {
         Swift.fatalError()
     }
+
+    public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
+        Swift.fatalError()
+    }
 }
