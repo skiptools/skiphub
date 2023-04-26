@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -36,6 +35,9 @@ class TestNSCache : XCTestCase {
     #endif // SKIP
     
     func test_setWithUnmutableKeys() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<NSString, NSString>()
         
         var key1 = NSString(string: "key")
@@ -63,9 +65,13 @@ class TestNSCache : XCTestCase {
         XCTAssertEqual(cache.object(forKey: key2), value1, "should be equal to \(value1) when using second key")
         XCTAssertEqual(cache.object(forKey: key1), value2, "should be equal to \(value1) when using first key")
         XCTAssertEqual(cache.object(forKey: key2), value2, "should be equal to \(value1) when using second key")
+        #endif // !SKIP
     }
     
     func test_setWithMutableKeys() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<NSMutableString, NSString>()
         
         let key1 = NSMutableString(string: "key")
@@ -93,9 +99,13 @@ class TestNSCache : XCTestCase {
         key1.setString("key")
         XCTAssertEqual(cache.object(forKey: key1), value, "should be equal to \(value) when using first key")
         XCTAssertEqual(cache.object(forKey: key2), value, "should be equal to \(value) when using second key")        
+        #endif // !SKIP
     }
     
     func test_costLimit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<NSString, NSString>()
         cache.totalCostLimit = 10
         
@@ -107,9 +117,13 @@ class TestNSCache : XCTestCase {
         XCTAssertNil(cache.object(forKey: "0"), "should be nil")
         XCTAssertEqual(cache.object(forKey: "2"), "object2", "should be equal to 'object2'")
         XCTAssertEqual(cache.object(forKey: "1"), "object1", "should be equal to 'object1'")
+        #endif // !SKIP
     }
     
     func test_countLimit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<NSString, NSString>()
         cache.countLimit = 2
         
@@ -126,6 +140,7 @@ class TestNSCache : XCTestCase {
         XCTAssertEqual(cache.object(forKey: key3), value, "should be equal to \(value)")
 //        XCTAssertNil(cache.object(forKey: key1), "should be nil")
         
+        #endif // !SKIP
     }
 
 
@@ -137,17 +152,28 @@ class TestNSCache : XCTestCase {
         }
 
         func hash(into hasher: inout Hasher) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
             hasher.combine(string)
+        #endif // !SKIP
         }
 
         static func ==(lhs: TestHashableCacheKey,
             rhs:TestHashableCacheKey) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
             return lhs.string == rhs.string
+        #endif // !SKIP
         }
     }
 
     // Test when NSCacheKey.value is AnyHashable
     func test_hashableKey() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<TestHashableCacheKey, NSString>()
         cache.countLimit = 2
 
@@ -163,6 +189,7 @@ class TestNSCache : XCTestCase {
         XCTAssertEqual(cache.object(forKey: key2), value, "should be equal to \(value)")
         XCTAssertEqual(cache.object(forKey: key3), value, "should be equal to \(value)")
 //        XCTAssertNil(cache.object(forKey: key1), "should be nil")
+        #endif // !SKIP
     }
 
 
@@ -176,6 +203,9 @@ class TestNSCache : XCTestCase {
 
     // Test when NSCacheKey.value is neither NSObject or AnyHashable
     func test_nonHashableKey() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<TestCacheKey, NSString>()
         cache.countLimit = 2
 
@@ -191,9 +221,13 @@ class TestNSCache : XCTestCase {
         XCTAssertEqual(cache.object(forKey: key2), value, "should be equal to \(value)")
         XCTAssertEqual(cache.object(forKey: key3), value, "should be equal to \(value)")
 //        XCTAssertNil(cache.object(forKey: key1), "should be nil")
+        #endif // !SKIP
     }
     
     func test_objectCorrectlyReleased() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = NSCache<NSString, AnyObject>()
         cache.totalCostLimit = 10
         
@@ -222,8 +256,8 @@ class TestNSCache : XCTestCase {
         XCTAssertNil(weakObject1, "removed cached object not released")
         XCTAssertNil(weakObject2, "removed cached object not released")
         XCTAssertNil(weakObject3, "removed cached object not released")
+        #endif // !SKIP
     }
 }
 
-#endif
 
