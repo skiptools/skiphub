@@ -15,6 +15,12 @@ import XCTest
 
 // MARK: Foundation Stubs
 
+internal protocol ComparisonResult {
+}
+
+internal protocol NSBinarySearchingOptions {
+}
+
 internal protocol DateIntervalFormatter {
 }
 
@@ -84,6 +90,9 @@ internal class NSObject : NSObjectProtocol {
 //}
 
 
+internal protocol NSRange {
+}
+
 internal class NSData : NSObject {
 }
 
@@ -91,6 +100,8 @@ internal class NSMutableData : NSData {
 }
 
 internal class NSAttributedString : NSObject {
+    public struct Key {
+    }
 }
 
 internal class NSMutableAttributedString : NSAttributedString {
@@ -101,6 +112,12 @@ internal class NSCharacterSet : NSObject {
 }
 
 internal class NSMutableCharacterSet : NSCharacterSet {
+}
+
+internal class NSArray : NSObject {
+}
+
+internal class NSMutableArray : NSArray {
 }
 
 

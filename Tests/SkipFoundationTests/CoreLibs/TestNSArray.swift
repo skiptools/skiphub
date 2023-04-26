@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -71,13 +70,20 @@ class TestNSArray : XCTestCase {
     #endif // SKIP
     
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array = NSArray()
         let array2 : NSArray = ["foo", "bar"]
         XCTAssertEqual(array.count, 0)
         XCTAssertEqual(array2.count, 2)
+        #endif // !SKIP
     }
 
     func test_constructors() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let arrayNil = NSArray(objects: nil, count: 0)
         XCTAssertEqual(arrayNil.count, 0)
 
@@ -110,9 +116,13 @@ class TestNSArray : XCTestCase {
         XCTAssertEqual(array7, mutArray)
         array7.removeObject(at: 3)
         XCTAssertNotEqual(array7.count, mutArray.count)
+        #endif // !SKIP
     }
 
     func test_constructorWithCopyItems() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let foo = "foo" as NSMutableString
 
         let array1 = NSArray(array: [foo], copyItems: false)
@@ -123,9 +133,13 @@ class TestNSArray : XCTestCase {
         foo.append("1")
         XCTAssertEqual(array1[0] as! String, "foo1")
         XCTAssertEqual(array2[0] as! String, "foo")
+        #endif // !SKIP
     }
     
     func test_enumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array : NSArray = ["foo", "bar", "baz"]
         let e = array.objectEnumerator()
         XCTAssertEqual((e.nextObject() as! String), "foo")
@@ -148,9 +162,13 @@ class TestNSArray : XCTestCase {
         let reverseEmpty = NSArray().reverseObjectEnumerator()
         XCTAssertNil(reverseEmpty.nextObject())
         XCTAssertNil(reverseEmpty.nextObject())
+        #endif // !SKIP
     }
     
     func test_enumerationUsingBlock() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array : NSArray = NSArray(array: Array(0..<100))
         let createIndexesArrayHavingSeen = { (havingSeen: IndexSet) in
             return (0 ..< array.count).map { havingSeen.contains($0) }
@@ -269,15 +287,20 @@ class TestNSArray : XCTestCase {
             }
         }
         
+        #endif // !SKIP
     }
     
     func test_sequenceType() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array : NSArray = ["foo", "bar", "baz"]
         var res = [String]()
         for obj in array {
             res.append((obj as! String))
         }
         XCTAssertEqual(res, ["foo", "bar", "baz"])
+        #endif // !SKIP
     }
 
 //    func test_getObjects() {
@@ -294,15 +317,22 @@ class TestNSArray : XCTestCase {
 //    }
     
     func test_objectAtIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array : NSArray = ["foo", "bar"]
         let foo = array.object(at: 0) as! String
         XCTAssertEqual(foo, "foo")
         
         let bar = array.object(at: 1) as! String
         XCTAssertEqual(bar, "bar")
+        #endif // !SKIP
     }
 
     func test_binarySearch() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let numbers: [AnyObject] = [
             NSNumber(value: 0 as Int), NSNumber(value: 1 as Int), NSNumber(value: 2 as Int), NSNumber(value: 2 as Int), NSNumber(value: 3 as Int),
             NSNumber(value: 4 as Int), NSNumber(value: 4 as Int), NSNumber(value: 6 as Int), NSNumber(value: 7 as Int), NSNumber(value: 7 as Int),
@@ -358,10 +388,14 @@ class TestNSArray : XCTestCase {
         XCTAssertEqual(indexInMiddle2, 1, "If no match found item should be inserted before least greater object")
         let indexInMiddle3 = objectIndexInArray(arrayOfTwo, value: 1, startingFrom: 0, length: 2, options: [.insertionIndex])
         XCTAssertEqual(indexInMiddle3, 1, "If no match found item should be inserted before least greater object")
+        #endif // !SKIP
     }
 
 
     func test_arrayReplacement() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let numbers: [AnyObject] = [
             NSNumber(value: 0 as Int), NSNumber(value: 1 as Int), NSNumber(value: 2 as Int), NSNumber(value: 3 as Int),
             NSNumber(value: 4 as Int), NSNumber(value: 5 as Int), NSNumber(value: 7 as Int)]
@@ -370,9 +404,13 @@ class TestNSArray : XCTestCase {
         XCTAssertTrue((array[0] as! NSNumber).intValue == 8)
         XCTAssertTrue((array[1] as! NSNumber).intValue == 9)
         XCTAssertTrue((array[2] as! NSNumber).intValue == 2)
+        #endif // !SKIP
     }
 
     func test_arrayReplaceObjectsInRangeFromRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let numbers: [AnyObject] = [
             NSNumber(value: 0 as Int), NSNumber(value: 1 as Int), NSNumber(value: 2 as Int), NSNumber(value: 3 as Int),
             NSNumber(value: 4 as Int), NSNumber(value: 5 as Int), NSNumber(value: 7 as Int)]
@@ -381,9 +419,13 @@ class TestNSArray : XCTestCase {
         XCTAssertTrue((array[0] as! NSNumber).intValue == 9)
         XCTAssertTrue((array[1] as! NSNumber).intValue == 10)
         XCTAssertTrue((array[2] as! NSNumber).intValue == 2)
+        #endif // !SKIP
     }
 
     func test_replaceObjectAtIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let numbers: [AnyObject] = [
             NSNumber(value: 0 as Int), NSNumber(value: 1 as Int), NSNumber(value: 2 as Int), NSNumber(value: 3 as Int),
             NSNumber(value: 4 as Int), NSNumber(value: 5 as Int), NSNumber(value: 7 as Int)]
@@ -403,9 +445,13 @@ class TestNSArray : XCTestCase {
         array.replaceObject(at: 6, with: NSNumber(value: 6 as Int))
         XCTAssertEqual(array.count, 7)
         XCTAssertEqual((array[6] as! NSNumber).intValue, 6)
+        #endif // !SKIP
     }
 
     func test_removeObjectsInArray() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let numbers: [AnyObject] = [
             NSNumber(value: 0 as Int), NSNumber(value: 1 as Int), NSNumber(value: 2 as Int), NSNumber(value: 3 as Int),
             NSNumber(value: 4 as Int), NSNumber(value: 5 as Int), NSNumber(value: 7 as Int)]
@@ -418,9 +464,13 @@ class TestNSArray : XCTestCase {
         XCTAssertEqual((array[1] as! NSNumber).intValue, 2)
         XCTAssertEqual((array[2] as! NSNumber).intValue, 3)
         XCTAssertEqual((array[3] as! NSNumber).intValue, 4)
+        #endif // !SKIP
     }
 
     func test_binarySearchFringeCases() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let numbers: [AnyObject] = [
             NSNumber(value: 0 as Int), NSNumber(value: 1 as Int), NSNumber(value: 2 as Int), NSNumber(value: 2 as Int), NSNumber(value: 3 as Int),
             NSNumber(value: 4 as Int), NSNumber(value: 4 as Int), NSNumber(value: 6 as Int), NSNumber(value: 7 as Int), NSNumber(value: 7 as Int),
@@ -451,13 +501,23 @@ class TestNSArray : XCTestCase {
         
         let greatestInsert = objectIndexInArray(array, value: 15, startingFrom: rangeStart, length: rangeLength, options: .insertionIndex)
         XCTAssertTrue(greatestInsert == (rangeStart + rangeLength), "If object is greater than greatest object in the range it should be inserted at range' end.")
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     func objectIndexInArray(_ array: NSArray, value: Int, startingFrom: Int, length: Int, options: NSBinarySearchingOptions = []) -> Int {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return array.index(of: NSNumber(value: value), inSortedRange: NSRange(location: startingFrom, length: length), options: options, usingComparator: compareIntNSNumber)
+        #endif // !SKIP
     }
+    #endif
     
     func compareIntNSNumber(_ lhs: Any, rhs: Any) -> ComparisonResult {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let lhsInt = (lhs as! NSNumber).intValue
         let rhsInt = (rhs as! NSNumber).intValue
         if lhsInt == rhsInt {
@@ -468,9 +528,13 @@ class TestNSArray : XCTestCase {
         }
         
         return .orderedDescending
+        #endif // !SKIP
     }
     
     func test_replaceObjectsInRange_withObjectsFrom() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array1 = NSMutableArray(array:[
             "foo1",
             "bar1",
@@ -487,9 +551,13 @@ class TestNSArray : XCTestCase {
         XCTAssertEqual(array1[1] as? String, "bar2", "Expected bar2 but was \(array1[1])")
         XCTAssertEqual(array1[2] as? String, "baz2", "Expected baz2 but was \(array1[2])")
         XCTAssertEqual(array1[3] as? String, "baz1", "Expected baz1 but was \(array1[3])")
+        #endif // !SKIP
     }
     
     func test_replaceObjectsInRange_withObjectsFrom_range() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array1 = NSMutableArray(array:[
             "foo1",
             "bar1",
@@ -506,9 +574,13 @@ class TestNSArray : XCTestCase {
         XCTAssertEqual(array1[1] as? String, "bar2", "Expected bar2 but was \(array1[1])")
         XCTAssertEqual(array1[2] as? String, "baz2", "Expected baz2 but was \(array1[2])")
         XCTAssertEqual(array1[3] as? String, "baz1", "Expected baz1 but was \(array1[3])")
+        #endif // !SKIP
     }
 
     func test_sortedArrayUsingComparator() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // sort with localized caseInsensitive compare
         let input = ["this", "is", "a", "test", "of", "sort", "with", "strings"]
         let expectedResult: Array<String> = input.sorted()
@@ -532,9 +604,13 @@ class TestNSArray : XCTestCase {
             return l < r ? .orderedAscending : (l == r ? .orderedSame : .orderedDescending)
         }
         XCTAssertEqual(resultNumbers.map { ($0 as! NSNumber).intValue}, expectedNumbers)
+        #endif // !SKIP
     }
 
     func test_sortedArrayWithOptionsUsingComparator() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // check that sortedArrayWithOptions:comparator: works in the way sortedArrayUsingComparator does
         let input = NSArray(array: ["this", "is", "a", "test", "of", "sort", "with", "strings"])
         let comparator: (Any, Any) -> ComparisonResult = { left, right -> ComparisonResult in
@@ -550,9 +626,13 @@ class TestNSArray : XCTestCase {
         // sort empty array
         let emptyArray = NSArray().sortedArray(options: []) { _,_ in .orderedSame }
         XCTAssertTrue(emptyArray.isEmpty)
+        #endif // !SKIP
     }
 
     func test_sortUsingFunction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let inputNumbers = [11, 120, 215, 11, 1, -22, 35, -89, 65]
         let mutableInput = NSArray(array: inputNumbers).mutableCopy() as! NSMutableArray
         let expectedNumbers = inputNumbers.sorted()
@@ -565,9 +645,13 @@ class TestNSArray : XCTestCase {
         mutableInput.sort(compare, context: UnsafeMutableRawPointer(bitPattern: 0))
 
         XCTAssertEqual(mutableInput.map { ($0 as! NSNumber).intValue}, expectedNumbers)
+        #endif // !SKIP
     }
 
     func test_sortUsingComparator() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // check behaviour with Array's sort method
         let inputNumbers = [11, 120, 215, 11, 1, -22, 35, -89, 65]
         let mutableInput = NSMutableArray(array: inputNumbers)
@@ -593,9 +677,13 @@ class TestNSArray : XCTestCase {
         mutableStringsInput1.sort(comparator: comparator)
         mutableStringsInput2.sort(options: [], usingComparator: comparator)
         XCTAssertTrue(mutableStringsInput1.isEqual(to: Array(mutableStringsInput2)))
+        #endif // !SKIP
     }
 
     func test_equality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array1 = NSArray(array: ["this", "is", "a", "test", "of", "equal", "with", "strings"])
         let array2 = NSArray(array: ["this", "is", "a", "test", "of", "equal", "with", "strings"])
         let array3 = NSArray(array: ["this", "is", "a", "test", "of", "equal", "with", "objects"])
@@ -619,10 +707,14 @@ class TestNSArray : XCTestCase {
         XCTAssertFalse(objectsArray1 == objectsArray2)
         XCTAssertFalse(objectsArray1.isEqual(objectsArray2))
         XCTAssertFalse(objectsArray1.isEqual(to: Array(objectsArray2)))
+        #endif // !SKIP
     }
 
     /// - Note: value type conversion will destroy identity. So use index(of:) instead of indexOfObjectIdentical(to:)
     func test_copying() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array = NSArray(array: ["this", "is", "a", "test", "of", "copy", "with", "strings"])
 
         let arrayCopy1 = array.copy() as! NSArray
@@ -636,9 +728,13 @@ class TestNSArray : XCTestCase {
             XCTAssertTrue(array.index(of: entry) != NSNotFound)
         }
 
+        #endif // !SKIP
     }
 
     func test_mutableCopying() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array = NSArray(array: ["this", "is", "a", "test", "of", "mutableCopy", "with", "strings"])
 
         let arrayMutableCopy1 = array.mutableCopy() as! NSMutableArray
@@ -654,9 +750,13 @@ class TestNSArray : XCTestCase {
         for entry in arrayMutableCopy2 {
             XCTAssertTrue(arrayMutableCopy1.index(of: entry) != NSNotFound)
         }
+        #endif // !SKIP
     }
 
     func test_initWithContentsOfFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 234))
         if let _ = testFilePath {
             let a1: NSArray = ["foo", "bar"]
@@ -671,9 +771,13 @@ class TestNSArray : XCTestCase {
         } else {
             XCTFail("Temporary file creation failed")
         }
+        #endif // !SKIP
     }
 
     func test_initMutableWithContentsOfFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 234)) {
             let a1: NSArray = ["foo", "bar"]
             let isWritten = a1.write(toFile: testFilePath, atomically: true)
@@ -690,9 +794,13 @@ class TestNSArray : XCTestCase {
         } else {
             XCTFail("Temporary file creation failed")
         }
+        #endif // !SKIP
     }
 
     func test_initMutableWithContentsOfURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 234)) {
             let a1: NSArray = ["foo", "bar"]
             let isWritten = a1.write(toFile: testFilePath, atomically: true)
@@ -710,9 +818,13 @@ class TestNSArray : XCTestCase {
         } else {
             XCTFail("Temporary file creation failed")
         }
+        #endif // !SKIP
     }
 
     func test_writeToFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
         let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 234))
         if let _ = testFilePath {
@@ -736,9 +848,13 @@ class TestNSArray : XCTestCase {
             XCTFail("Temporary file creation failed")
         }
         #endif
+        #endif // !SKIP
     }
 
     func test_readWriteURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = NSArray(arrayLiteral: "one", "two", "three", "four", "five")
         do {
             let tempDir = NSTemporaryDirectory() + "TestFoundation_Playground_" + NSUUID().uuidString
@@ -765,9 +881,13 @@ class TestNSArray : XCTestCase {
         } catch {
             XCTFail("Failed to write to file: \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_insertObjectAtIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a1 = NSMutableArray(arrayLiteral: "one", "two", "three", "four")
         a1.insert("a", at: 0)
         XCTAssertEqual(a1, ["a", "one", "two", "three", "four"])
@@ -779,9 +899,13 @@ class TestNSArray : XCTestCase {
         let a3 = NSMutableArray()
         a3.insert("a", at: 0)
         XCTAssertEqual(a3, ["a"])
+        #endif // !SKIP
     }
 
     func test_insertObjectsAtIndexes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a1 = NSMutableArray(arrayLiteral: "one", "two", "three", "four")
         a1.insert(["a", "b"], at: [0, 1])
         XCTAssertEqual(a1, ["a", "b", "one", "two", "three", "four"])
@@ -797,9 +921,13 @@ class TestNSArray : XCTestCase {
         let a4 = NSMutableArray()
         a4.insert(["a", "b"], at: [0, 1])
         XCTAssertEqual(a4, ["a", "b"])
+        #endif // !SKIP
     }
 
     func test_replaceObjectsAtIndexesWithObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a1 = NSMutableArray(arrayLiteral: "one", "two", "three", "four")
         a1.replaceObjects(at: [0], with: ["a"])
         XCTAssertEqual(a1, ["a", "two", "three", "four"])
@@ -811,9 +939,13 @@ class TestNSArray : XCTestCase {
         let a3 = NSMutableArray(arrayLiteral: "one", "two", "three", "four")
         a3.replaceObjects(at: [3, 2, 1, 0], with: ["a", "b", "c", "d"])
         XCTAssertEqual(a3, ["a", "b", "c", "d"])
+        #endif // !SKIP
     }
 
     func test_pathsMatchingExtensions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let paths = NSArray(arrayLiteral: "file1.txt", "/tmp/file2.txt", "file3.jpg", "file3.png", "/file4.png", "txt", ".txt")
         let match1 = paths.pathsMatchingExtensions(["txt"])
         XCTAssertEqual(match1, ["file1.txt", "/tmp/file2.txt"])
@@ -829,9 +961,13 @@ class TestNSArray : XCTestCase {
 
         let match5 = paths.pathsMatchingExtensions(["..txt"])
         XCTAssertEqual(match5, [])
+        #endif // !SKIP
     }
     
     func test_customMirror() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let inputArray = ["this", "is", "a", "test", "of", "custom", "mirror"]
         let array = NSArray(array: inputArray)
         let arrayMirror = array.customMirror
@@ -843,10 +979,14 @@ class TestNSArray : XCTestCase {
         XCTAssertEqual(array[4] as! String, arrayMirror.descendant(4) as! String)
         XCTAssertEqual(array[5] as! String, arrayMirror.descendant(5) as! String)
         XCTAssertEqual(array[6] as! String, arrayMirror.descendant(6) as! String)
+        #endif // !SKIP
     }
 
 #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(Linux)
     func test_arrayUsedAsCFArrayInvokesArrayMethods() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let number = 789 as NSNumber
         let array = NSMutableArray(array: [123, 456])
         withExtendedLifetime(number) {
@@ -854,10 +994,14 @@ class TestNSArray : XCTestCase {
         }
         XCTAssertEqual(array[0] as! NSNumber, 123 as NSNumber)
         XCTAssertEqual(array[1] as! NSNumber, 789 as NSNumber)
+        #endif // !SKIP
     }
 #endif
 
     private func createTestFile(_ path: String, _contents: Data) -> String? {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tempDir = NSTemporaryDirectory() + "TestFoundation_Playground_" + NSUUID().uuidString + "/"
         do {
             try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: false, attributes: nil)
@@ -869,12 +1013,16 @@ class TestNSArray : XCTestCase {
         } catch {
             return nil
         }
+        #endif // !SKIP
     }
     
     private func removeTestFile(_ location: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try? FileManager.default.removeItem(atPath: location)
+        #endif // !SKIP
     }
 }
 
-#endif
 

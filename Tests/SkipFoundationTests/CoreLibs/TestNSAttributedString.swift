@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,12 @@ import XCTest
 
 class TestNSAttributedString : XCTestCase {
     func test_initWithString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem 😀 ipsum dolor sit amet, consectetur adipiscing elit. ⌘ Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit. ಠ_ರೃ"
         let attrString = NSAttributedString(string: string)
         XCTAssertEqual(attrString.string, string)
@@ -36,9 +41,17 @@ class TestNSAttributedString : XCTestCase {
         XCTAssertNil(attribute)
         XCTAssertEqual(range.location, 0)
         XCTAssertEqual(range.length, string.utf16.count)
+        #endif // !SKIP
+        #endif // !SKIP
     }
     
     func test_initWithStringAndAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
         
@@ -69,22 +82,35 @@ class TestNSAttributedString : XCTestCase {
             return
         }
         XCTAssertEqual(validAttribute, "attribute.placeholder.value")
+        #endif // !SKIP
+        #endif // !SKIP
     }
     
     func test_initWithAttributedString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
         let mutableAttrString = NSMutableAttributedString(string: string, attributes: attributes)
-
+        
         let initializedAttrString = NSAttributedString(attributedString: mutableAttrString)
         XCTAssertTrue(initializedAttrString.isEqual(to: mutableAttrString))
 
         // changing the mutable attr string should not affect the initialized attr string
         mutableAttrString.append(mutableAttrString)
         XCTAssertEqual(initializedAttrString.string, string)
+        #endif // !SKIP
+        #endif // !SKIP
     }
     
     func test_attributedSubstring() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
         
@@ -102,9 +128,13 @@ class TestNSAttributedString : XCTestCase {
         XCTAssertEqual(range.location, 0)
         XCTAssertEqual(range.length, attrString.length)
         XCTAssertEqual(value, "attribute.placeholder.value")
+        #endif // !SKIP
     }
     
     func test_longestEffectiveRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         
         let attrKey = NSAttributedString.Key("attribute.placeholder.key")
@@ -127,9 +157,13 @@ class TestNSAttributedString : XCTestCase {
         _ = attrString.attributes(at: 0, longestEffectiveRange: &range, in: searchRange)
         XCTAssertEqual(range.location, 0)
         XCTAssertEqual(range.length, 28)
+        #endif // !SKIP
     }
     
     func test_enumerateAttributeWithName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
@@ -174,9 +208,13 @@ class TestNSAttributedString : XCTestCase {
         }
         XCTAssertEqual(rangeDescriptionString, "(0,28)(28,12)(40,5)(45,99)")
         XCTAssertEqual(attrDescriptionString, "\(attrValue1)|nil|nil|nil|")
+        #endif // !SKIP
     }
     
     func test_enumerateAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
@@ -235,9 +273,13 @@ class TestNSAttributedString : XCTestCase {
         }
         XCTAssertEqual(rangeDescriptionString, "(0,10)")
         XCTAssertEqual(attrsDescriptionString, "[attribute.placeholder.key1:attribute.placeholder.value1]")
+        #endif // !SKIP
     }
     
     func test_copy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
         
@@ -252,9 +294,13 @@ class TestNSAttributedString : XCTestCase {
         XCTAssertTrue(mutableAttrStringCopy is NSAttributedString)
         XCTAssertFalse(mutableAttrStringCopy is NSMutableAttributedString)
         XCTAssertTrue((mutableAttrStringCopy as! NSAttributedString).isEqual(to: originalMutableAttrString))
+        #endif // !SKIP
     }
     
     func test_mutableCopy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
 
@@ -267,9 +313,13 @@ class TestNSAttributedString : XCTestCase {
         let mutableAttrStringMutableCopy = originalMutableAttrString.mutableCopy()
         XCTAssertTrue(mutableAttrStringMutableCopy is NSMutableAttributedString)
         XCTAssertTrue((mutableAttrStringMutableCopy as! NSMutableAttributedString).isEqual(to: originalMutableAttrString))
+        #endif // !SKIP
     }
     
     func test_isEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
 
@@ -287,9 +337,13 @@ class TestNSAttributedString : XCTestCase {
         mutableAttrString.addAttributes(newAttrs, range: newAttrsRange)
         XCTAssertFalse(attrString.isEqual(to: mutableAttrString))
         XCTAssertFalse(mutableAttrString.isEqual(to: attrString))
+        #endif // !SKIP
     }
     
     func test_archivingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = try Fixtures.attributedString.make()
         
         let data = NSMutableData()
@@ -304,13 +358,18 @@ class TestNSAttributedString : XCTestCase {
         
         XCTAssertNil(unarchiver.error)
         XCTAssertEqual(string, unarchived)
+        #endif // !SKIP
     }
     
     func test_unarchivingFixtures() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let string = try Fixtures.attributedString.make()
 //        try Fixtures.attributedString.loadEach { (unarchived, variant) in
 //            XCTAssertEqual(string, unarchived, "Object loaded from \(variant) didn't match fixture.")
 //        }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -337,18 +396,29 @@ class TestNSAttributedString : XCTestCase {
 fileprivate extension TestNSAttributedString {
     
     func describe(range: NSRange) -> String {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return "(\(range.location),\(range.length))"
+        #endif // !SKIP
     }
     
     func describe(attr: Any?) -> String {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if let attr = attr {
             return "\(attr)" + "|"
         } else {
             return "nil" + "|"
         }
+        #endif // !SKIP
     }
     
     func describe(attrs: [NSAttributedString.Key: Any]) -> String {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if attrs.count > 0 {
             let mapped: [String] = attrs.map({ "\($0.rawValue):\($1)" })
             let sorted: [String] = mapped.sorted(by: { $0 < $1 })
@@ -357,18 +427,26 @@ fileprivate extension TestNSAttributedString {
         } else {
             return "[:]"
         }
+        #endif // !SKIP
     }
 }
 
 class TestNSMutableAttributedString : XCTestCase {
     
     func test_initWithString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem 😀 ipsum dolor sit amet, consectetur adipiscing elit. ⌘ Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit. ಠ_ರೃ"
         let mutableAttrString = NSMutableAttributedString(string: string)
         XCTAssertEqual(mutableAttrString.mutableString, NSMutableString(string: string))
+        #endif // !SKIP
     }
     
     func test_initWithStringAndAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
         
@@ -399,9 +477,13 @@ class TestNSMutableAttributedString : XCTestCase {
             return
         }
         XCTAssertEqual(validAttribute, "attribute.placeholder.value")
+        #endif // !SKIP
     }
     
     func test_initWithAttributedString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key") : "attribute.placeholder.value"]
 
@@ -413,9 +495,13 @@ class TestNSMutableAttributedString : XCTestCase {
         // changing the mutable attr string should not affect the initialized attr string
         mutableAttrString.append(mutableAttrString)
         XCTAssertEqual(initializedMutableAttrString.mutableString, NSMutableString(string: string))
+        #endif // !SKIP
     }
     
     func test_addAttribute() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let mutableAttrString = NSMutableAttributedString(string: string)
         
@@ -430,9 +516,13 @@ class TestNSMutableAttributedString : XCTestCase {
             return
         }
         XCTAssertEqual(validAttribute, "attribute.placeholder.value1")
+        #endif // !SKIP
     }
     
     func test_addAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let mutableAttrString = NSMutableAttributedString(string: string)
         
@@ -455,9 +545,13 @@ class TestNSMutableAttributedString : XCTestCase {
             NSAttributedString.Key("attribute.placeholder.key3") : "attribute.placeholder.value3",
         ]
         XCTAssertEqual(result, expectedResult)
+        #endif // !SKIP
     }
     
     func test_setAttributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let mutableAttrString = NSMutableAttributedString(string: string)
         
@@ -483,9 +577,13 @@ class TestNSMutableAttributedString : XCTestCase {
         mutableAttrString.setAttributes(nil, range: attrRange2)
         let emptyResult = mutableAttrString.attributes(at: 10, effectiveRange: nil)
         XCTAssertTrue(emptyResult.isEmpty)
+        #endif // !SKIP
     }
     
     func test_replaceCharactersWithString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
         let attrValue1 = "attribute.placeholder.value1"
@@ -505,9 +603,13 @@ class TestNSMutableAttributedString : XCTestCase {
             return
         }
         XCTAssertEqual(validAttribute, "attribute.placeholder.value1")
+        #endif // !SKIP
     }
 
     func test_replaceCharactersWithAttributedString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur et sem vitae consectetur. Nam venenatis lectus a laoreet blandit."
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
         let attrValue1 = "attribute.placeholder.value1"
@@ -533,9 +635,13 @@ class TestNSMutableAttributedString : XCTestCase {
             return
         }
         XCTAssertEqual(attrValue, "attribute.replacement.value")
+        #endif // !SKIP
     }
 
     func test_insert() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
         let attrValue1 = "attribute.placeholder.value1"
@@ -558,9 +664,13 @@ class TestNSMutableAttributedString : XCTestCase {
         let originalAttributes = mutableAttrString.attributes(at: insertAttrString.length, effectiveRange: nil) as? [NSAttributedString.Key: String]
         let expectedOriginal = [attrKey1 : attrValue1]
         XCTAssertEqual(originalAttributes, expectedOriginal)
+        #endif // !SKIP
     }
 
     func test_append() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
         let attrValue1 = "attribute.placeholder.value1"
@@ -583,9 +693,13 @@ class TestNSMutableAttributedString : XCTestCase {
         let appendedAttributes = mutableAttrString.attributes(at: string.utf16.count, effectiveRange: nil) as? [NSAttributedString.Key: String]
         let expectedAppended = [appendAttrKey : "attribute.appending.value"]
         XCTAssertEqual(appendedAttributes, expectedAppended)
+        #endif // !SKIP
     }
 
     func test_deleteCharacters() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attrKey1 = NSAttributedString.Key("attribute.placeholder.key1")
         let attrValue1 = "attribute.placeholder.value1"
@@ -607,9 +721,13 @@ class TestNSMutableAttributedString : XCTestCase {
         XCTAssertEqual(value, "attribute.placeholder.value1")
         XCTAssertEqual(longestEffectiveRange.location, expectedLongestEffectiveRange.location)
         XCTAssertEqual(longestEffectiveRange.length, expectedLongestEffectiveRange.length)
+        #endif // !SKIP
     }
     
     func test_setAttributedString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         let attributes1: [NSAttributedString.Key: Any] = [NSAttributedString.Key("attribute.placeholder.key1") : "attribute.placeholder.value1"]
         let mutableAttrString = NSMutableAttributedString(string: string1, attributes: attributes1)
@@ -624,9 +742,13 @@ class TestNSMutableAttributedString : XCTestCase {
         // changing the replacement attr string should not affect the replaced attr string
         replacementAttrString.append(replacementAttrString)
         XCTAssertEqual(mutableAttrString.string, string2)
+        #endif // !SKIP
     }
     
     func test_archivingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = try Fixtures.mutableAttributedString.make()
         
         let data = NSMutableData()
@@ -641,21 +763,32 @@ class TestNSMutableAttributedString : XCTestCase {
 //
 //        XCTAssertNil(unarchiver.error)
 //        XCTAssertEqual(string, unarchived)
+        #endif // !SKIP
     }
     
     func test_unarchivingFixtures() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let mutableString = try Fixtures.mutableAttributedString.make()
 //        try Fixtures.mutableAttributedString.loadEach { (unarchived, variant) in
 //            XCTAssertEqual(mutableString, unarchived, "Object loaded from \(variant) didn't match fixture.")
 //        }
+        #endif // !SKIP
     }
 
     let extendReplaceString = "12345"
     let reductReplaceString = "0"
+
+    #if !SKIP
     let extendAttributedReplaceString = NSAttributedString(string: "12345", attributes: [.init("Bold"): true])
     let reductAttributedReplaceString = NSAttributedString(string: "0", attributes: [.init("Bold"): true])
-    
+    #endif
+
     func test_direct_attribute_enumeration_with_extend_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendAttributedReplaceString)
@@ -666,9 +799,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_reverse_attribute_enumeration_with_extend_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendAttributedReplaceString)
@@ -679,9 +816,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_direct_attributes_enumeration_with_extend_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendAttributedReplaceString)
@@ -693,9 +834,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_reverse_attributes_enumeration_with_extend_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendAttributedReplaceString)
@@ -706,9 +851,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_direct_attribute_enumeration_with_reduct_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductAttributedReplaceString)
@@ -719,9 +868,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_reverse_attribute_enumeration_with_reduct_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductAttributedReplaceString)
@@ -732,9 +885,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_direct_attributes_enumeration_with_reduct_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductAttributedReplaceString)
@@ -745,9 +902,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_reverse_attributes_enumeration_with_reduct_attributed_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductAttributedReplaceString)
@@ -758,9 +919,13 @@ class TestNSMutableAttributedString : XCTestCase {
 //                    Bold = true;
 //                }
 //                """)
+        #endif // !SKIP
     }
     
     func test_direct_attribute_enumeration_with_extend_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendReplaceString)
@@ -783,9 +948,13 @@ class TestNSMutableAttributedString : XCTestCase {
                 }12345{
                 }
                 """)
+        #endif // !SKIP
     }
     
     func test_reverse_attribute_enumeration_with_extend_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendReplaceString)
@@ -809,9 +978,13 @@ class TestNSMutableAttributedString : XCTestCase {
                 }12345{
                 }
                 """)
+        #endif // !SKIP
     }
     
     func test_direct_attributes_enumeration_with_extend_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendReplaceString)
@@ -835,9 +1008,13 @@ class TestNSMutableAttributedString : XCTestCase {
                 }12345{
                 }
                 """)
+        #endif // !SKIP
     }
     
     func test_reverse_attributes_enumeration_with_extend_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: extendReplaceString)
@@ -861,9 +1038,13 @@ class TestNSMutableAttributedString : XCTestCase {
                 }12345{
                 }
                 """)
+        #endif // !SKIP
     }
     
     func test_direct_attribute_enumeration_with_reduct_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in: NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductReplaceString)
@@ -887,9 +1068,13 @@ class TestNSMutableAttributedString : XCTestCase {
         }0{
         }
         """)
+        #endif // !SKIP
     }
     
     func test_reverse_attribute_enumeration_with_reduct_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttribute(.init("Font"), in:  NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductReplaceString)
@@ -913,10 +1098,14 @@ class TestNSMutableAttributedString : XCTestCase {
         }0{
         }
         """)
+        #endif // !SKIP
     }
     
     // Direct Attributes Enumeration With Reduction Replace
     func test_direct_attributes_enumeration_with_reduct_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in:NSRange(location: 0, length: attrString.length), options: [], using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductReplaceString)
@@ -940,10 +1129,14 @@ class TestNSMutableAttributedString : XCTestCase {
         }0{
         }
         """)
+        #endif // !SKIP
     }
     
     // Reverse Attributes Enumeration With Reduction Replace
     func test_reverse_attributes_enumeration_with_reduct_replace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let attrString = try Fixtures.mutableAttributedString.make()
         attrString.enumerateAttributes(in: NSRange(location: 0, length: attrString.length), options: .reverse, using: { value, range, stop in
             attrString.replaceCharacters(in: range, with: reductReplaceString)
@@ -967,8 +1160,10 @@ class TestNSMutableAttributedString : XCTestCase {
         }0{
         }
         """)
+        #endif // !SKIP
     }
 
+    #if !SKIP
     static var allTests: [(String, (TestNSMutableAttributedString) -> () throws -> Void)] {
         return [
             ("test_initWithString", test_initWithString),
@@ -1003,7 +1198,7 @@ class TestNSMutableAttributedString : XCTestCase {
             ("test_reverse_attributes_enumeration_with_reduct_replace", test_reverse_attributes_enumeration_with_reduct_replace)
         ]
     }
+    #endif
 }
 
-#endif
 
