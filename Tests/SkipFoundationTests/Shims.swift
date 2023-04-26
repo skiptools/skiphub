@@ -9,7 +9,8 @@ import XCTest
 @testable import SkipFoundation
 #endif
 
-// Stand-in types for test case compilation
+// Stand-in types for test case compilation.
+// These types will all eventually be implemented in SkipFoundation, but by providing stubs here we enable to test case scaffold to compile
 
 #if SKIP
 
@@ -18,7 +19,7 @@ import XCTest
 internal protocol ComparisonResult {
 }
 
-internal protocol NSBinarySearchingOptions {
+internal protocol DateInterval {
 }
 
 internal protocol DateIntervalFormatter {
@@ -105,7 +106,6 @@ internal class NSAttributedString : NSObject {
 }
 
 internal class NSMutableAttributedString : NSAttributedString {
-
 }
 
 internal class NSCharacterSet : NSObject {
@@ -120,5 +120,53 @@ internal class NSArray : NSObject {
 internal class NSMutableArray : NSArray {
 }
 
+internal class NSDateComponents : NSArray {
+}
+
+internal class NSCalendar : NSObject {
+    struct Options {
+    }
+
+    enum Unit {
+        case era
+        case year
+        case month
+        case day
+        case hour
+        case minute
+        case second
+        case weekday
+        case weekdayOrdinal
+        case quarter
+        case weekOfMonth
+        case weekOfYear
+        case yearForWeekOfYear
+        case nanosecond
+        case calendar
+        case timeZone
+    }
+
+    enum Identifier {
+        case gregorian
+        case buddhist
+        case chinese
+        case coptic
+        case ethiopicAmeteMihret
+        case ethiopicAmeteAlem
+        case hebrew
+        case ISO8601
+        case indian
+        case islamic
+        case islamicCivil
+        case japanese
+        case persian
+        case republicOfChina
+        case islamicTabular
+        case islamicUmmAlQura
+    }
+}
+
+internal protocol NSBinarySearchingOptions {
+}
 
 #endif

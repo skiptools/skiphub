@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,9 @@ import XCTest
 
 class TestNSCalendar: XCTestCase {
     func test_initWithCalendarIdentifier() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var calMaybe = NSCalendar(calendarIdentifier: NSCalendar.Identifier("Not a calendar"))
         XCTAssertNil(calMaybe)
         
@@ -30,9 +32,13 @@ class TestNSCalendar: XCTestCase {
         }
         
         XCTAssertEqual(cal.calendarIdentifier, NSCalendar.Identifier.chinese)
+        #endif // !SKIP
     }
     
     func test_calendarWithIdentifier() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var calMaybe = NSCalendar(identifier: NSCalendar.Identifier("Not a calendar"))
         XCTAssertNil(calMaybe)
         
@@ -42,9 +48,13 @@ class TestNSCalendar: XCTestCase {
         }
         
         XCTAssertEqual(cal.calendarIdentifier, NSCalendar.Identifier.chinese)
+        #endif // !SKIP
     }
     
     func test_calendarOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let allOptions: [NSCalendar.Options] = [.matchStrictly, .searchBackwards, .matchPreviousTimePreservingSmallerUnits, .matchNextTimePreservingSmallerUnits, .matchNextTime, .matchFirst, .matchLast]
         
         for (i, option) in allOptions.enumerated() {
@@ -58,9 +68,13 @@ class TestNSCalendar: XCTestCase {
             
             XCTAssertEqual(0, (option.rawValue & otherOptions), "Options should be exclusive")
         }
+        #endif // !SKIP
     }
     
     func test_isEqualWithDifferentWaysToCreateCalendar() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let date = Date(timeIntervalSinceReferenceDate: 497973600) // 2016-10-12 07:00:00 +0000;
         
         let gregorianCalendar = try XCTUnwrap(NSCalendar(identifier: .gregorian))
@@ -73,9 +87,13 @@ class TestNSCalendar: XCTestCase {
         let gregorianCalendar3 = try XCTUnwrap(gregorianCalendar.components(.calendar, from: date).calendar) as NSCalendar
         
         XCTAssertEqual(gregorianCalendar, gregorianCalendar3)
+        #endif // !SKIP
     }
     
     func test_isEqual() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testCal1 = try XCTUnwrap(NSCalendar(identifier: .gregorian))
         let testCal2 = try XCTUnwrap(NSCalendar(identifier: .gregorian))
         XCTAssertEqual(testCal1, testCal2)
@@ -88,9 +106,13 @@ class TestNSCalendar: XCTestCase {
         
         let testCal3 = try XCTUnwrap(NSCalendar(calendarIdentifier: .chinese))
         XCTAssertNotEqual(testCal1, testCal3)
+        #endif // !SKIP
     }
     
     func test_isEqualCurrentCalendar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testCal1 = NSCalendar.current as NSCalendar
         let testCal2 = NSCalendar.current as NSCalendar
         XCTAssertEqual(testCal1, testCal2)
@@ -99,9 +121,13 @@ class TestNSCalendar: XCTestCase {
         XCTAssertNotEqual(testCal1.firstWeekday, 4)
         testCal1.firstWeekday = 4
         XCTAssertNotEqual(testCal1, testCal2)
+        #endif // !SKIP
     }
     
     func test_isEqualAutoUpdatingCurrentCalendar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testCal1 = NSCalendar.autoupdatingCurrent as NSCalendar
         let testCal2 = NSCalendar.autoupdatingCurrent as NSCalendar
         XCTAssertEqual(testCal1, testCal2)
@@ -110,24 +136,34 @@ class TestNSCalendar: XCTestCase {
         XCTAssertNotEqual(testCal1.firstWeekday, 4)
         testCal1.firstWeekday = 4
         XCTAssertNotEqual(testCal1, testCal2)
+        #endif // !SKIP
     }
     
     func test_copy() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cal = try XCTUnwrap(NSCalendar(identifier: .gregorian))
         let calCopy = try XCTUnwrap((cal.copy() as? NSCalendar))
         XCTAssertEqual(cal, calCopy)
         XCTAssert(cal !== calCopy)
+        #endif // !SKIP
     }
     
     func test_copyCurrentCalendar() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cal = NSCalendar.current as NSCalendar
         let calCopy = try XCTUnwrap((cal.copy() as? NSCalendar))
         XCTAssertEqual(cal, calCopy)
         XCTAssert(cal !== calCopy)
+        #endif // !SKIP
     }
     
     // MARK: API Method Tests
-    
+
+    #if !SKIP
     let timeIntervalsNext50Months: [TimeInterval] = [
         349776000, // 2012-02-01 08:00:00 +0000
         352281600, // 2012-03-01 08:00:00 +0000
@@ -180,8 +216,12 @@ class TestNSCalendar: XCTestCase {
         476006400, // 2016-02-01 08:00:00 +0000
         478512000, // 2016-03-01 08:00:00 +0000
     ];
+    #endif
     
     func test_next50MonthsFromDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let calendar = try XCTUnwrap(NSCalendar(identifier: .gregorian))
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "America/Los_Angeles"))
         
@@ -211,6 +251,7 @@ class TestNSCalendar: XCTestCase {
         }
         
         XCTAssertEqual(expectedDates, resultDates)
+        #endif // !SKIP
     }
     
     let iterableCalendarUnits: [NSCalendar.Unit] = [
@@ -231,7 +272,8 @@ class TestNSCalendar: XCTestCase {
         .calendar,
         .timeZone,
     ]
-    
+
+    #if !SKIP
     let allCalendarUnits: NSCalendar.Unit = [
         .era,
         .year,
@@ -250,8 +292,12 @@ class TestNSCalendar: XCTestCase {
         .calendar,
         .timeZone,
     ]
-    
+    #endif
+
     func yieldUnits(in components: NSDateComponents) -> [NSCalendar.Unit] {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return iterableCalendarUnits.filter({ (unit) -> Bool in
             switch unit {
             case .calendar:
@@ -262,17 +308,25 @@ class TestNSCalendar: XCTestCase {
                 return components.value(forComponent: unit) != NSDateComponentUndefined
             }
         })
+        #endif // !SKIP
     }
     
     func units(in components: NSDateComponents) -> NSCalendar.Unit {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return yieldUnits(in: components).reduce([], { (current, toAdd) in
             var new = current
             new.insert(toAdd)
             return new
         })
+        #endif // !SKIP
     }
     
     func performTest_dateByAdding(with calendar: NSCalendar, components: NSDateComponents, toAdd secondComponents: NSDateComponents, options: NSCalendar.Options, expected: NSDateComponents, addSingleUnit: Bool) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         let date = try XCTUnwrap(calendar.date(from: components as DateComponents))
         var returnedDate: Date
@@ -302,24 +356,39 @@ class TestNSCalendar: XCTestCase {
         if calculationTimeZone != nil {
             calendar.timeZone = originalTimeZone
         }
+        #endif // !SKIP
     }
     
     func performTest_componentsFromDateToDate(with calendar: NSCalendar, from fromComponents: NSDateComponents, to toComponents: NSDateComponents, expected: NSDateComponents, options: NSCalendar.Options) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fromDate = try XCTUnwrap(calendar.date(from: fromComponents as DateComponents))
         let toDate = try XCTUnwrap(calendar.date(from: toComponents as DateComponents))
         
         let expectedUnitFlags = units(in: expected)
         let returned = calendar.components(expectedUnitFlags, from: fromDate, to: toDate, options: options) as NSDateComponents
         XCTAssertEqual(expected, returned, "Expected \(expected), but received \(returned) - from date: \(fromDate) to date: \(toDate)")
+        #endif // !SKIP
     }
     
     func performTest_componentsFromDCToDC(with calendar: NSCalendar, from fromComponents: NSDateComponents, to toComponents: NSDateComponents, expected: NSDateComponents, options: NSCalendar.Options) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectedUnitFlags = units(in: expected)
         let returned = calendar.components(expectedUnitFlags, from: fromComponents as DateComponents, to: toComponents as DateComponents, options: options) as NSDateComponents
         XCTAssertEqual(expected, returned, "Expected \(expected), but received \(returned) - from components: \(fromComponents) to components: \(toComponents)")
+        #endif // !SKIP
     }
-    
+
+    // Conflicting declarations: value-parameter from: NSCalendar, value-parameter from: NSDateComponents
+
+    #if !SKIP
     func performTest_getComponentsInOtherCalendar(from fromCalendar: NSCalendar, to toCalendar: NSCalendar, from fromComponents: NSDateComponents, expected: NSDateComponents) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let originalTZ = fromCalendar.timeZone
         fromCalendar.timeZone = toCalendar.timeZone
         
@@ -331,9 +400,14 @@ class TestNSCalendar: XCTestCase {
         let returned = toCalendar.components(expectedUnitFlags, from: fromDate) as NSDateComponents
         
         XCTAssertEqual(expected, returned, "Expected \(expected), but received \(returned) - from calendar: \(fromCalendar) to calendar: \(toCalendar) from components: \(fromComponents)")
+        #endif // !SKIP
     }
+    #endif
     
     func test_dateByAddingUnit_withWrapOption() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let locale = Locale(identifier: "ar_EG")
         let calendar = try XCTUnwrap(NSCalendar(identifier: .gregorian))
         let timeZone = try XCTUnwrap(TimeZone(abbreviation: "GMT"))
@@ -344,9 +418,13 @@ class TestNSCalendar: XCTestCase {
         let date = try self.date(fromFixture: "2013-09-20 23:20:28 +0000")
         let newDate = try XCTUnwrap(calendar.date(byAdding: .hour, value: 12, to: date, options: .wrapComponents))
         XCTAssertEqual(newDate, try self.date(fromFixture: "2013-09-20 11:20:28 +0000"))
+        #endif // !SKIP
     }
     
     func date(fromFixture string: String) throws -> Date {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let formatter = DateFormatter()
         let calendar = Calendar(identifier: .gregorian)
         
@@ -355,9 +433,13 @@ class TestNSCalendar: XCTestCase {
         formatter.locale = Locale(identifier: "en_US")
         
         return try XCTUnwrap(formatter.date(from: string))
+        #endif // !SKIP
     }
     
     func enumerateTestDates(using block: (NSCalendar, Date, NSDateComponents) throws -> Void) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func yield(to block: (NSCalendar, Date, NSDateComponents) throws -> Void, _ element: (calendarIdentifier: NSCalendar.Identifier, localeIdentifier: String, timeZoneName: String, dateString: String)) throws {
             let calendar = try XCTUnwrap(NSCalendar(calendarIdentifier: element.calendarIdentifier))
             let currentCalendar = NSCalendar.current as NSCalendar
@@ -411,9 +493,13 @@ class TestNSCalendar: XCTestCase {
         try yield(to: block, (.hebrew,              "he_IL",   "Israel",              "2018-12-24 05:40:43 +0200"))
         try yield(to: block, (.hebrew,              "he_IL",   "Israel",              "2019-03-22 09:23:26 +0200"))
 #endif
+        #endif // !SKIP
     }
     
     func test_getEra_year_month_day_fromDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             var era = 0, year = 0, month = 0, day = 0
             calendar.getEra(&era, year: &year, month: &month, day: &day, from: date)
@@ -423,9 +509,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertEqual(month, components.month)
             XCTAssertEqual(day, components.day)
         }
+        #endif // !SKIP
     }
     
     func test_getEra_yearForWeekOfYear_weekOfYear_weekday_fromDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             var era = 0, yearForWeekOfYear = 0, weekOfYear = 0, weekday = 0
             calendar.getEra(&era, yearForWeekOfYear: &yearForWeekOfYear, weekOfYear: &weekOfYear, weekday: &weekday, from: date)
@@ -435,9 +525,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertEqual(weekOfYear, components.weekOfYear)
             XCTAssertEqual(weekday, components.weekday)
         }
+        #endif // !SKIP
     }
     
     func test_getHour_minute_second_nanoseconds_fromDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             var hour = 0, minute = 0, second = 0, nanosecond = 0
             calendar.getHour(&hour, minute: &minute, second: &second, nanosecond: &nanosecond, from: date)
@@ -447,9 +541,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertEqual(second, components.second)
             XCTAssertEqual(nanosecond, components.nanosecond)
         }
+        #endif // !SKIP
     }
     
     func test_component_fromDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             for unit in iterableCalendarUnits {
                 if unit == .calendar || unit == .timeZone {
@@ -462,18 +560,26 @@ class TestNSCalendar: XCTestCase {
                 XCTAssertEqual(expectedValue, value)
             }
         }
+        #endif // !SKIP
     }
     
     func test_dateWithYear_month_day_hour_minute_second_nanosecond() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             let returnedDate = try XCTUnwrap(calendar.date(era: components.era, year: components.year, month: components.month, day: components.day, hour: components.hour, minute: components.minute, second: components.second, nanosecond: components.nanosecond))
             
             let interval = date.timeIntervalSince(returnedDate)
             XCTAssertEqual(fabs(interval), 0, accuracy: 0.0000001)
         }
+        #endif // !SKIP
     }
     
     func test_dateWithYearForWeekOfYear_weekOfYear_weekday_hour_minute_second_nanosecond() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             // Era is defined to be in the current era, so the below can only work for dates that are in the current era.
             if components.era != calendar.components(.era, from: Date()).era {
@@ -489,9 +595,13 @@ class TestNSCalendar: XCTestCase {
             let interval = date.timeIntervalSince(returnedDate)
             XCTAssertEqual(fabs(interval), 0, accuracy: 0.0000001)
         }
+        #endif // !SKIP
     }
     
     func enumerateTestDatesWithStartOfDay(using block: (NSCalendar, Date, Date) throws -> Void) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func yield(to block: (NSCalendar, Date, Date) throws -> Void, _ element: (calendarIdentifier: NSCalendar.Identifier, localeIdentifier: String, timeZoneName: String, dateString: String, startOfDayDateString: String)) throws {
             let calendar = try XCTUnwrap(NSCalendar(calendarIdentifier: element.calendarIdentifier))
             let currentCalendar = NSCalendar.current as NSCalendar
@@ -523,16 +633,24 @@ class TestNSCalendar: XCTestCase {
         try yield(to: block, (.gregorian, "pt_BR", "Brazil/East", "2013-10-20 13:10:20 -0200", "2013-10-20 01:00:00 -0200")) // DST jump forward at midnight
         try yield(to: block, (.gregorian, "pt_BR", "Brazil/East", "2014-02-15 23:59:59 -0300", "2014-02-15 00:00:00 -0200")) // DST jump backward
 #endif
+        #endif // !SKIP
     }
     
     func test_startOfDayForDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDatesWithStartOfDay() { (calendar, date, startOfDay) in
             let resultDate = calendar.startOfDay(for: date)
             XCTAssertEqual(startOfDay, resultDate)
         }
+        #endif // !SKIP
     }
     
     func test_componentsInTimeZone_fromDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDates() { (calendar, date, components) in
             let calendarWithoutTimeZone = try XCTUnwrap(NSCalendar(identifier: calendar.calendarIdentifier))
             calendarWithoutTimeZone.locale = calendar.locale
@@ -542,9 +660,13 @@ class TestNSCalendar: XCTestCase {
             let returned = calendarWithoutTimeZone.components(in: timeZone, from: date) as NSDateComponents
             XCTAssertEqual(components, returned)
         }
+        #endif // !SKIP
     }
     
     func enumerateTestDateComparisons(using block: (NSCalendar, Date, Date, NSCalendar.Unit, ComparisonResult) throws -> Void) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func yield(to block: (NSCalendar, Date, Date, NSCalendar.Unit, ComparisonResult) throws -> Void, _ element: (calendarIdentifier: NSCalendar.Identifier, localeIdentifier: String, timeZoneName: String, firstDateString: String, secondDateString: String, granularity: NSCalendar.Unit, expectedResult: ComparisonResult)) throws {
             let calendar = try XCTUnwrap(NSCalendar(calendarIdentifier: element.calendarIdentifier))
             let currentCalendar = NSCalendar.current as NSCalendar
@@ -615,23 +737,32 @@ class TestNSCalendar: XCTestCase {
         try yield(to: block, (.buddhist,             "zh-Hans_HK",   "Asia/Hong_Kong", "2012-12-14 02:34:56 +0000", "2012-12-15 02:34:56 +0000", .weekOfYear, .orderedSame))
         try yield(to: block, (.buddhist,             "zh-Hans_HK",   "Asia/Hong_Kong", "2012-12-14 02:34:56 +0000", "2012-12-15 02:34:56 +0000", .weekOfMonth, .orderedSame))
         try yield(to: block, (.buddhist,             "zh-Hans_HK",   "Asia/Hong_Kong", "2012-12-14 02:34:56 +0000", "2012-12-15 02:34:56 +0000", .weekdayOrdinal, .orderedAscending))
+        #endif // !SKIP
     }
     
     func test_compareDate_toDate_toUnitGranularity() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDateComparisons { (calendar, firstDate, secondDate, granularity, result) in
             let returned = calendar.compare(firstDate, to: secondDate, toUnitGranularity: granularity)
             
             XCTAssertEqual(returned, result, "Comparison result should match; expected \(result), got \(returned), when comparing \(firstDate) (\(firstDate.timeIntervalSinceReferenceDate) to \(secondDate) (\(secondDate.timeIntervalSinceReferenceDate) with granularity \(granularity)")
         }
+        #endif // !SKIP
     }
     
     func test_isDate_equalToDate_toUnitGranularity() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestDateComparisons { (calendar, firstDate, secondDate, granularity, result) in
             let expected = result == .orderedSame
             let returned = calendar.isDate(firstDate, equalTo: secondDate, toUnitGranularity: granularity)
             
             XCTAssertEqual(returned, expected)
         }
+        #endif // !SKIP
     }
     
     let availableCalendarIdentifiers: [NSCalendar.Identifier] = [
@@ -654,6 +785,9 @@ class TestNSCalendar: XCTestCase {
     ]
     
     func test_isDateInToday() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var datesTested: [Date] = []
         for identifier in availableCalendarIdentifiers {
             let calendar = try XCTUnwrap(NSCalendar(identifier: identifier))
@@ -675,9 +809,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertFalse(calendar.isDateInToday(Date.distantPast), "Shouldn't match the distant past")
             XCTAssertFalse(calendar.isDateInToday(Date.distantFuture), "Shouldn't match the distant future")
         }
+        #endif // !SKIP
     }
   
     func test_isDateInYesterday() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var datesTested: [Date] = []
         for identifier in availableCalendarIdentifiers {
             let calendar = try XCTUnwrap(NSCalendar(identifier: identifier))
@@ -703,9 +841,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertFalse(calendar.isDateInYesterday(Date.distantPast), "Shouldn't match the distant past")
             XCTAssertFalse(calendar.isDateInYesterday(Date.distantFuture), "Shouldn't match the distant future")
         }
+        #endif // !SKIP
     }
     
     func test_isDateInTomorrow() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var datesTested: [Date] = []
         for identifier in availableCalendarIdentifiers {
             let calendar = try XCTUnwrap(NSCalendar(identifier: identifier))
@@ -731,9 +873,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertFalse(calendar.isDateInTomorrow(Date.distantPast), "Shouldn't match the distant past")
             XCTAssertFalse(calendar.isDateInTomorrow(Date.distantFuture), "Shouldn't match the distant future")
         }
+        #endif // !SKIP
     }
     
     func enumerateTestWeekends(using block: (NSCalendar, DateInterval) throws -> Void) throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func yield(to block: (NSCalendar, DateInterval) throws -> Void, _ element: (calendarIdentifier: NSCalendar.Identifier, localeIdentifier: String, timeZoneName: String, firstDateString: String, secondDateString: String)) throws {
             let calendar = try XCTUnwrap(NSCalendar(calendarIdentifier: element.calendarIdentifier))
             
@@ -768,9 +914,13 @@ class TestNSCalendar: XCTestCase {
         // it is unclear if the support for the old names need to be validated.
         try yield(to: block, (.hebrew,                "he_IL",   "Israel",              "2018-03-23 00:00:00 +0200",   "2018-03-25 00:00:00 +0300")) // weekend with DST jump
 #endif
+        #endif // !SKIP
     }
     
     func test_isDateInWeekend() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try enumerateTestWeekends() { (calendar, interval) in
             XCTAssertTrue(calendar.isDateInWeekend(interval.start), "Start date should be in weekend")
             XCTAssertFalse(calendar.isDateInWeekend(interval.end), "End date should not be in weekend")
@@ -778,9 +928,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertFalse(calendar.isDateInWeekend(interval.start - 1), "Just before start date should not be in weekend")
             XCTAssertTrue(calendar.isDateInWeekend(interval.end - 1), "Just before end date should be in weekend")
         }
+        #endif // !SKIP
     }
     
     func test_rangeOfWeekendStartDate_interval_containingDate() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if XXX && !DARWIN_COMPATIBILITY_TESTS // NSCalender range(ofWeekendContaining:) is experimental
         try enumerateTestWeekends() { (calendar, interval) in
             let startDateResult = calendar.range(ofWeekendContaining: interval.start)
@@ -796,9 +950,13 @@ class TestNSCalendar: XCTestCase {
             XCTAssertEqual(oneSecondBeforeEndResult, interval)
         }
 #endif
+        #endif // !SKIP
     }
     
     func test_enumerateDatesStartingAfterDate_chineseEra_matchYearOne() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let calendar = try XCTUnwrap(NSCalendar(calendarIdentifier: .chinese))
         let locale = Locale(identifier: "zh_CN")
         let timeZone = try XCTUnwrap(TimeZone(identifier: "Asia/Shanghai"))
@@ -822,8 +980,10 @@ class TestNSCalendar: XCTestCase {
         }
         
         XCTAssertTrue(atLeastOnce)
+        #endif // !SKIP
     }
     
+    #if !SKIP
     struct TimeIntervalQuintuple {
         var value: (TimeInterval, TimeInterval, TimeInterval, TimeInterval, TimeInterval) = (0, 0, 0, 0, 0)
         
@@ -850,8 +1010,12 @@ class TestNSCalendar: XCTestCase {
             value = (a, b, c, d, e)
         }
     }
+    #endif
     
     func test_enumerateDatesStartingAfterDate_ensureStrictlyIncreasingResults_minuteSecondClearing() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // When we match a specific hour in date enumeration, we clear out lower units (minute and second). This can cause us to accidentally match the components backwards, when we otherwise wouldn't have (e.g. 2018-02-14 00:00:01 -> 2018-02-14 00:00:00).
         // This leads us to propose a potential match twice in certain circumstances (when the highest set date component is hour and we're looking for hour 0).
         //
@@ -886,6 +1050,7 @@ class TestNSCalendar: XCTestCase {
                 }
             }
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -924,5 +1089,4 @@ class TestNSCalendar: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 
