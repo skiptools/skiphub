@@ -27,6 +27,9 @@ fun <T : Comparable<T>> max(a: T, b: T): T {
 	return if (a >= b) a else b
 }
 
+class NullReturnException: Exception() {
+}
+
 fun print(arg1: Any?, arg2: Any? = null, arg3: Any? = null, arg4: Any? = null, arg5: Any? = null, arg6: Any? = null, arg7: Any? = null, arg8: Any? = null, arg9: Any? = null, separator: String = " ", terminator: String = "\n") {
 	arg1?.let { a -> kotlin.io.print(a) }
 	arg2?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }

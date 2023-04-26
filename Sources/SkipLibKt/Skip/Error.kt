@@ -12,9 +12,9 @@ fun Throwable.aserror(): Error {
     if (this is Error) {
         return this
     } else {
-        return ErrorThrowable(this)
+        return ErrorException(this)
     }
 }
 
-class ErrorThrowable(cause: Throwable): Throwable(cause), Error {
+class ErrorException(cause: Throwable): Exception(cause), Error {
 }
