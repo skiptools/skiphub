@@ -25,70 +25,6 @@ public func SkipFoundationPublicModuleName() -> String {
 
 #if SKIP
 
-// MARK: Foundation Stubs
-
-internal protocol ComparisonResult {
-}
-
-internal protocol DateInterval {
-}
-
-internal protocol DateIntervalFormatter {
-}
-
-internal protocol DataProtocol {
-}
-
-internal struct EnergyFormatter {
-}
-
-internal struct LengthFormatter {
-}
-
-internal struct MassFormatter {
-}
-
-internal protocol HTTPCookieStorage {
-}
-
-internal protocol ISO8601DateFormatter {
-}
-
-internal protocol IndexSet {
-}
-
-internal protocol FileHandle {
-}
-
-internal class URLSession {
-    class ResponseDisposition {
-    }
-}
-
-internal protocol URLResponse {
-}
-
-
-internal protocol URLSessionTask {
-}
-
-internal protocol URLSessionDataTask : URLSessionTask {
-}
-
-protocol URLSessionDelegate : NSObjectProtocol {
-}
-
-internal protocol URLSessionTaskDelegate : URLSessionDelegate {
-}
-
-internal protocol URLSessionDataDelegate : URLSessionTaskDelegate {
-}
-
-internal protocol CharacterSet {
-}
-
-internal protocol AttributedString {
-}
 
 // MARK: Foundation Stubs
 
@@ -96,6 +32,21 @@ internal protocol NSObjectProtocol {
 }
 
 internal class NSObject : NSObjectProtocol {
+}
+
+// Cannot extend `NSObject`: An Error type cannot extend another class because it will be translated to extend Exception in Kotlin
+internal class NSError : Error {
+}
+
+public protocol CustomNSError : Error {
+    /// The domain of the error.
+    //static var errorDomain: String { get }
+
+    /// The error code within the given domain.
+    //var errorCode: Int { get }
+
+    /// The user-info dictionary.
+    //var errorUserInfo: [String : Any] { get }
 }
 
 //internal class NSString : NSObject {
@@ -187,6 +138,73 @@ internal class NSCalendar : NSObject {
 }
 
 internal protocol NSBinarySearchingOptions {
+}
+
+
+
+// MARK: Foundation Placeholders
+
+internal protocol ComparisonResult {
+}
+
+internal protocol DateInterval {
+}
+
+internal protocol DateIntervalFormatter {
+}
+
+internal protocol DataProtocol {
+}
+
+internal struct EnergyFormatter {
+}
+
+internal struct LengthFormatter {
+}
+
+internal struct MassFormatter {
+}
+
+internal protocol HTTPCookieStorage {
+}
+
+internal protocol ISO8601DateFormatter {
+}
+
+internal protocol IndexSet {
+}
+
+internal protocol FileHandle {
+}
+
+internal class URLSession {
+    class ResponseDisposition {
+    }
+}
+
+internal protocol URLResponse {
+}
+
+
+internal protocol URLSessionTask {
+}
+
+internal protocol URLSessionDataTask : URLSessionTask {
+}
+
+protocol URLSessionDelegate : NSObjectProtocol {
+}
+
+internal protocol URLSessionTaskDelegate : URLSessionDelegate {
+}
+
+internal protocol URLSessionDataDelegate : URLSessionTaskDelegate {
+}
+
+internal protocol CharacterSet {
+}
+
+internal protocol AttributedString {
 }
 
 #endif

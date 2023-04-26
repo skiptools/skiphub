@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,22 +20,33 @@ import XCTest
 
 class TestNSDictionary : XCTestCase {
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict = NSDictionary()
         let dict2: NSDictionary = ["foo": "bar"]
         XCTAssertEqual(dict.count, 0)
         XCTAssertEqual(dict2.count, 1)
+        #endif // !SKIP
     }
     
 
     func test_description() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d1: NSDictionary = [ "foo": "bar", "baz": "qux"]
         XCTAssertTrue(d1.description == "{\n    baz = qux;\n    foo = bar;\n}" ||
                       d1.description == "{\n    foo = bar;\n    baz = qux;\n}")
         let d2: NSDictionary = ["1" : ["1" : ["1" : "1"]]]
         XCTAssertEqual(d2.description, "{\n    1 =     {\n        1 =         {\n            1 = 1;\n        };\n    };\n}")
+        #endif // !SKIP
     }
 
     func test_HeterogeneousConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict2: NSDictionary = [
             "foo": "bar",
             1 : 2
@@ -44,16 +54,24 @@ class TestNSDictionary : XCTestCase {
         XCTAssertEqual(dict2.count, 2)
         XCTAssertEqual(dict2["foo"] as? String, "bar")
         XCTAssertEqual(dict2[1] as? NSNumber, NSNumber(value: 2))
+        #endif // !SKIP
     }
     
     func test_ArrayConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let objects = ["foo", "bar", "baz"]
         let keys: [NSString] = ["foo", "bar", "baz"]
         let dict = NSDictionary(objects: objects, forKeys: keys)
         XCTAssertEqual(dict.count, 3)
+        #endif // !SKIP
     }
     
     func test_enumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict : NSDictionary = ["foo" : "bar", "whiz" : "bang", "toil" : "trouble"]
         let e = dict.keyEnumerator()
         var keys = Set<String>()
@@ -72,18 +90,26 @@ class TestNSDictionary : XCTestCase {
         XCTAssertNil(o.nextObject())
         XCTAssertNil(o.nextObject())
         XCTAssertEqual(objs, ["bar", "bang", "trouble"])
+        #endif // !SKIP
     }
     
     func test_sequenceType() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict : NSDictionary = ["foo" : "bar", "whiz" : "bang", "toil" : "trouble"]
         var result = [String:String]()
         for (key, value) in dict {
             result[key as! String] = (value as! String)
         }
         XCTAssertEqual(result, ["foo" : "bar", "whiz" : "bang", "toil" : "trouble"])
+        #endif // !SKIP
     }
 
     func test_equality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict1 = NSDictionary(dictionary: [
             "foo":"bar",
             "whiz":"bang",
@@ -138,9 +164,13 @@ class TestNSDictionary : XCTestCase {
                 ["key": 1]
             ]
         ]))
+        #endif // !SKIP
     }
 
     func test_copying() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let inputDictionary : NSDictionary = ["foo" : "bar", "whiz" : "bang", "toil" : "trouble"]
 
         let copy: NSDictionary = inputDictionary.copy() as! NSDictionary
@@ -151,9 +181,13 @@ class TestNSDictionary : XCTestCase {
 //        XCTAssertTrue(type(of: dictCopy2) === NSDictionary.self)
         XCTAssertFalse(dictMutableCopy === dictCopy2)
         XCTAssertTrue(dictMutableCopy == dictCopy2)
+        #endif // !SKIP
     }
 
     func test_mutableCopying() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let inputDictionary : NSDictionary = ["foo" : "bar", "whiz" : "bang", "toil" : "trouble"]
 
         let dictMutableCopy1 = inputDictionary.mutableCopy() as! NSMutableDictionary
@@ -165,9 +199,13 @@ class TestNSDictionary : XCTestCase {
 //        XCTAssertTrue(type(of: dictMutableCopy2) === NSMutableDictionary.self)
         XCTAssertFalse(dictMutableCopy2 === dictMutableCopy1)
         XCTAssertTrue(dictMutableCopy2 == dictMutableCopy1)
+        #endif // !SKIP
     }
 
     func test_writeToFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
         let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 256))
         if let _ = testFilePath {
@@ -191,9 +229,13 @@ class TestNSDictionary : XCTestCase {
             XCTFail("Temporary file creation failed")
         }
         #endif
+        #endif // !SKIP
     }
     
     func test_initWithContentsOfFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testFilePath = createTestFile("TestFileOut.txt", _contents: Data(capacity: 256))
         if let _ = testFilePath {
             let d1: NSDictionary = ["Hello":["world":"again"]]
@@ -208,28 +250,44 @@ class TestNSDictionary : XCTestCase {
         } else {
             XCTFail("Temporary file creation failed")
         }
+        #endif // !SKIP
     }
 
     func test_settingWithStringKey() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict = NSMutableDictionary()
         // has crashed in the past
         dict["stringKey"] = "value"
+        #endif // !SKIP
     }
     
     func test_valueForKey() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict: NSDictionary = ["foo": "bar"]
         let result = dict.value(forKey: "foo")
         XCTAssertEqual(result as? String, "bar")
+        #endif // !SKIP
     }
     
     func test_valueForKeyWithNestedDict() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict: NSDictionary = ["foo": ["bar": "baz"]]
         let result = dict.value(forKey: "foo")
         let expectedResult: NSDictionary = ["bar": "baz"]
         XCTAssertEqual(result as? NSDictionary, expectedResult)
+        #endif // !SKIP
     }
 
     private func createTestFile(_ path: String, _contents: Data) -> String? {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tempDir = NSTemporaryDirectory() + "TestFoundation_Playground_" + NSUUID().uuidString + "/"
         do {
             try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: false, attributes: nil)
@@ -242,13 +300,21 @@ class TestNSDictionary : XCTestCase {
         } catch {
             return nil
         }
+        #endif // !SKIP
     }
     
     private func removeTestFile(_ location: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try? FileManager.default.removeItem(atPath: location)
+        #endif // !SKIP
     }
 
     func test_sharedKeySets() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let keys: [NSCopying] = [ "a" as NSString, "b" as NSString, 1 as NSNumber, 2 as NSNumber ]
         let keySet = NSDictionary.sharedKeySet(forKeys: keys)
         
@@ -267,6 +333,7 @@ class TestNSDictionary : XCTestCase {
         XCTAssertEqual(dictionary["c" as NSString] as? String, "h")
         dictionary[3 as NSNumber] = "k"
         XCTAssertEqual(dictionary[3 as NSNumber] as? String, "k")
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -290,5 +357,4 @@ class TestNSDictionary : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 
