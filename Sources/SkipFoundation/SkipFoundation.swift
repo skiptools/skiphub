@@ -28,14 +28,23 @@ public func SkipFoundationPublicModuleName() -> String {
 
 // MARK: Foundation Stubs
 
-internal protocol NSObjectProtocol {
+public protocol AnyClass {
 }
 
-internal class NSObject : NSObjectProtocol {
+public protocol NSObjectProtocol {
 }
+
+public class NSObject : NSObjectProtocol {
+    public var description: String { "\(self)" }
+    public func isEqual(_ other: Any?) -> Bool { false }
+}
+
+public class NSCoder : NSObject {
+}
+
 
 // Cannot extend `NSObject`: An Error type cannot extend another class because it will be translated to extend Exception in Kotlin
-internal class NSError : Error {
+public class NSError : Error {
 }
 
 public protocol CustomNSError : Error {
@@ -88,9 +97,6 @@ internal class NSMutableArray : NSArray {
 internal class NSDateComponents : NSArray {
 }
 
-internal class NSCoder : NSObject {
-}
-
 internal class NSPredicate : NSObject {
 }
 
@@ -140,7 +146,17 @@ internal class NSCalendar : NSObject {
 internal protocol NSBinarySearchingOptions {
 }
 
+internal protocol NSCoding {
+}
 
+internal protocol NSSecureCoding {
+}
+
+internal protocol NSKeyedArchiver {
+}
+
+internal protocol NSKeyedUnarchiver {
+}
 
 // MARK: Foundation Placeholders
 

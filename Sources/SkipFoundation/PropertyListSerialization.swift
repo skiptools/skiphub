@@ -5,6 +5,12 @@
 // as published by the Free Software Foundation https://fsf.org
 #if SKIP
 public class PropertyListSerialization {
+    public enum PropertyListFormat {
+        case openStep
+        case xml
+        case binary
+    }
+
     private static var plistRegex: kotlin.text.Regex = getPlistRegex().toRegex()
 
     private static func getPlistRegex() -> String {

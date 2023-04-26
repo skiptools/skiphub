@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -27,16 +26,22 @@ public class NSUserClass : NSObject, NSSecureCoding {
     }
     
     public func encode(with aCoder : NSCoder) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         aCoder.encode(ivar, forKey:"$ivar") // also test escaping
+        #endif // !SKIP
     }
     
     init(_ value: Int) {
         self.ivar = value
     }
-    
+
+    #if !SKIP
     public required init?(coder aDecoder: NSCoder) {
         self.ivar = aDecoder.decodeInteger(forKey: "$ivar")
     }
+    #endif
     
     public override var description: String {
         get {
@@ -45,11 +50,15 @@ public class NSUserClass : NSObject, NSSecureCoding {
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if let custom = object as? NSUserClass {
             return self.ivar == custom.ivar
         } else {
             return false
         }
+        #endif // !SKIP
     }
 }
 
@@ -61,18 +70,24 @@ public class UserClass : NSObject, NSSecureCoding {
     }
     
     public func encode(with aCoder : NSCoder) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         aCoder.encode(ivar, forKey:"$ivar") // also test escaping
+        #endif // !SKIP
     }
     
     init(_ value: Int) {
         self.ivar = value
         super.init()
     }
-    
+
+    #if !SKIP
     public required init?(coder aDecoder: NSCoder) {
         self.ivar = aDecoder.decodeInteger(forKey: "$ivar")
         super.init()
     }
+    #endif
     
     public override var description: String {
         get {
@@ -81,11 +96,15 @@ public class UserClass : NSObject, NSSecureCoding {
     }
     
     public override func isEqual(_ other: Any?) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
       guard let other = other as? UserClass else {
         return false
       }
       
       return ivar == other.ivar
+        #endif // !SKIP
     }
 }
 
@@ -121,6 +140,9 @@ class TestNSKeyedArchiver : XCTestCase {
 
     private func test_archive(_ encode: (NSKeyedArchiver) -> Bool,
                               decode: (NSKeyedUnarchiver) -> Bool) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Archiving using custom NSMutableData instance
         let data = NSMutableData()
         let archiver = NSKeyedArchiver(forWritingWith: data)
@@ -148,9 +170,13 @@ class TestNSKeyedArchiver : XCTestCase {
         
         let unarchiver2 = NSKeyedUnarchiver(forReadingWith: archivedData2)
         XCTAssertTrue(decode(unarchiver2))
+        #endif // !SKIP
     }
 
     private func test_archive(_ object: Any, classes: [AnyClass], allowsSecureCoding: Bool = true, outputFormat: PropertyListSerialization.PropertyListFormat) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         test_archive({ archiver -> Bool in
                 archiver.requiresSecureCoding = allowsSecureCoding
                 archiver.outputFormat = outputFormat
@@ -175,38 +201,62 @@ class TestNSKeyedArchiver : XCTestCase {
                 
                 return true
         })
+        #endif // !SKIP
     }
     
     private func test_archive(_ object: Any, classes: [AnyClass], allowsSecureCoding: Bool = true) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // test both XML and binary encodings
         test_archive(object, classes: classes, allowsSecureCoding: allowsSecureCoding, outputFormat: .xml)
         test_archive(object, classes: classes, allowsSecureCoding: allowsSecureCoding, outputFormat: .binary)
+        #endif // !SKIP
     }
     
     private func test_archive(_ object: AnyObject, allowsSecureCoding: Bool = true) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return test_archive(object, classes: [(object as! NSObject).classForCoder], allowsSecureCoding: allowsSecureCoding)
+        #endif // !SKIP
     }
     
     func test_archive_array() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array = NSArray(array: ["one", "two", "three"])
         test_archive(array)
+        #endif // !SKIP
     }
     
     func test_archive_concrete_value() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array: Array<UInt64> = [12341234123, 23452345234, 23475982345, 9893563243, 13469816598]
         let objctype = "[5Q]"
         array.withUnsafeBufferPointer { cArray in
             let concrete = NSValue(bytes: cArray.baseAddress!, objCType: objctype)
             test_archive(concrete)
         }
+        #endif // !SKIP
     }
     
     func test_archive_dictionary() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dictionary = NSDictionary(dictionary: ["one" : 1, "two" : 2, "three" : 3])
         test_archive(dictionary)
+        #endif // !SKIP
     }
     
     func test_archive_generic_objc() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array: Array<Int32> = [1234, 2345, 3456, 10000]
 
         test_archive({ archiver -> Bool in
@@ -223,24 +273,40 @@ class TestNSKeyedArchiver : XCTestCase {
             XCTAssertEqual(expected, array)
             return true
             })
+        #endif // !SKIP
     }
 
     func test_archive_locale() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let locale = Locale.current
 //        test_archive(locale._bridgeToObjectiveC())
+        #endif // !SKIP
     }
     
     func test_archive_string() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = NSString(string: "hello")
         test_archive(string)
+        #endif // !SKIP
     }
     
     func test_archive_mutable_array() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array = NSMutableArray(array: ["one", "two", "three"])
         test_archive(array)
+        #endif // !SKIP
     }
 
     func test_archive_mutable_dictionary() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let one: NSNumber = NSNumber(value: Int(1))
         let two: NSNumber = NSNumber(value: Int(2))
         let three: NSNumber = NSNumber(value: Int(3))
@@ -251,45 +317,73 @@ class TestNSKeyedArchiver : XCTestCase {
         ]
         let mdictionary = NSMutableDictionary(dictionary: dict)
         test_archive(mdictionary)
+        #endif // !SKIP
     }
     
     func test_archive_nspoint() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let point = NSValue(point: NSPoint(x: CGFloat(20.0), y: CGFloat(35.0)))
 //        test_archive(point)
+        #endif // !SKIP
     }
 
     func test_archive_nsrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let range = NSValue(range: NSRange(location: 1234, length: 5678))
         test_archive(range)
+        #endif // !SKIP
     }
     
     func test_archive_nsrect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let point = NSPoint(x: CGFloat(20.0), y: CGFloat(35.4))
 //        let size = NSSize(width: CGFloat(50.0), height: CGFloat(155.0))
 //
 //        let rect = NSValue(rect: NSRect(origin: point, size: size))
 //        test_archive(rect)
+        #endif // !SKIP
     }
 
     func test_archive_null() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let null = NSNull()
         test_archive(null)
+        #endif // !SKIP
     }
     
     func test_archive_set() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let set = NSSet(array: [NSNumber(value: Int(1234234)),
 //                                NSNumber(value: Int(2374853)),
 //                                NSString(string: "foobarbarbar"),
 //                                NSValue(point: NSPoint(x: CGFloat(5.0), y: CGFloat(Double(1.5))))])
 //        test_archive(set, classes: [NSValue.self, NSSet.self])
+        #endif // !SKIP
     }
     
     func test_archive_url() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = NSURL(string: "index.html", relativeTo: URL(string: "http://www.apple.com"))!
         test_archive(url)
+        #endif // !SKIP
     }
     
     func test_archive_charptr() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let charArray = [CChar]("Hello world, we are testing!\0".utf8CString)
 
         charArray.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<CChar>) in
@@ -316,31 +410,51 @@ class TestNSKeyedArchiver : XCTestCase {
                 }
             })
         }
+        #endif // !SKIP
     }
     
     func test_archive_user_class() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if false && !DARWIN_COMPATIBILITY_TESTS  // Causes SIGABRT
         let userClass = UserClass(1234)
         test_archive(userClass)
 #endif
+        #endif // !SKIP
     }
     
     func test_archive_ns_user_class() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let nsUserClass = NSUserClass(5678)
         test_archive(nsUserClass)
+        #endif // !SKIP
     }
     
     func test_archive_uuid_byref() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = NSUUID()
         test_archive(uuid)
+        #endif // !SKIP
     }
     
     func test_archive_uuid_byvalue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = UUID()
         return test_archive(uuid, classes: [NSUUID.self])
+        #endif // !SKIP
     }
 
     func test_archive_unhashable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = """
             {
               "args": {},
@@ -364,9 +478,13 @@ class TestNSKeyedArchiver : XCTestCase {
         catch {
             XCTFail("test_archive_unhashable, de-serialization error \(error)")
         }
+        #endif // !SKIP
     }
 
     func test_archiveRootObject_String() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let filePath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
         let result = NSKeyedArchiver.archiveRootObject("Hello", toFile: filePath)
         XCTAssertTrue(result)
@@ -375,9 +493,13 @@ class TestNSKeyedArchiver : XCTestCase {
         } catch {
             XCTFail("Failed to clean up file")
         }
+        #endif // !SKIP
     }
 
     func test_archiveRootObject_URLRequest() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let filePath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
         let url = URL(string: "http://swift.org")!
         let request = URLRequest(url: url)._bridgeToObjectiveC()
@@ -388,9 +510,9 @@ class TestNSKeyedArchiver : XCTestCase {
         } catch {
             XCTFail("Failed to clean up file")
         }
+        #endif // !SKIP
     }
 
 }
 
-#endif
 
