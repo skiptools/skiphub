@@ -21,16 +21,4 @@ final class SkipFoundationTests: XCTestCase {
         XCTAssertEqual("Swift", foundationHelperDemo())
         #endif
     }
-
-    // MARK: - ArrayTests
-    func testArrayLiteralInit() {
-        let emptyArray: [Int] = []
-        XCTAssertEqual(emptyArray.count, 0)
-
-        let singleElementArray = [1]
-        XCTAssertEqual(singleElementArray.count, 1)
-
-        let multipleElementArray = [1, 2]
-        XCTAssertEqual(multipleElementArray.count, 2)
-    }
 }

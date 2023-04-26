@@ -38,6 +38,11 @@ class TestJSONSerialization : XCTestCase {
     }
     #endif // SKIP
     
+    // The declaring extension cannot be merged into its extended Kotlin type definition. Therefore the extension can only include properties and functions
+    enum ObjectType {
+        case data
+        case stream
+    }
 }
 
 //MARK: - JSONObjectWithData
@@ -51,7 +56,7 @@ extension TestJSONSerialization {
         ]
     }
     #endif
-    
+
     func test_JSONObjectWithData_emptyObject() {
         #if SKIP
         throw XCTSkip("TODO")
@@ -105,10 +110,11 @@ extension TestJSONSerialization {
 //MARK: - JSONDeserialization
 extension TestJSONSerialization {
 
-    enum ObjectType {
-        case data
-        case stream
-    }
+    // The declaring extension cannot be merged into its extended Kotlin type definition. Therefore the extension can only include properties and functions
+    //enum ObjectType {
+    //    case data
+    //    case stream
+    //}
     static var objectType = ObjectType.data
 
     #if !SKIP
