@@ -25,6 +25,10 @@ public func SkipFoundationPublicModuleName() -> String {
 
 #if SKIP
 
+public typealias NSString = String
+public typealias NSURL = SkipURL
+public typealias NSUUID = SkipUUID
+
 
 // MARK: Foundation Stubs
 

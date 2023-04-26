@@ -4,14 +4,9 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-/// Needed because Skip cannot create typealias inside extensions, so all references to `String.Encoding` need to be `StringEncoding`
-public typealias StringEncoding = String.Encoding
-
-#else
-
+#if SKIP
 extension String {
-    public func data(using: StringEncoding, allowLossyConversion: Bool) -> Data? {
+    public func data(using: StringEncoding, allowLossyConversion: Bool = true) -> Data? {
         return try? Data(rawValue: toByteArray(using.rawValue))
     }
 

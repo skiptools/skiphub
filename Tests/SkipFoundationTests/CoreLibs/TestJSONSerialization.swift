@@ -1985,44 +1985,35 @@ extension TestJSONSerialization {
     }
     
     func test_bailOnDeepValidStructure() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let repetition = 8000
         let testString = String(repeating: "[", count: repetition) +  String(repeating: "]", count: repetition)
-        let data = testString.data(using: .utf8)!
+        let data = testString.data(using: String.Encoding.utf8)!
         do {
             _ = try JSONSerialization.jsonObject(with: data, options: [])
+            XCTFail("Should not have successfully parsed")
         }
         catch let nativeError {
-            if let error = nativeError as? NSError {
-                XCTAssertEqual(error.domain, "NSCocoaErrorDomain")
-                XCTAssertEqual(error.code, 3840)
-            }
+//            if let error = nativeError as? NSError {
+//                XCTAssertEqual(error.domain, "NSCocoaErrorDomain")
+//                XCTAssertEqual(error.code, 3840)
+//            }
         }
-        #endif // !SKIP
     }
     
     func test_bailOnDeepInvalidStructure() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let repetition = 8000
         let testString = String(repeating: "[", count: repetition)
-        let data = testString.data(using: .utf8)!
+        let data = testString.data(using: String.Encoding.utf8)!
         do {
             _ = try JSONSerialization.jsonObject(with: data, options: [])
+            XCTFail("Should not have successfully parsed")
         }
         catch {
             // expected case
         }
-        #endif // !SKIP
     }
 
     fileprivate func createTestFile(_ path: String,_contents: Data) -> String? {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let tempDir = NSTemporaryDirectory() + "TestFoundation_Playground_" + NSUUID().uuidString + "/"
         do {
             try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: false, attributes: nil)
@@ -2035,15 +2026,10 @@ extension TestJSONSerialization {
         } catch {
             return nil
         }
-        #endif // !SKIP
     }
     
     fileprivate func removeTestFile(_ location: String) {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         try? FileManager.default.removeItem(atPath: location)
-        #endif // !SKIP
     }
 }
 

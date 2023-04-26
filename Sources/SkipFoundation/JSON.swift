@@ -28,7 +28,16 @@ struct CannotConvertString: Error { }
 
 // SKIP DECLARE: public class PlatformJSONSerialization
 internal class PlatformJSONSerialization {
-    public static func jsonObject(with jsonData: Data) throws -> Any? {
+    public enum ReadingOptions : Int {
+        case mutableContainers
+        case mutableLeaves
+        case fragmentsAllowed
+        case json5Allowed
+        case topLevelDictionaryAssumed
+        case allowFragments
+    }
+
+    public static func jsonObject(with jsonData: Data, options: [PlatformJSONSerialization.ReadingOptions] = []) throws -> Any? {
         guard let string = String(data: jsonData, encoding: String.Encoding.utf8) else {
             throw CannotConvertString()
         }

@@ -52,7 +52,7 @@ final class BundleTests: XCTestCase {
         "The \\\"same\\\" text in English" = "Le \\\"même\\\" texte en anglais";
         """
 
-        let data = try XCTUnwrap(locstr.data(using: StringEncoding.utf8, allowLossyConversion: false))
+        let data = try XCTUnwrap(locstr.data(using: String.Encoding.utf8, allowLossyConversion: false))
 
         let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
 

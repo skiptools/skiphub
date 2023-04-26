@@ -33,12 +33,6 @@ fileprivate typealias FoundationURL = SkipURL
 // test case handling for NSError (which is not provided by Skip)
 fileprivate typealias NSError = java.lang.Exception
 
-// NSURL does not exist in Skip, but for the purposes of the test case, we pretend it is the same a Foundation.URL
-fileprivate typealias NSURL = SkipURL
-
-// test case handling for NSString (which is not provided by Skip)
-fileprivate typealias NSString = String
-
 fileprivate func NSURL(string: String, relativeTo: SkipURL? = nil) -> SkipURL? {
     return URL(string: string, relativeTo: relativeTo)
 }
