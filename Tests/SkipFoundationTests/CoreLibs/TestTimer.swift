@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -32,6 +31,9 @@ class TestTimer : XCTestCase {
     #endif // SKIP
     
     func test_timerInit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let fireDate = Date()
         let timeInterval: TimeInterval = 0.3
 
@@ -44,9 +46,13 @@ class TestTimer : XCTestCase {
         XCTAssertEqual(repeatingTimer.fireDate, fireDate)
         XCTAssertEqual(repeatingTimer.timeInterval, timeInterval)
         XCTAssert(timer.isValid)
+        #endif // !SKIP
     }
     
     func test_timerTickOnce() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var flag = false
         
         let dummyTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: false) { timer in
@@ -61,6 +67,7 @@ class TestTimer : XCTestCase {
         runLoop.run(until: Date(timeIntervalSinceNow: 0.05))
         
         XCTAssertTrue(flag)
+        #endif // !SKIP
     }
 
 //    func test_timerRepeats() {
@@ -90,6 +97,9 @@ class TestTimer : XCTestCase {
 //    }
 
     func test_timerInvalidate() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var flag = false
         
         let dummyTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
@@ -107,9 +117,9 @@ class TestTimer : XCTestCase {
         runLoop.run(until: Date(timeIntervalSinceNow: 0.05))
         
         XCTAssertTrue(flag)
+        #endif // !SKIP
     }
 
 }
 
-#endif
 

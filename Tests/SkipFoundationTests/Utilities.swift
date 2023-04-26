@@ -272,7 +272,8 @@ extension Fixture where ValueType: NSObject & NSCoding {
             XCTAssertTrue(matchHandler(reference, value), "The fixture with identifier \(identifier) failed to match for on-disk variant \(variant)")
         })
     }
-    
+
+    @available(*, deprecated)
     func assertValueRoundtripsInCoder(settingUpArchiverWith archiverSetup: (NSKeyedArchiver) -> Void = { _ in}, unarchiverWith unarchiverSetup: (NSKeyedUnarchiver) -> Void = { _ in}, matchingWith: (ValueType, ValueType) -> Bool = { $0 == $1 }) throws {
         let original = try make()
         
@@ -297,7 +298,8 @@ extension Fixture where ValueType: NSObject & NSCoding {
             XCTFail("The fixture with identifier '\(identifier)' failed to decode after an in-memory roundtrip.")
         }
     }
-    
+
+    @available(*, deprecated)
     func assertValueRoundtripsInCoder(secureCoding: Bool, matchingWith: (ValueType, ValueType) -> Bool = { $0 == $1 }) throws {
         try assertValueRoundtripsInCoder(settingUpArchiverWith: { (archiver) in
             archiver.requiresSecureCoding = secureCoding

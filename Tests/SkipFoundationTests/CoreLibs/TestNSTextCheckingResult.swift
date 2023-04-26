@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,9 @@ import XCTest
 
 class TestNSTextCheckingResult: XCTestCase {
     func test_textCheckingResult() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
        let patternString = "(a|b)x|123|(?<aname>c|d)y"
        do {
            let patternOptions: NSRegularExpression.Options = []
@@ -56,9 +58,13 @@ class TestNSTextCheckingResult: XCTestCase {
        } catch {
             XCTFail("Unable to build regular expression for pattern \(patternString)")
        }
+        #endif // !SKIP
     }
 
     func test_multipleMatches() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let patternString = "(?<name>hello)[0-9]"
 
         do {
@@ -84,10 +90,14 @@ class TestNSTextCheckingResult: XCTestCase {
         } catch {
             XCTFail("Unable to build regular expression for pattern \(patternString)")
         }
+        #endif // !SKIP
     }
 
 
     func test_rangeWithName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard #available(OSX 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) else {
             return
         }
@@ -107,6 +117,7 @@ class TestNSTextCheckingResult: XCTestCase {
         } catch {
             XCTFail("Unable to build regular expression for pattern \(patternString)")
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -118,6 +129,9 @@ class TestNSTextCheckingResult: XCTestCase {
     #endif
     
     private func areEqual(_ lhs: NSTextCheckingResult, _ rhs: NSTextCheckingResult) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard lhs.resultType == rhs.resultType else { return false }
         guard lhs.numberOfRanges == rhs.numberOfRanges else { return false }
         
@@ -132,18 +146,27 @@ class TestNSTextCheckingResult: XCTestCase {
         }
         
         return true
+        #endif // !SKIP
     }
     
     func test_codingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
             try fixture.assertValueRoundtripsInCoder(secureCoding: true, matchingWith: areEqual(_:_:))
         }
+        #endif // !SKIP
     }
     
     func test_loadedVauesMatch() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
 //            try fixture.assertLoadedValuesMatch(areEqual(_:_:))
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -159,5 +182,4 @@ class TestNSTextCheckingResult: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

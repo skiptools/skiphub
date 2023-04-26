@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -34,6 +33,9 @@ class TestNSLock: XCTestCase {
 
 
     func test_lockWait() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let condition = NSCondition()
         let lock = NSLock()
 
@@ -68,10 +70,14 @@ class TestNSLock: XCTestCase {
         XCTAssertTrue(test(waitTime: 4, shouldLock: false))
         XCTAssertTrue(test(waitTime: 8, shouldLock: true))
         XCTAssertTrue(test(waitTime: -1, shouldLock: true))
+        #endif // !SKIP
     }
 
 
     func test_threadsAndLocks() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let condition = NSCondition()
         let lock = NSLock()
         let threadCount = 10
@@ -129,9 +135,13 @@ class TestNSLock: XCTestCase {
         if gotLock {
             lock.unlock()
         }
+        #endif // !SKIP
     }
     
     func test_recursiveLock() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // We will start 10 threads, and their collective task will be to reduce
         // the countdown value to zero in less than 30 seconds.
         
@@ -200,8 +210,8 @@ class TestNSLock: XCTestCase {
         XCTAssertEqual(resultCountdownValue, 0, "Wrong coundtdown means unresolved race conditions, locks broken")
         
         threadCompletedCondition.unlock()
+        #endif // !SKIP
     }
 }
 
-#endif
 

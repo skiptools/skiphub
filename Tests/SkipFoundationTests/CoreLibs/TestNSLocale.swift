@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -34,6 +33,9 @@ class TestNSLocale : XCTestCase {
     #endif // SKIP
 
     func test_Identifier() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Current locale identifier should not be empty
         // Or things like NumberFormatter spellOut style won't work
         XCTAssertFalse(Locale.current.identifier.isEmpty)
@@ -45,9 +47,13 @@ class TestNSLocale : XCTestCase {
         let deDEID = "de_DE"
         let germanLocale = Locale(identifier: deDEID)
         XCTAssertEqual(deDEID, germanLocale.identifier)
+        #endif // !SKIP
     }
     
     func test_constants() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSLocale.currentLocaleDidChangeNotification.rawValue, "kCFLocaleCurrentLocaleDidChangeNotification",
                         "\(NSLocale.currentLocaleDidChangeNotification.rawValue) is not equal to kCFLocaleCurrentLocaleDidChangeNotification")
         
@@ -108,24 +114,36 @@ class TestNSLocale : XCTestCase {
         XCTAssertEqual(NSLocale.Key.alternateQuotationEndDelimiterKey.rawValue, "kCFLocaleAlternateQuotationEndDelimiterKey",
                         "\(NSLocale.Key.alternateQuotationEndDelimiterKey.rawValue) is not equal to kCFLocaleAlternateQuotationEndDelimiterKey")
 
+        #endif // !SKIP
     }
 
     func test_copy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let locale = Locale(identifier: "en_US")
         let localeCopy = locale
 
         XCTAssertTrue(locale == localeCopy)
+        #endif // !SKIP
     }
 
     func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a1 = Locale(identifier: "en_US")
         let a2 = Locale(identifier: "en_US")
 
         XCTAssertEqual(a1, a2)
         XCTAssertEqual(a1.hashValue, a2.hashValue)
+        #endif // !SKIP
     }
 
     func test_staticProperties() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let euroCurrencyCode = "EUR"
         let spainRegionCode = "ES"
         let galicianLanguageCode = "gl"
@@ -146,18 +164,22 @@ class TestNSLocale : XCTestCase {
         XCTAssertTrue(Locale.isoLanguageCodes.contains(galicianLanguageCode))
         
         XCTAssertTrue(Locale.preferredLanguages.count == UserDefaults.standard.array(forKey: "AppleLanguages")?.count ?? 0)
+        #endif // !SKIP
     }
     
     func test_localeProperties(){
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let enUSID = "en_US"
         let locale = Locale(identifier: enUSID)
         XCTAssertEqual(String(describing: locale.languageCode!), "en")
         XCTAssertEqual(String(describing: locale.decimalSeparator!), ".")
         XCTAssertEqual(String(describing: locale.currencyCode!), "USD")
         XCTAssertEqual(String(describing: locale.collatorIdentifier!), enUSID)
+        #endif // !SKIP
     }
 
 }
 
-#endif
 

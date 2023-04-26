@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -34,6 +33,9 @@ class TestUnitConverter: XCTestCase {
     #endif // SKIP
     
     func test_baseUnit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(UnitAcceleration.baseUnit().symbol,
                        UnitAcceleration.metersPerSecondSquared.symbol)
         XCTAssertEqual(UnitAngle.baseUnit().symbol,
@@ -76,17 +78,25 @@ class TestUnitConverter: XCTestCase {
                        UnitTemperature.kelvin.symbol)
         XCTAssertEqual(UnitVolume.baseUnit().symbol,
                        UnitVolume.liters.symbol)
+        #endif // !SKIP
     }
     
     func test_linearity() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let coefficient = 7.0
         let baseUnitConverter = UnitConverterLinear(coefficient: coefficient)
         XCTAssertEqual(baseUnitConverter.value(fromBaseUnitValue: coefficient), 1.0)
         XCTAssertEqual(baseUnitConverter.baseUnitValue(fromValue: 1), coefficient)
+        #endif // !SKIP
     }
     
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_bijectivity() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let delta = 1e-9
         let testIdentity: (Dimension) -> Double = { dimension in
             let converter = dimension.converter
@@ -309,9 +319,13 @@ class TestUnitConverter: XCTestCase {
         XCTAssertEqual(testIdentity(UnitVolume.imperialQuarts), 1, accuracy: delta)
         XCTAssertEqual(testIdentity(UnitVolume.imperialGallons), 1, accuracy: delta)
         XCTAssertEqual(testIdentity(UnitVolume.metricCups), 1, accuracy: delta)
+        #endif // !SKIP
     }
 
     func test_equality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let u1 = UnitConverterLinear(coefficient: 1, constant: 2)
         let u2 = UnitConverterLinear(coefficient: 1, constant: 2)
         XCTAssertEqual(u1, u2)
@@ -326,9 +340,9 @@ class TestUnitConverter: XCTestCase {
         XCTAssertNotEqual(u4, u1)
 
         // Cannot test NSUnitConverterReciprocal due to no support for @testable import.
+        #endif // !SKIP
     }
     
 }
 
-#endif
 

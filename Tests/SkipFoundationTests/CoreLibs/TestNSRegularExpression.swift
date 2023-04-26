@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -37,7 +36,11 @@ class TestNSRegularExpression : XCTestCase {
     }
     #endif // SKIP
 
+    #if !SKIP
     func simpleRegularExpressionTestWithPattern(_ patternString: String, target searchString: String, looking: Bool, match: Bool, file: StaticString = #file, line: UInt = #line) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let str = NSString(string: searchString)
             var range = NSRange(location: 0, length: str.length)
@@ -104,9 +107,14 @@ class TestNSRegularExpression : XCTestCase {
         } catch {
             XCTFail("Unable to build regular expression for pattern \(patternString)", file: file, line: line)
         }
+        #endif // !SKIP
     }
+    #endif
     
     func test_simpleRegularExpressions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         simpleRegularExpressionTestWithPattern("st(abc)ring", target:"stabcring thing", looking:true, match:false)
         simpleRegularExpressionTestWithPattern("st(abc)ring", target:"stabcring", looking:true, match:true)
         simpleRegularExpressionTestWithPattern("st(abc)ring", target:"stabcrung", looking:false, match:false)
@@ -168,9 +176,14 @@ class TestNSRegularExpression : XCTestCase {
         simpleRegularExpressionTestWithPattern("\\\\\\|\\(\\)\\[\\{\\~\\$\\*\\+\\?\\.", target:"\\|()[{~$*+?.", looking:true, match:true)
         simpleRegularExpressionTestWithPattern(NSRegularExpression.escapedPattern(for: "+\\{}[].^$?#<=!&*()"), target:"+\\{}[].^$?#<=!&*()", looking:true, match:true)
         simpleRegularExpressionTestWithPattern(NSRegularExpression.escapedPattern(for: "+\\{}[].^$?#<=!&*()"), target:"+\\{}[].^$?#<=!&*() abc", looking:true, match:false)
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     func replaceRegularExpressionTest(_ patternString: String, _ patternOptions: NSRegularExpression.Options, _ searchString: String, _ searchOptions: NSRegularExpression.MatchingOptions, _ searchRange: NSRange, _ templ: String, _ numberOfMatches: Int, _ result: String, file: StaticString = #file, line: UInt = #line) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let regex = try NSRegularExpression(pattern: patternString, options: patternOptions)
             let mutableString = NSMutableString(string: searchString)
@@ -182,9 +195,14 @@ class TestNSRegularExpression : XCTestCase {
         } catch {
             XCTFail("Unable to construct regular expression from \(patternString) options \(patternOptions)", file: file, line: line)
         }
+        #endif // !SKIP
     }
-    
+    #endif
+
     func test_regularExpressionReplacement() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         replaceRegularExpressionTest("\\b(th[a-z]+) \\1\\b", [], "This is the way.", [], NSRange(location: 0, length: 16), "foo", 0, "This is the way.")
         replaceRegularExpressionTest("\\b(th[a-z]+) \\1\\b", [], "This this is the the way.", [], NSRange(location: 0, length: 25), "foo", 1, "This this is foo way.")
         replaceRegularExpressionTest("\\b(th[a-z]+) \\1\\b", [], "This this is the the way.", [], NSRange(location: 0, length: 25), "$0", 1, "This this is the the way.")
@@ -209,9 +227,14 @@ class TestNSRegularExpression : XCTestCase {
         replaceRegularExpressionTest("\\b(th[a-z]+) \\1\\b", .caseInsensitive, "This this is the the way.", [], NSRange(location: 0, length: 25), "*\\\\\\$1*", 2, "*\\$1* is *\\$1* way.")
         replaceRegularExpressionTest("([1-9]a)([1-9]b)([1-9]c)([1-9]d)([1-9]e)([1-9]f)", [], "9a3b4c8d3e1f,9a3b4c8d3e1f", [], NSRange(location: 0, length: 25), "$2$4 is your key", 2, "3b8d is your key,3b8d is your key")
         replaceRegularExpressionTest("([1-9]a)([1-9]b)([1-9]c)([1-9]d)([1-9]e)([1-9]f)([1-9]z)", [], "9a3b4c8d3e1f2z,9a3b4c8d3e1f2z", [], NSRange(location: 0, length: 29), "$2$4$1 is your key", 2, "3b8d9a is your key,3b8d9a is your key")
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     func complexRegularExpressionTest(_ patternString: String, _ patternOptions: NSRegularExpression.Options, _ searchString: String, _ searchOptions: NSRegularExpression.MatchingOptions, _ searchRange: NSRange, _ numberOfMatches: Int, _ firstMatchOverallRange: NSRange, _ firstMatchFirstCaptureRange: NSRange, _ firstMatchLastCaptureRange: NSRange, file: StaticString = #file, line: UInt = #line) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let regex = try NSRegularExpression(pattern: patternString, options: patternOptions)
             let matches = regex.matches(in: searchString, options: searchOptions, range: searchRange)
@@ -240,9 +263,14 @@ class TestNSRegularExpression : XCTestCase {
         } catch {
             XCTFail("Unable to construct regular expression from \(patternString) options \(patternOptions)", file: file, line: line)
         }
+        #endif // !SKIP
     }
+    #endif
     
     func test_complexRegularExpressions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         complexRegularExpressionTest("\\b(th[a-z]+) \\1\\b", [], "This is the way.", [], NSRange(location: 0, length: 16), 0, NSRange(location: NSNotFound, length: 0), NSRange(location: NSNotFound, length: 0), NSRange(location: NSNotFound, length: 0))
         complexRegularExpressionTest("\\b(th[a-z]+) \\1\\b", [], "This this is the the way.", [], NSRange(location: 0, length: 25), 1, NSRange(location: 13, length: 7), NSRange(location: 13, length: 3), NSRange(location: 13, length: 3))
         complexRegularExpressionTest("\\b(th[a-z]+) \\1\\b", .caseInsensitive, "This this is the the way.", [], NSRange(location: 0, length: 25), 2, NSRange(location: 0, length: 9), NSRange(location: 0, length: 4), NSRange(location: 0, length: 4))
@@ -324,9 +352,13 @@ class TestNSRegularExpression : XCTestCase {
         complexRegularExpressionTest("(a|b)x|123|(c|d)y", [], "903847123", [], NSRange(location: 0, length: 9), 1, NSRange(location: 6, length: 3), NSRange(location: NSNotFound, length: 0), NSRange(location: NSNotFound, length: 0))
         complexRegularExpressionTest("(a|b)x|123|(c|d)y", [], "axcy", [], NSRange(location: 0, length: 4), 2, NSRange(location: 0, length: 2), NSRange(location: 0, length: 1), NSRange(location: NSNotFound, length: 0))
         complexRegularExpressionTest("(a|b)x|123|(c|d)y", [], "cya", [], NSRange(location: 0, length: 3), 1, NSRange(location: 0, length: 2), NSRange(location: NSNotFound, length: 0), NSRange(location: 0, length: 1))
+        #endif // !SKIP
     }
     
     func test_Equal() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var regularExpressionA = try! NSRegularExpression(pattern: "[a-z]+", options: [])
         var regularExpressionB = try! NSRegularExpression(pattern: "[a-z]+", options: [])
         XCTAssertTrue(regularExpressionA == regularExpressionB)
@@ -351,16 +383,24 @@ class TestNSRegularExpression : XCTestCase {
         regularExpressionB = try! NSRegularExpression(pattern: "[a-z]+", options: .caseInsensitive)
         XCTAssertFalse(regularExpressionA == regularExpressionB)
         XCTAssertFalse(regularExpressionA === regularExpressionB)
+        #endif // !SKIP
     }
     
     func test_NSCoding() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let regularExpressionA = try! NSRegularExpression(pattern: "[a-z]+", options: [.caseInsensitive, .allowCommentsAndWhitespace])
         let regularExpressionB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: regularExpressionA)) as! NSRegularExpression
         XCTAssertEqual(regularExpressionA, regularExpressionB, "Archived then unarchived `NSRegularExpression` must be equal.")
+        #endif // !SKIP
     }
 
     // Check all of the following functions do not need to be passed options:
     func test_defaultOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let pattern = ".*fatal error: (.*): file (.*), line ([0-9]+)$"
         let text = "fatal error: Some message: file /tmp/foo.swift, line 123"
         let regex = try? NSRegularExpression(pattern: pattern)
@@ -376,9 +416,13 @@ class TestNSRegularExpression : XCTestCase {
                       "Some message-/tmp/foo.swift-123")
         let str = NSMutableString(string: text)
         XCTAssertEqual(regex!.replaceMatches(in: str, range: range, withTemplate: "$1-$2-$3"), 1)
+        #endif // !SKIP
     }
 
     func test_badPattern() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             _ = try NSRegularExpression(pattern: "(", options: [])
             XCTFail()
@@ -388,9 +432,13 @@ class TestNSRegularExpression : XCTestCase {
             XCTAssertEqual(err.code, CocoaError.formatting.rawValue)
             XCTAssertEqual(err.userInfo["NSInvalidValue"] as? String, "(")
         }
+        #endif // !SKIP
     }
 
     func test_unicodeNamedGroup() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let patternString = "(?<りんご>a)"
         do {
             _ = try NSRegularExpression(pattern: patternString, options: [])
@@ -401,9 +449,13 @@ class TestNSRegularExpression : XCTestCase {
             XCTAssertEqual(err.code, CocoaError.formatting.rawValue)
             XCTAssertEqual(err.userInfo["NSInvalidValue"] as? String, patternString)
         }
+        #endif // !SKIP
     }
 
     func test_conflictingNamedGroups() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let patternString = "(?<name>a)(?<name>b)"
         do {
             _ = try NSRegularExpression(pattern: patternString, options: [])
@@ -414,9 +466,9 @@ class TestNSRegularExpression : XCTestCase {
             XCTAssertEqual(err.code, CocoaError.formatting.rawValue)
             XCTAssertEqual(err.userInfo["NSInvalidValue"] as? String, patternString)
         }
+        #endif // !SKIP
     }
 
 }
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -55,6 +54,9 @@ class TestNSNumber : XCTestCase {
     #endif // SKIP
     
     func test_NumberWithBool() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: true).boolValue, true)
         XCTAssertEqual(NSNumber(value: true).int8Value, Int8(1))
         XCTAssertEqual(NSNumber(value: true).uint8Value, UInt8(1))
@@ -80,9 +82,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: false).floatValue, Float(0))
         XCTAssertEqual(NSNumber(value: false).doubleValue, Double(0))
+        #endif // !SKIP
     }
     
     func test_CFBoolean() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard let plist = try? PropertyListSerialization.data(fromPropertyList: ["test" : true], format: .binary, options: 0) else {
             XCTFail()
             return
@@ -100,9 +106,13 @@ class TestNSNumber : XCTestCase {
             return
         }
         XCTAssertTrue(boolValue)
+        #endif // !SKIP
     }
     
     func test_numberWithChar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int8(0)).boolValue, false)
         XCTAssertEqual(NSNumber(value: Int8(0)).int8Value, Int8(0))
         XCTAssertEqual(NSNumber(value: Int8(0)).uint8Value, UInt8(0))
@@ -168,9 +178,13 @@ class TestNSNumber : XCTestCase {
         // Linux/arm and Linux/power chars are unsigned, so Int8 in Swift, until this issue is resolved, these tests will always fail.
         XCTAssertEqual(NSNumber(value: Int8.min).doubleValue, Double(Int8.min))
 #endif
+        #endif // !SKIP
     }
     
     func test_numberWithUnsignedChar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt8(42)).boolValue, true)
         XCTAssertEqual(NSNumber(value: UInt8(42)).int8Value, Int8(42))
         XCTAssertEqual(NSNumber(value: UInt8(42)).uint8Value, UInt8(42))
@@ -230,9 +244,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: UInt8.max).floatValue, Float(UInt8.max))
         XCTAssertEqual(NSNumber(value: UInt8.max).doubleValue, Double(UInt8.max))
+        #endif // !SKIP
     }
     
     func test_numberWithShort() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int16(0)).boolValue, false)
         XCTAssertEqual(NSNumber(value: Int16(0)).int8Value, Int8(0))
         XCTAssertEqual(NSNumber(value: Int16(0)).uint8Value, UInt8(0))
@@ -334,9 +352,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: Int16.max).floatValue, Float(Int16.max))
         XCTAssertEqual(NSNumber(value: Int16.max).doubleValue, Double(Int16.max))
+        #endif // !SKIP
     }
 
     func test_numberWithUnsignedShort() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt16(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: UInt16(0)).int8Value, 0)
@@ -374,9 +396,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: UInt16.max).floatValue, Float(UInt16.max))
         XCTAssertEqual(NSNumber(value: UInt16.max).doubleValue, Double(UInt16.max))
+        #endif // !SKIP
     }
 
     func test_numberWithLong() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int32(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: Int32(0)).int8Value, 0)
@@ -444,9 +470,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: Int32.max).floatValue, Float(Int32.max))
         XCTAssertEqual(NSNumber(value: Int32.max).doubleValue, Double(Int32.max))
+        #endif // !SKIP
     }
 
     func test_numberWithUnsignedLong() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt32(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: UInt32(0)).int8Value, 0)
@@ -494,9 +524,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: UInt32.max).floatValue, Float(UInt32.max))
         XCTAssertEqual(NSNumber(value: UInt32.max).doubleValue, Double(UInt32.max))
+        #endif // !SKIP
     }
 
     func test_numberWithLongLong() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int64(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: Int64(0)).int8Value, 0)
@@ -591,9 +625,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: Int64.max).floatValue, Float(Int64.max))
         XCTAssertEqual(NSNumber(value: Int64.max).doubleValue, Double(Int64.max))
+        #endif // !SKIP
     }
 
     func test_numberWithUnsignedLongLong() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt64(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: UInt64(0)).int8Value, 0)
@@ -641,9 +679,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual(NSNumber(value: UInt64.max).floatValue, Float(UInt64.max))
         XCTAssertEqual(NSNumber(value: UInt64.max).doubleValue, Double(UInt64.max))
+        #endif // !SKIP
     }
 
     func test_numberWithInt() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: Int(0)).int8Value, 0)
@@ -751,9 +793,13 @@ class TestNSNumber : XCTestCase {
 #endif
         default: XCTFail("Unexpected mismatched Int & UInt sizes: \(intSize) & \(uintSize)")
         }
+        #endif // !SKIP
     }
 
     func test_numberWithUInt() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt(0)).boolValue, false)
 
         XCTAssertEqual(NSNumber(value: UInt(0)).int8Value, 0)
@@ -821,9 +867,13 @@ class TestNSNumber : XCTestCase {
             
         default: XCTFail("Unexpected mismatched Int & UInt sizes: \(intSize) & \(uintSize)")
         }
+        #endif // !SKIP
     }
 
     func test_numberWithFloat() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Float(0)).boolValue, false)
         XCTAssertEqual(NSNumber(value: Float(0)).int8Value, Int8(0))
         XCTAssertEqual(NSNumber(value: Float(0)).uint8Value, UInt8(0))
@@ -867,9 +917,13 @@ class TestNSNumber : XCTestCase {
 
         let nanFloat = NSNumber(value: Float.nan)
         XCTAssertTrue(nanFloat.doubleValue.isNaN)
+        #endif // !SKIP
     }
     
     func test_numberWithDouble() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Double(0)).boolValue, false)
         XCTAssertEqual(NSNumber(value: Double(0)).int8Value, Int8(0))
         XCTAssertEqual(NSNumber(value: Double(0)).uint8Value, UInt8(0))
@@ -902,9 +956,13 @@ class TestNSNumber : XCTestCase {
 
         let nanDouble = NSNumber(value: Double.nan)
         XCTAssertTrue(nanDouble.floatValue.isNaN)
+        #endif // !SKIP
     }
 
     func test_compareNumberWithBool() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: true).compare(NSNumber(value: true)), .orderedSame)
         XCTAssertEqual(NSNumber(value: true).compare(NSNumber(value: false)), .orderedDescending)
         XCTAssertEqual(NSNumber(value: false).compare(NSNumber(value: true)), .orderedAscending)
@@ -927,9 +985,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: true).compare(NSNumber(value: Double(1))), .orderedSame)
         XCTAssertEqual(NSNumber(value: true).compare(NSNumber(value: Double(0.9))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: true).compare(NSNumber(value: Double(1.1))), .orderedAscending)
+        #endif // !SKIP
     }
 
     func test_compareNumberWithChar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int8(42)).compare(NSNumber(value: Int8(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Int8(42)).compare(NSNumber(value: Int8(0))), .orderedDescending)
 #if !(os(Linux) && (arch(arm) || arch(powerpc64) || arch(powerpc64le)))
@@ -957,9 +1019,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Int8(-16)).compare(NSNumber(value: Float(-37.5))), .orderedDescending)
 #endif
         XCTAssertEqual(NSNumber(value: Int8(16)).compare(NSNumber(value: Float(16.1))), .orderedAscending)
+        #endif // !SKIP
     }
 
     func test_compareNumberWithUnsignedChar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt8(42)).compare(NSNumber(value: UInt8(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: UInt8(42)).compare(NSNumber(value: UInt8(0))), .orderedDescending)
 //        XCTAssertEqual(NSNumber(value: UInt8(42)).compare(NSNumber(value: UInt8(255))), .orderedAscending)
@@ -975,9 +1041,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: UInt8(42)).compare(NSNumber(value: Float(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: UInt8(0)).compare(NSNumber(value: Float(-37.5))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: UInt8(255)).compare(NSNumber(value: Float(1234.5))), .orderedAscending)
+        #endif // !SKIP
     }
 
     func test_compareNumberWithShort() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Int16(42)).compare(NSNumber(value: Int16(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Int16(42)).compare(NSNumber(value: Int16(0))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Int16(-37)).compare(NSNumber(value: Int16(12345))), .orderedAscending)
@@ -993,9 +1063,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Int16(42)).compare(NSNumber(value: Float(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Int16(0)).compare(NSNumber(value: Float(-37.5))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Int16(255)).compare(NSNumber(value: Float(1234.5))), .orderedAscending)
+        #endif // !SKIP
     }
 
     func test_compareNumberWithFloat() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Float(42)).compare(NSNumber(value: Float(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Float(42)).compare(NSNumber(value: Float(0))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Float(-37)).compare(NSNumber(value: Float(12345))), .orderedAscending)
@@ -1011,9 +1085,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Float(42)).compare(NSNumber(value: Double(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Float(0)).compare(NSNumber(value: Double(-37.5))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Float(-37.5)).compare(NSNumber(value: Double(1234.5))), .orderedAscending)
+        #endif // !SKIP
     }
 
     func test_compareNumberWithDouble() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: Double(42)).compare(NSNumber(value: Double(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Double(42)).compare(NSNumber(value: Double(0))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Double(-37)).compare(NSNumber(value: Double(12345))), .orderedAscending)
@@ -1029,10 +1107,14 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Double(42)).compare(NSNumber(value: Float(42))), .orderedSame)
         XCTAssertEqual(NSNumber(value: Double(0)).compare(NSNumber(value: Float(-37.5))), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Double(-37.5)).compare(NSNumber(value: Float(1234.5))), .orderedAscending)
+        #endif // !SKIP
     }
 
     
     func test_description() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: 1000).description, "1000")
         XCTAssertEqual(NSNumber(value: 0.001).description, "0.001")
 
@@ -1073,9 +1155,13 @@ class TestNSNumber : XCTestCase {
 //        XCTAssertEqual(NSNumber(value: Double.leastNonzeroMagnitude).description, "5e-324")
 //        XCTAssertEqual(NSNumber(value: Double.greatestFiniteMagnitude).description, "1.7976931348623157e+308")
         XCTAssertEqual(NSNumber(value: Double.pi).description, "3.141592653589793")
+        #endif // !SKIP
     }
 
     func test_descriptionWithLocale() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // nil Locale
         XCTAssertEqual(NSNumber(value: 1000).description(withLocale: nil), "1000")
         XCTAssertEqual(NSNumber(value: 0.001).description(withLocale: nil), "0.001")
@@ -1214,9 +1300,13 @@ class TestNSNumber : XCTestCase {
         //XCTAssertEqual(NSNumber(value: Double.leastNonzeroMagnitude).description(withLocale: Locale(identifier: "de_DE")), "5E-324")
         XCTAssertEqual(NSNumber(value: 2 * Double.leastNonzeroMagnitude).description(withLocale: Locale(identifier: "de_DE")), "1E-323")
         XCTAssertEqual(NSNumber(value: Double.greatestFiniteMagnitude).description(withLocale: Locale(identifier: "de_DE")), "1,797693134862316E+308")
+        #endif // !SKIP
     }
 
     func test_objCType() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let objCType: (NSNumber) -> UnicodeScalar = { number in
             return UnicodeScalar(UInt8(number.objCType.pointee))
         }
@@ -1256,9 +1346,13 @@ class TestNSNumber : XCTestCase {
 
         XCTAssertEqual("f" /* 0x66 */, objCType(NSNumber(value: Float.greatestFiniteMagnitude)))
         XCTAssertEqual("d" /* 0x64 */, objCType(NSNumber(value: Double.greatestFiniteMagnitude)))
+        #endif // !SKIP
     }
 
     func test_stringValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if UInt.max == UInt32.max {
             XCTAssertEqual(NSNumber(value: UInt.min).stringValue, "0")
             XCTAssertEqual(NSNumber(value: UInt.min + 1).stringValue, "1")
@@ -1322,9 +1416,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Int64.min + 1).stringValue, "-9223372036854775807")
         XCTAssertEqual(NSNumber(value: Int64.max).stringValue, "9223372036854775807")
         XCTAssertEqual(NSNumber(value: Int64.max - 1).stringValue, "9223372036854775806")
+        #endif // !SKIP
     }
 
     func test_Equals() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Booleans: false only equals 0, true only equals 1
         XCTAssertTrue(NSNumber(value: true) == NSNumber(value: Bool(true)))
         XCTAssertTrue(NSNumber(value: true) == NSNumber(value: Int(1)))
@@ -1428,9 +1526,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Double.leastNonzeroMagnitude).compare(NSNumber(value: 0)), .orderedDescending)
         XCTAssertEqual(NSNumber(value: Double.greatestFiniteMagnitude).compare(NSNumber(value: 0)), .orderedDescending)
         XCTAssertTrue(NSNumber(value: Double(-0.0)) == NSNumber(value: Double(0.0)))
+        #endif // !SKIP
     }
 
     func test_boolValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNumber(value: UInt8.max).boolValue, true)
         XCTAssertEqual(NSNumber(value: UInt8.min).boolValue, false)
 
@@ -1475,9 +1577,13 @@ class TestNSNumber : XCTestCase {
         XCTAssertEqual(NSNumber(value: Int.min).boolValue, true)
         XCTAssertEqual(NSNumber(value: Int.min + 1).boolValue, true)
         XCTAssertEqual(NSNumber(value: Int(-1)).boolValue, true)
+        #endif // !SKIP
     }
 
     func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // A zero double hashes as zero.
         XCTAssertEqual(NSNumber(value: 0 as Double).hash, 0)
 
@@ -1497,8 +1603,8 @@ class TestNSNumber : XCTestCase {
             // was found by trial and error.
             XCTAssertEqual(NSNumber(value: 1.3819660135 as Double).hash, 0)
         #endif
+        #endif // !SKIP
     }
 }
 
-#endif
 

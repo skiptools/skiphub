@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -20,11 +19,16 @@ import XCTest
 //
 
 fileprivate func withScanner(for string: String, invoking block: ((Scanner) throws -> Void)? = nil) rethrows {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
     let scanner = Scanner(string: string)
     scanner.locale = Locale(identifier: "en_US_POSIX")
     try block?(scanner)
+        #endif // !SKIP
 }
 
+#if !SKIP
 extension CharacterSet {
     fileprivate init(unicodeScalarsIn string: String) {
         // Needed because: rdar://47615913
@@ -38,10 +42,14 @@ extension CharacterSet {
         self = set
     }
 }
+#endif
 
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 class TestScanner : XCTestCase {
     func testScanFloatingPoint() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Leading whitespace:
         withScanner(for: "    1.2345") {
             expectEqual($0.scanFloat(), 1.2345 as Float, within: 0.0001 as Float, "Parsing with leading whitespace should work")
@@ -101,9 +109,13 @@ class TestScanner : XCTestCase {
             expectEqual($0.scanDouble(), nil, "Dont parse 'e4' as a Double'")     // "e3" doesnt parse as Double
             expectEqual($0.scanString("e4"), "e4", "Consume the 'e4'")
         }
+        #endif // !SKIP
     }
     
     func testHexRepresentation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Long sequence:
         withScanner(for: " 9 F 0xF 98 0x98 0x00098 0x980000000 0x980000000 acdcg0xacdcg0XACDCg0xg fFfffffE 0?777\t\n 004321X ") {
             expectEqual($0.scanInt32(representation: .hexadecimal), 9, "Same as decimal")
@@ -136,9 +148,13 @@ class TestScanner : XCTestCase {
             expectEqual($0.scanString("X"), "X", "Consume the X")
             expectTrue($0.isAtEnd, "The X was not consumed")
         }
+        #endif // !SKIP
     }
 
     func testHexFloatingPoint() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         withScanner(for: "0xAA 3.14 0.1x 1g 3xx .F00x 1e00 . -0xabcdef.02") {
             expectEqual($0.scanDouble(representation: .hexadecimal), 0xAA, "Integer as Double")
 //            expectEqual($0.scanDouble(representation: .hexadecimal), 3.078125, "Double")
@@ -155,9 +171,13 @@ class TestScanner : XCTestCase {
 //            expectEqual($0.scanString("."), ".", "Consue '.'")
 //            expectEqual($0.scanDouble(representation: .hexadecimal), -11259375.0078125, "negative decimal")
         }
+        #endif // !SKIP
     }
     
     func testUInt64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // UInt64 long sequence:
         withScanner(for: String(format: "%llu %llu %llu 42 + 42 0 %llu", UInt64.max / 10, UInt64.max - 1, UInt64.max, UInt64.max)) {
             expectEqual($0.scanUInt64(), UInt64.max / 10, "Order of magnitude close to max")
@@ -173,9 +193,13 @@ class TestScanner : XCTestCase {
         withScanner(for: "\(UInt64.max)0") {
             expectEqual($0.scanUInt64(), UInt64.max, "Overflow")
         }
+        #endif // !SKIP
     }
     
     func testInt64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Int64 long sequence:
         withScanner(for: String(format: "%lld %lld %lld 42 - 42 0 -1 -1 %lld %lld", Int64.max / 10, Int64.max - 1, Int64.max, Int64.min, Int64.max)) {
             expectEqual($0.scanInt64(), Int64.max / 10, "Order of magnitude close to max")
@@ -194,9 +218,13 @@ class TestScanner : XCTestCase {
         withScanner(for: "\(Int64.max)0") {
             expectEqual($0.scanInt64(), Int64.max, "Overflow")
         }
+        #endif // !SKIP
     }
     
     func testInt32() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Int32 long sequence:
         withScanner(for: String(format: "%d %d %d 42 - 42 0 -1 -1 %d %d", Int32.max / 10, Int32.max - 1, Int32.max, Int32.min, Int32.max)) {
             expectEqual($0.scanInt32(), Int32.max / 10, "Order of magnitude close to max")
@@ -215,9 +243,13 @@ class TestScanner : XCTestCase {
         withScanner(for: "\(Int32.max)0") {
             expectEqual($0.scanInt32(), Int32.max, "Overflow")
         }
+        #endif // !SKIP
     }
     
     func testScanCharacter() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         withScanner(for: " hello ") {
             expectEqual($0.scanCharacter(), "h", "Hello! (h)")
             expectEqual($0.scanCharacter(), "e", "Hello! (e)")
@@ -257,9 +289,13 @@ class TestScanner : XCTestCase {
             expectEqual($0.scanCharacter(), "🧛‍♀️", "Scan single grapheme (made of multiple code points)")
             expectTrue($0.isAtEnd, "At end (ignores trailing whitespace)")
         }
+        #endif // !SKIP
     }
     
     func testScanString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Scan skipping whitespace:
         withScanner(for: "h el lo ") {
             expectEqual($0.scanString("hello"), nil, "Split 'hello': Cannot scan the whole word in one go")
@@ -342,9 +378,13 @@ class TestScanner : XCTestCase {
             expectFalse($0.isAtEnd, "The scanner can scan more using legacy methods, even though no whole graphemes are left to scan. This can only happen when legacy methods are invoked or the deprecated .scanLocation property is set directly.")
             expectEqual($0.currentIndex, $0.string.endIndex, "The Swift.String.Index we will resume scanning from for new methods is correctly pointing to the end of the string")
         }
+        #endif // !SKIP
     }
     
     func testScanUpToString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Scan skipping whitespace:
         withScanner(for: "  hel lo") {
             expectEqual($0.scanUpToString("lo"), "hel ", "Leading whitespace is skipped but not trailing whitespace before the stop point")
@@ -397,9 +437,13 @@ class TestScanner : XCTestCase {
             expectEqual($0.scanUpToString("\u{1F469}\u{1F3FB}\u{200D}\u{1F4BB}"), "Lily is a ", "New method must work if graphemes would not be split while scanning")
             expectEqual($0.scanString("👩🏻‍💻"), "👩🏻‍💻", "The up-to string can be scanned immediately afterwards")
         }
+        #endif // !SKIP
     }
     
     func testScanCharactersFromSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Scan skipping whitespace:
         withScanner(for: "   doremifasol123 whoa") {
             expectEqual($0.scanCharacters(from: .alphanumerics), "doremifasol123", "Skip leading whitespace, but do stop when new whitespace occurs")
@@ -442,9 +486,13 @@ class TestScanner : XCTestCase {
             let set = CharacterSet(unicodeScalarsIn: "Lily is a \u{1F469}\u{1F3FB}\u{200D}\u{1F4BB}")
             expectEqual($0.scanCharacters(from: set), "Lily is a 👩🏻‍💻", "Can scan a grapheme if all of its code points are in the character set")
         }
+        #endif // !SKIP
     }
     
     func testScanUpToCharactersFromSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Scan skipping whitespace:
         withScanner(for: "   hel- lo ") {
             let hyphen = CharacterSet(unicodeScalarsIn: "-")
@@ -511,9 +559,13 @@ class TestScanner : XCTestCase {
             expectEqual($0.scanUpToCharacters(from: finalSet), "Lily is a ", "New method must work if graphemes would not be split while scanning")
             expectEqual($0.scanCharacters(from: finalSet), "👩🏻‍💻", "The up-to character set can be scanned immediately afterwards")
         }
+        #endif // !SKIP
     }
 
     func testLocalizedScanner() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ds = Locale.current.decimalSeparator ?? "."
         let string = "123\(ds)456"
         let scanner = try XCTUnwrap((Scanner.localizedScanner(with: string) as? Scanner))
@@ -524,6 +576,7 @@ class TestScanner : XCTestCase {
 
         // Check a normal scanner has no locale set
         XCTAssertNil(Scanner(string: "foo").locale)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -546,5 +599,4 @@ class TestScanner : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

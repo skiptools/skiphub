@@ -304,12 +304,12 @@ extension JUnitTestCase {
 
             suiteTotal += 1
             var pass = 0, fail = 0, skip = 0
-            var time = 0.0
+            var timeSuite = 0.0
             defer {
                 passTotal += pass
                 failTotal += fail
                 skipTotal += skip
-                timeTotal += time
+                timeTotal += timeSuite
             }
 
             for testCase in testSuite.testCases {
@@ -321,7 +321,7 @@ extension JUnitTestCase {
                 } else {
                     fail += 1
                 }
-                time += testCase.time
+                timeSuite += testCase.time
 
                 var msg = ""
 
@@ -391,7 +391,7 @@ extension JUnitTestCase {
                 }
             }
 
-            print("JUNIT TEST SUITE: \(testSuiteName): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeTotal * 100.0) / 100.0)")
+            print("JUNIT TEST SUITE: \(testSuiteName): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeSuite * 100.0) / 100.0)")
         }
 
         let passPercentage = Double(passTotal) / (testsTotal == 0 ? Double.nan : Double(testsTotal))

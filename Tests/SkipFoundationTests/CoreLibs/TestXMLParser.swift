@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -30,6 +29,9 @@ enum XMLParserDelegateEvent {
 extension XMLParserDelegateEvent: Equatable {
 
     public static func ==(lhs: XMLParserDelegateEvent, rhs: XMLParserDelegateEvent) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         switch (lhs, rhs) {
         case (.startDocument, startDocument):
             return true
@@ -46,6 +48,7 @@ extension XMLParserDelegateEvent: Equatable {
         default:
             return false
         }
+        #endif // !SKIP
     }
 
 }
@@ -54,19 +57,39 @@ class XMLParserDelegateEventStream: NSObject, XMLParserDelegate {
     var events: [XMLParserDelegateEvent] = []
 
     func parserDidStartDocument(_ parser: XMLParser) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         events.append(.startDocument)
+        #endif // !SKIP
     }
     func parserDidEndDocument(_ parser: XMLParser) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         events.append(.endDocument)
+        #endif // !SKIP
     }
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         events.append(.didStartElement(elementName, namespaceURI, qName, attributeDict))
+        #endif // !SKIP
     }
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         events.append(.didEndElement(elementName, namespaceURI, qName))
+        #endif // !SKIP
     }
     func parser(_ parser: XMLParser, foundCharacters string: String) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         events.append(.foundCharacters(string))
+        #endif // !SKIP
     }
 }
 
@@ -86,6 +109,9 @@ class TestXMLParser : XCTestCase {
 
     // Helper method to embed the correct encoding in the XML header
     static func xmlUnderTest(encoding: String.Encoding? = nil) -> String {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xmlUnderTest = "<test attribute='value'><foo>bar</foo></test>"
         guard var encoding = encoding?.description else {
             return xmlUnderTest
@@ -98,9 +124,13 @@ class TestXMLParser : XCTestCase {
             encoding = String(encoding[..<close.lowerBound])
         }
         return "<?xml version='1.0' encoding='\(encoding.uppercased())' standalone='no'?>\n\(xmlUnderTest)\n"
+        #endif // !SKIP
     }
 
     static func xmlUnderTestExpectedEvents(namespaces: Bool = false) -> [XMLParserDelegateEvent] {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uri: String? = namespaces ? "" : nil
         return [
             .startDocument,
@@ -111,10 +141,14 @@ class TestXMLParser : XCTestCase {
             .didEndElement("test", uri, namespaces ? "test" : nil),
             .endDocument,
         ]
+        #endif // !SKIP
     }
 
 
     func test_withData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xml = Array(TestXMLParser.xmlUnderTest().utf8CString)
         let data = xml.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<CChar>) -> Data in
             return buffer.baseAddress!.withMemoryRebound(to: UInt8.self, capacity: buffer.count * MemoryLayout<CChar>.stride) {
@@ -127,9 +161,13 @@ class TestXMLParser : XCTestCase {
         let res = parser.parse()
 //        XCTAssertEqual(stream.events, TestXMLParser.xmlUnderTestExpectedEvents())
 //        XCTAssertTrue(res)
+        #endif // !SKIP
     }
 
     func test_withDataEncodings() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if !os(iOS)
         // If th <?xml header isn't present, any non-UTF8 encodings fail. This appears to be libxml2 behavior.
         // These don't work, it may just be an issue with the `encoding=xxx`.
@@ -149,9 +187,13 @@ class TestXMLParser : XCTestCase {
             XCTAssertTrue(res)
         }
 #endif
+        #endif // !SKIP
     }
 
     func test_withDataOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xml = TestXMLParser.xmlUnderTest()
         let parser = XMLParser(data: xml.data(using: .utf8)!)
         parser.shouldProcessNamespaces = true
@@ -162,9 +204,13 @@ class TestXMLParser : XCTestCase {
         let res = parser.parse()
         XCTAssertEqual(stream.events, TestXMLParser.xmlUnderTestExpectedEvents(namespaces: true)  )
         XCTAssertTrue(res)
+        #endif // !SKIP
     }
 
     func test_sr9758_abortParsing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         class Delegate: NSObject, XMLParserDelegate {
             func parserDidStartDocument(_ parser: XMLParser) { parser.abortParsing() }
         }
@@ -178,9 +224,13 @@ class TestXMLParser : XCTestCase {
         parser.delegate = delegate
         XCTAssertFalse(parser.parse())
         XCTAssertNotNil(parser.parserError)
+        #endif // !SKIP
     }
 
     func test_sr10157_swappedElementNames() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         class ElementNameChecker: NSObject, XMLParserDelegate {
             let name: String
             init(_ name: String) { self.name = name }
@@ -223,9 +273,9 @@ class TestXMLParser : XCTestCase {
         
         ElementNameChecker("noPrefix").check()
         ElementNameChecker("myPrefix:myLocalName").check()
+        #endif // !SKIP
     }
     
 }
 
-#endif
 

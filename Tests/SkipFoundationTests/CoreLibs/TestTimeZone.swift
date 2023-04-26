@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -25,25 +24,40 @@ class TestTimeZone: XCTestCase {
     var initialDefaultTimeZone: TimeZone?
     
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         initialDefaultTimeZone = NSTimeZone.default
         super.setUp()
+        #endif // !SKIP
     }
     
     override func tearDown() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         super.tearDown()
         if let tz = initialDefaultTimeZone {
             NSTimeZone.default = tz
         }
+        #endif // !SKIP
     }
 
     func test_abbreviation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tz = NSTimeZone.system
         let abbreviation1 = tz.abbreviation()
         let abbreviation2 = tz.abbreviation(for: Date())
         XCTAssertEqual(abbreviation1, abbreviation2, "\(abbreviation1 as Optional) should be equal to \(abbreviation2 as Optional)")
+        #endif // !SKIP
     }
 
     func test_abbreviationDictionary() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let oldDictionary = TimeZone.abbreviationDictionary
         let newDictionary = [
             "UTC": "UTC",
@@ -56,9 +70,13 @@ class TestTimeZone: XCTestCase {
         XCTAssertEqual(TimeZone.abbreviationDictionary, newDictionary)
         TimeZone.abbreviationDictionary = oldDictionary
         XCTAssertEqual(TimeZone.abbreviationDictionary, oldDictionary)
+        #endif // !SKIP
     }
 
     func test_changingDefaultTimeZone() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let oldDefault = NSTimeZone.default
         let oldSystem = NSTimeZone.system
 
@@ -78,9 +96,13 @@ class TestTimeZone: XCTestCase {
         NSTimeZone.default = oldDefault
         let revertedDefault = NSTimeZone.default
         XCTAssertEqual(oldDefault, revertedDefault)
+        #endif // !SKIP
     }
 
     func test_computedPropertiesMatchMethodReturnValues() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tz = NSTimeZone.default
         let obj = tz._bridgeToObjectiveC()
 
@@ -106,14 +128,22 @@ class TestTimeZone: XCTestCase {
         let nextDaylightSavingTimeTransition2 = obj.nextDaylightSavingTimeTransition
         let nextDaylightSavingTimeTransition3 = tz.nextDaylightSavingTimeTransition(after: Date())
         XCTAssert(nextDaylightSavingTimeTransition1 == nextDaylightSavingTimeTransition2 || nextDaylightSavingTimeTransition2 == nextDaylightSavingTimeTransition3, "\(nextDaylightSavingTimeTransition1 as Optional) should be equal to \(nextDaylightSavingTimeTransition2 as Optional), or in the rare circumstance where a daylight saving time transition has just occurred, \(nextDaylightSavingTimeTransition2 as Optional) should be equal to \(nextDaylightSavingTimeTransition3 as Optional)")
+        #endif // !SKIP
     }
 
     func test_knownTimeZoneNames() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let known = NSTimeZone.knownTimeZoneNames
         XCTAssertNotEqual([], known, "known time zone names not expected to be empty")
+        #endif // !SKIP
     }
     
     func test_localizedName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let initialTimeZone = NSTimeZone.default
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
         let defaultTimeZone = NSTimeZone.default
@@ -125,9 +155,13 @@ class TestTimeZone: XCTestCase {
         XCTAssertEqual(defaultTimeZone.localizedName(for: .shortDaylightSaving, locale: locale), "EDT")
         XCTAssertEqual(defaultTimeZone.localizedName(for: .shortGeneric, locale: locale), "ET")
         NSTimeZone.default = initialTimeZone //reset the TimeZone
+        #endif // !SKIP
     }
 
     func test_initializingTimeZoneWithOffset() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tz = TimeZone(identifier: "GMT-0400")
         XCTAssertNotNil(tz)
         let seconds = tz?.secondsFromGMT(for: Date()) ?? 0
@@ -152,9 +186,13 @@ class TestTimeZone: XCTestCase {
 
         XCTAssertNil(TimeZone(secondsFromGMT:  -18 * 3600 - 1))
         XCTAssertNil(TimeZone(secondsFromGMT:  18 * 3600 + 1))
+        #endif // !SKIP
     }
 
     func test_initializingTimeZoneWithAbbreviation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Test invalid timezone abbreviation
         var tz = TimeZone(abbreviation: "XXX")
         XCTAssertNil(tz)
@@ -163,10 +201,14 @@ class TestTimeZone: XCTestCase {
         let expectedIdentifier = "America/Halifax"
         let actualIdentifier = tz?.identifier
         XCTAssertEqual(actualIdentifier, expectedIdentifier, "expected identifier \"\(expectedIdentifier)\" is not equal to \"\(actualIdentifier as Optional)\"")
+        #endif // !SKIP
     }
 
 #if !os(Windows)
     func test_systemTimeZoneUsesSystemTime() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        tzset()
 //        var t = time(nil)
 //        var lt = tm()
@@ -174,10 +216,14 @@ class TestTimeZone: XCTestCase {
 //        let zoneName = NSTimeZone.system.abbreviation() ?? "Invalid Abbreviation"
 //        let expectedName = String(cString: lt.tm_zone, encoding: .ascii) ?? "Invalid Zone"
 //        XCTAssertEqual(zoneName, expectedName, "expected name \"\(expectedName)\" is not equal to \"\(zoneName)\"")
+        #endif // !SKIP
     }
 #endif
 
     func test_tz_customMirror() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let tz = TimeZone.current
         let mirror = Mirror(reflecting: tz as TimeZone)
         var children = [String : Any](minimumCapacity: Int(mirror.children.count))
@@ -191,17 +237,25 @@ class TestTimeZone: XCTestCase {
         XCTAssertNotNil(children["kind"])
         XCTAssertNotNil(children["secondsFromGMT"])
         XCTAssertNotNil(children["isDaylightSavingTime"])
+        #endif // !SKIP
     }
 
     func test_knownTimeZones() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let timeZones = TimeZone.knownTimeZoneIdentifiers.sorted()
         XCTAssertTrue(timeZones.count > 0, "No known timezones")
         for tz in timeZones {
             XCTAssertNotNil(TimeZone(identifier: tz), "Cant instantiate valid timeZone: \(tz)")
         }
+        #endif // !SKIP
     }
 
     func test_systemTimeZoneName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Ensure that the system time zone creates names the same way as creating them with an identifier.
         // If it isn't the same, bugs in DateFormat can result, but in this specific case, the bad length
         // is only visible to CoreFoundation APIs, and the Swift versions hide it, making it hard to detect.
@@ -211,9 +265,13 @@ class TestTimeZone: XCTestCase {
 
         XCTAssertEqual(timeZoneName.length, TimeZone.current.identifier.count)
         XCTAssertEqual(timeZoneName.length, createdTimeZone.identifier.count)
+        #endif // !SKIP
     }
     
     func test_autoupdatingTimeZone() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let system = NSTimeZone.system
         let date = Date()
         
@@ -234,9 +292,13 @@ class TestTimeZone: XCTestCase {
                 XCTAssertEqual(zone.localizedName(for: style, locale: NSLocale.system), system.localizedName(for: style, locale: NSLocale.system), "For style: \(style)")
             }
         }
+        #endif // !SKIP
     }
 
     func test_nextDaylightSavingTimeTransition() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Timezones without DST
         let gmt = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
         let msk = try XCTUnwrap(TimeZone(identifier: "Europe/Moscow"))
@@ -266,9 +328,13 @@ class TestTimeZone: XCTestCase {
         XCTAssertNil(msk.nextDaylightSavingTimeTransition(after: dt2))
         XCTAssertEqual(bst.nextDaylightSavingTimeTransition(after: dt2)?.description, "2018-10-28 01:00:00 +0000")
         XCTAssertEqual(aest.nextDaylightSavingTimeTransition(after: dt2)?.description, "2018-10-06 16:00:00 +0000")
+        #endif // !SKIP
     }
 
     func test_isDaylightSavingTime() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let eukv = try XCTUnwrap(TimeZone(identifier: "Europe/Kiev"))
         
         let dateNoDST = Date(timeIntervalSince1970: 1585432800.0) // March 29, 2020
@@ -276,6 +342,7 @@ class TestTimeZone: XCTestCase {
         
         XCTAssertFalse(eukv.isDaylightSavingTime(for: dateNoDST))
         XCTAssertTrue(eukv.isDaylightSavingTime(for: dateDST))
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -312,5 +379,4 @@ class TestTimeZone: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

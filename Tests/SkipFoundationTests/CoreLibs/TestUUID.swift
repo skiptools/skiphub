@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -35,6 +34,9 @@ class TestUUID : XCTestCase {
     #endif // SKIP
     
     func test_UUIDEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuidA = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
         let uuidB = UUID(uuidString: "e621e1f8-c36c-495a-93fc-0c247a3e6e5f")
         let uuidC = UUID(uuid: (0xe6,0x21,0xe1,0xf8,0xc3,0x6c,0x49,0x5a,0x93,0xfc,0x0c,0x24,0x7a,0x3e,0x6e,0x5f))
@@ -43,32 +45,52 @@ class TestUUID : XCTestCase {
         XCTAssertEqual(uuidA, uuidB, "String case must not matter.")
         XCTAssertEqual(uuidA, uuidC, "A UUID initialized with a string must be equal to the same UUID initialized with its UnsafePointer<UInt8> equivalent representation.")
         XCTAssertNotEqual(uuidC, uuidD, "Two different UUIDs must not be equal.")
+        #endif // !SKIP
     }
     
     func test_UUIDInvalid() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = UUID(uuidString: "Invalid UUID")
         XCTAssertNil(uuid, "The convenience initializer `init?(uuidString string:)` must return nil for an invalid UUID string.")
+        #endif // !SKIP
     }
     
     // `uuidString` should return an uppercase string
     // See: https://bugs.swift.org/browse/SR-865
     func test_UUIDuuidString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = UUID(uuid: (0xe6,0x21,0xe1,0xf8,0xc3,0x6c,0x49,0x5a,0x93,0xfc,0x0c,0x24,0x7a,0x3e,0x6e,0x5f))
         XCTAssertEqual(uuid.uuidString, "E621E1F8-C36C-495A-93FC-0C247A3E6E5F", "The uuidString representation must be uppercase.")
+        #endif // !SKIP
     }
     
     func test_UUIDdescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = UUID()
         XCTAssertEqual(uuid.description, uuid.uuidString, "The description must be the same as the uuidString.")
+        #endif // !SKIP
     }
     
     func test_UUIDNSCoding() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuidA = UUID()
         let uuidB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: uuidA)) as! UUID
         XCTAssertEqual(uuidA, uuidB, "Archived then unarchived uuid must be equal.")
+        #endif // !SKIP
     }
 
     func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let values: [UUID] = [
             // This list takes a UUID and tweaks every byte while
             // leaving the version/variant intact.
@@ -91,8 +113,8 @@ class TestUUID : XCTestCase {
             UUID(uuidString: "a53baa1c-b4f5-48db-9467-9786b76b256d")!,
         ]
         checkHashable(values, equalityOracle: { $0 == $1 })
+        #endif // !SKIP
     }
 }
 
-#endif
 

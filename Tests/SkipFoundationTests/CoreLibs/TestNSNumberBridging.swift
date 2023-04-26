@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -42,7 +41,11 @@ class TestNSNumberBridging : XCTestCase {
     }
     #endif // SKIP
 
+    #if !SKIP
     func testFloat(_ lhs: Float?, _ rhs: Float?, file: String = #file, line: UInt = #line) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let message = "\(file):\(line) \(String(describing: lhs)) != \(String(describing: rhs)) Float"
         if let lhsValue = lhs {
             if let rhsValue = rhs {
@@ -59,9 +62,13 @@ class TestNSNumberBridging : XCTestCase {
                 XCTFail(message)
             }
         }
+        #endif // !SKIP
     }
 
     func testDouble(_ lhs: Double?, _ rhs: Double?, file: String = #file, line: UInt = #line) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let message = "\(file):\(line) \(String(describing: lhs)) != \(String(describing: rhs)) Double"
         if let lhsValue = lhs {
             if let rhsValue = rhs {
@@ -78,9 +85,14 @@ class TestNSNumberBridging : XCTestCase {
                 XCTFail(message)
             }
         }
+        #endif // !SKIP
     }
+    #endif
 
     func testNSNumberBridgeFromInt8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Int8._interestingValues {
             func testNumber(_ number: NSNumber) {
                 let int8 = Int8(exactly: number)
@@ -113,9 +125,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromUInt8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in UInt8._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -149,9 +165,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromInt16() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Int16._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -185,9 +205,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromUInt16() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in UInt8._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -221,9 +245,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromInt32() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Int32._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -261,9 +289,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromUInt32() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in UInt32._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -301,9 +333,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromInt64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Int64._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -341,9 +377,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromUInt64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in UInt64._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -381,9 +421,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromInt() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Int._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -421,9 +465,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromUInt() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in UInt._interestingValues {
             func testNumber(_ number: NSNumber) {
                 XCTAssertEqual(interestingValue.description, number.description)
@@ -461,9 +509,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromFloat() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Float._interestingValues {
             func testNumber(_ number: NSNumber) {
 //                XCTAssertEqual(interestingValue.description, number.description)
@@ -501,9 +553,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeFromDouble() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for interestingValue in Double._interestingValues {
             func testNumber(_ number: NSNumber) {
 //                XCTAssertEqual(interestingValue.description, number.description)
@@ -541,9 +597,13 @@ class TestNSNumberBridging : XCTestCase {
             let created = NSNumber(value: interestingValue)
             testNumber(created)
         }
+        #endif // !SKIP
     }
 
     func test_numericBitPatterns_to_floatingPointTypes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let signed_numbers: [NSNumber] = [
             NSNumber(value: Int64(6)),
             NSNumber(value: Int64(bitPattern: 1 << 56)),
@@ -623,9 +683,13 @@ class TestNSNumberBridging : XCTestCase {
             let valueCast = Float(exactly: value)
             XCTAssertEqual(numberCast, valueCast)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberBridgeAnyHashable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var dict = [AnyHashable : Any]()
         for i in -Int(UInt8.min) ... Int(UInt8.max) {
             dict[i] = "\(i)"
@@ -648,9 +712,13 @@ class TestNSNumberBridging : XCTestCase {
 
             XCTAssertEqual(value, ns_value)
         }
+        #endif // !SKIP
     }
 
     func testNSNumberToBool() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // FIXME: When running swift-corelibs-foundation on Darwin, these tests all give the warning:
         // 'Conditional cast from 'NSNumber' to 'Bool' always succeeds' and never return nil so these tests fail.
         // These tests work on Darwin using normal Foundation (when testing with DarwinCompatibilityTests)
@@ -695,10 +763,12 @@ class TestNSNumberBridging : XCTestCase {
         XCTAssertNil(NSNumber(value: Int.min) as? Bool)
         XCTAssertNil(NSNumber(value: Int.max) as? Bool)
 #endif
+        #endif // !SKIP
     }
 }
 
 extension Float {
+    #if !SKIP
     init?(reasonably value: Float) {
         self = value
     }
@@ -724,9 +794,11 @@ extension Float {
 
         self = Float(value)
     }
+    #endif
 }
 
 extension Double {
+    #if !SKIP
     init?(reasonably value: Float) {
         guard !value.isNaN else {
             self = Double.nan
@@ -748,8 +820,11 @@ extension Double {
     init?(reasonably value: Double) {
         self = value
     }
+    #endif
 }
 
+
+#if !SKIP
 extension Int8 {
     static var _interestingValues: [Int8] {
         return [
@@ -929,6 +1004,5 @@ extension Double {
         ]
     }
 }
-
 #endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,13 +21,20 @@ import XCTest
 class TestNSOrderedSet : XCTestCase {
 
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet()
         let set2 = NSOrderedSet(array: ["foo", "bar"])
         XCTAssertEqual(set.count, 0)
         XCTAssertEqual(set2.count, 2)
+        #endif // !SKIP
     }
 
     func test_Enumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let arr = ["foo", "bar", "bar"]
         let set = NSOrderedSet(array: arr)
         var index = 0
@@ -36,9 +42,13 @@ class TestNSOrderedSet : XCTestCase {
             XCTAssertEqual(arr[index], item as? String)
             index += 1
         }
+        #endif // !SKIP
     }
     
     func test_enumerationUsingBlock() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array = NSOrderedSet(array: Array(0..<100))
         let createIndexesArrayHavingSeen = { (havingSeen: IndexSet) in
             return (0 ..< array.count).map { havingSeen.contains($0) }
@@ -156,16 +166,24 @@ class TestNSOrderedSet : XCTestCase {
                 })
             }
         }
+        #endif // !SKIP
     }
 
     func test_Uniqueness() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: ["foo", "bar", "bar"])
         XCTAssertEqual(set.count, 2)
         XCTAssertEqual(set.object(at: 0) as? String, "foo")
         XCTAssertEqual(set.object(at: 1) as? String, "bar")
+        #endif // !SKIP
     }
 
     func test_reversedEnumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let arr = ["foo", "bar", "baz"]
         let set = NSOrderedSet(array: arr)
         var index = set.count - 1
@@ -174,9 +192,13 @@ class TestNSOrderedSet : XCTestCase {
             XCTAssertEqual(set.object(at: index) as? String, item as? String)
             index -= 1
         }
+        #endif // !SKIP
     }
 
     func test_reversedOrderedSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
         let work = NSOrderedSet(array: days)
         let krow = work.reversed
@@ -185,89 +207,133 @@ class TestNSOrderedSet : XCTestCase {
             XCTAssertEqual(work.object(at: index) as? String, item as? String)
            index -= 1
         }
+        #endif // !SKIP
     }
 
     func test_reversedEmpty() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: [])
         let reversedEnum = set.reverseObjectEnumerator()
         XCTAssertNil(reversedEnum.nextObject())
         let reversedSet = set.reversed
         XCTAssertNil(reversedSet.firstObject)
+        #endif // !SKIP
     }
 
     func test_ObjectAtIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: ["foo", "bar", "baz"])
         XCTAssertEqual(set.object(at: 0) as? String, "foo")
         XCTAssertEqual(set.object(at: 1) as? String, "bar")
         XCTAssertEqual(set.object(at: 2) as? String, "baz")
+        #endif // !SKIP
     }
 
     func test_ObjectsAtIndexes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: ["foo", "bar", "baz", "1", "2", "3"])
         let objects = set.objects(at: [1, 3, 5])
         XCTAssertEqual(objects.count, 3)
         XCTAssertEqual(objects[0] as? String, "bar")
         XCTAssertEqual(objects[1] as? String, "1")
         XCTAssertEqual(objects[2] as? String, "3")
+        #endif // !SKIP
     }
 
     func test_FirstAndLastObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: ["foo", "bar", "baz"])
         XCTAssertEqual(set.firstObject as? String, "foo")
         XCTAssertEqual(set.lastObject as? String, "baz")
+        #endif // !SKIP
     }
 
     func test_AddObject() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet()
         set.add("1")
         set.add("2")
         XCTAssertEqual(set[0] as? String, "1")
         XCTAssertEqual(set[1] as? String, "2")
         XCTAssertEqual(set.count, 2)
+        #endif // !SKIP
     }
 
     func test_AddObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet()
         set.addObjects(from: ["foo", "bar", "baz"])
         XCTAssertEqual(set.object(at: 0) as? String, "foo")
         XCTAssertEqual(set.object(at: 1) as? String, "bar")
         XCTAssertEqual(set.object(at: 2) as? String, "baz")
+        #endif // !SKIP
     }
 
     func test_RemoveAllObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet()
         set.addObjects(from: ["foo", "bar", "baz"])
         XCTAssertEqual(set.index(of: "foo"), 0)
         set.removeAllObjects()
         XCTAssertEqual(set.count, 0)
         XCTAssertEqual(set.index(of: "foo"), NSNotFound)
+        #endif // !SKIP
     }
 
     func test_RemoveObject() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet()
         set.addObjects(from: ["foo", "bar", "baz"])
         set.remove("bar")
         XCTAssertEqual(set.count, 2)
         XCTAssertEqual(set.index(of: "baz"), 1)
+        #endif // !SKIP
     }
 
     func test_RemoveObjectAtIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet()
         set.addObjects(from: ["foo", "bar", "baz"])
         set.removeObject(at: 1)
         XCTAssertEqual(set.count, 2)
         XCTAssertEqual(set.index(of: "baz"), 1)
+        #endif // !SKIP
     }
 
     func test_IsEqualToOrderedSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: ["foo", "bar", "baz"])
         let otherSet = NSOrderedSet(array: ["foo", "bar", "baz"])
         let otherOtherSet = NSOrderedSet(array: ["foo", "bar", "123"])
         XCTAssert(set.isEqual(to: otherSet))
         XCTAssertFalse(set.isEqual(to: otherOtherSet))
+        #endif // !SKIP
     }
 
     func test_Subsets() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSOrderedSet(array: ["foo", "bar", "baz"])
         let otherOrderedSet = NSOrderedSet(array: ["foo", "bar"])
         let otherSet = Set<AnyHashable>(["foo", "baz"])
@@ -276,9 +342,13 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertFalse(set.isSubset(of: otherOrderedSet))
         XCTAssertFalse(set.isSubset(of: otherSet))
         XCTAssert(set.isSubset(of: otherOtherSet))
+        #endif // !SKIP
     }
 
     func test_ReplaceObject() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         set.replaceObject(at: 1, with: "123")
         set[2] = "456"
@@ -286,18 +356,26 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(set[0] as? String, "foo")
         XCTAssertEqual(set[1] as? String, "123")
         XCTAssertEqual(set[2] as? String, "456")
+        #endif // !SKIP
     }
 
     func test_ExchangeObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         set.exchangeObject(at: 0, withObjectAt: 2)
         XCTAssertEqual(set.count, 3)
         XCTAssertEqual(set[0] as? String, "baz")
         XCTAssertEqual(set[1] as? String, "bar")
         XCTAssertEqual(set[2] as? String, "foo")
+        #endif // !SKIP
     }
 
     func test_MoveObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz", "123", "456")
         var indexes = IndexSet()
         indexes.insert(1)
@@ -310,9 +388,13 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(set[2] as? String, "456")
         XCTAssertEqual(set[3] as? String, "foo")
         XCTAssertEqual(set[4] as? String, "123")
+        #endif // !SKIP
     }
 
     func test_InsertObjects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         var indexes = IndexSet()
         indexes.insert(1)
@@ -324,9 +406,13 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(set[2] as? String, "bar")
         XCTAssertEqual(set[3] as? String, "456")
         XCTAssertEqual(set[4] as? String, "baz")
+        #endif // !SKIP
     }
 
     func test_Insert() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet()
         set.insert("foo", at: 0)
         XCTAssertEqual(set.count, 1)
@@ -334,9 +420,13 @@ class TestNSOrderedSet : XCTestCase {
         set.insert("bar", at: 1)
         XCTAssertEqual(set.count, 2)
         XCTAssertEqual(set[1] as? String, "bar")
+        #endif // !SKIP
     }
 
     func test_SetObjectAtIndex() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         set.setObject("123", at: 1)
         XCTAssertEqual(set[0] as? String, "foo")
@@ -344,18 +434,26 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(set[2] as? String, "baz")
         set.setObject("456", at: 3)
         XCTAssertEqual(set[3] as? String, "456")
+        #endif // !SKIP
     }
 
     func test_RemoveObjectsInRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz", "123", "456")
         set.removeObjects(in: NSRange(location: 1, length: 2))
         XCTAssertEqual(set.count, 3)
         XCTAssertEqual(set[0] as? String, "foo")
         XCTAssertEqual(set[1] as? String, "123")
         XCTAssertEqual(set[2] as? String, "456")
+        #endif // !SKIP
     }
 
     func test_ReplaceObjectsAtIndexes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         var indexes = IndexSet()
         indexes.insert(0)
@@ -365,9 +463,13 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(set[0] as? String, "a")
         XCTAssertEqual(set[1] as? String, "bar")
         XCTAssertEqual(set[2] as? String, "b")
+        #endif // !SKIP
     }
 
     func test_Intersection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         let otherSet = NSOrderedSet(array: ["foo", "baz"])
         XCTAssert(set.intersects(otherSet))
@@ -383,9 +485,13 @@ class TestNSOrderedSet : XCTestCase {
 
         let nonIntersectingSet = Set<AnyHashable>(["asdf"])
         XCTAssertFalse(set.intersectsSet(nonIntersectingSet))
+        #endif // !SKIP
     }
 
     func test_Subtraction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         let otherSet = NSOrderedSet(array: ["baz"])
         let otherOtherSet = Set<AnyHashable>(["foo"])
@@ -396,9 +502,13 @@ class TestNSOrderedSet : XCTestCase {
         set.minusSet(otherOtherSet)
         XCTAssertEqual(set.count, 1)
         XCTAssertEqual(set[0] as? String, "bar")
+        #endif // !SKIP
     }
 
     func test_Union() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "foo", "bar", "baz")
         let otherSet = NSOrderedSet(array: ["123", "baz"])
         let otherOtherSet = Set<AnyHashable>(["foo", "456"])
@@ -411,9 +521,13 @@ class TestNSOrderedSet : XCTestCase {
         set.unionSet(otherOtherSet)
         XCTAssertEqual(set.count, 5)
         XCTAssertEqual(set[4] as? String, "456")
+        #endif // !SKIP
     }
 
     func test_Initializers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let copyableObject = NSObject()
         let set = NSMutableOrderedSet(arrayLiteral: copyableObject, "bar", "baz")
         let newSet = NSOrderedSet(orderedSet: set)
@@ -424,9 +538,13 @@ class TestNSOrderedSet : XCTestCase {
         let newSetFromUnorderedSet = NSOrderedSet(set: unorderedSet)
         XCTAssertEqual(newSetFromUnorderedSet.count, 3)
         XCTAssert(newSetFromUnorderedSet.contains("foo"))
+        #endif // !SKIP
     }
 
     func test_Sorting() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let set = NSMutableOrderedSet(arrayLiteral: "a", "d", "c", "b")
         set.sort(options: []) { lhs, rhs in
             if let lhs = lhs as? String, let rhs = rhs as? String {
@@ -449,9 +567,13 @@ class TestNSOrderedSet : XCTestCase {
         XCTAssertEqual(set[1] as? String, "c")
         XCTAssertEqual(set[2] as? String, "b")
         XCTAssertEqual(set[3] as? String, "d")
+        #endif // !SKIP
     }
 
     func test_reversedEnumerationMutable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let arr = ["foo", "bar", "baz"]
         let set = NSMutableOrderedSet()
         set.addObjects(from: arr)
@@ -473,9 +595,13 @@ class TestNSOrderedSet : XCTestCase {
         }
 
 
+        #endif // !SKIP
     }
 
     func test_reversedOrderedSetMutable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
         let work =  NSMutableOrderedSet()
         work.addObjects(from: days)
@@ -487,6 +613,7 @@ class TestNSOrderedSet : XCTestCase {
         krow = work.reversed
         XCTAssertEqual(work.firstObject as? String, krow.lastObject as? String)
         XCTAssertEqual(work.lastObject as? String, krow.firstObject as? String)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -502,21 +629,29 @@ class TestNSOrderedSet : XCTestCase {
     #endif
     
     func test_codingRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
             try fixture.assertValueRoundtripsInCoder()
         }
         for fixture in mutableFixtures {
             try fixture.assertValueRoundtripsInCoder()
         }
+        #endif // !SKIP
     }
     
     func test_loadedValuesMatch() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for fixture in fixtures {
             try fixture.assertLoadedValuesMatch()
         }
         for fixture in mutableFixtures {
             try fixture.assertLoadedValuesMatch()
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -560,5 +695,4 @@ class TestNSOrderedSet : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

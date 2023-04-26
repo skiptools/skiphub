@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -61,6 +60,9 @@ class TestOperationQueue : XCTestCase {
     #endif // SKIP
     
     func test_OperationCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         let op1 = BlockOperation(block: { Thread.sleep(forTimeInterval: 2) })
         queue.addOperation(op1)
@@ -82,9 +84,13 @@ class TestOperationQueue : XCTestCase {
         queue.waitUntilAllOperationsAreFinished()
         XCTAssertEqual(queue.operationCount, 0)
         XCTAssertEqual(queue.operations.count, 0)
+        #endif // !SKIP
     }
 
     func test_OperationPriorities() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var msgOperations = [String]()
         let operation1 : BlockOperation = BlockOperation(block: {
             msgOperations.append("Operation1 executed")
@@ -114,9 +120,13 @@ class TestOperationQueue : XCTestCase {
         XCTAssertEqual(msgOperations[1], "Operation1 executed")
         XCTAssertEqual(msgOperations[2], "Operation2 executed")
         XCTAssertEqual(msgOperations[3], "Operation4 executed")
+        #endif // !SKIP
     }
 
     func test_isExecutingWorks() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         class _OperationBox {
             var operation: Operation?
             init() {
@@ -134,9 +144,13 @@ class TestOperationQueue : XCTestCase {
         XCTAssertFalse(op.isExecuting)
 
         opBox.operation = nil /* break the reference cycle op -> <closure> -> opBox -> op */
+        #endif // !SKIP
     }
 
     func test_AsyncOperation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let operation = AsyncOperation()
         XCTAssertFalse(operation.isExecuting)
         XCTAssertFalse(operation.isFinished)
@@ -149,9 +163,13 @@ class TestOperationQueue : XCTestCase {
 
         XCTAssertFalse(operation.isExecuting)
         XCTAssertTrue(operation.isFinished)
+        #endif // !SKIP
     }
     
     func test_SyncOperationWithoutAQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let operation = SyncOperation()
         XCTAssertFalse(operation.isExecuting)
         XCTAssertFalse(operation.isFinished)
@@ -161,9 +179,13 @@ class TestOperationQueue : XCTestCase {
         XCTAssertFalse(operation.isExecuting)
         XCTAssertTrue(operation.isFinished)
         XCTAssertTrue(operation.hasRun)
+        #endif // !SKIP
     }
     
     func test_MainQueueGetter() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertTrue(OperationQueue.main === OperationQueue.main)
         
         /*
@@ -171,9 +193,13 @@ class TestOperationQueue : XCTestCase {
          There used to be a bug where subsequent OperationQueue.main call would return a "dangling pointer".
          */
         XCTAssertFalse(OperationQueue.main.isSuspended)
+        #endif // !SKIP
     }
     
     func test_CancelOneOperation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var operations = [Operation]()
         var valueOperations = [Int]()
         for i in 0..<5 {
@@ -190,9 +216,13 @@ class TestOperationQueue : XCTestCase {
         operations.remove(at: 2).cancel()
         queue.waitUntilAllOperationsAreFinished()
         XCTAssertTrue(!valueOperations.contains(2))
+        #endif // !SKIP
     }
     
     func test_CancelOperationsOfSpecificQueuePriority() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var operations = [Operation]()
         var valueOperations = [Int]()
         
@@ -240,13 +270,21 @@ class TestOperationQueue : XCTestCase {
         XCTAssertTrue(valueOperations.count == 2)
         XCTAssertTrue(valueOperations[0] == 0)
         XCTAssertTrue(valueOperations[1] == 1)
+        #endif // !SKIP
     }
     
     func test_CurrentQueueOnMainQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertTrue(OperationQueue.main === OperationQueue.current)
+        #endif // !SKIP
     }
     
     func test_CurrentQueueOnBackgroundQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectation = self.expectation(description: "Background execution")
         
         let operationQueue = OperationQueue()
@@ -256,9 +294,13 @@ class TestOperationQueue : XCTestCase {
         }
         
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
     
     func test_CurrentQueueOnBackgroundQueueWithSelfCancel() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
         let expectation = self.expectation(description: "Background execution")
@@ -270,9 +312,13 @@ class TestOperationQueue : XCTestCase {
         }
         
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
 
     func test_CurrentQueueWithCustomUnderlyingQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectation = self.expectation(description: "Background execution")
 
         let operationQueue = OperationQueue()
@@ -285,9 +331,13 @@ class TestOperationQueue : XCTestCase {
         }
         
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
     
     func test_isSuspended() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectation1 = self.expectation(description: "DispatchQueue execution")
         let expectation2 = self.expectation(description: "OperationQueue execution")
         
@@ -308,9 +358,13 @@ class TestOperationQueue : XCTestCase {
         }
         
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
     
     func test_CurrentQueueWithUnderlyingQueueResetToNil() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectation = self.expectation(description: "Background execution")
         
         let operationQueue = OperationQueue()
@@ -324,9 +378,13 @@ class TestOperationQueue : XCTestCase {
         }
         
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
     
     func test_OperationDependencyCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var results = [Int]()
         let op1 = BlockOperation {
             results.append(1)
@@ -338,9 +396,13 @@ class TestOperationQueue : XCTestCase {
         op2.name = "op2"
         op1.addDependency(op2)
         XCTAssert(op1.dependencies.count == 1)
+        #endif // !SKIP
     }
     
     func test_CancelDependency() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectation = self.expectation(description: "Operation should finish")
 
         let queue = OperationQueue()
@@ -360,9 +422,13 @@ class TestOperationQueue : XCTestCase {
         queue.addOperation(op2)
 
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
 
     func test_Deadlock() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectation1 = self.expectation(description: "Operation should finish")
         let expectation2 = self.expectation(description: "Operation should finish")
 
@@ -388,18 +454,26 @@ class TestOperationQueue : XCTestCase {
 
         waitForExpectations(timeout: 1)
         Thread.sleep(forTimeInterval: 1)
+        #endif // !SKIP
     }
 
     public func test_CancelOutOfQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let op = Operation()
         op.cancel()
 
         XCTAssert(op.isCancelled)
         XCTAssertFalse(op.isExecuting)
         XCTAssertFalse(op.isFinished)
+        #endif // !SKIP
     }
 
     public func test_CrossQueueDependency() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         let queue2 = OperationQueue()
 
@@ -422,9 +496,13 @@ class TestOperationQueue : XCTestCase {
         queue2.addOperation(op2)
 
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
 
     public func test_CancelWhileSuspended() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         queue.isSuspended = true
 
@@ -449,9 +527,13 @@ class TestOperationQueue : XCTestCase {
         XCTAssert(op2.isCancelled)
         XCTAssertFalse(op2.isExecuting)
         XCTAssert(op2.isFinished)
+        #endif // !SKIP
     }
 
     public func test_OperationOrder() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
         queue.isSuspended = true
@@ -498,9 +580,13 @@ class TestOperationQueue : XCTestCase {
         queue.waitUntilAllOperationsAreFinished()
 
         XCTAssertEqual(array, [1, 2, 3, 4, 5])
+        #endif // !SKIP
     }
 
     public func test_OperationOrder2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
         queue.isSuspended = true
@@ -547,9 +633,13 @@ class TestOperationQueue : XCTestCase {
         queue.waitUntilAllOperationsAreFinished()
 
         XCTAssertEqual(array, [5, 4, 3, 2, 1])
+        #endif // !SKIP
     }
 
     func test_ExecutionOrder() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         
         let didRunOp1 = expectation(description: "Did run first operation")
@@ -573,9 +663,13 @@ class TestOperationQueue : XCTestCase {
         }
         
         waitForExpectations(timeout: 1.0)
+        #endif // !SKIP
     }
 
     func test_WaitUntilFinished() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue1 = OperationQueue()
         let queue2 = OperationQueue()
 
@@ -589,9 +683,13 @@ class TestOperationQueue : XCTestCase {
 
         queue2.waitUntilAllOperationsAreFinished()
         XCTAssertEqual(queue2.operationCount, 0)
+        #endif // !SKIP
     }
 
     func test_OperationWaitUntilFinished() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue1 = OperationQueue()
         let op1 = BlockOperation { Thread.sleep(forTimeInterval: 1) }
         queue1.addOperation(op1)
@@ -602,9 +700,13 @@ class TestOperationQueue : XCTestCase {
         // to allow OperationQueue to deal with finished op.
         Thread.sleep(forTimeInterval: 0.1)
         XCTAssertEqual(queue1.operationCount, 0)
+        #endif // !SKIP
     }
 
     func test_CustomOperationReady() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        class CustomOperation: Operation {
 //
 //            private var _isReady = false
@@ -638,9 +740,13 @@ class TestOperationQueue : XCTestCase {
 //        op1.setIsReady()
 //        queue1.waitUntilAllOperationsAreFinished()
 //        XCTAssertEqual(queue1.operationCount, 0)
+        #endif // !SKIP
     }
 
     func test_DependencyCycleBreak() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let op1DidRun = expectation(description: "op1 supposed to be run")
         let op2DidRun = expectation(description: "op2 supposed to be run")
         let op2Finished = expectation(description: "op2 supposed to be finished")
@@ -684,9 +790,13 @@ class TestOperationQueue : XCTestCase {
         op3.cancel()
 
         waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
 
     func test_Lifecycle() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let opStarted = expectation(description: "Operation supposed to start")
         let opDone = expectation(description: "Operation supposed to be done")
 
@@ -715,9 +825,13 @@ class TestOperationQueue : XCTestCase {
 
         Thread.sleep(forTimeInterval: 1) // Let queue to be deallocated
         XCTAssertNil(weakQueue, "Queue should be deallocated at this point")
+        #endif // !SKIP
     }
 
     func test_ConcurrentOperations() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 2
         
@@ -736,9 +850,13 @@ class TestOperationQueue : XCTestCase {
             
             self.wait(for: [didRunOp1], timeout: 0.3)
         }
+        #endif // !SKIP
     }
 
     func test_ConcurrentOperationsWithDependenciesAndCompletions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 2
         
@@ -766,9 +884,13 @@ class TestOperationQueue : XCTestCase {
             
             self.wait(for: [didRunOp1, didRunOp1Completion], timeout: 0.3)
         }
+        #endif // !SKIP
     }
 
     func test_BlockOperationAddExecutionBlock() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let block1Expectation = expectation(description: "Block 1 executed")
         let block2Expectation = expectation(description: "Block 2 executed")
         
@@ -782,9 +904,11 @@ class TestOperationQueue : XCTestCase {
         let queue = OperationQueue()
         queue.addOperation(blockOperation)
         waitForExpectations(timeout: 1.0)
+        #endif // !SKIP
     }
 }
 
+#if !SKIP
 class AsyncOperation: Operation {
 
     private let queue = DispatchQueue(label: "async.operation.queue")
@@ -834,6 +958,9 @@ class AsyncOperation: Operation {
     }
 
     override func start() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if isCancelled {
             isFinished = true
             return
@@ -846,20 +973,27 @@ class AsyncOperation: Operation {
             self.isExecuting = false
             self.isFinished = true
         }
+        #endif // !SKIP
     }
 
 }
+#endif
 
 class SyncOperation: Operation {
 
     var hasRun = false
 
+    #if !SKIP
     override func main() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         Thread.sleep(forTimeInterval: 1)
         hasRun = true
+        #endif // !SKIP
     }
+    #endif
 
 }
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -27,13 +26,20 @@ import XCTest
 class TestThread : XCTestCase {
 
     func test_currentThread() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let thread1 = Thread.current
         let thread2 = Thread.current
         XCTAssertEqual(thread1, thread2)
         XCTAssertEqual(thread1, Thread.main)
+        #endif // !SKIP
     }
     
     func test_threadStart() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let condition = NSCondition()
         condition.lock()
 
@@ -48,9 +54,13 @@ class TestThread : XCTestCase {
         let ok = condition.wait(until: Date(timeIntervalSinceNow: 2))
         condition.unlock()
         XCTAssertTrue(ok, "NSCondition wait timed out")
+        #endif // !SKIP
     }
     
     func test_threadName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         func testInternalThreadName(_ name: String?) {
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
@@ -82,9 +92,13 @@ class TestThread : XCTestCase {
         XCTAssertEqual(Thread.current.name, "12345678901234567890")
 #endif
         testInternalThreadName(Thread.current.name)
+        #endif // !SKIP
     }
 
     func test_mainThread() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertTrue(Thread.isMainThread)
         let t = Thread.main
         XCTAssertTrue(t.isMainThread)
@@ -108,18 +122,27 @@ class TestThread : XCTestCase {
         let ok = condition.wait(until: Date(timeIntervalSinceNow: 10))
         condition.unlock()
         XCTAssertTrue(ok, "NSCondition wait timed out")
+        #endif // !SKIP
     }
 
     func test_callStackSymbols() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let symbols = Thread.callStackSymbols
         XCTAssertTrue(symbols.count > 0)
         XCTAssertTrue(symbols.count <= 128)
+        #endif // !SKIP
     }
 
     func test_callStackReturnAddresses() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let addresses = Thread.callStackReturnAddresses
         XCTAssertTrue(addresses.count > 0)
         XCTAssertTrue(addresses.count <= 128)
+        #endif // !SKIP
     }
     
     func test_sleepForTimeInterval() {
@@ -191,5 +214,4 @@ class TestThread : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -25,6 +24,9 @@ class TestURLCache : XCTestCase {
     let lots = 200 * 1024 * 1024 /* 200 MB */
     
     func testStorageRoundtrip() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
 
         let (request, response) = try cachePair(for: "https://google.com/", ofSize: aBit, storagePolicy: .allowed)
@@ -32,9 +34,13 @@ class TestURLCache : XCTestCase {
 
         let storedResponse = cache.cachedResponse(for: request)
         XCTAssertEqual(response, storedResponse)
+        #endif // !SKIP
     }
     
     func testStoragePolicy() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
         do {
             let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
@@ -72,18 +78,26 @@ class TestURLCache : XCTestCase {
         
         try? FileManager.default.removeItem(at: writableTestDirectoryURL)
         #endif
+        #endif // !SKIP
     }
     
     func testNoDiskUsageIfDisabled() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: 0)
         let (request, response) = try cachePair(for: "https://google.com/", ofSize: aBit)
         cache.storeCachedResponse(response, for: request)
         
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: writableTestDirectoryURL.path).count, 0)
         XCTAssertNotNil(cache.cachedResponse(for: request))
+        #endif // !SKIP
     }
     
     func testShrinkingDiskCapacityEvictsItems() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
@@ -106,9 +120,13 @@ class TestURLCache : XCTestCase {
 //            XCTAssertNotNil(cache.cachedResponse(for: URLRequest(url: URL(string: url)!)))
 //        }
         #endif
+        #endif // !SKIP
     }
     
     func testNoMemoryUsageIfDisabled() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = try self.cache(memoryCapacity: 0, diskCapacity: lots)
         let (request, response) = try cachePair(for: "https://google.com/", ofSize: aBit)
         cache.storeCachedResponse(response, for: request)
@@ -121,9 +139,13 @@ class TestURLCache : XCTestCase {
 //        try FileManager.default.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
 //
 //        XCTAssertNil(cache.cachedResponse(for: request))
+        #endif // !SKIP
     }
     
     func testShrinkingMemoryCapacityEvictsItems() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
@@ -150,9 +172,13 @@ class TestURLCache : XCTestCase {
 //            XCTAssertNil(cache.cachedResponse(for: URLRequest(url: URL(string: url)!)))
         }
         #endif
+        #endif // !SKIP
     }
     
     func testRemovingOne() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
 
         let urls = [ "https://apple.com/",
@@ -178,9 +204,13 @@ class TestURLCache : XCTestCase {
 //
 //            first = false
 //        }
+        #endif // !SKIP
     }
     
     func testRemovingAll() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         #if !os(iOS)
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
@@ -202,9 +232,13 @@ class TestURLCache : XCTestCase {
 //            XCTAssertNil(cache.cachedResponse(for: request))
 //        }
         #endif
+        #endif // !SKIP
     }
     
     func testRemovingSince() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
         let urls = [ "https://apple.com/",
@@ -234,9 +268,13 @@ class TestURLCache : XCTestCase {
 //
 //            first = false
 //        }
+        #endif // !SKIP
     }
     
     func testStoringTwiceOnlyHasOneEntry() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cache = try self.cache(memoryCapacity: lots, diskCapacity: lots)
         
         let url = "https://apple.com/"
@@ -253,6 +291,7 @@ class TestURLCache : XCTestCase {
 //        let response = cache.cachedResponse(for: requestB)
 //        XCTAssertNotNil(response)
 //        XCTAssertEqual((try XCTUnwrap(response)).data, responseB.data)
+        #endif // !SKIP
     }
     
     // -----
@@ -277,11 +316,18 @@ class TestURLCache : XCTestCase {
     // -----
     
     func cache(memoryCapacity: Int = 0, diskCapacity: Int = 0) throws -> URLCache {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         try FileManager.default.createDirectory(at: writableTestDirectoryURL, withIntermediateDirectories: true)
         return URLCache(memoryCapacity: memoryCapacity, diskCapacity: diskCapacity, diskPath: writableTestDirectoryURL.path)
+        #endif // !SKIP
     }
     
-    func cachePair(for urlString: String, ofSize size: Int, storagePolicy: URLCache.StoragePolicy = .allowed, startingWith: UInt8 = 0) throws -> (URLRequest, CachedURLResponse) {
+    func cachePair(for urlString: String, ofSize size: Int, storagePolicy: URLCache.StoragePolicy = .allowed, startingWith: UInt8 = UInt8(0)) throws -> (URLRequest, CachedURLResponse) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: urlString))
         let request = URLRequest(url: url)
         let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 200, httpVersion: "1.1", headerFields: [:]))
@@ -292,18 +338,26 @@ class TestURLCache : XCTestCase {
         }
         
         return (request, CachedURLResponse(response: response, data: data, storagePolicy: storagePolicy))
+        #endif // !SKIP
     }
     
     var writableTestDirectoryURL: URL!
     
     override func setUp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         super.setUp()
         
         let pid = ProcessInfo.processInfo.processIdentifier
         writableTestDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("org.swift.TestFoundation.TestURLCache.\(pid)")
+        #endif // !SKIP
     }
     
     override func tearDown() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if let directoryURL = writableTestDirectoryURL,
             (try? FileManager.default.attributesOfItem(atPath: directoryURL.path)) != nil {
             do {
@@ -314,9 +368,9 @@ class TestURLCache : XCTestCase {
         }
         
         super.tearDown()
+        #endif // !SKIP
     }
     
 }
 
-#endif
 

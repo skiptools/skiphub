@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -23,6 +22,9 @@ import XCTest
 class TestProcessInfo : XCTestCase {
     
     func test_operatingSystemVersion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let processInfo = ProcessInfo.processInfo
         let versionString = processInfo.operatingSystemVersionString
         XCTAssertFalse(versionString.isEmpty)
@@ -47,9 +49,13 @@ class TestProcessInfo : XCTestCase {
         let minVersion = OperatingSystemVersion(majorVersion: 1, minorVersion: 0, patchVersion: 0)
         XCTAssertTrue(processInfo.isOperatingSystemAtLeast(minVersion))
 #endif
+        #endif // !SKIP
     }
     
     func test_processName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Assert that the original process name is "TestFoundation". This test
         // will fail if the test target ever gets renamed, so maybe it should
         // just test that the initial name is not empty or something?
@@ -72,9 +78,13 @@ class TestProcessInfo : XCTestCase {
         // Assign back to the original process name.
         processInfo.processName = originalProcessName
         XCTAssertEqual(processInfo.processName, originalProcessName, "\"\(processInfo.processName)\" not equal to \"\(originalProcessName)\"")
+        #endif // !SKIP
     }
     
     func test_globallyUniqueString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uuid = ProcessInfo.processInfo.globallyUniqueString
         
         let parts = uuid.components(separatedBy: "-")
@@ -84,9 +94,13 @@ class TestProcessInfo : XCTestCase {
         XCTAssertEqual(parts[2].utf16.count, 4)
         XCTAssertEqual(parts[3].utf16.count, 4)
         XCTAssertEqual(parts[4].utf16.count, 12)
+        #endif // !SKIP
     }
 
     func test_environment() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if os(Windows)
         func setenv(_ key: String, _ value: String, _ overwrite: Int) -> Int32 {
           assert(overwrite == 1)
@@ -137,11 +151,15 @@ class TestProcessInfo : XCTestCase {
         XCTAssertEqual(env["var3"], "=x")
         XCTAssertEqual(env["var4"], "x=")
         XCTAssertEqual(env["var5"], "=x=")
+        #endif // !SKIP
     }
 
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && os(Linux)
     func test_cfquota_parsing() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         let tests = [
             ("50000", "100000", 1),
@@ -167,6 +185,7 @@ class TestProcessInfo : XCTestCase {
                 XCTAssertEqual(ProcessInfo.coreCount(quota: quotaPath, period: periodPath), count)
             }
         }
+        #endif // !SKIP
     }
 #endif
 
@@ -189,5 +208,4 @@ class TestProcessInfo : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

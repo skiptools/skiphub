@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 class TestNSURL: XCTestCase {
 
     func test_absoluteString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder", isDirectory: true).absoluteString, "file:///path/to/folder/")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder/", isDirectory: true).absoluteString, "file:///path/to/folder/")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../folder", isDirectory: true).absoluteString, "file:///path/../folder/")
@@ -31,9 +33,13 @@ class TestNSURL: XCTestCase {
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/file/", isDirectory: false).absoluteString, "file:///path/to/file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../file", isDirectory: false).absoluteString, "file:///path/../file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/./file/..", isDirectory: false).absoluteString, "file:///path/to/./file/..")
+        #endif // !SKIP
     }
 
     func test_pathComponents() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder", isDirectory: true).pathComponents, ["/", "path", "to", "folder"])
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder/", isDirectory: true).pathComponents, ["/", "path", "to", "folder"])
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../folder", isDirectory: true).pathComponents, ["/", "path", "..", "folder"])
@@ -44,9 +50,13 @@ class TestNSURL: XCTestCase {
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/file/", isDirectory: false).pathComponents, ["/", "path", "to", "file"])
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../file", isDirectory: false).pathComponents, ["/", "path", "..", "file"])
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/./file/..", isDirectory: false).pathComponents, ["/", "path", "to", ".", "file", ".."])
+        #endif // !SKIP
     }
 
     func test_standardized() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder", isDirectory: true).standardized?.absoluteString, "file:///path/to/folder/")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder/", isDirectory: true).standardized?.absoluteString, "file:///path/to/folder/")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../folder", isDirectory: true).standardized?.absoluteString, "file:///folder/")
@@ -56,9 +66,13 @@ class TestNSURL: XCTestCase {
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/file/", isDirectory: false).standardized?.absoluteString, "file:///path/to/file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../file", isDirectory: false).standardized?.absoluteString, "file:///file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/./file/..", isDirectory: false).standardized?.absoluteString, "file:///path/to")
+        #endif // !SKIP
     }
 
     func test_standardizingPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder", isDirectory: true).standardizingPath?.absoluteString, "file:///path/to/folder/")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder/", isDirectory: true).standardizingPath?.absoluteString, "file:///path/to/folder/")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../folder", isDirectory: true).standardizingPath?.absoluteString, "file:///folder/")
@@ -68,9 +82,13 @@ class TestNSURL: XCTestCase {
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/file/", isDirectory: false).standardizingPath?.absoluteString, "file:///path/to/file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../file", isDirectory: false).standardizingPath?.absoluteString, "file:///file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/./file/..", isDirectory: false).standardizingPath?.absoluteString, "file:///path/to")
+        #endif // !SKIP
     }
 
     func test_resolvingSymlinksInPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder", isDirectory: true).resolvingSymlinksInPath?.absoluteString, "file:///path/to/folder")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/folder/", isDirectory: true).resolvingSymlinksInPath?.absoluteString, "file:///path/to/folder")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../folder", isDirectory: true).resolvingSymlinksInPath?.absoluteString, "file:///folder")
@@ -80,6 +98,7 @@ class TestNSURL: XCTestCase {
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/file/", isDirectory: false).resolvingSymlinksInPath?.absoluteString, "file:///path/to/file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/../file", isDirectory: false).resolvingSymlinksInPath?.absoluteString, "file:///file")
         XCTAssertEqual(NSURL(fileURLWithPath: "/path/to/./file/..", isDirectory: false).resolvingSymlinksInPath?.absoluteString, "file:///path/to")
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -97,5 +116,4 @@ class TestNSURL: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 
