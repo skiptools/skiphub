@@ -147,14 +147,14 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(strings2, ["AA", "ZZ", "MM"])
 
         let raws = [1, 2, 3].map { ElementEnum(rawValue: $0) }
-        XCTAssertTrue(raws[0] == .one)
-        XCTAssertTrue(raws[1] == .two)
-        XCTAssertTrue(raws[2] == .three)
+        XCTAssertEqual(raws[0], .one)
+        XCTAssertEqual(raws[1], .two)
+        XCTAssertEqual(raws[2], .three)
 
         let cases = [0, 1, 2].map { ElementEnum.allCases[$0] }
-        XCTAssertTrue(cases[0] == .one)
-        XCTAssertTrue(cases[1] == .two)
-        XCTAssertTrue(cases[2] == .three)
+        XCTAssertEqual(cases[0], .one)
+        XCTAssertEqual(cases[1], .two)
+        XCTAssertEqual(cases[2], .three)
     }
 
     func testCompactMap() {
@@ -166,8 +166,8 @@ final class ArrayTests: XCTestCase {
 
         let raws = [1, 5, 3].compactMap { ElementEnum(rawValue: $0) }
         XCTAssertEqual(2, raws.count)
-        XCTAssertTrue(raws[0] == .one)
-        XCTAssertTrue(raws[1] == .three)
+        XCTAssertEqual(raws[0], .one)
+        XCTAssertEqual(raws[1], .three)
     }
 
     func testFlatMap() {
@@ -176,7 +176,7 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(strings2, ["A", "a", "B", "b", "C", "c"])
 
         let enums = [1, 2].flatMap { _ in ElementEnum.allCases }
-        XCTAssertTrue(enums == [.one, .two, .three, .one, .two, .three])
+        XCTAssertEqual(enums, [.one, .two, .three, .one, .two, .three])
     }
 
     func testReduce() {
@@ -187,9 +187,9 @@ final class ArrayTests: XCTestCase {
         let dict = [1, 2, 3].reduce(into: [Int: ElementEnum]()) { result, i in
             result[i] = ElementEnum(rawValue: i)!
         }
-        XCTAssertTrue(dict[1] == .one)
-        XCTAssertTrue(dict[2] == .two)
-        XCTAssertTrue(dict[3] == .three)
+        XCTAssertEqual(dict[1], .one)
+        XCTAssertEqual(dict[2], .two)
+        XCTAssertEqual(dict[3], .three)
 
         #if !SKIP
         XCTAssertEqual(strings.lazy.reduce("S", { $0 + $1 }), "SKIP")
@@ -206,8 +206,8 @@ final class ArrayTests: XCTestCase {
 
         let filtered = [ElementEnum.one, ElementEnum.two, ElementEnum.three].filter { $0.rawValue % 2 == 1 }
         XCTAssertEqual(2, filtered.count)
-        XCTAssertTrue(filtered[0] == .one)
-        XCTAssertTrue(filtered[1] == .three)
+        XCTAssertEqual(filtered[0], .one)
+        XCTAssertEqual(filtered[1], .three)
     }
 
     func testArraySort() {
