@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,6 +20,9 @@ import XCTest
 
 /// Reads the test data plist file and returns the list of objects
 private func getTestData() -> [Any]? {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
     let testFilePath = testBundle().url(forResource: "NSURLTestData", withExtension: "plist")
     let data = try! Data(contentsOf: testFilePath!)
     guard let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) else {
@@ -36,11 +38,15 @@ private func getTestData() -> [Any]? {
         return nil
     }
     return parsingTests
+        #endif // !SKIP
 }
 
 class TestURLComponents: XCTestCase {
 
     func test_queryItems() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let urlString = "http://localhost:8080/foo?bar=&bar=baz"
         let url = URL(string: urlString)!
 
@@ -51,9 +57,13 @@ class TestURLComponents: XCTestCase {
             query[$0.name] = $0.value ?? ""
         }
         XCTAssertEqual(["bar": "baz"], query)
+        #endif // !SKIP
     }
 
     func test_percentEncodedQueryItems() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let urlString = "http://localhost:8080/foo?feed%20me=feed%20me"
         let url = URL(string: urlString)!
 
@@ -64,10 +74,14 @@ class TestURLComponents: XCTestCase {
             query[$0.name] = $0.value ?? ""
         }
         XCTAssertEqual(["feed%20me": "feed%20me"], query)
+        #endif // !SKIP
     }
 
 
     func test_string() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for obj in getTestData()! {
             let testDict = obj as! [String: Any]
             let unencodedString = testDict[kURLTestUrlKey] as! String
@@ -75,9 +89,13 @@ class TestURLComponents: XCTestCase {
             guard let components = URLComponents(string: expectedString) else { continue }
             XCTAssertEqual(components.string!, expectedString, "should be the expected string (\(components.string!) != \(expectedString))")
         }
+        #endif // !SKIP
     }
 
     func test_portSetter() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let urlString = "http://myhost.mydomain.com"
         let port: Int = 8080
         let expectedString = "http://myhost.mydomain.com:8080"
@@ -85,9 +103,13 @@ class TestURLComponents: XCTestCase {
         url!.port = port
         let receivedString = url!.string
         XCTAssertEqual(receivedString, expectedString, "expected \(expectedString) but received \(receivedString as Optional)")
+        #endif // !SKIP
     }
 
     func test_url() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         let baseURL = try XCTUnwrap(URL(string: "https://www.example.com"))
 
@@ -129,9 +151,13 @@ class TestURLComponents: XCTestCase {
         compWithoutAuthority.path = "//path/to/file with space.html" //shouldn't start with //
         XCTAssertNil(compWithoutAuthority.string) // must be nil
         XCTAssertNil(compWithoutAuthority.url(relativeTo: baseURL)) //must be nil
+        #endif // !SKIP
     }
 
     func test_copy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let urlString = "https://www.swift.org/path/to/file.html?id=name"
         let urlComponent = NSURLComponents(string: urlString)!
         let copy = urlComponent.copy() as! NSURLComponents
@@ -141,9 +167,13 @@ class TestURLComponents: XCTestCase {
 
         /* Assert that NSURLComponents.copy is actually a copy of NSURLComponents */
         XCTAssertTrue(copy.isEqual(urlComponent))
+        #endif // !SKIP
     }
 
     func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let c1 = URLComponents(string: "https://www.swift.org/path/to/file.html?id=name")!
         let c2 = URLComponents(string: "https://www.swift.org/path/to/file.html?id=name")!
 
@@ -216,9 +246,13 @@ class TestURLComponents: XCTestCase {
             initialValue: NSURLComponents(),
             byMutating: \NSURLComponents.fragment,
             throughValues: strings)
+        #endif // !SKIP
     }
 
     func test_createURLWithComponents() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let urlComponents = NSURLComponents()
         urlComponents.scheme = "https";
         urlComponents.host = "com.test.swift";
@@ -231,9 +265,13 @@ class TestURLComponents: XCTestCase {
         urlComponents.queryItems = [query1, query2, query3, query4]
         XCTAssertNotNil(urlComponents.url?.query)
         XCTAssertEqual(urlComponents.queryItems?.count, 4)
+        #endif // !SKIP
     }
 
     func test_createURLWithComponentsPercentEncoded() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let urlComponents = NSURLComponents()
         urlComponents.scheme = "https";
         urlComponents.host = "com.test.swift";
@@ -249,9 +287,13 @@ class TestURLComponents: XCTestCase {
         }
         XCTAssertEqual(item.name, "simple%20string")
         XCTAssertEqual(item.value, "true%20is%20false")
+        #endif // !SKIP
     }
 
     func test_path() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let c1 = URLComponents()
         XCTAssertEqual(c1.path, "")
 
@@ -269,9 +311,13 @@ class TestURLComponents: XCTestCase {
 
         let c6 = URLComponents(string: "http://swift.org:80/foo/b%20r")
         XCTAssertEqual(c6?.path, "/foo/b r")
+        #endif // !SKIP
     }
 
     func test_percentEncodedPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let c1 = URLComponents()
         XCTAssertEqual(c1.percentEncodedPath, "")
 
@@ -289,6 +335,7 @@ class TestURLComponents: XCTestCase {
 
         let c6 = URLComponents(string: "http://swift.org:80/foo/b%20r")
         XCTAssertEqual(c6?.percentEncodedPath, "/foo/b%20r")
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -310,5 +357,4 @@ class TestURLComponents: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

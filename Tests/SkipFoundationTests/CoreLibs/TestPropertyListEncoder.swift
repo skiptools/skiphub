@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -61,6 +60,9 @@ extension TestPropertyListEncoder {
     }
     
     func test_basicEncodeDecode() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let propertyListFormats: [PropertyListSerialization.PropertyListFormat?] = [nil, .binary, .xml]
         
         for format in propertyListFormats {
@@ -90,6 +92,7 @@ extension TestPropertyListEncoder {
                 XCTAssertNotNil(String(data: data!, encoding: .utf8))
             }
         }
+        #endif // !SKIP
     }
 }
 
@@ -138,6 +141,9 @@ extension TestPropertyListEncoder {
     }
     
     func test_xmlDecoder() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let resultInfoPlist = InfoPlist(
             CFBundleDevelopmentRegion: "en",
             CFBundleExecutable: "xdgTestHelper",
@@ -156,8 +162,8 @@ extension TestPropertyListEncoder {
         let decodedInfoPlist = try decoder.decode(InfoPlist.self, from: testData, format: &format)
         XCTAssertEqual(format, .xml)
         XCTAssertEqual(decodedInfoPlist, resultInfoPlist)
+        #endif // !SKIP
     }
 }
 
-#endif
 

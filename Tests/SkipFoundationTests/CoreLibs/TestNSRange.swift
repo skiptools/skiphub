@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -40,6 +39,9 @@ class TestNSRange : XCTestCase {
     #endif // SKIP
 
     func test_NSRangeFromString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let emptyRangeStrings = [
             "",
             "{}",
@@ -70,25 +72,37 @@ class TestNSRange : XCTestCase {
         for string in fullRangeStrings {
             XCTAssert(NSEqualRanges(NSRangeFromString(string), fullRange))
         }
+        #endif // !SKIP
     }
     
     func test_NSRangeBridging() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let swiftRange: Range<Int> = 1..<7
         let range = NSRange(swiftRange)
         let swiftRange2 = Range(range)
         XCTAssertEqual(swiftRange, swiftRange2)
+        #endif // !SKIP
     }
 
     func test_NSMaxRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ranges = [(NSRange(location: 0, length: 3), 3),
                       (NSRange(location: 7, length: 8), 15),
                       (NSRange(location: 56, length: 1), 57)]
         for (range, result) in ranges {
             XCTAssertEqual(NSMaxRange(range), result)
         }
+        #endif // !SKIP
     }
 
     func test_NSLocationInRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ranges = [(3, NSRange(location: 0, length: 5), true),
                       (10, NSRange(location: 2, length: 9), true),
                       (7, NSRange(location: 2, length: 5), false),
@@ -96,9 +110,13 @@ class TestNSRange : XCTestCase {
         for (location, range, result) in ranges {
             XCTAssertEqual(NSLocationInRange(location, range), result);
         }
+        #endif // !SKIP
     }
 
     func test_NSEqualRanges() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ranges = [(NSRange(location: 0, length: 3), NSRange(location: 0, length: 3), true),
                       (NSRange(location: 0, length: 4), NSRange(location: 0, length: 8), false),
                       (NSRange(location: 3, length: 6), NSRange(location: 3, length: 10), false),
@@ -106,10 +124,14 @@ class TestNSRange : XCTestCase {
         for (first, second, result) in ranges {
             XCTAssertEqual(NSEqualRanges(first, second), result)
         }
+        #endif // !SKIP
     }
 
     
     func test_NSUnionRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ranges = [(NSRange(location: 0, length: 5), NSRange(location: 3, length: 8), NSRange(location: 0, length: 11)),
                       (NSRange(location: 6, length: 10), NSRange(location: 3, length: 8), NSRange(location: 3, length: 13)),
                       (NSRange(location: 3, length: 8), NSRange(location: 6, length: 10), NSRange(location: 3, length: 13)),
@@ -118,9 +140,13 @@ class TestNSRange : XCTestCase {
         for (first, second, result) in ranges {
             XCTAssert(NSEqualRanges(NSUnionRange(first, second), result))
         }
+        #endif // !SKIP
     }
 
     func test_NSIntersectionRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ranges = [(NSRange(location: 0, length: 5), NSRange(location: 3, length: 8), NSRange(location: 3, length: 2)),
                       (NSRange(location: 6, length: 10), NSRange(location: 3, length: 8), NSRange(location: 6, length: 5)),
                       (NSRange(location: 3, length: 8), NSRange(location: 6, length: 10), NSRange(location: 6, length: 5)),
@@ -129,9 +155,13 @@ class TestNSRange : XCTestCase {
         for (first, second, result) in ranges {
             XCTAssert(NSEqualRanges(NSIntersectionRange(first, second), result))
         }
+        #endif // !SKIP
     }
 
     func test_NSStringFromRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ranges = ["{0, 0}": NSRange(location: 0, length: 0),
                       "{6, 4}": NSRange(location: 6, length: 4),
                       "{0, 10}": NSRange(location: 0, length: 10),
@@ -142,16 +172,26 @@ class TestNSRange : XCTestCase {
         for (string, range) in ranges {
             XCTAssertEqual(NSStringFromRange(range), string)
         }
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     /// Specialized for the below tests.
     private func _assertNSRangeInit<S: StringProtocol, R: RangeExpression>(
         _ region: R, in target: S, is rangeString: String
     ) where R.Bound == S.Index {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssert(NSEqualRanges(NSRangeFromString(rangeString), NSRange(region, in: target)))
+        #endif // !SKIP
     }
+    #endif
     
     func test_init_region_in_ascii_string() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // all count = 18
         let normalString = "1;DROP TABLE users"
         
@@ -170,9 +210,13 @@ class TestNSRange : XCTestCase {
         _assertNSRangeInit(normalSubstring.startIndex..., in: normalString, is: "{2, 16}")
         _assertNSRangeInit(...normalSubstring.lastIndex(of: " ")!, in: normalSubstring, is: "{0, 11}")
         _assertNSRangeInit(..<normalSubstring.lastIndex(of: " ")!, in: normalString, is: "{0, 12}")
+        #endif // !SKIP
     }
     
     func test_init_region_in_unicode_string() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // count: 46, utf8: 90, utf16: 54
         let unicodeString = "This  is a #naughty👻 string (╯°□°）╯︵ ┻━┻👨‍👩‍👧‍👦)"
         
@@ -191,9 +235,13 @@ class TestNSRange : XCTestCase {
         _assertNSRangeInit(unicodeSubstring.startIndex..., in: unicodeString, is: "{20, 34}")
         _assertNSRangeInit(...unicodeSubstring.firstIndex(of: "╯")!, in: unicodeSubstring, is: "{0, 12}")
         _assertNSRangeInit(..<unicodeSubstring.firstIndex(of: "╯")!, in: unicodeString, is: "{0, 31}")
+        #endif // !SKIP
     }
 
     func test_hashing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let large = Int.max >> 2
         let samples: [NSRange] = [
             NSRange(location: 1, length: 1),
@@ -205,8 +253,8 @@ class TestNSRange : XCTestCase {
             NSRange(location: large, length: 0),
         ]
         checkHashable(samples, equalityOracle: { $0 == $1 })
+        #endif // !SKIP
     }
 }
 
-#endif
 

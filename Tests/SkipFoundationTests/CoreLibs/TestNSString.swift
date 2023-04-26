@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -42,6 +41,9 @@ internal let kCFStringEncodingUTF32LE =  CFStringBuiltInEncodings.UTF32LE.rawVal
 class TestNSString : XCTestCase { // : LoopbackServerTest
 
     func test_initData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testString = "\u{00} This is a test string"
         let data = testString.data(using: .utf8)!
         XCTAssertEqual(data.count, 23)
@@ -103,9 +105,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         } else {
             XCTFail("Cant convert large Data string to String")
         }
+        #endif // !SKIP
     }
 
     func test_boolValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let trueStrings: [NSString] = ["t", "true", "TRUE", "tRuE", "yes", "YES", "1", "+000009"]
         for string in trueStrings {
             XCTAssert(string.boolValue)
@@ -114,9 +120,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         for string in falseStrings {
             XCTAssertFalse(string.boolValue)
         }
+        #endif // !SKIP
     }
     
     func test_BridgeConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let literalConversion: NSString = "literal"
         XCTAssertEqual(literalConversion.length, 7)
         
@@ -132,9 +142,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         
         let cluster: NSString = "✌🏾"
         XCTAssertEqual(cluster.length, 3)
+        #endif // !SKIP
     }
 
     func test_bridging() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let nsstring = NSString("NSString")
         let anyNSstring = nsstring as Any
 
@@ -154,10 +168,14 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 
         let abc = "abc" as Substring as NSString
         XCTAssertEqual(abc, NSString("abc"))
+        #endif // !SKIP
     }
 
 
     func test_integerValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string1: NSString = "123"
         XCTAssertEqual(string1.integerValue, 123)
 
@@ -187,9 +205,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 
         let string10: NSString = "-999999999999999999999999999999"
         XCTAssertEqual(string10.integerValue, Int.min)
+        #endif // !SKIP
     }
 
     func test_intValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string1: NSString = "123"
         XCTAssertEqual(string1.intValue, 123)
 
@@ -219,9 +241,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 
         let string10: NSString = "-999999999999999999999999999999"
         XCTAssertEqual(string10.intValue, Int32.min)
+        #endif // !SKIP
     }
 
     func test_doubleValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSString(string: ".2").doubleValue, 0.2)
         XCTAssertEqual(NSString(string: "+.2").doubleValue, 0.2)
         XCTAssertEqual(NSString(string: "-.2").doubleValue, -0.2)
@@ -241,96 +267,154 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(NSString(string: "1.2.3.4").doubleValue, 1.2)
         XCTAssertEqual(NSString(string: "1e2.3").doubleValue, 100)
         XCTAssertEqual(NSString(string: "1E3").doubleValue, 1000)
+        #endif // !SKIP
     }
     
     func test_isEqualToStringWithSwiftString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string: NSString = "literal"
         let swiftString = "literal"
         XCTAssertTrue(string.isEqual(to: swiftString))
+        #endif // !SKIP
     }
   
     func test_isEqualToObjectWithNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string1: NSString = "literal"
         let string2: NSString = "literal"
         XCTAssertTrue(string1.isEqual(string2))
+        #endif // !SKIP
     }
     
     func test_isNotEqualToObjectWithNSNumber() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
       let string: NSString = "5"
       let number: NSNumber = 5
       XCTAssertFalse(string.isEqual(number))
+        #endif // !SKIP
     }
 
+    #if !SKIP
     internal let mockASCIIStringBytes: [UInt8] = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x53, 0x77, 0x69, 0x66, 0x74, 0x21]
+    #endif
     internal let mockASCIIString = "Hello Swift!"
+    #if !SKIP
     internal let mockUTF8StringBytes: [UInt8] = [0x49, 0x20, 0xE2, 0x9D, 0xA4, 0xEF, 0xB8, 0x8F, 0x20, 0x53, 0x77, 0x69, 0x66, 0x74]
+    #endif
     internal let mockUTF8String = "I ❤️ Swift"
+    #if !SKIP
     internal let mockMalformedUTF8StringBytes: [UInt8] = [0xFF]
+    #endif
 
     func test_FromASCIIData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockASCIIStringBytes
         let string = NSString(bytes: bytes, length: bytes.count, encoding: String.Encoding.ascii.rawValue)
         XCTAssertNotNil(string)
         XCTAssertTrue(string?.isEqual(to: mockASCIIString) ?? false)
+        #endif // !SKIP
     }
 
     func test_FromUTF8Data() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockUTF8StringBytes
         let string = NSString(bytes: bytes, length: bytes.count, encoding: String.Encoding.utf8.rawValue)
         XCTAssertNotNil(string)
         XCTAssertTrue(string?.isEqual(to: mockUTF8String) ?? false)
+        #endif // !SKIP
     }
 
     func test_FromMalformedUTF8Data() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockMalformedUTF8StringBytes
         let string = NSString(bytes: bytes, length: bytes.count, encoding: String.Encoding.utf8.rawValue)
         XCTAssertNil(string)
+        #endif // !SKIP
     }
 
     func test_FromASCIINSData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockASCIIStringBytes
         let data = Data(bytes: bytes, count: bytes.count)
         let string = NSString(data: data, encoding: String.Encoding.ascii.rawValue)
         XCTAssertNotNil(string)
         XCTAssertTrue(string?.isEqual(to: mockASCIIString) ?? false)
+        #endif // !SKIP
     }
 
     func test_FromUTF8NSData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockUTF8StringBytes
         let data = Data(bytes: bytes, count: bytes.count)
         let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
         XCTAssertNotNil(string)
         XCTAssertTrue(string?.isEqual(to: mockUTF8String) ?? false)
+        #endif // !SKIP
     }
 
     func test_FromMalformedUTF8NSData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockMalformedUTF8StringBytes
         let data = Data(bytes: bytes, count: bytes.count)
         let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
         XCTAssertNil(string)
+        #endif // !SKIP
     }
 
     func test_FromNullTerminatedCStringInASCII() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockASCIIStringBytes + [0x00]
         let string = NSString(cString: bytes.map { Int8(bitPattern: $0) }, encoding: String.Encoding.ascii.rawValue)
         XCTAssertNotNil(string)
         XCTAssertTrue(string?.isEqual(to: mockASCIIString) ?? false)
+        #endif // !SKIP
     }
 
     func test_FromNullTerminatedCStringInUTF8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockUTF8StringBytes + [0x00]
         let string = NSString(cString: bytes.map { Int8(bitPattern: $0) }, encoding: String.Encoding.utf8.rawValue)
         XCTAssertNotNil(string)
         XCTAssertTrue(string?.isEqual(to: mockUTF8String) ?? false)
+        #endif // !SKIP
     }
 
     func test_FromMalformedNullTerminatedCStringInUTF8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes = mockMalformedUTF8StringBytes + [0x00]
         let string = NSString(cString: bytes.map { Int8(bitPattern: $0) }, encoding: String.Encoding.utf8.rawValue)
         XCTAssertNil(string)
+        #endif // !SKIP
     }
 
     func test_FromContentsOfURL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard let testFileURL = testBundle().url(forResource: "NSStringTestData", withExtension: "txt") else {
             XCTFail("URL for NSStringTestData.txt is nil")
             return
@@ -368,9 +452,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 //            return
 //        }
 //        XCTAssertEqual(zeroString, "Some\u{00}text\u{00}with\u{00}NUL\u{00}bytes\u{00}instead\u{00}of\u{00}spaces.\u{00}\n")
+        #endif // !SKIP
     }
 
     func test_FromContentOfFileUsedEncodingIgnored() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testFilePath = testBundle().path(forResource: "NSStringTestData", ofType: "txt")
         XCTAssertNotNil(testFilePath)
         
@@ -380,9 +468,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         } catch {
             XCTFail("Unable to init NSString from contentsOfFile:encoding:")
         }
+        #endif // !SKIP
     }
     
     func test_FromContentOfFileUsedEncodingUTF8() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testFilePath = testBundle().path(forResource: "NSStringTestData", ofType: "txt")
         XCTAssertNotNil(testFilePath)
         
@@ -394,9 +486,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         } catch {
             XCTFail("Unable to init NSString from contentsOfFile:encoding:")
         }
+        #endif // !SKIP
     }
 
     func test_FromContentsOfURLUsedEncodingUTF16BE() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
       guard let testFileURL = testBundle().url(forResource: "NSString-UTF16-BE-data", withExtension: "txt") else {
         XCTFail("URL for NSString-UTF16-BE-data.txt is nil")
         return
@@ -410,9 +506,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
       } catch {
           XCTFail("Unable to init NSString from contentsOf:usedEncoding:")
       }
+        #endif // !SKIP
     }
 
     func test_FromContentsOfURLUsedEncodingUTF16LE() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
       guard let testFileURL = testBundle().url(forResource: "NSString-UTF16-LE-data", withExtension: "txt") else {
         XCTFail("URL for NSString-UTF16-LE-data.txt is nil")
         return
@@ -426,9 +526,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
       } catch {
           XCTFail("Unable to init NSString from contentOf:usedEncoding:")
       }
+        #endif // !SKIP
     }
 
     func test_FromContentsOfURLUsedEncodingUTF32BE() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
       guard let testFileURL = testBundle().url(forResource: "NSString-UTF32-BE-data", withExtension: "txt") else {
         XCTFail("URL for NSString-UTF32-BE-data.txt is nil")
         return
@@ -442,9 +546,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 //      } catch {
 //          XCTFail("Unable to init NSString from contentOf:usedEncoding:")
 //      }
+        #endif // !SKIP
     }
 
     func test_FromContentsOfURLUsedEncodingUTF32LE() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
       guard let testFileURL = testBundle().url(forResource: "NSString-UTF32-LE-data", withExtension: "txt") else {
         XCTFail("URL for NSString-UTF32-LE-data.txt is nil")
         return
@@ -458,9 +566,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
       } catch {
           XCTFail("Unable to init NSString from contentOf:usedEncoding:")
       }
+        #endif // !SKIP
     }
 
     func test_FromContentOfFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testFilePath = testBundle().path(forResource: "NSStringTestData", ofType: "txt")
         XCTAssertNotNil(testFilePath)
         
@@ -470,9 +582,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         } catch {
             XCTFail("Unable to init NSString from contentsOfFile:encoding:")
         }
+        #endif // !SKIP
     }
 
     func test_writeToURLHasBOM_UTF32() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var url = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
         url.appendPathComponent("swiftfoundation-\(#function)-tmp")
@@ -499,9 +615,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let data = try Data(contentsOf: url)
             XCTAssertTrue(data.starts(with: [0x68, 0x00, 0x00, 0x00]))
         }
+        #endif // !SKIP
     }
 
     func test_uppercaseString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSString(stringLiteral: "abcd").uppercased, "ABCD")
         XCTAssertEqual(NSString(stringLiteral: "ａｂｃｄ").uppercased, "ＡＢＣＤ") // full-width
         XCTAssertEqual(NSString(stringLiteral: "абВГ").uppercased, "АБВГ")
@@ -513,9 +633,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         // XCTAssertEqual(NSString(stringLiteral: "\u{0069}").uppercased(with: NSLocale(localeIdentifier: "tr")), "\u{0130}")
         XCTAssertEqual(NSString(stringLiteral: "\u{00df}").uppercased, "\u{0053}\u{0053}")
         XCTAssertEqual(NSString(stringLiteral: "\u{fb01}").uppercased, "\u{0046}\u{0049}")
+        #endif // !SKIP
     }
 
     func test_lowercaseString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSString(stringLiteral: "abCD").lowercased, "abcd")
         XCTAssertEqual(NSString(stringLiteral: "ＡＢＣＤ").lowercased, "ａｂｃｄ") // full-width
         XCTAssertEqual(NSString(stringLiteral: "aБВГ").lowercased, "aбвг")
@@ -528,14 +652,22 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(NSString(stringLiteral: "\u{0049}\u{0307}").lowercased(with: Locale(identifier: "en")), "\u{0069}\u{0307}")
         // Currently fails; likely there are locale loading issues that are preventing this from functioning correctly
         // XCTAssertEqual(NSString(stringLiteral: "\u{0049}\u{0307}").lowercaseStringWithLocale(NSLocale(localeIdentifier: "tr")), "\u{0069}")
+        #endif // !SKIP
     }
 
     func test_capitalizedString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSString(stringLiteral: "foo Foo fOO FOO").capitalized, "Foo Foo Foo Foo")
         XCTAssertEqual(NSString(stringLiteral: "жжж").capitalized, "Жжж")
+        #endif // !SKIP
     }
 
     func test_longLongValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string1: NSString = "123"
         XCTAssertEqual(string1.longLongValue, 123)
 
@@ -565,9 +697,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
 
         let string10: NSString = "-999999999999999999999999999999"
         XCTAssertEqual(string10.longLongValue, Int64.min)
+        #endif // !SKIP
     }
     
     func test_rangeOfCharacterFromSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string: NSString = "0Az"
         let letters = CharacterSet.letters
         let decimalDigits = CharacterSet.decimalDigits
@@ -575,15 +711,23 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(string.rangeOfCharacter(from: decimalDigits).location, 0)
         XCTAssertEqual(string.rangeOfCharacter(from: letters, options: .backwards).location, 2)
         XCTAssertEqual(string.rangeOfCharacter(from: letters, options: [], range: NSRange(location: 2, length: 1)).location, 2)
+        #endif // !SKIP
     }
     
     func test_CFStringCreateMutableCopy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let nsstring: NSString = "абВГ"
         XCTAssertEqual(nsstring, nsstring.mutableCopy() as! NSString)
+        #endif // !SKIP
     }
     
     // This test verifies that CFStringGetBytes with a UTF16 encoding works on an NSString backed by a Swift string
     func test_swiftStringUTF16() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testString = "hello world"
         let string = NSString(string: testString)
 
@@ -596,9 +740,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         }
         
         XCTAssertTrue(newString.isEqual(to: testString))
+        #endif // !SKIP
     }
     
     func test_completePathIntoString() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         // Check all strings start with a common prefix
         func startWith(_ prefix: String, strings: [String]) -> Bool {
@@ -798,34 +946,50 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             }
             #endif
         }
+        #endif // !SKIP
     }
 
 
     func test_stringByTrimmingCharactersInSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let characterSet = CharacterSet.whitespaces
         let string: NSString = " abc   "
         XCTAssertEqual(string.trimmingCharacters(in: characterSet), "abc")
         
         let emojiString: NSString = " \u{1F62C}  "
         XCTAssertEqual(emojiString.trimmingCharacters(in: characterSet), "\u{1F62C}")
+        #endif // !SKIP
     }
     
     func test_initializeWithFormat() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let argument: [CVarArg] = [42, 42.0]
         withVaList(argument) {
             pointer in
             let string = NSString(format: "Value is %d (%.1f)", arguments: pointer)
             XCTAssertEqual(string, "Value is 42 (42.0)")
         }
+        #endif // !SKIP
     }
     
     func test_initializeWithFormat2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let argument: UInt8 = 75
         let string = NSString(format: "%02X", argument)
         XCTAssertEqual(string, "4B")
+        #endif // !SKIP
     }
     
     func test_initializeWithFormat3() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let argument: [CVarArg] = [1000, 42.0]
         
         withVaList(argument) {
@@ -852,9 +1016,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let string = NSString(format: "NSDictionary value is %d (%.1f)", locale: loc, arguments: pointer)
             XCTAssertEqual(string, "NSDictionary value is 1000 (42&0)")
         }
+        #endif // !SKIP
     }
 
     func test_initializeWithFormat4() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // The NSString() is required on macOS to work around error: `Type of expression is ambiguous without more context`
         let argument: [CVarArg] = [NSString("One"), NSString("Two"), NSString("Three")]
         withVaList(argument) {
@@ -862,9 +1030,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let string = NSString(format: "Testing %@ %@ %@", arguments: pointer)
             XCTAssertEqual(string, "Testing One Two Three")
         }
+        #endif // !SKIP
     }
 
     func test_appendingPathComponent() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let path: NSString = "/tmp"
             let result = path.appendingPathComponent("scratch.tiff")
@@ -888,9 +1060,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let result = path.appendingPathComponent("scratch.tiff")
             XCTAssertEqual(result, "scratch.tiff")
         }                        
+        #endif // !SKIP
     }
     
     func test_deletingLastPathComponent() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let path: NSString = "/tmp/scratch.tiff"
             let result = path.deletingLastPathComponent
@@ -932,9 +1108,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let result = path.deletingLastPathComponent
             XCTAssertEqual(result, "foo", "Relative path stays relative.")
         }
+        #endif // !SKIP
     }
     
     func test_resolvingSymlinksInPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let path: NSString = "foo/bar"
             let result = path.resolvingSymlinksInPath
@@ -977,9 +1157,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let result = path.resolvingSymlinksInPath
             XCTAssertEqual(result, "file:/tmp/..", "resolvingSymlinksInPath treats receiver as file path always")
         }
+        #endif // !SKIP
     }
 
     func test_getCString_simple() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str: NSString = "foo"
         var chars = [Int8](repeating:0xF, count:4)
         let count = chars.count
@@ -991,9 +1175,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         }
         XCTAssertTrue(res, "getCString should work on simple strings with ascii string encoding")
         XCTAssertEqual(chars, expected, "getCString on \(str) should have resulted in \(expected) but got \(chars)")
+        #endif // !SKIP
     }
     
     func test_getCString_nonASCII_withASCIIAccessor() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str: NSString = "ƒoo"
         var chars = [Int8](repeating:0xF, count:5)
         let expected: [Int8] = [-58, -110, 111, 111, 0]
@@ -1010,9 +1198,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         }
         XCTAssertTrue(res, "getCString should work on UTF8 encoding")
         XCTAssertEqual(chars, expected, "getCString on \(str) should have resulted in \(expected) but got \(chars)")
+        #endif // !SKIP
     }
     
     func test_NSHomeDirectoryForUser() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let homeDir = NSHomeDirectoryForUser(nil)
         let userName = NSUserName()
         let homeDir2 = NSHomeDirectoryForUser(userName)
@@ -1020,9 +1212,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertNotNil(homeDir)
         XCTAssertEqual(homeDir, homeDir2)
         XCTAssertEqual(homeDir, homeDir3)
+        #endif // !SKIP
     }
     
     func test_expandingTildeInPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Android home directory is the root directory, so the result of ~ may
         // actually have a trailing path separator, but only if it is the root
         // directory itself.
@@ -1057,9 +1253,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
           	// next assert fails in VirtualBox because home directory for unknown user resolved to /var/run/vboxadd
 //            XCTAssertEqual(result, "~\(userName)", "Return copy of receiver if home directory could not be resolved.")
         }
+        #endif // !SKIP
     }
     
     func test_standardizingPath() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         // tmp is special because it is symlinked to /private/tmp and this /private prefix should be dropped,
         // so tmp is tmp. On Linux tmp is not symlinked so it would be the same.
@@ -1112,24 +1312,36 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let result = path.standardizingPath
             XCTAssertEqual(NSString(string: result), path, "parent links could not be resolved for relative paths")
         }
+        #endif // !SKIP
     }
 
     func test_addingPercentEncoding() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s1 = "a b".addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         XCTAssertEqual(s1, "a%20b")
         
         let s2 = "\u{0434}\u{043E}\u{043C}".addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         XCTAssertEqual(s2, "%D0%B4%D0%BE%D0%BC")
+        #endif // !SKIP
     }
     
     func test_removingPercentEncodingInLatin() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s1 = "a%20b".removingPercentEncoding
         XCTAssertEqual(s1, "a b")
         let s2 = "a%1 b".removingPercentEncoding
         XCTAssertNil(s2, "returns nil for a string with an invalid percent encoding")
+        #endif // !SKIP
     }
     
     func test_removingPercentEncodingInNonLatin() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s1 = "\u{043C}\u{043E}\u{0439}%20\u{0434}\u{043E}\u{043C}".removingPercentEncoding
         XCTAssertEqual(s1, "\u{043C}\u{043E}\u{0439} \u{0434}\u{043E}\u{043C}")
         
@@ -1138,9 +1350,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         
         let s3 = "\u{00E0}a%1 b".removingPercentEncoding
         XCTAssertNil(s3, "returns nil for a string with an invalid percent encoding")
+        #endif // !SKIP
     }
     
     func test_removingPersentEncodingWithoutEncoding() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let cyrillicString = "\u{0434}\u{043E}\u{043C}"
         let cyrillicEscapedString = cyrillicString.removingPercentEncoding
         XCTAssertEqual(cyrillicString, cyrillicEscapedString)
@@ -1160,9 +1376,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         let latinString = "home"
         let latinEscapedString = latinString.removingPercentEncoding
         XCTAssertEqual(latinString, latinEscapedString)
+        #endif // !SKIP
     }
     
     func test_addingPercentEncodingAndBack() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let latingString = "a b"
         let escapedLatingString = latingString.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         let returnedLatingString = escapedLatingString?.removingPercentEncoding
@@ -1172,9 +1392,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         let escapedCyrillicString = cyrillicString.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
         let returnedCyrillicString = escapedCyrillicString?.removingPercentEncoding
         XCTAssertEqual(returnedCyrillicString, cyrillicString)
+        #endif // !SKIP
     }
     
     func test_stringByAppendingPathExtension() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let values = [
             NSString(string: "/tmp/scratch.old") : "/tmp/scratch.old.tiff",
             NSString(string: "/tmp/scratch.") : "/tmp/scratch..tiff",
@@ -1187,9 +1411,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let result = fileName.appendingPathExtension("tiff")
             XCTAssertEqual(result, expectedResult, "expected \(expectedResult) for \(fileName) but got \(result as Optional)")
         }
+        #endif // !SKIP
     }
     
     func test_deletingPathExtension() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let values : Dictionary = [
             NSString(string: "/tmp/scratch.tiff") : "/tmp/scratch",
             NSString(string: "/tmp/") : "/tmp",
@@ -1203,9 +1431,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let result = fileName.deletingPathExtension
             XCTAssertEqual(result, expectedResult, "expected \(expectedResult) for \(fileName) but got \(result)")
         }
+        #endif // !SKIP
     }
     
     func test_ExternalRepresentation() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Ensure NSString can be used to create an external data representation
 
         do {
@@ -1238,14 +1470,22 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
             let ISOLatin1Data = string.data(using: String.Encoding.isoLatin1.rawValue, allowLossyConversion: false) as NSData?
             XCTAssertNil(ISOLatin1Data)
         }
+        #endif // !SKIP
     }
     
     func test_mutableStringConstructor() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let mutableString = NSMutableString(string: "Test")
         XCTAssertEqual(mutableString, "Test")
+        #endif // !SKIP
     }
 
     func test_getLineStart() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // offset        012345 678901
         let twoLines =  "line1\nline2\n"
         var outStartIndex = twoLines.startIndex
@@ -1267,15 +1507,23 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(outStartIndex, twoLines.index(twoLines.startIndex, offsetBy: 6))
         XCTAssertEqual(outContentsEndIndex, twoLines.index(twoLines.startIndex, offsetBy: 11))
         XCTAssertEqual(outEndIndex, twoLines.index(twoLines.startIndex, offsetBy: 12))
+        #endif // !SKIP
     }
     
     func test_emptyStringPrefixAndSuffix() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testString = "hello"
         XCTAssertTrue(testString.hasPrefix(""))
         XCTAssertTrue(testString.hasSuffix(""))
+        #endif // !SKIP
     }
 
     func test_substringWithRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let trivial = NSString(string: "swift.org")
         XCTAssertEqual(trivial.substring(with: NSRange(location: 0, length: 5)), "swift")
 
@@ -1314,17 +1562,25 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         // SR-3363
         let s6 = NSString(string: "Beyonce\u{301} and Tay")
         XCTAssertEqual(s6.substring(with: NSRange(location: 7, length: 9)), "\u{301} and Tay")
+        #endif // !SKIP
     }
 
     func test_substringFromCFString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = StringTransform.stripCombiningMarks.rawValue as NSString
         let range = NSRange(location: 0, length: string.length)
         let substring = string.substring(with: range)
 
         XCTAssertEqual(string.length, substring.utf16.count)
+        #endif // !SKIP
     }
 
     func test_createCopy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string: NSMutableString = "foo"
         let stringCopy = string.copy() as! NSString
         XCTAssertEqual(string, stringCopy)
@@ -1332,9 +1588,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertNotEqual(string, stringCopy)
         XCTAssertEqual(string, "foobar")
         XCTAssertEqual(stringCopy, "foo")
+        #endif // !SKIP
     }
 
     func test_commonPrefix() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual("".commonPrefix(with: ""), "")
         XCTAssertEqual("1234567890".commonPrefix(with: ""), "")
         XCTAssertEqual("".commonPrefix(with: "1234567890"), "")
@@ -1348,9 +1608,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual("Ma\u{308}dchen".commonPrefix(with: "M\u{E4}dchenschule", options: [.literal]), "M")
         XCTAssertEqual("m\u{E4}dchen".commonPrefix(with: "M\u{E4}dchenschule", options: [.caseInsensitive, .literal]), "mädchen")
         XCTAssertEqual("ma\u{308}dchen".commonPrefix(with: "M\u{E4}dchenschule", options: [.caseInsensitive, .literal]), "m")
+        #endif // !SKIP
     }
 
     func test_lineRangeFor() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // column     1 2 3 4 5 6 7 8 9  10 11
         // line 1     L I N E 1 _ 6 7 あ \n
         // line 2     L I N E 2 _ 7 8 9  0 \n
@@ -1360,12 +1624,20 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(string.distance(from: rangeOfFirstLine.lowerBound, to: rangeOfFirstLine.upperBound), 10)
         let firstLine = string[rangeOfFirstLine]
         XCTAssertEqual(firstLine, "LINE1_67あ\n")
+        #endif // !SKIP
     }
 
     func test_reflection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        #endif // !SKIP
     }
 
     func test_replacingOccurrences() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testPrefix = "ab"
         let testSuffix = "cd"
         let testEmoji = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}\u{200D}\u{1F466}"
@@ -1432,9 +1704,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(str4.replacingOccurrences(of: "\r\n", with: "\n\r"), "Hello\r\rworld.")
         XCTAssertEqual(str4.replacingOccurrences(of: "\r\n", with: "\r\n"), "Hello\r\rworld.")
         XCTAssertEqual(str4.replacingOccurrences(of: "\n\r", with: " "), "Hello\r\rworld.")
+        #endif // !SKIP
     }
 
     func test_replacingOccurrencesInSubclass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // NSMutableString doesnt subclasss correctly
 #if XXX && !DARWIN_COMPATIBILITY_TESTS
         class TestMutableString: NSMutableString {
@@ -1492,10 +1768,14 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(testString.replacingOccurrences(of: "ab", with: "xx"), "xxxxxx")
         XCTAssertEqual(testString.replaceCharactersCount, 3)
 #endif
+        #endif // !SKIP
     }
 
 
     func test_fileSystemRepresentation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = "☃" as NSString
         let result = name.fileSystemRepresentation
         XCTAssertEqual(UInt8(bitPattern: result[0]), 0xE2)
@@ -1505,9 +1785,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
     #if false && !DARWIN_COMPATIBILITY_TESTS // auto-released by Darwin's Foundation
         result.deallocate()
     #endif
+        #endif // !SKIP
     }
     
     func test_enumerateSubstrings() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // http://www.gutenberg.org/ebooks/12389, with a prefix addition by me.
         // U+0300 COMBINING ACUTE ACCENT;
         // U+0085 NEXT LINE (creates a new line that's not a new paragraph)
@@ -1588,9 +1872,13 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
                 }
             }
         }
+        #endif // !SKIP
     }
     
     func test_paragraphRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let text = "Klaatu\nbarada\r\nnikto.\rRemember 🟨those\u{2029}words."
         let nsText = text as NSString
 
@@ -1681,14 +1969,22 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
                 return true
             }
         }
+        #endif // !SKIP
     }
 
     func test_initStringWithNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ns = NSString("Test")
         XCTAssertEqual(String(ns), "Test")
+        #endif // !SKIP
     }
 
     func test_initString_utf8StringWithArrayInput() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var source: [CChar] = [0x61, 0x62, 0, 0x63]
         var str: String?
         str = String(utf8String: source)
@@ -1700,10 +1996,14 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         source[1] = CChar(bitPattern: 0xff)
         str = String(utf8String: source)
         XCTAssertNil(str)
+        #endif // !SKIP
     }
 
     @available(*, deprecated) // silence the deprecation warning within
     func test_initString_utf8StringWithStringInput() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let source = "ab\0c"
         var str: String?
         str = String(utf8String: source)
@@ -1714,19 +2014,27 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         str = String(utf8String: "")
         XCTAssertNotNil(str)
         XCTAssertEqual(str?.isEmpty, true)
+        #endif // !SKIP
     }
 
     @available(*, deprecated) // silence the deprecation warning within
     func test_initString_utf8StringWithInoutConversion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var c = CChar.zero
         var str: String?
         str = String(utf8String: &c)
         // Any other value of `c` would violate the null-terminated precondition
         XCTAssertNotNil(str)
         XCTAssertEqual(str?.isEmpty, true)
+        #endif // !SKIP
     }
 
     func test_initString_cStringWithArrayInput() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var source: [CChar] = [0x61, 0x62, 0, 0x63]
         var str: String?
         str = String(cString: source, encoding: .utf8)
@@ -1761,10 +2069,14 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
                 str, String(cString: $0.baseAddress!, encoding: .macOSRoman)
             )
         }
+        #endif // !SKIP
     }
 
     @available(*, deprecated) // silence the deprecation warning within
     func test_initString_cStringWithStringInput() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let source = "ab\0c"
         var str: String?
         str = String(cString: source, encoding: .utf8)
@@ -1782,16 +2094,21 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
         XCTAssertEqual(str?.isEmpty, true)
         str = String(cString: "Caractères", encoding: .ascii)
         XCTAssertNil(str)
+        #endif // !SKIP
     }
 
     @available(*, deprecated) // silence the deprecation warning within
     func test_initString_cStringWithInoutConversion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var c = CChar.zero
         var str: String?
         str = String(cString: &c, encoding: .ascii)
         // Any other value of `c` would violate the null-terminated precondition
         XCTAssertNotNil(str)
         XCTAssertEqual(str?.isEmpty, true)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -1889,5 +2206,4 @@ class TestNSString : XCTestCase { // : LoopbackServerTest
     #endif // SKIP
 }
 
-#endif
 

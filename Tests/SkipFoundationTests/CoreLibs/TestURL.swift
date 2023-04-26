@@ -28,34 +28,19 @@ fileprivate extension URLComponents {
 
 #else // SKIP
 
-// NSURL does not exist in Skip, but for the purposes of the test case, we pretend it is the same a Foundation.URL
-fileprivate typealias NSURL = SkipURL
 fileprivate typealias FoundationURL = SkipURL
 
 // test case handling for NSError (which is not provided by Skip)
 fileprivate typealias NSError = java.lang.Exception
+
+// NSURL does not exist in Skip, but for the purposes of the test case, we pretend it is the same a Foundation.URL
+fileprivate typealias NSURL = SkipURL
 
 // test case handling for NSString (which is not provided by Skip)
 fileprivate typealias NSString = String
 
 fileprivate func NSURL(string: String, relativeTo: SkipURL? = nil) -> SkipURL? {
     return URL(string: string, relativeTo: relativeTo)
-}
-
-//fileprivate func NSURL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDirectory: Bool? = nil) -> SkipURL {
-//    return SkipURL(fileURLWithPath: path, relativeTo: relativeTo, isDirectory: isDirectory)
-//}
-
-fileprivate func strlen(_ string: String) -> Int {
-    return string.count
-}
-
-fileprivate func strncmp(_ str1: String, _ str2: String) -> Int {
-    return str1.toLowerCase() == str2.toLowerCase() ? 0 : 1
-}
-
-fileprivate func NSLog(_ message: String) {
-    //logger.info(message)
 }
 
 fileprivate extension SkipURL {

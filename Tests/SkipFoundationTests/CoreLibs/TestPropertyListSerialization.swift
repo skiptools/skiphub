@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -32,6 +31,9 @@ class TestPropertyListSerialization : XCTestCase {
     #endif // SKIP
     
     func test_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dict = NSMutableDictionary(capacity: 0)
 //        dict["foo"] = "bar"
         var data: Data? = nil
@@ -42,9 +44,13 @@ class TestPropertyListSerialization : XCTestCase {
         }
         XCTAssertNotNil(data)
         XCTAssertEqual(data!.count, 42, "empty dictionary should be 42 bytes")
+        #endif // !SKIP
     }
     
     func test_decodeData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var decoded: Any?
         var fmt = PropertyListSerialization.PropertyListFormat.binary
         let path = testBundle().url(forResource: "Test", withExtension: "plist")
@@ -67,9 +73,13 @@ class TestPropertyListSerialization : XCTestCase {
         } else {
             XCTFail("value stored is not a string")
         }
+        #endif // !SKIP
     }
 
     func test_decodeStream() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var decoded: Any?
         var fmt = PropertyListSerialization.PropertyListFormat.binary
         let path = testBundle().url(forResource: "Test", withExtension: "plist")
@@ -93,9 +103,13 @@ class TestPropertyListSerialization : XCTestCase {
         } else {
             XCTFail("value stored is not a string")
         }
+        #endif // !SKIP
     }
 
     func test_decodeEmptyData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertThrowsError(try PropertyListSerialization.propertyList(from: Data(), format: nil)) { error in
             let nserror = error as! NSError
             XCTAssertEqual(nserror.domain, NSCocoaErrorDomain)
@@ -103,8 +117,8 @@ class TestPropertyListSerialization : XCTestCase {
             XCTAssertEqual(nserror.userInfo[NSDebugDescriptionErrorKey] as? String, "Cannot parse a NULL or zero-length data")
 	}
 
+        #endif // !SKIP
     }
 }
 
-#endif
 

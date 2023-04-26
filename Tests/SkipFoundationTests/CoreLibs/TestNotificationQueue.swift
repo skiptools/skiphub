@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -38,6 +37,9 @@ class TestNotificationQueue : XCTestCase {
     #endif // SKIP
 
     func test_defaultQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let defaultQueue1 = NotificationQueue.default
         let defaultQueue2 = NotificationQueue.default
         XCTAssertEqual(defaultQueue1, defaultQueue2)
@@ -47,9 +49,13 @@ class TestNotificationQueue : XCTestCase {
             XCTAssertEqual(defaultQueueForBackgroundThread, NotificationQueue.default)
             XCTAssertNotEqual(defaultQueueForBackgroundThread, defaultQueue1)
         }
+        #endif // !SKIP
     }
 
     func test_postNowToDefaultQueueWithoutCoalescing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationName = Notification.Name(rawValue: "test_postNowWithoutCoalescing")
         let dummyObject = NSObject()
         let notification = Notification(name: notificationName, object: dummyObject)
@@ -61,9 +67,13 @@ class TestNotificationQueue : XCTestCase {
         queue.enqueue(notification, postingStyle: .now)
         XCTAssertEqual(numberOfCalls, 1)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_postNowToDefaultQueueWithCoalescing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationName = Notification.Name(rawValue: "test_postNowToDefaultQueueWithCoalescingOnName")
         let dummyObject = NSObject()
         let notification = Notification(name: notificationName, object: dummyObject)
@@ -78,9 +88,13 @@ class TestNotificationQueue : XCTestCase {
         // Coalescing doesn't work for the NSPostingStyle.PostNow. That is why we expect 3 calls here
         XCTAssertEqual(numberOfCalls, 3)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_postNowToCustomQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationName = Notification.Name(rawValue: "test_postNowToCustomQueue")
         let dummyObject = NSObject()
         let notification = Notification(name: notificationName, object: dummyObject)
@@ -93,9 +107,13 @@ class TestNotificationQueue : XCTestCase {
         notificationQueue.enqueue(notification, postingStyle: .now)
         XCTAssertEqual(numberOfCalls, 1)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_postNowForDefaultRunLoopMode() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationName = Notification.Name(rawValue: "test_postNowToDefaultQueueWithCoalescingOnName")
         let dummyObject = NSObject()
         let notification = Notification(name: notificationName, object: dummyObject)
@@ -124,9 +142,13 @@ class TestNotificationQueue : XCTestCase {
         let _ = runLoop.run(mode: .default, before: endDate)
 //        XCTAssertEqual(numberOfCalls, 2)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_postAsapToDefaultQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationName = Notification.Name(rawValue: "test_postAsapToDefaultQueue")
         let dummyObject = NSObject()
         let notification = Notification(name: notificationName, object: dummyObject)
@@ -140,9 +162,13 @@ class TestNotificationQueue : XCTestCase {
         scheduleTimer(withInterval: 0.001) // run timer trigger the notifications
         XCTAssertEqual(numberOfCalls, 1)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_postAsapToDefaultQueueWithCoalescingOnNameAndSender() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Check coalescing on name and object
         let notificationName = Notification.Name(rawValue: "test_postAsapToDefaultQueueWithCoalescingOnNameAndSender")
         let notification = Notification(name: notificationName, object: NSObject())
@@ -158,9 +184,13 @@ class TestNotificationQueue : XCTestCase {
         scheduleTimer(withInterval: 0.001)
         XCTAssertEqual(numberOfCalls, 1)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_postAsapToDefaultQueueWithCoalescingOnNameOrSender() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Check coalescing on name or sender
         let notificationName = Notification.Name(rawValue: "test_postAsapToDefaultQueueWithCoalescingOnNameOrSender")
         let notification1 = Notification(name: notificationName, object: NSObject())
@@ -191,10 +221,14 @@ class TestNotificationQueue : XCTestCase {
 //        XCTAssertEqual(numberOfObjectCoalescingCalls, 1)
         NotificationCenter.default.removeObserver(obs1)
         NotificationCenter.default.removeObserver(obs2)
+        #endif // !SKIP
     }
 
 
     func test_postIdleToDefaultQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationName = Notification.Name(rawValue: "test_postIdleToDefaultQueue")
         let dummyObject = NSObject()
         let notification = Notification(name: notificationName, object: dummyObject)
@@ -208,9 +242,13 @@ class TestNotificationQueue : XCTestCase {
         scheduleTimer(withInterval: 0.001)
         XCTAssertEqual(numberOfCalls, 1)
         NotificationCenter.default.removeObserver(obs)
+        #endif // !SKIP
     }
 
     func test_notificationQueueLifecycle() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // check that notificationqueue is associated with current thread. when the thread is destroyed, the queue should be deallocated as well
         weak var notificationQueue: NotificationQueue?
 
@@ -221,20 +259,28 @@ class TestNotificationQueue : XCTestCase {
         }
         
         XCTAssertNil(notificationQueue)
+        #endif // !SKIP
     }
 
     // MARK: Private
 
     private func scheduleTimer(withInterval interval: TimeInterval) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let e = expectation(description: "Timer")
         let dummyTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
             e.fulfill()
         }
         RunLoop.current.add(dummyTimer, forMode: .default)
         waitForExpectations(timeout: 0.1)
+        #endif // !SKIP
     }
 
     private func executeInBackgroundThread(_ operation: @escaping () -> Void) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let e = expectation(description: "Background Execution")
         let bgThread = Thread() {
             operation()
@@ -250,8 +296,8 @@ class TestNotificationQueue : XCTestCase {
         // Callers of this function are assuming thread is
         // deallocated after call.
         Thread.sleep(forTimeInterval: 0.05)
+        #endif // !SKIP
     }
 }
 
-#endif
 

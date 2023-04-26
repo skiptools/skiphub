@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -31,6 +30,9 @@ class TestNSNull : XCTestCase {
     #endif // SKIP
     
     func test_alwaysEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let null_1 = NSNull()
         let null_2 = NSNull()
         
@@ -48,12 +50,16 @@ class TestNSNull : XCTestCase {
         
         //Make sure that NSNull() != .None
         XCTAssertNotEqual(null_1, null_4)        
+        #endif // !SKIP
     }
     
     func test_description() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSNull().description, "<null>")
+        #endif // !SKIP
     }
 }
 
-#endif
 

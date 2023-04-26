@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -37,6 +36,9 @@ struct PlayerRecordSortable: Hashable {
 class TestNSSortDescriptor: XCTestCase {
     // Conceptually, requires a < firstCopyOfB, firstCopyOfB == secondCopyOfB, firstCopyOfB !== secondCopyOfB (if reference types)
     private func assertObjectsPass<Root, Value: Comparable>(_ a: Root, _ firstCopyOfB: Root, _ secondCopyOfB: Root, keyPath: KeyPath<Root, Value>) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let sort = NSSortDescriptor(keyPath: keyPath, ascending: true)
             XCTAssertEqual(sort.compare(a, to: firstCopyOfB), .orderedAscending)
@@ -56,9 +58,13 @@ class TestNSSortDescriptor: XCTestCase {
             XCTAssertEqual(sort.compare(firstCopyOfB, to: secondCopyOfB), .orderedSame)
             XCTAssertEqual(sort.compare(secondCopyOfB, to: firstCopyOfB), .orderedSame)
         }
+        #endif // !SKIP
     }
     
     func assertObjectsPass<Root, BridgedRoot, BaseType, Value: Comparable>(_ a: Root, _ firstCopyOfB: Root, _ secondCopyOfB: Root, _ bridgedA: BridgedRoot, _ firstCopyOfBridgedB: BridgedRoot, _ secondCopyOfBridgedB: BridgedRoot, keyPath: KeyPath<BaseType, Value>) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let sort = NSSortDescriptor(keyPath: keyPath, ascending: true)
             XCTAssertEqual(sort.compare(bridgedA, to: firstCopyOfB), .orderedAscending)
@@ -90,9 +96,13 @@ class TestNSSortDescriptor: XCTestCase {
             XCTAssertEqual(sort.compare(secondCopyOfBridgedB, to: firstCopyOfB), .orderedSame)
             XCTAssertEqual(sort.compare(secondCopyOfB, to: firstCopyOfBridgedB), .orderedSame)
         }
+        #endif // !SKIP
     }
     
     private func assertObjectsPass<Root, Value>(_ a: Root, _ firstCopyOfB: Root, _ secondCopyOfB: Root, keyPath: KeyPath<Root, Value>, comparator: @escaping Comparator) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let sort = NSSortDescriptor(keyPath: keyPath, ascending: true, comparator: comparator)
             XCTAssertEqual(sort.compare(a, to: firstCopyOfB), .orderedAscending)
@@ -112,25 +122,37 @@ class TestNSSortDescriptor: XCTestCase {
             XCTAssertEqual(sort.compare(firstCopyOfB, to: secondCopyOfB), .orderedSame)
             XCTAssertEqual(sort.compare(secondCopyOfB, to: firstCopyOfB), .orderedSame)
         }
+        #endif // !SKIP
     }
     
     func testComparable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a = IntSortable(value: 42)
         let b = IntSortable(value: 108)
         let bAgain = IntSortable(value: 108)
         
         assertObjectsPass(a, b, bAgain, keyPath: \IntSortable.value)
+        #endif // !SKIP
     }
     
     func testBuiltinComparableObject() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a = NSString(string: "A")
         let b = NSString(string: "B")
         let bAgain = NSString(string: "B")
 
         //assertObjectsPass(a, b, bAgain, keyPath: \NSString.self)
+        #endif // !SKIP
     }
     
     func testBuiltinComparableBridgeable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a = NSString(string: "A")
         let b = NSString(string: "B")
         let bAgain = NSString(string: "B")
@@ -141,9 +163,13 @@ class TestNSSortDescriptor: XCTestCase {
         
         //assertObjectsPass(a, b, bAgain, aString, bString, bStringAgain, keyPath: \NSString.self)
         assertObjectsPass(a, b, bAgain, aString, bString, bStringAgain, keyPath: \String.self)
+        #endif // !SKIP
     }
     
     func testComparatorSorting() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let canonicalOrder = [ "Velma", "Daphne", "Scooby" ]
         
         let a = StringSortable(value: "Velma")
@@ -162,11 +188,15 @@ class TestNSSortDescriptor: XCTestCase {
                 return .orderedSame
             }
         }
+        #endif // !SKIP
     }
     
     private let runOnlySinglePermutation = false // Useful for debugging. Always keep set to false when committing.
     
     func permute<T>(_ array: [T]) -> [[T]] {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard !runOnlySinglePermutation else {
             return [array]
         }
@@ -187,9 +217,13 @@ class TestNSSortDescriptor: XCTestCase {
         }
 
         return result
+        #endif // !SKIP
     }
     
     func testSortingContainers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a = PlayerRecordSortable(name: "A", victories: 3, tiebreakerPoints: 0)
         let b = PlayerRecordSortable(name: "B", victories: 1, tiebreakerPoints: 10)
         let c = PlayerRecordSortable(name: "C", victories: 1, tiebreakerPoints: 10)
@@ -234,6 +268,7 @@ class TestNSSortDescriptor: XCTestCase {
             check(mutableOrderedSet.array)
             
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -250,5 +285,4 @@ class TestNSSortDescriptor: XCTestCase {
 }
 #endif
 
-#endif
 

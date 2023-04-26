@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -21,15 +20,24 @@ import XCTest
 
 class TestURLResponse : XCTestCase {
 
+    #if !SKIP
     let testURL = URL(string: "test")!
+    #endif
 
     func test_URL() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(string: "a/test/path")!
         let res = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
         XCTAssertEqual(res.url, url, "should be the expected url")
+        #endif // !SKIP
     }
 
     func test_MIMEType() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var mimetype: String? = "text/plain"
         var res = URLResponse(url: testURL, mimeType: mimetype, expectedContentLength: 0, textEncodingName: nil)
         XCTAssertEqual(res.mimeType, mimetype, "should be the passed in mimetype")
@@ -41,9 +49,13 @@ class TestURLResponse : XCTestCase {
         mimetype = nil
         res = URLResponse(url: testURL, mimeType: mimetype, expectedContentLength: 0, textEncodingName: nil)
 //        XCTAssertEqual(res.mimeType, mimetype, "should be the other mimetype")
+        #endif // !SKIP
     }
 
     func test_ExpectedContentLength() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var contentLength = 100
         var res = URLResponse(url: testURL, mimeType: "text/plain", expectedContentLength: contentLength, textEncodingName: nil)
         XCTAssertEqual(res.expectedContentLength, Int64(contentLength), "should be positive Int64 content length")
@@ -55,42 +67,67 @@ class TestURLResponse : XCTestCase {
         contentLength = -1
         res = URLResponse(url: testURL, mimeType: nil, expectedContentLength: contentLength, textEncodingName: nil)
         XCTAssertEqual(res.expectedContentLength, Int64(contentLength), "should be invalid (-1) Int64 content length")
+        #endif // !SKIP
     }
 
     func test_TextEncodingName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encoding = "utf8"
         var res = URLResponse(url: testURL, mimeType: nil, expectedContentLength: 0, textEncodingName: encoding)
         XCTAssertEqual(res.textEncodingName, encoding, "should be the utf8 encoding")
 
         res = URLResponse(url: testURL, mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
         XCTAssertNil(res.textEncodingName)
+        #endif // !SKIP
     }
 
     func test_suggestedFilename_1() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(string: "a/test/name.extension")!
         let res = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
         XCTAssertEqual(res.suggestedFilename, "name.extension")
+        #endif // !SKIP
     }
 
     func test_suggestedFilename_2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(string: "a/test/name.extension?foo=bar")!
         let res = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
         XCTAssertEqual(res.suggestedFilename, "name.extension")
+        #endif // !SKIP
     }
 
     func test_suggestedFilename_3() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(string: "a://bar")!
         let res = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
 //        XCTAssertEqual(res.suggestedFilename, "Unknown")
+        #endif // !SKIP
     }
 
     func test_copyWithZone() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(string: "a/test/path")!
         let res = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
         XCTAssertTrue(res.isEqual(res.copy() as! NSObject))
+        #endif // !SKIP
     }
 
+    @available(*, deprecated)
     func test_NSCoding() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(string: "https://apple.com")!
         let responseA = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
         let responseB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: responseA)) as! URLResponse
@@ -101,23 +138,35 @@ class TestURLResponse : XCTestCase {
         XCTAssertEqual(responseA.expectedContentLength, responseB.expectedContentLength, "Archived then unarchived url response must be equal.")
         XCTAssertEqual(responseA.textEncodingName, responseB.textEncodingName, "Archived then unarchived url response must be equal.")
         XCTAssertEqual(responseA.suggestedFilename, responseB.suggestedFilename, "Archived then unarchived url response must be equal.")
+        #endif // !SKIP
     }
 
     func test_equalWithTheSameInstance() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
 
         XCTAssertTrue(response.isEqual(response))
+        #endif // !SKIP
     }
 
     func test_equalWithUnrelatedObject() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
 
         XCTAssertFalse(response.isEqual(NSObject()))
+        #endif // !SKIP
     }
 
     func test_equalCheckingURL() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url1 = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url1, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
 
@@ -130,9 +179,13 @@ class TestURLResponse : XCTestCase {
         XCTAssertFalse(response2.isEqual(response1))
 //        XCTAssertTrue(response1.isEqual(response3))
 //        XCTAssertTrue(response3.isEqual(response1))
+        #endif // !SKIP
     }
 
     func test_equalCheckingMimeType() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url, mimeType: "mimeType1", expectedContentLength: -1, textEncodingName: nil)
 
@@ -144,9 +197,13 @@ class TestURLResponse : XCTestCase {
         XCTAssertFalse(response2.isEqual(response1))
 //        XCTAssertTrue(response1.isEqual(response3))
 //        XCTAssertTrue(response3.isEqual(response1))
+        #endif // !SKIP
     }
 
     func test_equalCheckingExpectedContentLength() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url, mimeType: nil, expectedContentLength: 100, textEncodingName: nil)
 
@@ -158,9 +215,13 @@ class TestURLResponse : XCTestCase {
         XCTAssertFalse(response2.isEqual(response1))
 //        XCTAssertTrue(response1.isEqual(response3))
 //        XCTAssertTrue(response3.isEqual(response1))
+        #endif // !SKIP
     }
 
     func test_equalCheckingTextEncodingName() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: "textEncodingName1")
 
@@ -172,9 +233,13 @@ class TestURLResponse : XCTestCase {
         XCTAssertFalse(response2.isEqual(response1))
 //        XCTAssertTrue(response1.isEqual(response3))
 //        XCTAssertTrue(response3.isEqual(response1))
+        #endif // !SKIP
     }
 
     func test_hash() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url1 = try XCTUnwrap(URL(string: "http://example.com/"))
         let response1 = URLResponse(url: url1, mimeType: "mimeType1", expectedContentLength: 100, textEncodingName: "textEncodingName1")
 
@@ -187,9 +252,11 @@ class TestURLResponse : XCTestCase {
 //        XCTAssertEqual(response1.hash, response2.hash)
         XCTAssertNotEqual(response1.hash, response3.hash)
         XCTAssertNotEqual(response2.hash, response3.hash)
+        #endif // !SKIP
     }
 
     #if !SKIP
+    @available(*, deprecated)
     static var allTests: [(String, (TestURLResponse) -> () throws -> Void)] {
         return [
             ("test_URL", test_URL),
@@ -213,5 +280,4 @@ class TestURLResponse : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

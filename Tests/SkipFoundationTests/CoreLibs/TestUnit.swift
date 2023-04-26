@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -23,6 +22,9 @@ class TestUnit: XCTestCase {
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func test_equality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s1 = "a"
         let s2 = "ab"
 
@@ -98,6 +100,7 @@ class TestUnit: XCTestCase {
         testEquality(ofDimensionSubclass: UnitSpeed.self)
         testEquality(ofDimensionSubclass: UnitTemperature.self)
         testEquality(ofDimensionSubclass: UnitVolume.self)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -110,5 +113,4 @@ class TestUnit: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -47,6 +46,9 @@ class TestObjCRuntime: XCTestCase {
     #endif // SKIP
 
     func testStringFromClass() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = testBundleName()
         XCTAssertEqual(NSStringFromClass(NSObject.self), "NSObject")
 //        XCTAssertEqual(NSStringFromClass(SwiftClass.self), "\(name).SwiftClass")
@@ -55,9 +57,13 @@ class TestObjCRuntime: XCTestCase {
 #else
 //        XCTAssertEqual(NSStringFromClass(XCTestCase.self), "XCTest.XCTestCase");
 #endif
+        #endif // !SKIP
     }
 
     func testClassFromString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = testBundleName()
         XCTAssertNotNil(NSClassFromString("NSObject"))
 //        XCTAssertNotNil(NSClassFromString("\(name).SwiftClass"))
@@ -66,17 +72,21 @@ class TestObjCRuntime: XCTestCase {
         XCTAssertNil(NSClassFromString("MadeUpClassName"))
         XCTAssertNil(NSClassFromString("SwiftStruct"));
         XCTAssertNil(NSClassFromString("SwiftEnum"));
+        #endif // !SKIP
     }
     
     #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func testClassesRenamedByAPINotes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         for entry in _NSClassesRenamedByObjCAPINotes {
             XCTAssert(try XCTUnwrap(NSClassFromString(NSStringFromClass(entry.class))) === entry.class)
             XCTAssert(NSStringFromClass(try XCTUnwrap(NSClassFromString(entry.objCName))) == entry.objCName)
         }
+        #endif // !SKIP
     }
     #endif
 }
 
-#endif
 

@@ -31,6 +31,73 @@ public func SkipFoundationPublicModuleName() -> String {
 public protocol AnyClass {
 }
 
+internal protocol Encodable {
+}
+
+internal protocol Decodable {
+}
+
+internal protocol Codable: Encodable, Decodable {
+}
+
+internal protocol Scanner {
+}
+
+internal protocol SocketPort {
+}
+
+internal protocol CharacterSet {
+}
+
+internal protocol AttributedString {
+}
+
+internal protocol NotificationCenter {
+}
+
+internal protocol PersonNameComponents {
+}
+
+internal protocol Operation {
+}
+
+internal protocol OperationQueue {
+}
+
+internal struct URLRequest {
+}
+
+internal class XMLParser {
+}
+
+internal protocol XMLParserDelegate {
+}
+
+internal class URLCache {
+    public enum StoragePolicy {
+        case allowed
+        case allowedInMemoryOnly
+        case notAllowed
+    }
+}
+
+internal protocol CachedURLResponse {
+}
+
+internal func strlen(_ string: String) -> Int {
+    return string.count
+}
+
+internal func strncmp(_ str1: String, _ str2: String) -> Int {
+    return str1.toLowerCase() == str2.toLowerCase() ? 0 : 1
+}
+
+internal func NSLog(_ message: String) {
+    //logger.info(message)
+}
+
+
+
 public protocol NSObjectProtocol {
 }
 
@@ -98,6 +165,9 @@ internal class NSDateComponents : NSArray {
 }
 
 internal class NSPredicate : NSObject {
+}
+
+internal class NSTextCheckingResult : NSObject {
 }
 
 internal class NSCalendar : NSObject {
@@ -215,12 +285,6 @@ internal protocol URLSessionTaskDelegate : URLSessionDelegate {
 }
 
 internal protocol URLSessionDataDelegate : URLSessionTaskDelegate {
-}
-
-internal protocol CharacterSet {
-}
-
-internal protocol AttributedString {
 }
 
 #endif

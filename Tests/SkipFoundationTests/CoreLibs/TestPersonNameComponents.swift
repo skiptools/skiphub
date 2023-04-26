@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -20,33 +19,39 @@ import XCTest
 //
 
 private func assertEqual(_ lhs:PersonNameComponents,
-                         _ rhs: PersonNameComponents,
-                         file: StaticString = #file,
-                         line: UInt = #line) {
-    assert(equal: true, lhs, rhs, file: file, line: line)
+                         _ rhs: PersonNameComponents) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+    assert(equal: true, lhs, rhs)
+        #endif // !SKIP
 }
 
 private func assertNotEqual(_ lhs:PersonNameComponents,
-                            _ rhs: PersonNameComponents,
-                            file: StaticString = #file,
-                            line: UInt = #line) {
-    assert(equal: false, lhs, rhs, file: file, line: line)
+                            _ rhs: PersonNameComponents) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+    assert(equal: false, lhs, rhs)
+        #endif // !SKIP
 }
 
 private func assert(equal: Bool,
                     _ lhs:PersonNameComponents,
-                    _ rhs: PersonNameComponents,
-                    file: StaticString = #file,
-                    line: UInt = #line) {
+                    _ rhs: PersonNameComponents) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
     if equal {
-        XCTAssertEqual(lhs, rhs, file: file, line: line)
-        XCTAssertEqual(lhs._bridgeToObjectiveC(), rhs._bridgeToObjectiveC(), file: file, line: line)
-        XCTAssertTrue(lhs._bridgeToObjectiveC().isEqual(rhs), file: file, line: line)
+        XCTAssertEqual(lhs, rhs)
+        XCTAssertEqual(lhs._bridgeToObjectiveC(), rhs._bridgeToObjectiveC())
+        XCTAssertTrue(lhs._bridgeToObjectiveC().isEqual(rhs))
     } else {
-        XCTAssertNotEqual(lhs, rhs, file: file, line: line)
-        XCTAssertNotEqual(lhs._bridgeToObjectiveC(), rhs._bridgeToObjectiveC(), file: file, line: line)
-        XCTAssertFalse(lhs._bridgeToObjectiveC().isEqual(rhs), file: file, line: line)
+        XCTAssertNotEqual(lhs, rhs)
+        XCTAssertNotEqual(lhs._bridgeToObjectiveC(), rhs._bridgeToObjectiveC())
+        XCTAssertFalse(lhs._bridgeToObjectiveC().isEqual(rhs))
     }
+        #endif // !SKIP
 }
 
 class TestPersonNameComponents : XCTestCase {
@@ -61,6 +66,9 @@ class TestPersonNameComponents : XCTestCase {
     #endif // SKIP
     
     func testCopy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let original = NSPersonNameComponents()
         original.givenName = "Maria"
         original.phoneticRepresentation = PersonNameComponents()
@@ -71,9 +79,13 @@ class TestPersonNameComponents : XCTestCase {
         XCTAssertNotEqual(original.givenName, copy.givenName)
         XCTAssertEqual(original.phoneticRepresentation!.givenName,copy.phoneticRepresentation!.givenName)
         XCTAssertNil(copy.phoneticRepresentation!.phoneticRepresentation)
+        #endif // !SKIP
     }
 
     func testEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         do {
             let lhs = PersonNameComponents()
             let rhs = PersonNameComponents()
@@ -120,11 +132,15 @@ class TestPersonNameComponents : XCTestCase {
             rhs.phoneticRepresentation?.namePrefix = "differentValue"
             assertNotEqual(lhs, rhs)
         }
+        #endif // !SKIP
     }
 
     // MARK: - Helpers
 
     private func makePersonNameComponentsWithTestValues() -> PersonNameComponents {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var components = PersonNameComponents()
         components.namePrefix = "namePrefix"
         components.givenName = "givenName"
@@ -143,10 +159,10 @@ class TestPersonNameComponents : XCTestCase {
             return components
         }()
         return components
+        #endif // !SKIP
     }
 }
 
         
 
-#endif
 

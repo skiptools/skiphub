@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -45,6 +44,9 @@ class TestProgress : XCTestCase {
     #endif // SKIP
     
     func test_totalCompletedChangeAffectsFractionCompleted() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 100
         
@@ -77,9 +79,13 @@ class TestProgress : XCTestCase {
         child1.totalUnitCount = 100
         XCTAssertEqual(50.0 / 100.0, child1.fractionCompleted, accuracy: 0.01)
         XCTAssertEqual((50.0 / 100.0) * (10.0 / 200), parent.fractionCompleted, accuracy: 0.01)
+        #endif // !SKIP
     }
     
     func test_multipleChildren() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Verify that when multiple children are added to one group, they do the right thing
         // n.b. prior to 10.11 / 9.0, this split up the pending unit among all of the children. After that, we give all of the pending unit count to the first child. This is because if you split up the pending unit count, the progress will almost certainly go backwards. API was added to give more explicit control over adding multiple children.
         let progress = Progress(parent: nil)
@@ -103,9 +109,13 @@ class TestProgress : XCTestCase {
         // Update child #1
         child1.completedUnitCount = 5
         XCTAssertEqual(progress.fractionCompleted, 1.0, accuracy: 0.01)
+        #endif // !SKIP
     }
     
     func test_indeterminateChildrenAffectFractionCompleted() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 1000
         
@@ -132,9 +142,13 @@ class TestProgress : XCTestCase {
         XCTAssertEqual(parent.fractionCompleted, 0.0, accuracy: 0.01)
         
         parent.resignCurrent()
+        #endif // !SKIP
     }
 
     func test_indeterminateChildrenAffectFractionCompleted2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 100
         
@@ -161,9 +175,13 @@ class TestProgress : XCTestCase {
         // Move it back to determinate
         child1.completedUnitCount = 1
         XCTAssertEqual(parent.fractionCompleted, 0.5, accuracy: 0.01)
+        #endif // !SKIP
     }
 
     func test_childCompletionFinishesGroups() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let root = Progress(totalUnitCount: 2)
         let child1 = Progress(totalUnitCount: 1)
         let child2 = Progress(totalUnitCount: 1)
@@ -177,9 +195,13 @@ class TestProgress : XCTestCase {
         child2.completedUnitCount = 1
         XCTAssertEqual(root.fractionCompleted, 1.0, accuracy: 0.01)
         XCTAssertEqual(root.completedUnitCount, 2)
+        #endif // !SKIP
     }
     
     func test_childrenAffectFractionCompleted_explicit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 100
         
@@ -206,9 +228,13 @@ class TestProgress : XCTestCase {
         child2.completedUnitCount = 50
         
         XCTAssertEqual(0.10 + 0.9 / 2.0, parent.fractionCompleted)
+        #endif // !SKIP
     }
     
     func test_childrenAffectFractionCompleted_explicit_partial() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 2
         
@@ -229,9 +255,13 @@ class TestProgress : XCTestCase {
         
         // half of 50% is done + half of 50% is done == 50% of overall work is done
         XCTAssertEqual(0.50, parent.fractionCompleted)
+        #endif // !SKIP
     }
     
     func test_childrenAffectFractionCompleted_explicit_child_already_complete() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Adding children who are already partially completed should cause the parent fraction completed to be updated
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 2
@@ -245,9 +275,13 @@ class TestProgress : XCTestCase {
         
         // all of 50% is done
         XCTAssertEqual(0.5, parent.fractionCompleted)
+        #endif // !SKIP
     }
     
     func test_grandchildrenAffectFractionCompleted_explicit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // The parent's progress is entirely represented by the 1 grandchild
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 100
@@ -266,9 +300,13 @@ class TestProgress : XCTestCase {
         grandchild.completedUnitCount = 50
         
         XCTAssertEqual(0.50, parent.fractionCompleted)
+        #endif // !SKIP
     }
     
     func test_grandchildrenAffectFractionCompleted() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // The parent's progress is entirely represented by the 1 grandchild
         let parent = Progress(parent: nil)
         parent.totalUnitCount = 100
@@ -288,9 +326,13 @@ class TestProgress : XCTestCase {
         
         grandchild.completedUnitCount = 50
         XCTAssertEqual(0.50, parent.fractionCompleted)
+        #endif // !SKIP
     }
 
     func test_mixedExplicitAndImplicitChildren() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         
         parent.totalUnitCount = 3
@@ -337,9 +379,13 @@ class TestProgress : XCTestCase {
         XCTAssertTrue(parent.isFinished)
         XCTAssertEqual(parent.completedUnitCount, parent.totalUnitCount)
 
+        #endif // !SKIP
     }
     
     func test_notReturningNaN() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p = Progress(parent: nil)
         
         let tests = [(-1, -1, true, 0.0),
@@ -358,9 +404,13 @@ class TestProgress : XCTestCase {
             XCTAssertEqual(t.2, p.isIndeterminate, "failed with \(t)")
             XCTAssertEqual(t.3, p.fractionCompleted,  "failed with \(t)")
         }
+        #endif // !SKIP
     }
     
     func test_handlers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         let parentSema = DispatchSemaphore(value: 0)
         
@@ -387,9 +437,13 @@ class TestProgress : XCTestCase {
         parent.resume()
         XCTAssertEqual(.success, parentSema.wait(timeout: .now() + .seconds(3)))
         XCTAssertEqual(.success, childSema.wait(timeout: .now() + .seconds(3)))
+        #endif // !SKIP
     }
     
     func test_alreadyCancelled() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let parent = Progress(parent: nil)
         let parentSema = DispatchSemaphore(value: 0)
         let child = Progress(parent: nil)
@@ -403,9 +457,13 @@ class TestProgress : XCTestCase {
         
         XCTAssertEqual(.success, parentSema.wait(timeout: .now() + .seconds(3)))
         XCTAssertEqual(.success, childSema.wait(timeout: .now() + .seconds(3)))
+        #endif // !SKIP
     }
     
     func test_userInfo() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p = Progress(parent: nil, userInfo: [.estimatedTimeRemainingKey : 1000])
         XCTAssertEqual(p.userInfo[.estimatedTimeRemainingKey] as? Int, 1000)
         
@@ -414,8 +472,8 @@ class TestProgress : XCTestCase {
 
         p.setUserInfoObject(nil, forKey: .fileTotalCountKey)
         XCTAssertEqual(p.userInfo[.fileTotalCountKey] as? Int, nil)
+        #endif // !SKIP
     }
 }
 
-#endif
 

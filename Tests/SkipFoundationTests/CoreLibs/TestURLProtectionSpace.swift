@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -49,6 +48,9 @@ class TestURLProtectionSpace : XCTestCase {
     #endif // SKIP
 
     func test_description() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var space = URLProtectionSpace(
             host: "apple.com",
             port: 80,
@@ -68,10 +70,14 @@ class TestURLProtectionSpace : XCTestCase {
         )
         XCTAssert(space.description.hasPrefix("<\(type(of: space))"))
         XCTAssert(space.description.hasSuffix(": Host:apple.com, Server:http, Auth-Scheme:NSURLAuthenticationMethodHTMLForm, Realm:(null), Port:80, Proxy:NO, Proxy-Type:(null)"))
+        #endif // !SKIP
     }
 
     #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func test_createWithHTTPURLresponse() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Real responce from outlook.office365.com
         let headerFields1 = [
             "Server": "Microsoft-IIS/10.0",
@@ -146,9 +152,13 @@ class TestURLProtectionSpace : XCTestCase {
                                                       headerFields: ["www-authenticate" : "NT LM realm="]))
         XCTAssertNil(URLProtectionSpace.create(with: response6), "Should not create protection space from invalid header")
 
+        #endif // !SKIP
     }
 
     func test_challenge() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(_HTTPURLProtocol._HTTPMessage._Challenge.challenges(from: "").count, 0, "No challenges should be parsed from empty string")
         
         // This is valid challenges list as per RFC-7235, but it doesn't contain any known auth scheme
@@ -232,9 +242,9 @@ class TestURLProtectionSpace : XCTestCase {
         let param8_2_2 = try XCTUnwrap(challenge8_2.parameter(withName: "param"))
         XCTAssertEqual(param8_2_2.name, "param")
         XCTAssertEqual(param8_2_2.value, "")
+        #endif // !SKIP
     }
     #endif
 }
 
-#endif
 

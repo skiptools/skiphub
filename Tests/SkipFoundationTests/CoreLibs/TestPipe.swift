@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -40,6 +39,9 @@ class TestPipe: XCTestCase {
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func test_MaxPipes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Try and create enough pipes to exhaust the process's limits. 1024 is a reasonable
         // hard limit for the test. This is reached when testing on Linux (at around 488 pipes)
         // but not on macOS.
@@ -60,10 +62,14 @@ class TestPipe: XCTestCase {
             pipes.append(pipe)
         }
         pipes = []
+        #endif // !SKIP
     }
 #endif
 
     func test_Pipe() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let aPipe = Pipe()
         let text = "test-pipe"
         
@@ -86,8 +92,8 @@ class TestPipe: XCTestCase {
         
         // Confirm the data written in is the same as the data we read
         XCTAssertEqual(text, convertedData)
+        #endif // !SKIP
     }
 }
 
-#endif
 

@@ -9,7 +9,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -39,20 +38,31 @@ class TestNotificationCenter : XCTestCase {
     #endif // SKIP
     
     func test_defaultCenter() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let defaultCenter1 = NotificationCenter.default
         let defaultCenter2 = NotificationCenter.default
         XCTAssertEqual(defaultCenter1, defaultCenter2)
+        #endif // !SKIP
     }
     
     func removeObserver(_ observer: NSObjectProtocol, notificationCenter: NotificationCenter) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         guard let observer = observer as? NSObject else {
             return
         }
         
         notificationCenter.removeObserver(observer)
+        #endif // !SKIP
     }
     
     func test_postNotification() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationCenter = NotificationCenter()
         let notificationName = Notification.Name(rawValue: "test_postNotification_name")
         var flag = false
@@ -68,9 +78,13 @@ class TestNotificationCenter : XCTestCase {
         XCTAssertTrue(flag)
         
         removeObserver(observer, notificationCenter: notificationCenter)
+        #endif // !SKIP
     }
 
     func test_postNotificationForObject() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationCenter = NotificationCenter()
         let notificationName = Notification.Name(rawValue: "test_postNotificationForObject_name")
         var flag = true
@@ -84,9 +98,13 @@ class TestNotificationCenter : XCTestCase {
         XCTAssertTrue(flag)
         
         removeObserver(observer, notificationCenter: notificationCenter)
+        #endif // !SKIP
     }
     
     func test_postMultipleNotifications() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationCenter = NotificationCenter()
         let notificationName = Notification.Name(rawValue: "test_postMultipleNotifications_name")
         var flag1 = false
@@ -113,9 +131,13 @@ class TestNotificationCenter : XCTestCase {
         
         removeObserver(observer1, notificationCenter: notificationCenter)
         removeObserver(observer3, notificationCenter: notificationCenter)
+        #endif // !SKIP
     }
 
     func test_addObserverForNilName() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationCenter = NotificationCenter()
         let notificationName = Notification.Name(rawValue: "test_addObserverForNilName_name")
         let invalidNotificationName = Notification.Name(rawValue: "test_addObserverForNilName_name_invalid")
@@ -142,9 +164,13 @@ class TestNotificationCenter : XCTestCase {
         removeObserver(observer1, notificationCenter: notificationCenter)
         removeObserver(observer2, notificationCenter: notificationCenter)
         removeObserver(observer3, notificationCenter: notificationCenter)
+        #endif // !SKIP
     }
 
     func test_removeObserver() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationCenter = NotificationCenter()
         let notificationName = Notification.Name(rawValue: "test_removeObserver_name")
         var flag = true
@@ -156,9 +182,13 @@ class TestNotificationCenter : XCTestCase {
 
         notificationCenter.post(name: notificationName, object: nil)
         XCTAssertTrue(flag)
+        #endif // !SKIP
     }
     
     func test_observeOnPostingQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let notificationCenter = NotificationCenter()
         let name = Notification.Name(rawValue: "\(#function)_name")
         let postingQueue = OperationQueue()
@@ -174,9 +204,13 @@ class TestNotificationCenter : XCTestCase {
         }
         
         self.waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
     
     func test_observeOnSpecificQueuePostFromMainQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = Notification.Name(rawValue: "\(#function)_name")
         let notificationCenter = NotificationCenter()
         let operationQueue = OperationQueue()
@@ -197,9 +231,13 @@ class TestNotificationCenter : XCTestCase {
         // All observers should be notified synchronously regardless of the observer queue.
         XCTAssertTrue(flag1)
         XCTAssertTrue(flag2)
+        #endif // !SKIP
     }
     
     func test_observeOnSpecificQueuePostFromObservedQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = Notification.Name(rawValue: "\(#function)_name")
         let notificationCenter = NotificationCenter()
         let observingQueue = OperationQueue()
@@ -226,9 +264,13 @@ class TestNotificationCenter : XCTestCase {
         }
         
         self.waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
     
     func test_observeOnSpecificQueuePostFromUnrelatedQueue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = Notification.Name(rawValue: "\(#function)_name")
         let notificationCenter = NotificationCenter()
         let operationQueue = OperationQueue()
@@ -256,8 +298,8 @@ class TestNotificationCenter : XCTestCase {
         }
         
         self.waitForExpectations(timeout: 1)
+        #endif // !SKIP
     }
 }
 
-#endif
 

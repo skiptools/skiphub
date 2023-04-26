@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,11 +21,18 @@ import XCTest
 class TestURLCredentialStorage : XCTestCase {
 
     func test_storageStartsEmpty() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 //        XCTAssertEqual(storage.allCredentials.count, 0)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialGetsReturnedForTheRightProtectionSpace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -45,9 +51,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(recovered, credential)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialDoesNotGetReturnedForTheWrongProtectionSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -58,9 +68,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertNil(storage.credentials(for: wrongSpace))
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialBecomesDefaultForProtectionSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -70,9 +84,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(storage.defaultCredential(for: space), credential)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialGetsReturnedAsDefaultIfSetAsDefaultForSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -82,9 +100,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(storage.defaultCredential(for: space), credential)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialGetsReturnedIfSetAsDefaultForSpace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -103,9 +125,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(recovered, credential)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialDoesNotGetReturnedIfSetAsDefaultForOtherSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -116,9 +142,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertNil(storage.defaultCredential(for: wrongSpace))
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialDoesNotGetReturnedWhenNotAddedAsDefault() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential1 = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -131,9 +161,13 @@ class TestURLCredentialStorage : XCTestCase {
 
         storage.remove(credential2, for: space)
         storage.remove(credential1, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionCredentialCanBeRemovedFromSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -146,9 +180,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertNil(storage.credentials(for: space))
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_sessionDefaultCredentialCanBeRemovedFromSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential1 = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -162,6 +200,7 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(storage.credentials(for: space)?.count, 1)
 
         storage.remove(credential2, for: space)
+        #endif // !SKIP
     }
 
     #if NS_FOUNDATION_NETWORKING_URLCREDENTIALSTORAGE_SYNCHRONIZABLE_ALLOWED
@@ -171,6 +210,9 @@ class TestURLCredentialStorage : XCTestCase {
      If we ever implement synchronizable credentials, uncomment this.
      */
     func test_synchronizableCredentialCanBeRemovedWithRightOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .synchronizable)
@@ -180,9 +222,13 @@ class TestURLCredentialStorage : XCTestCase {
         expectChanges(storage.allCredentials.count, by: -1) {
             storage.remove(credential, for: space, options: [NSURLCredentialStorageRemoveSynchronizableCredentials: NSNumber(value: true)])
         }
+        #endif // !SKIP
     }
     
     func test_synchronizableCredentialWillNotBeRemovedWithoutRightOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .synchronizable)
@@ -207,10 +253,14 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(storage.allCredentials.count, 1)
 
         storage.remove(credential, for: space, options: [NSURLCredentialStorageRemoveSynchronizableCredentials: NSNumber(value: true)])
+        #endif // !SKIP
     }
     #endif
     
     func test_storageCanRemoveArbitraryCredentialWithoutFailing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential1 = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -221,9 +271,13 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertNoThrow(storage.remove(credential1, for: space))
 
         storage.remove(credential2, for: space)
+        #endif // !SKIP
     }
 
     func test_storageWillNotSaveCredentialsWithoutPersistence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .none)
@@ -234,6 +288,7 @@ class TestURLCredentialStorage : XCTestCase {
         }
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     // TODO: test that credentials without name/password are not saved. There's
@@ -285,6 +340,9 @@ class TestURLCredentialStorage : XCTestCase {
     }
 
     func test_storageWillNotSendNotificationWhenAddingExistingCredential() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential1 = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -305,6 +363,7 @@ class TestURLCredentialStorage : XCTestCase {
         NotificationCenter.default.removeObserver(observer)
         storage.remove(credential1, for: space)
         storage.remove(credential2, for: space)
+        #endif // !SKIP
     }
 
     func test_storageWillSendNotificationWhenAddingNewDefaultCredential() {
@@ -326,6 +385,9 @@ class TestURLCredentialStorage : XCTestCase {
     }
 
     func test_storageWillNotSendNotificationWhenAddingExistingDefaultCredential() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential1 = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -346,6 +408,7 @@ class TestURLCredentialStorage : XCTestCase {
         NotificationCenter.default.removeObserver(observer)
         storage.remove(credential1, for: space)
         storage.remove(credential2, for: space)
+        #endif // !SKIP
     }
 
     func test_storageWillSendNotificationWhenAddingDifferentDefaultCredential() {
@@ -391,6 +454,9 @@ class TestURLCredentialStorage : XCTestCase {
     }
 
     func test_storageWillNotSendNotificationWhenRemovingExistingCredentialInOtherSpace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -410,6 +476,7 @@ class TestURLCredentialStorage : XCTestCase {
 
         NotificationCenter.default.removeObserver(observer)
         storage.remove(credential, for: space1)
+        #endif // !SKIP
     }
 
     func test_storageWillSendNotificationWhenRemovingDefaultNotification() {
@@ -434,6 +501,9 @@ class TestURLCredentialStorage : XCTestCase {
     }
 
     func test_taskBasedGetCredentialsReturnsCredentialsForSpace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -454,9 +524,13 @@ class TestURLCredentialStorage : XCTestCase {
         waitForExpectations(timeout: 0)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_taskBasedSetCredentialStoresGivenCredentials() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -482,9 +556,13 @@ class TestURLCredentialStorage : XCTestCase {
 
         waitForExpectations(timeout: 10)
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_taskBasedRemoveCredentialDeletesCredentialsFromSpace() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -498,9 +576,13 @@ class TestURLCredentialStorage : XCTestCase {
         expectChanges(storage.allCredentials.count, by: -1) {
             storage.remove(credential, for: space, options: [:], task: task)
         }
+        #endif // !SKIP
     }
 
     func test_taskBasedGetDefaultCredentialReturnsTheDefaultCredential() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -520,9 +602,13 @@ class TestURLCredentialStorage : XCTestCase {
         waitForExpectations(timeout: 0)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
 
     func test_taskBasedSetDefaultCredentialStoresTheDefaultCredential() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let storage = URLCredentialStorage.shared
 
         let credential = URLCredential(user: "user1", password: "password1", persistence: .forSession)
@@ -538,6 +624,7 @@ class TestURLCredentialStorage : XCTestCase {
         XCTAssertEqual(storage.defaultCredential(for: space), credential)
 
         storage.remove(credential, for: space)
+        #endif // !SKIP
     }
     
     
@@ -585,5 +672,4 @@ class TestURLCredentialStorage : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

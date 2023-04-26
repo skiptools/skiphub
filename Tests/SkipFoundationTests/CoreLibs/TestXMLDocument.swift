@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 #if !os(iOS)
 class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
     func test_basicCreation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = XMLDocument(rootElement: nil)
 //        XCTAssert(doc.version == "1.0", "expected 1.0, got \(String(describing: doc.version))")
         doc.version = "1.1"
@@ -32,9 +34,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
 
         let element = doc.rootElement()!
         XCTAssert(element === node)
+        #endif // !SKIP
     }
     
     func test_createElement() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = try XMLElement(xmlString: "<D:propfind xmlns:D=\"DAV:\"><D:prop></D:prop></D:propfind>")
         XCTAssert(element.name! == "D:propfind")
         XCTAssert(element.rootDocument == nil)
@@ -52,9 +58,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         } else {
             XCTFail("Child element was not parsed correctly!")
         }
+        #endif // !SKIP
     }
 
     func test_nextPreviousNode() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = XMLDocument(rootElement: nil)
         let node = XMLElement(name: "Hello", uri: "http://www.example.com")
 
@@ -76,9 +86,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         XCTAssert(barNode.previous?.previous === fooNode)
         XCTAssert(barNode.previous?.previous?.previous === node)
         XCTAssert(barNode.previous?.previous?.previous?.previous === doc)
+        #endif // !SKIP
     }
 
     func test_xpath() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = XMLDocument(rootElement: nil)
         let foo = XMLElement(name: "foo")
         let bar1 = XMLElement(name: "bar")
@@ -128,15 +142,23 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         } else {
             XCTAssert(false, "propNode should have existed, but was nil")            
         }
+        #endif // !SKIP
     }
 
     func test_elementCreation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "test", stringValue: "This is my value")
         XCTAssertEqual(element.xmlString, "<test>This is my value</test>")
         XCTAssertEqual(element.children?.count, 1)
+        #endif // !SKIP
     }
 
     func test_elementChildren() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "root")
         let foo = XMLElement(name: "foo")
         let bar = XMLElement(name: "bar")
@@ -173,9 +195,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
 
         element.setChildren([foo, bar, baz, bar2, faz])
         XCTAssert(element.children?.count == 5)
+        #endif // !SKIP
     }
 
     func test_stringValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "root")
         let foo = XMLElement(name: "foo")
         let text = XMLNode.text(withStringValue:"<text>") as! XMLNode
@@ -212,10 +238,14 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         //        doc.rootElement()?.addChild(author)
         //        author.setStringValue("&author;", resolvingEntities: true)
         //        XCTAssertEqual(author.stringValue, "Robert Thompson", author.stringValue ?? "")
+        #endif // !SKIP
     }
 
 
     func test_objectValue() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "root")
         let dict: [String: String] = ["hello": "world"]
         element.objectValue = dict
@@ -223,9 +253,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         /// - Todo: verify this behavior
         // id to Any conversion changed descriptions so this now is "<root>[\"hello\": \"world\"]</root>"
         // XCTAssertEqual(element.xmlString, "<root>{\n    hello = world;\n}</root>", element.xmlString)
+        #endif // !SKIP
     }
 
     func test_attributes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "root")
         let attribute = XMLNode.attribute(withName: "color", stringValue: "#ff00ff") as! XMLNode
         element.addAttribute(attribute)
@@ -262,9 +296,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         element.setAttributesWith(["hello": "world", "foobar": "buzbaz"])
         XCTAssertEqual(element.attribute(forName:"hello")?.stringValue, "world", "\(element.attribute(forName:"hello")?.stringValue as Optional)")
         XCTAssertEqual(element.attribute(forName:"foobar")?.stringValue, "buzbaz", "\(element.attributes ?? [])")
+        #endif // !SKIP
     }
     
     func test_attributesWithNamespace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let uriNs1 = "http://example.com/ns1"
         let uriNs2 = "http://example.com/ns2"
         
@@ -311,25 +349,37 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
             element.removeAttribute(forName: "ns1:name")
             XCTAssertNil(element.attribute(forLocalName: "name", uri: uriNs1), "ns1:name removed")
         }
+        #endif // !SKIP
     }
 
     func test_comments() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "root")
         let comment = XMLNode.comment(withStringValue:"Here is a comment") as! XMLNode
         element.addChild(comment)
         XCTAssertEqual(element.xmlString, "<root><!--Here is a comment--></root>")
+        #endif // !SKIP
     }
 
     func test_processingInstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let document = XMLDocument(rootElement: XMLElement(name: "root"))
         let pi = XMLNode.processingInstruction(withName:"xml-stylesheet", stringValue: "type=\"text/css\" href=\"style.css\"") as! XMLNode
 
         document.addChild(pi)
 
         XCTAssertEqual(pi.xmlString, "<?xml-stylesheet type=\"text/css\" href=\"style.css\"?>")
+        #endif // !SKIP
     }
 
     func test_parseXMLString() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let string = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE test.dtd [\n        <!ENTITY author \"Robert Thompson\">\n        ]><root><author>&author;</author></root>"
 
         let doc = try XMLDocument(xmlString: string, options: [.nodeLoadExternalEntitiesNever])
@@ -351,15 +401,23 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
 //        doc.insertChild(XMLElement(name: "body"), at: 1)
 //        XCTAssertEqual(doc.children?[1].name, "body")
 //        XCTAssertEqual(doc.children?[2].name, "root", (doc.children?[2].name)!)
+        #endif // !SKIP
     }
 
     func test_prefixes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "xml:root")
         XCTAssertEqual(element.prefix, "xml")
         XCTAssertEqual(element.localName, "root")
+        #endif // !SKIP
     }
     
     func test_addNamespace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let element = XMLElement(name: "foo")
         let xmlnsURI = "http://example.com/fakexmlns"
         let xmlns = XMLNode.namespace(withName: "", stringValue: xmlnsURI) as! XMLNode
@@ -390,9 +448,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         XCTAssert(names![0] == "R" && names![1] == "F")
         otherDoc.rootElement()?.namespaces = nil
         XCTAssert((otherDoc.rootElement()?.namespaces?.count ?? 0) == 0)
+        #endif // !SKIP
     }
     
     func test_removeNamespace() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = XMLDocument(rootElement: XMLElement(name: "Foo"))
         let ns = XMLNode.namespace(withName: "F", stringValue: "http://example.com/fakenamespace") as! XMLNode
         let otherNS = XMLNode.namespace(withName: "R", stringValue: "http://example.com/rnamespace") as! XMLNode
@@ -405,9 +467,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         
         XCTAssert(doc.rootElement()?.namespaces?.count == 1)
         XCTAssert(doc.rootElement()?.namespaces?.first?.name == "R")
+        #endif // !SKIP
     }
 
     func test_validation_success() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let validString = "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE foo [ <!ELEMENT foo (#PCDATA)> ]><foo>Hello world</foo>"
         do {
             let doc = try XMLDocument(xmlString: validString, options: [])
@@ -427,9 +493,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
 //        } catch let nsError as NSError {
 //            XCTFail("\(nsError.userInfo)")
 //        }
+        #endif // !SKIP
     }
 
     func test_validation_failure() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xmlString = "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE foo [ <!ELEMENT img EMPTY> ]><foo><img>not empty</img></foo>"
         do {
             let doc = try XMLDocument(xmlString: xmlString, options: [])
@@ -450,9 +520,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
 //        } catch let error as NSError {
 //            XCTAssert((error.userInfo[NSLocalizedDescriptionKey] as! String).contains("Element true was declared EMPTY this one has content"))
 //        }
+        #endif // !SKIP
     }
 
     func test_dtd() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let node = XMLNode.dtdNode(withXMLString:"<!ELEMENT foo (#PCDATA)>") as! XMLDTDNode
         XCTAssert(node.name == "foo")
         
@@ -489,9 +563,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         elementDecl.stringValue = "(#PCDATA | array)*"
         XCTAssert(elementDecl.stringValue == "(#PCDATA | array)*", elementDecl.stringValue ?? "nil string value")
         XCTAssert(elementDecl.name == "MyElement")
+        #endif // !SKIP
     }
 
     func test_documentWithDTD() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = try XMLDocument(contentsOf: testBundle().url(forResource: "NSXMLDTDTestData", withExtension: "xml")!, options: [])
         let dtd = doc.dtd
         XCTAssert(dtd?.name == "root")
@@ -517,16 +595,24 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         } catch {
             XCTFail("\(error)")
         }
+        #endif // !SKIP
     }
     
     func test_dtd_attributes() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = try XMLDocument(contentsOf: testBundle().url(forResource: "NSXMLDTDTestData", withExtension: "xml")!, options: [])
         let dtd = doc.dtd!
         let attrDecl = dtd.attributeDeclaration(forName: "print", elementName: "foo")!
         XCTAssert(attrDecl.dtdKind == .enumerationAttribute)
+        #endif // !SKIP
     }
 
     func test_documentWithEncodingSetDoesntCrash() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         weak var weakDoc: XMLDocument? = nil
         func makeSureDocumentIsAllocatedAndFreed() {
                 let doc = XMLDocument(rootElement: XMLElement(name: "test"))
@@ -535,9 +621,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         }
         makeSureDocumentIsAllocatedAndFreed()
         XCTAssertNil(weakDoc, "document not freed even through it should have")
+        #endif // !SKIP
     }
     
     func test_nodeFindingWithNamespaces() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xmlString = """
         <?xml version="1.0" encoding="utf-8" standalone="yes"?>
             <D:propfind xmlns:D="DAV:">
@@ -573,9 +663,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         XCTAssert(node?.localName == "prop")
         
         XCTAssert(doc.rootElement()?.elements(forLocalName: "prop", uri: "DAV:").first?.name == "D:prop", "failed to get elements, got \(doc.rootElement()?.elements(forLocalName: "prop", uri: "DAV:").first as Any)")
+        #endif // !SKIP
     }
 
     func test_optionPreserveAll() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xmlString = """
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
@@ -589,9 +683,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         }
         let expected = xmlString.lowercased() + "\n"
 //        XCTAssertEqual(expected, String(describing: document))
+        #endif // !SKIP
     }
 
     func test_rootElementRetainsDocument() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let str = """
 <?xml version="1.0" encoding="UTF-8"?>
 <plans></plans>
@@ -605,9 +703,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         }
 
         XCTAssertEqual(try? test(), "plans")
+        #endif // !SKIP
     }
 
     func test_nodeKinds() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(XMLDocument(rootElement: nil).kind, .document)
         XCTAssertEqual(XMLElement(name: "prefix:localName").kind, .element)
         XCTAssertEqual((XMLNode.attribute(withName: "name", stringValue: "value") as? XMLNode)?.kind, .attribute)
@@ -620,9 +722,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         XCTAssertEqual(XMLDTDNode(xmlString: "<!ATTLIST A B CDATA #IMPLIED>")?.kind, .attributeDeclaration)
         XCTAssertEqual(XMLDTDNode(xmlString: "<!ELEMENT E EMPTY>")?.kind, .elementDeclaration)
         XCTAssertEqual(XMLDTDNode(xmlString: #"<!NOTATION f SYSTEM "F">"#)?.kind, .notationDeclaration)
+        #endif // !SKIP
     }
 
     func test_nodeNames() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let doc = XMLDocument(rootElement: nil)
         XCTAssertNil(doc.name)
         doc.name = "name"
@@ -682,14 +788,22 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         XCTAssertEqual(notationDecl.name, "f")
         notationDecl.name = "otherNotation"
         XCTAssertEqual(notationDecl.name, "otherNotation")
+        #endif // !SKIP
     }
     
     func test_creatingAnEmptyDocumentAndNode() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        _ = XMLDocument()
 //        _ = XMLNode()
+        #endif // !SKIP
     }
     
     func test_creatingAnEmptyDTD() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dtd = XMLDTD()
 //        XCTAssertEqual(dtd.publicID, "")
 //        XCTAssertEqual(dtd.systemID, "")
@@ -698,9 +812,13 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         let plistDTDUrl = "https://www.apple.com/DTDs/PropertyList-1.0.dtd"
         dtd.systemID = plistDTDUrl
         XCTAssertEqual(dtd.systemID, plistDTDUrl)
+        #endif // !SKIP
     }
     
     func test_parsingCDataSections() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let xmlString = """
            <?xml version="1.0" encoding="utf-8" standalone="yes"?>
            <content>some text <![CDATA[Some verbatim content! <br> Yep, it's HTML, what are you going to do]]> some more text</content>
@@ -734,6 +852,7 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
 //            XCTAssertEqual(children[1].stringValue, "Some verbatim content! <br> Yep, it's HTML, what are you going to do")
 //            XCTAssertEqual(children[2].stringValue, " some more text")
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -801,5 +920,4 @@ fileprivate extension XMLNode {
 #endif
 
 
-#endif
 

@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -20,6 +19,9 @@ import XCTest
 //
 
 func ensureFiles(_ fileNames: [String]) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
     var result = true
     let fm = FileManager.default
     for name in fileNames {
@@ -53,7 +55,7 @@ func ensureFiles(_ fileNames: [String]) -> Bool {
         }
     }
     return result
+        #endif // !SKIP
 }
 
-#endif
 

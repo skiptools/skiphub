@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 class TestUnitInformationStorage: XCTestCase {
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     func testUnitInformationStorage() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bits = Measurement(value: 8, unit: UnitInformationStorage.bits)
         XCTAssertEqual(
             bits.converted(to: .bytes).value,
@@ -45,13 +47,15 @@ class TestUnitInformationStorage: XCTestCase {
             accuracy: 1.0e-12,
             "Conversion from bits to gibibits"
         )
+        #endif // !SKIP
     }
 
+    #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     static let allTests = [
         ("testUnitInformationStorage", testUnitInformationStorage),
     ]
+    #endif
 }
 
-#endif
 

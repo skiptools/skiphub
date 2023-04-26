@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -37,6 +36,9 @@ import WinSDK
 class TestSocketPort : XCTestCase {
 
     func tcpOrUdpPort(of socketPort: SocketPort) -> Int? {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = socketPort.address
         
         #if canImport(Darwin) || os(FreeBSD) || os(OpenBSD)
@@ -66,24 +68,36 @@ class TestSocketPort : XCTestCase {
         } else {
             return nil
         }
+        #endif // !SKIP
     }
     
     func testRemoteSocketPortsAreUniqued() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a = SocketPort(remoteWithTCPPort: 10000, host: "localhost")
         let b = SocketPort(remoteWithTCPPort: 10000, host: "localhost")
         XCTAssertEqual(a, b)
+        #endif // !SKIP
     }
     
     func testInitPicksATCPPort() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let local = try XCTUnwrap(SocketPort(tcpPort: 0))
         defer { local.invalidate() }
         
         let port = try XCTUnwrap(tcpOrUdpPort(of: local))
         XCTAssertNotEqual(port, 0)
         XCTAssert(port >= 1024)
+        #endif // !SKIP
     }
     
     func testSendingOneMessageRemoteToLocal() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let local = try XCTUnwrap(SocketPort(tcpPort: 0))
 //        defer { local.invalidate() }
 //                        
@@ -116,6 +130,7 @@ class TestSocketPort : XCTestCase {
 //            
 //            waitForExpectations(timeout: 5.5)
 //        }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -129,5 +144,4 @@ class TestSocketPort : XCTestCase {
     #endif // SKIP
 }
 
-#endif
 

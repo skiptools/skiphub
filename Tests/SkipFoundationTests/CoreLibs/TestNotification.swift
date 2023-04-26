@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -31,6 +30,9 @@ class TestNotification : XCTestCase {
     #endif // SKIP
 
     func test_customReflection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let someName = "somenotifname"
         let targetObject = NSObject()
         let userInfo = ["hello": "world", "indexThis": 350] as [AnyHashable: Any]
@@ -54,13 +56,17 @@ class TestNotification : XCTestCase {
         XCTAssertEqual((thirdChild?.value as? [AnyHashable: Any])?["hello"] as? String, "world")
         XCTAssertEqual((thirdChild?.value as? [AnyHashable: Any])?["indexThis"] as? Int, 350)
 
+        #endif // !SKIP
     }
 
     func test_NotificationNameInit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let name = "TestNotificationNameInit"
         XCTAssertEqual(Notification.Name(name), Notification.Name(rawValue: name))
+        #endif // !SKIP
     }
 }
 
-#endif
 
