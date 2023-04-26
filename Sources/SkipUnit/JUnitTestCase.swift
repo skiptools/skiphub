@@ -20,7 +20,7 @@ open class JUnitTestCase: XCTestCase {
 extension JUnitTestCase {
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    public func testProjectGradle() async throws {
+    public func test() async throws {
         // only run in subclasses, not in the base test
         #if os(macOS) || os(Linux)
         if self.className == "SkipUnit.JUnitTestCase" {
@@ -65,16 +65,17 @@ extension JUnitTestCase {
         }
 
         let testSuites = try parseResults()
-        XCTAssertNotEqual(0, testSuites.count, "no tests were run")
+        // the absense of any test data probably indicates some sort of mis-configuration or else a build failure
+        XCTAssertNotEqual(0, testSuites.count, "No tests were run")
         reportTestResults(testSuites, dir)
-
-        //let firstResult = try XCTUnwrap(results.first)
 
         switch testProcessResult?.exitStatus {
         case .terminated(let code):
-            XCTAssertEqual(0, code, "gradle process failed either build or test")
+            // this is a general error that is reported whenever gradle fails, so that the overall test will fail even when we cannot parse any build errors or test failures
+            // there should be additional messages in the log to provide better indication of where the test failed
+            XCTAssertTrue(code == 0, "Gradle failed with exit code \(code)")
         default:
-            XCTFail("gradle process unexpected exit: \(testProcessResult?.description ?? "")")
+            XCTFail("Gradle process crashed: \(testProcessResult?.description ?? "")")
         }
     }
 
@@ -276,15 +277,17 @@ extension JUnitTestCase {
         // do one intial pass to show the stdout and stderror
         if showStreams {
             for testSuite in testSuites {
+                let testSuiteName = testSuite.name.split(separator: ".").last?.description ?? testSuite.name
+
                 // all the stdout/stderr is batched together for all test tests, so output it all at the end
                 // and line up the spaced with the "GRADLE TEST CASE" line describing the test
                 if let systemOut = testSuite.systemOut {
-                    print("JUNIT TEST STDOUT: \(testSuite.name):")
+                    print("JUNIT TEST STDOUT: \(testSuiteName):")
                     let prefix = "STDOUT> "
                     print(prefix + systemOut.split(separator: "\n").joined(separator: "\n" + prefix))
                 }
                 if let systemErr = testSuite.systemErr {
-                    print("JUNIT TEST STDERR: \(testSuite.name):")
+                    print("JUNIT TEST STDERR: \(testSuiteName):")
                     let prefix = "STDERR> "
                     print(prefix + systemErr.split(separator: "\n").joined(separator: "\n" + prefix))
                 }
@@ -296,6 +299,9 @@ extension JUnitTestCase {
 
         // parse the test result XML files and convert test failures into XCTIssues with links to the failing source and line
         for testSuite in testSuites {
+            // Turn "skip.foundation.TestDateIntervalFormatter" into "TestDateIntervalFormatter"
+            let testSuiteName = testSuite.name.split(separator: ".").last?.description ?? testSuite.name
+
             suiteTotal += 1
             var pass = 0, fail = 0, skip = 0
             var time = 0.0
@@ -323,7 +329,9 @@ extension JUnitTestCase {
 
                 // Jupiter test case names are like "testSystemRandomNumberGenerator$SkipFoundation()"
                 let testName = testCase.name.split(separator: "$").first?.description ?? testCase.name
-                msg += testName
+
+                // turn "" into ""
+                msg += testSuiteName + "." + testName
 
                 if !testCase.skipped {
                     msg += " (" + testCase.time.description + ") " // add in the time for profiling
@@ -332,45 +340,60 @@ extension JUnitTestCase {
                 print("JUNIT TEST", testCase.skipped ? "SKIPPED" : testCase.failures.isEmpty ? "PASSED" : "FAILED", msg)
                 // add a failure for each reported failure
                 for failure in testCase.failures {
+                    var failureMessage = failure.message
+                    let trimPrefixes = [
+                        "testProjectGradle(): ",
+                        //"java.lang.AssertionError: ",
+                    ]
+                    for trimPrefix in trimPrefixes {
+                        if failureMessage.hasPrefix(trimPrefix) {
+                            failureMessage.removeFirst(trimPrefix.count)
+                        }
+                    }
+
+                    let failureContents = failure.contents ?? ""
+
                     // TODO: extract the file path and report the failing file abd line to xcode
                     var msg = msg
                     msg += failure.type
                     msg += ": "
-                    msg += failure.message
+                    msg += failureMessage
                     msg += ": "
-                    msg += failure.contents ?? "empty" // add the stack trace; TODO: option for trimming
+                    msg += failureContents // add the stack trace
 
                     // convert the failure into an XCTIssue so we can see where in the source it failed
                     let issueType: XCTIssueReference.IssueType
-                    switch failure.type {
-                    case "org.junit.ComparisonFailure",
-                        "org.opentest4j.AssertionFailedError":
+
+                    // check for common known assertion failure exception types
+                    if failure.type.hasPrefix("org.junit.")
+                        || failure.type.hasPrefix("org.opentest4j.") {
                         issueType = .assertionFailure
-                    default:
-                        issueType = .assertionFailure
+                    } else {
+                        issueType = .thrownError
                     }
 
                     let (kotlinLocation, swiftLocation) = extractSourceLocation(dir: dir, failure: failure)
 
-                    // report the Kotlin error
-                    do {
-                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
+
+                    // we managed to link up the Kotlin line with the Swift source file, so add an initial issue with the swift location
+                    if let swiftLocation = swiftLocation {
+                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
                         record(issue)
                     }
 
-                    // we also managed to link up the Kotlin line with the Swift source file, so add a second issue for the swift location
-                    if let swiftLocation = swiftLocation {
-                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
+                    // and report the Kotlin error so the user can jump to the right place
+                    do {
+                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
                         record(issue)
                     }
                 }
             }
 
-            print("JUNIT TEST SUITE: \(testSuite.name): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeTotal * 100.0) / 100.0)")
+            print("JUNIT TEST SUITE: \(testSuiteName): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeTotal * 100.0) / 100.0)")
         }
 
         let passPercentage = Double(passTotal) / (testsTotal == 0 ? Double.nan : Double(testsTotal))
-        print("JUNIT TEST SUITES (\(suiteTotal)): TESTS \(testsTotal) PASSED \(passTotal) (\(round(passPercentage * 100))%) FAILED \(failTotal) SKIPPED \(skipTotal) TIME \(round(timeTotal * 100.0) / 100.0)")
+        print("JUNIT SUITES \(suiteTotal) TESTS \(testsTotal) PASSED \(passTotal) (\(round(passPercentage * 100))%) FAILED \(failTotal) SKIPPED \(skipTotal) TIME \(round(timeTotal * 100.0) / 100.0)")
 
     }
     #endif // os(macOS) || os(Linux)

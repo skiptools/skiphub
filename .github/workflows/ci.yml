@@ -8,8 +8,9 @@ on:
   workflow_dispatch:
   pull_request:
 
-#env:
+env:
   #DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_14.3.app/Contents/Developer
 
 jobs:
   ci:
@@ -85,41 +86,37 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-      # Attempt to run the tests in parallel mode.
-      # When successful this will bypass the individual framework tests.
-      - name: Fast Tests
-        if: true
-        working-directory: skiphub
-        #run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-        run: swift test && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+#      # Attempt to run the tests in parallel mode.
+#      # When successful this will bypass the individual framework tests.
+#      - name: Fast Tests
+#        if: false
+#        working-directory: skiphub
+#        #run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+#        run: swift test && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+#
+#      - name: Fast Tests (2)
+#        if: false
+#        #if: env.SKIP_FASTPASS != 'YES'
+#        working-directory: skiphub
+#        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+#
+#      - name: Fast Tests (3)
+#        if: false
+#        #if: env.SKIP_FASTPASS != 'YES'
+#        working-directory: skiphub
+#        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
+#
+#      - name: Fast Tests (4)
+#        if: false
+#        #if: env.SKIP_FASTPASS != 'YES'
+#        working-directory: skiphub
+#        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
 
-      - name: Fast Tests (2)
-        if: false
-        #if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-
-      - name: Fast Tests (3)
-        if: false
-        #if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-
-      - name: Fast Tests (4)
-        if: false
-        #if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-
+      # Pre-build to work around concurrency issues
       - name: Pre-build ${{ matrix.target }}
         if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
-        # the pre-build needs to take place because the Skip
-        # packages currently need to be built in order, but
-        # SPM will attempt to build the targets in parallel
-        # e.g.: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json: warning: error loading codebase for linkModuleName: SkipFoundation from: ~/.build/plugins/outputs/skiphub/SkipFoundationKt/skip-transpiler/SkipFoundation.skipcode.json error: The file “SkipFoundation.skipcode.json” couldn’t be opened because there is no such file.
-
-        #if: false
+        if: false
         run: |
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
 
