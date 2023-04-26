@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 #if !os(iOS)
 
@@ -30,6 +29,9 @@ private func assertEqual(_ rect: CGRect,
                          _ message: @autoclosure () -> String = "",
                          file: StaticString = #file,
                          line: UInt = #line) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
     if let accuracy = accuracy {
         XCTAssertEqual(rect.origin.x, x, accuracy: accuracy, message(), file: file, line: line)
@@ -42,6 +44,7 @@ private func assertEqual(_ rect: CGRect,
         XCTAssertEqual(rect.size.width, width, message(), file: file, line: line)
         XCTAssertEqual(rect.size.height, height, message(), file: file, line: line)
     }
+        #endif // !SKIP
 }
 
 class TestNSGeometry : XCTestCase {
@@ -102,11 +105,18 @@ class TestNSGeometry : XCTestCase {
     #endif // SKIP
 
     func test_CGFloat_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(CGFloat().native, 0.0)
         XCTAssertEqual(CGFloat(Double(3.0)).native, 3.0)
+        #endif // !SKIP
     }
 
     func test_CGFloat_Equality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(CGFloat(), CGFloat())
         XCTAssertEqual(CGFloat(1.0), CGFloat(1.0))
         XCTAssertEqual(CGFloat(-42.0), CGFloat(-42.0))
@@ -114,9 +124,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertNotEqual(CGFloat(1.0), CGFloat(1.4))
         XCTAssertNotEqual(CGFloat(37.3), CGFloat(-42.0))
         XCTAssertNotEqual(CGFloat(1.345), CGFloat())
+        #endif // !SKIP
     }
 
     func test_CGFloat_LessThanOrEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let w = CGFloat(-4.5)
         let x = CGFloat(1.0)
         let y = CGFloat(2.2)
@@ -131,9 +145,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertLessThanOrEqual(x, y)
         XCTAssertLessThan(w, y)
         XCTAssertLessThanOrEqual(w, y)
+        #endif // !SKIP
     }
 
     func test_CGFloat_GreaterThanOrEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let w = CGFloat(-4.5)
         let x = CGFloat(1.0)
         let y = CGFloat(2.2)
@@ -148,9 +166,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertGreaterThanOrEqual(y, x)
         XCTAssertGreaterThan(y, w)
         XCTAssertGreaterThanOrEqual(y, w)
+        #endif // !SKIP
     }
 
     func test_CGPoint_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p1 = CGPoint()
         XCTAssertEqual(p1.x, CGFloat(0.0))
         XCTAssertEqual(p1.y, CGFloat(0.0))
@@ -158,9 +180,13 @@ class TestNSGeometry : XCTestCase {
         let p2 = CGPoint(x: CGFloat(3.6), y: CGFloat(4.5))
         XCTAssertEqual(p2.x, CGFloat(3.6))
         XCTAssertEqual(p2.y, CGFloat(4.5))
+        #endif // !SKIP
     }
     
     func test_CGPoint_ExtendedConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p1 = CGPoint.zero
         XCTAssertEqual(p1.x, CGFloat(0))
         XCTAssertEqual(p1.y, CGFloat(0))
@@ -172,9 +198,13 @@ class TestNSGeometry : XCTestCase {
         let p3 = CGPoint(x: Double(3.6), y: Double(4.5))
         XCTAssertEqual(p3.x, CGFloat(3.6))
         XCTAssertEqual(p3.y, CGFloat(4.5))
+        #endif // !SKIP
     }
 
     func test_CGSize_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s1 = CGSize()
         XCTAssertEqual(s1.width, CGFloat(0.0))
         XCTAssertEqual(s1.height, CGFloat(0.0))
@@ -182,9 +212,13 @@ class TestNSGeometry : XCTestCase {
         let s2 = CGSize(width: CGFloat(3.6), height: CGFloat(4.5))
         XCTAssertEqual(s2.width, CGFloat(3.6))
         XCTAssertEqual(s2.height, CGFloat(4.5))
+        #endif // !SKIP
     }
     
     func test_CGSize_ExtendedConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s1 = CGSize.zero
         XCTAssertEqual(s1.width, CGFloat(0))
         XCTAssertEqual(s1.height, CGFloat(0))
@@ -196,9 +230,13 @@ class TestNSGeometry : XCTestCase {
         let s3 = CGSize(width: Double(3.6), height: Double(4.5))
         XCTAssertEqual(s3.width, CGFloat(3.6))
         XCTAssertEqual(s3.height, CGFloat(4.5))
+        #endif // !SKIP
     }
 
     func test_CGRect_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect()
         XCTAssertEqual(r1.origin.x, CGFloat(0.0))
         XCTAssertEqual(r1.origin.y, CGFloat(0.0))
@@ -212,9 +250,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r2.origin.y, p.y)
         XCTAssertEqual(r2.size.width, s.width)
         XCTAssertEqual(r2.size.height, s.height)
+        #endif // !SKIP
     }
     
     func test_CGRect_ExtendedConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect.zero
         XCTAssertEqual(r1.origin.x, CGFloat(0.0))
         XCTAssertEqual(r1.origin.y, CGFloat(0.0))
@@ -238,9 +280,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r4.origin.y, CGFloat(2))
         XCTAssertEqual(r4.size.width, CGFloat(3))
         XCTAssertEqual(r4.size.height, CGFloat(4))
+        #endif // !SKIP
     }
 
     func test_CGRect_IsNull() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertTrue(CGRect.null.isNull)
         XCTAssertTrue(CGRect(x: CGFloat.infinity, y: CGFloat.infinity, width: 0, height: 0).isNull)
         XCTAssertTrue(CGRect(x: CGFloat.infinity, y: CGFloat.infinity, width: 10, height: 10).isNull)
@@ -248,9 +294,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertTrue(CGRect(x: CGFloat.infinity, y: 0, width: 0, height: 0).isNull)
         XCTAssertTrue(CGRect(x: 0, y: CGFloat.infinity, width: 0, height: 0).isNull)
         XCTAssertFalse(CGRect(x: 0, y: 0, width: 0, height: 0).isNull)
+        #endif // !SKIP
     }
 
     func test_CGRect_IsInfinite() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertTrue(CGRect.infinite.isInfinite)
 
         XCTAssertFalse(CGRect(x: 0,
@@ -279,9 +329,13 @@ class TestNSGeometry : XCTestCase {
                               height: CGFloat.infinity).isInfinite)
 
         XCTAssertFalse(CGRect.null.isInfinite)
+        #endif // !SKIP
     }
 
     func test_CGRect_IsEmpty() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertTrue(CGRect.zero.isEmpty)
         XCTAssertTrue(CGRect.null.isEmpty)
         XCTAssertTrue(CGRect(x: 10, y: 20, width: 30, height: 0).isEmpty)
@@ -312,9 +366,13 @@ class TestNSGeometry : XCTestCase {
 
         XCTAssertFalse(CGRect.infinite.isEmpty)
         XCTAssertFalse(CGRect.infinite.isEmpty)
+        #endif // !SKIP
     }
 
     func test_CGRect_Equatable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(CGRect(x: 10, y: 20, width: 30, height: 40), CGRect(x: 10, y: 20, width: 30, height: 40))
         XCTAssertEqual(CGRect(x: -10, y: -20, width: -30, height: -40), CGRect(x: -10, y: -20, width: -30, height: -40))
         XCTAssertEqual(CGRect(x: -10, y: -20, width: 30, height: 40), CGRect(x: 20, y: 20, width: -30, height: -40))
@@ -343,9 +401,13 @@ class TestNSGeometry : XCTestCase {
         var r4 = CGRect.null
         r4.origin = CGPoint(x: 10, y: 20)
         XCTAssertNotEqual(r4, CGRect.null)
+        #endif // !SKIP
     }
 
     func test_CGRect_CalculatedGeometricProperties() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ε = CGFloat(0.00001)
 
         let r1 = CGRect(x: 1.2, y: 3.4, width: 5.6, height: 7.8)
@@ -395,9 +457,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r4.minY, -11.2, accuracy: ε)
         XCTAssertEqual(r4.midY, -7.3, accuracy: ε)
         XCTAssertEqual(r4.maxY, -3.4, accuracy: ε)
+        #endif // !SKIP
     }
 
     func test_CGRect_Standardized() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ε = CGFloat(0.00001)
         let nullX = CGRect.null.origin.x
         let nullY = CGRect.null.origin.y
@@ -443,9 +509,13 @@ class TestNSGeometry : XCTestCase {
         r10.origin = CGPoint(x: 10, y: 20)
         r10 = r10.standardized
         assertEqual(r10, x: 10, y: 20, width: 0, height: 0)
+        #endif // !SKIP
     }
 
     func test_CGRect_Integral() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ε = CGFloat(0.00001)
 
         let r1 = CGRect(x: 1.9, y: 1.9, width: 10.1, height: 10.2).integral
@@ -504,9 +574,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r8.origin.y, -20)
         XCTAssertEqual(r8.size.width, 30)
         XCTAssertEqual(r8.size.height, 40)
+        #endif // !SKIP
     }
 
     func test_CGRect_ContainsPoint() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertFalse(CGRect.null.contains(CGPoint()))
         XCTAssertFalse(CGRect.zero.contains(CGPoint()))
 
@@ -531,9 +605,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertTrue(r2.contains(CGPoint(x: -15, y: -15)))
 
         XCTAssertTrue(CGRect.infinite.contains(CGPoint()))
+        #endif // !SKIP
     }
 
     func test_CGRect_ContainsRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertFalse(CGRect.zero.contains(.infinite))
         XCTAssertTrue(CGRect.zero.contains(.null))
         XCTAssertTrue(CGRect.zero.contains(CGRect.zero))
@@ -563,9 +641,13 @@ class TestNSGeometry : XCTestCase {
         let r6 = CGRect(x: -5, y: -5, width: 10, height: 10)
         XCTAssertTrue(r5.contains(r6))
         XCTAssertFalse(r6.contains(r5))
+        #endif // !SKIP
     }
 
     func test_CGRect_Union() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect.null
         let r2 = CGRect.null
         let u1 = r1.union(r2)
@@ -604,9 +686,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(u5.origin.y, r8.origin.y)
         XCTAssertEqual(u5.size.width, r8.size.width)
         XCTAssertEqual(u5.size.height, r8.size.height)
+        #endif // !SKIP
     }
 
     func test_CGRect_Intersection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect(x: 10, y: 10, width: 50, height: 60)
         let r2 = CGRect(x: 25, y: 25, width: 60, height: 70)
         let i1 = r1.intersection(r2)
@@ -676,9 +762,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r8.origin.y, i10.origin.y)
 //        XCTAssertEqual(r8.size.width, i10.size.width)
         XCTAssertEqual(r8.size.height, i10.size.height)
+        #endif // !SKIP
     }
 
     func test_CGRect_Intersects() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect(x: 10, y: 10, width: 50, height: 60)
         let r2 = CGRect(x: 25, y: 25, width: 60, height: 70)
         XCTAssertTrue(r1.intersects(r2))
@@ -704,9 +794,13 @@ class TestNSGeometry : XCTestCase {
 
         let r7 = CGRect(x: -10, y: -10, width: 20, height: 20)
         XCTAssertTrue(r7.intersects(.zero))
+        #endif // !SKIP
     }
 
     func test_CGRect_OffsetBy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var r1 = CGRect.null
         r1.size = CGSize(width: 10, height: 20)
         r1.origin.x = 30
@@ -736,9 +830,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(o4.origin.y, -31.7)
         XCTAssertEqual(o4.size.width, 5.6)
         XCTAssertEqual(o4.size.height, 7.8)
+        #endif // !SKIP
     }
 
     func test_CGRect_Divide() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect(x: 10, y: 20, width: 30, height: 40)
         let d1 = r1.divided(atDistance: 10, from: .minXEdge)
         XCTAssertEqual(d1.slice.origin.x, 10)
@@ -855,9 +953,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(d11.remainder.origin.y, CGRect.null.origin.y)
         XCTAssertEqual(d11.remainder.size.width, CGRect.null.size.width)
         XCTAssertEqual(d11.remainder.size.height, CGRect.null.size.height)
+        #endif // !SKIP
     }
 
     func test_CGRect_InsetBy() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let ε = CGFloat(0.00001)
         let nullX = CGRect.null.origin.x
         let nullY = CGRect.null.origin.y
@@ -913,9 +1015,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(i2.origin.y, 30)
         XCTAssertEqual(i2.size.width, 10)
         XCTAssertEqual(i2.size.height, 20)
+        #endif // !SKIP
     }
     
     func test_CGRect_SpecialValues() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = CGRect.null
         XCTAssertEqual(r1.origin.x, CGFloat.infinity)
         XCTAssertEqual(r1.origin.y, CGFloat.infinity)
@@ -927,10 +1033,14 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r2.origin.y, -CGFloat.greatestFiniteMagnitude / 2)
         XCTAssertEqual(r2.size.width, CGFloat.greatestFiniteMagnitude)
         XCTAssertEqual(r2.size.height, CGFloat.greatestFiniteMagnitude)
+        #endif // !SKIP
     }
 
 #if !os(iOS)
     func test_NSEdgeInsets_BasicConstruction() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let i1 = NSEdgeInsets()
         XCTAssertEqual(i1.top, CGFloat(0.0))
         XCTAssertEqual(i1.left, CGFloat(0.0))
@@ -942,45 +1052,69 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(i2.left, CGFloat(4.5))
         XCTAssertEqual(i2.bottom, CGFloat(5.0))
         XCTAssertEqual(i2.right, CGFloat(-1.0))
+        #endif // !SKIP
     }
 
     func test_NSEdgeInsetsEqual() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let variant1 = NSEdgeInsets(top: CGFloat(3.6), left: CGFloat(4.5), bottom: CGFloat(5.0), right: CGFloat(-1.0))
         let variant1Copy = NSEdgeInsets(top: CGFloat(3.6), left: CGFloat(4.5), bottom: CGFloat(5.0), right: CGFloat(-1.0))
         let variant2 = NSEdgeInsets(top: CGFloat(3.1), left: CGFloat(4.5), bottom: CGFloat(5.0), right: CGFloat(-1.0))
         XCTAssertTrue(NSEdgeInsetsEqual(variant1, variant1Copy))
         XCTAssertFalse(NSEdgeInsetsEqual(variant1, variant2))
+        #endif // !SKIP
     }
 
     func test_NSMakePoint() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p2 = NSMakePoint(CGFloat(3.6), CGFloat(4.5))
         XCTAssertEqual(p2.x, CGFloat(3.6))
         XCTAssertEqual(p2.y, CGFloat(4.5))
+        #endif // !SKIP
     }
 
     func test_NSMakeSize() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let s2 = NSMakeSize(CGFloat(3.6), CGFloat(4.5))
         XCTAssertEqual(s2.width, CGFloat(3.6))
         XCTAssertEqual(s2.height, CGFloat(4.5))
+        #endif // !SKIP
     }
 
     func test_NSMakeRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r2 = NSMakeRect(CGFloat(2.2), CGFloat(3.0), CGFloat(5.0), CGFloat(5.0))
         XCTAssertEqual(r2.origin.x, CGFloat(2.2))
         XCTAssertEqual(r2.origin.y, CGFloat(3.0))
         XCTAssertEqual(r2.size.width, CGFloat(5.0))
         XCTAssertEqual(r2.size.height, CGFloat(5.0))
+        #endif // !SKIP
     }
 
     func test_NSEdgeInsetsMake() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let i2 = NSEdgeInsetsMake(CGFloat(2.2), CGFloat(3.0), CGFloat(5.0), CGFloat(5.0))
         XCTAssertEqual(i2.top, CGFloat(2.2))
         XCTAssertEqual(i2.left, CGFloat(3.0))
         XCTAssertEqual(i2.bottom, CGFloat(5.0))
         XCTAssertEqual(i2.right, CGFloat(5.0))
+        #endif // !SKIP
     }
 
     func test_NSUnionRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = NSMakeRect(CGFloat(1.2), CGFloat(3.1), CGFloat(10.0), CGFloat(10.0))
         let r2 = NSMakeRect(CGFloat(10.2), CGFloat(2.5), CGFloat(5.0), CGFloat(5.0))
 
@@ -993,9 +1127,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r3.origin.y, CGFloat(2.5))
         XCTAssertEqual(r3.size.width, CGFloat(14.0))
         XCTAssertEqual(r3.size.height, CGFloat(10.6))
+        #endif // !SKIP
     }
 
     func test_NSIntersectionRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = NSMakeRect(CGFloat(1.2), CGFloat(3.1), CGFloat(10.0), CGFloat(10.0))
         let r2 = NSMakeRect(CGFloat(-2.3), CGFloat(-1.5), CGFloat(1.0), CGFloat(1.0))
         let r3 = NSMakeRect(CGFloat(10.2), CGFloat(2.5), CGFloat(5.0), CGFloat(5.0))
@@ -1007,17 +1145,25 @@ class TestNSGeometry : XCTestCase {
         XCTAssertEqual(r4.origin.y, CGFloat(3.1))
         XCTAssertEqual(r4.size.width, CGFloat(1.0))
         XCTAssertEqual(r4.size.height, CGFloat(4.4))
+        #endif // !SKIP
     }
 
     func test_NSOffsetRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = NSMakeRect(CGFloat(1.2), CGFloat(3.1), CGFloat(10.0), CGFloat(10.0))
         let r2 = NSOffsetRect(r1, CGFloat(2.0), CGFloat(-5.0))
         let expectedRect = NSMakeRect(CGFloat(3.2), CGFloat(-1.9), CGFloat(10.0), CGFloat(10.0))
         
         XCTAssertTrue(_NSRect(expectedRect, equalsToRect: r2))
+        #endif // !SKIP
     }
 
     func test_NSPointInRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p1 = NSMakePoint(CGFloat(2.2), CGFloat(5.3))
         let p2 = NSMakePoint(CGFloat(1.2), CGFloat(3.1))
         let p3 = NSMakePoint(CGFloat(1.2), CGFloat(5.3))
@@ -1033,9 +1179,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertTrue(NSPointInRect(p3, r1))
         XCTAssertTrue(NSPointInRect(p4, r1))
         XCTAssertFalse(NSPointInRect(p5, r1))
+        #endif // !SKIP
     }
 
     func test_NSMouseInRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let p1 = NSMakePoint(CGFloat(2.2), CGFloat(5.3))
         let r1 = NSMakeRect(CGFloat(1.2), CGFloat(3.1), CGFloat(10.0), CGFloat(10.0))
         let r2 = NSMakeRect(CGFloat(-2.3), CGFloat(-1.5), CGFloat(1.0), CGFloat(1.0))
@@ -1051,9 +1201,13 @@ class TestNSGeometry : XCTestCase {
         let p3 = NSMakePoint(NSMinX(r1), NSMinY(r1))
         XCTAssertFalse(NSMouseInRect(p3, r1, false))
         XCTAssertTrue(NSMouseInRect(p3, r1, true))
+        #endif // !SKIP
     }
 
     func test_NSContainsRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = NSMakeRect(CGFloat(1.2), CGFloat(3.1), CGFloat(10.0), CGFloat(10.0))
         let r2 = NSMakeRect(CGFloat(-2.3), CGFloat(-1.5), CGFloat(1.0), CGFloat(1.0))
         let r3 = NSMakeRect(CGFloat(10.2), CGFloat(5.5), CGFloat(0.5), CGFloat(5.0))
@@ -1062,9 +1216,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertFalse(NSContainsRect(r1, r2))
         XCTAssertFalse(NSContainsRect(r2, r1))
         XCTAssertTrue(NSContainsRect(r1, r3))
+        #endif // !SKIP
     }
 
     func test_NSIntersectsRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1 = NSMakeRect(CGFloat(1.2), CGFloat(3.1), CGFloat(10.0), CGFloat(10.0))
         let r2 = NSMakeRect(CGFloat(-2.3), CGFloat(-1.5), CGFloat(1.0), CGFloat(1.0))
         let r3 = NSMakeRect(CGFloat(10.2), CGFloat(2.5), CGFloat(5.0), CGFloat(5.0))
@@ -1074,9 +1232,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertFalse(NSIntersectsRect(NSZeroRect, r2))
         XCTAssertFalse(NSIntersectsRect(r1, r2))
         XCTAssertTrue(NSIntersectsRect(r1, r3))
+        #endif // !SKIP
     }
 
     func test_NSIntegralRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let referenceNegativeRect = NSMakeRect(CGFloat(-0.6), CGFloat(-5.4), CGFloat(-105.7), CGFloat(-24.3))
         XCTAssertEqual(NSIntegralRect(referenceNegativeRect), NSZeroRect)
 
@@ -1092,9 +1254,13 @@ class TestNSGeometry : XCTestCase {
         result = NSIntegralRect(referenceNegativeOriginRect)
         XCTAssertEqual(result, expectedResult)
     
+        #endif // !SKIP
     }
     
     func test_NSIntegralRectWithOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let referenceRect = NSMakeRect(CGFloat(0.6), CGFloat(5.4), CGFloat(105.7), CGFloat(24.3))
         let referenceNegativeRect = NSMakeRect(CGFloat(-0.6), CGFloat(-5.4), CGFloat(-105.7), CGFloat(-24.3))
         let referenceNegativeOriginRect = NSMakeRect(CGFloat(-0.6), CGFloat(-5.4), CGFloat(105.7), CGFloat(24.3))
@@ -1183,9 +1349,13 @@ class TestNSGeometry : XCTestCase {
         expectedResult = NSMakeRect(CGFloat(-1.0), CGFloat(-5.0), CGFloat(106.0), CGFloat(24.0))
         result = NSIntegralRectWithOptions(referenceNegativeOriginRect, options)
         XCTAssertEqual(result, expectedResult)
+        #endif // !SKIP
     }
 
     func test_NSDivideRect() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 
         // divide empty rect
         var inRect = NSZeroRect
@@ -1276,9 +1446,13 @@ class TestNSGeometry : XCTestCase {
         expectedRemainder = NSMakeRect(CGFloat(0.0), CGFloat(-5.0), CGFloat(25.0), CGFloat(0.0))
         XCTAssertEqual(slice, expectedSlice)
         XCTAssertEqual(remainder, expectedRemainder)
+        #endif // !SKIP
     }
 
     func test_EncodeToNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let referenceRect = NSMakeRect(CGFloat(0.6), CGFloat(5.4), CGFloat(105.7), CGFloat(24.3))
         
         var expectedString = "{0.6, 5.4}"
@@ -1295,9 +1469,13 @@ class TestNSGeometry : XCTestCase {
         string = NSStringFromRect(referenceRect)
 //        XCTAssertEqual(expectedString, string,
 //                       "\(string) is not equal to expected \(expectedString)")
+        #endif // !SKIP
     }
     
     func test_EncodeNegativeToNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let referenceNegativeRect = NSMakeRect(CGFloat(-0.6), CGFloat(-5.4), CGFloat(-105.7), CGFloat(-24.3))
         
         var expectedString = "{-0.6, -5.4}"
@@ -1314,9 +1492,13 @@ class TestNSGeometry : XCTestCase {
         string = NSStringFromRect(referenceNegativeRect)
 //        XCTAssertEqual(expectedString, string,
 //                       "\(string) is not equal to expected \(expectedString)")
+        #endif // !SKIP
     }
     
     func test_DecodeFromNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var stringPoint = "{0.6, 5.4}"
         var stringSize = "{105.7, 24.3}"
         var stringRect = "{{0.6, 5.4}, {105.7, 24.3}}"
@@ -1374,9 +1556,13 @@ class TestNSGeometry : XCTestCase {
         let point1 = NSPointFromString("{1.0, 1.2234234234}")
         let point2 = NSPoint(x: CGFloat(1.0), y: CGFloat(1.2234234234))
         XCTAssertEqual(point1, point2)
+        #endif // !SKIP
     }
     
     func test_DecodeEmptyStrings() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let stringPoint = ""
         let stringSize = ""
         let stringRect = ""
@@ -1395,9 +1581,13 @@ class TestNSGeometry : XCTestCase {
         let rect = NSRectFromString(stringRect)
         XCTAssertTrue(_NSRect(expectedRect, equalsToRect: rect),
                        "\(NSStringFromRect(rect)) is not equal to expected \(NSStringFromRect(expectedRect))")
+        #endif // !SKIP
     }
     
     func test_DecodeNegativeFromNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let stringPoint = "{-0.6, -5.4}"
         let stringSize = "{-105.7, -24.3}"
         let stringRect = "{{-0.6, -5.4}, {-105.7, -24.3}}"
@@ -1417,9 +1607,13 @@ class TestNSGeometry : XCTestCase {
         XCTAssertTrue(_NSRect(expectedRect, equalsToRect: rect),
                        "\(NSStringFromRect(rect)) is not equal to expected \(NSStringFromRect(expectedRect))")
         
+        #endif // !SKIP
     }
     
     func test_DecodeGarbageFromNSString() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var stringRect = "-0.6a5.4das-105.7bfh24.3dfas;hk312}}"
         var expectedRect = NSMakeRect(CGFloat(-0.6), CGFloat(5.4), CGFloat(-105.7), CGFloat(24.3))
         var rect = NSRectFromString(stringRect)
@@ -1432,33 +1626,49 @@ class TestNSGeometry : XCTestCase {
         XCTAssertTrue(_NSRect(expectedRect, equalsToRect: rect),
                        "\(NSStringFromRect(rect)) is not equal to expected \(NSStringFromRect(expectedRect))")
 
+        #endif // !SKIP
     }
     #endif
 
     // MARK: Private
     
     func _NSRect(_ rect: NSRect, equalsToRect rect2: NSRect, withPrecision precision: CGFloat.NativeType = .ulpOfOne) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return _NSPoint(rect.origin, equalsToPoint: rect2.origin, withPrecision: precision)
             && _NSSize(rect.size, equalsToSize: rect2.size, withPrecision: precision)
+        #endif // !SKIP
     }
 
     func _NSSize(_ size: NSSize, equalsToSize size2: NSSize, withPrecision precision: CGFloat.NativeType = .ulpOfOne) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return _CGFloat(size.width, equalsToCGFloat: size2.width, withPrecision: precision)
             && _CGFloat(size.height, equalsToCGFloat: size2.height, withPrecision: precision)
+        #endif // !SKIP
     }
 
     func _NSPoint(_ point: NSPoint, equalsToPoint point2: NSPoint, withPrecision precision: CGFloat.NativeType = .ulpOfOne) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return _CGFloat(point.x, equalsToCGFloat: point2.x, withPrecision: precision)
             && _CGFloat(point.y, equalsToCGFloat: point2.y, withPrecision: precision)
+        #endif // !SKIP
     }
 
     func _CGFloat(_ float: CGFloat, equalsToCGFloat float2: CGFloat, withPrecision precision: CGFloat.NativeType = .ulpOfOne) -> Bool {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         return fabs(float.native - float2.native) <= precision
+        #endif // !SKIP
     }
 
 }
 
 #endif
 
-#endif
 
