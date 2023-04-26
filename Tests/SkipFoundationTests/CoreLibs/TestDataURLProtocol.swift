@@ -33,6 +33,9 @@ class DataURLTestDelegate: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
     init(expectation: XCTestExpectation?) {
         self.expectation = expectation
     }
+    #else
+    init() {
+    }
     #endif
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

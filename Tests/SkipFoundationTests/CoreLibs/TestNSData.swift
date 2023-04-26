@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -23,8 +22,9 @@ import CoreFoundation
 
 
 class TestNSData: XCTestCase { // : LoopbackServerTest {
-    
+    #if !SKIP
     class AllOnesImmutableData : NSData {
+        #if !SKIP
         private var _length : Int
         var _pointer : UnsafeMutableBufferPointer<UInt8>? {
             willSet {
@@ -41,19 +41,25 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             // Not tested
             fatalError()
         }
-        
+        #endif
+
+        #if !SKIP
         deinit {
             if let p = _pointer {
                 free(p.baseAddress)
             }
         }
+        #endif
         
+        #if !SKIP
         override var length : Int {
             get {
                 return _length
             }
         }
-        
+        #endif
+
+        #if !SKIP
         override var bytes : UnsafeRawPointer {
             if let d = _pointer {
                 return UnsafeRawPointer(d.baseAddress!)
@@ -68,8 +74,12 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
                 return UnsafeRawPointer(result.baseAddress!)
             }
         }
+        #endif
         
         override func getBytes(_ buffer: UnsafeMutableRawPointer, length: Int) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
             if let d = _pointer {
                 // Get the real data from the buffer
                 memmove(buffer, d.baseAddress!, length)
@@ -77,10 +87,12 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
                 // A more efficient implementation of getBytes in the case where no one has asked for our backing bytes
                 memset(buffer, 1, length)
             }
+        #endif // !SKIP
         }
     }
-    
-    
+    #endif
+
+    #if !SKIP
     class AllOnesData : NSMutableData {
         
         private var _length : Int
@@ -99,13 +111,14 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             // Not tested
             fatalError()
         }
-        
+
+        #if !SKIP
         deinit {
             if let p = _pointer {
                 free(p.baseAddress)
             }
         }
-        
+
         override var length : Int {
             get {
                 return _length
@@ -158,8 +171,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             _length = newBufferLength
             return UnsafeMutableRawPointer(result.baseAddress!)
         }
-        
+        #endif
+
+        #if !SKIP
         override func getBytes(_ buffer: UnsafeMutableRawPointer, length: Int) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
             if let d = _pointer {
                 // Get the real data from the buffer
                 memmove(buffer, d.baseAddress!, length)
@@ -167,22 +185,32 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
                 // A more efficient implementation of getBytes in the case where no one has asked for our backing bytes
                 memset(buffer, 1, length)
             }
+        #endif // !SKIP
         }
+        #endif
     }
+    #endif
     
     var heldData: Data?
     
     // this holds a reference while applying the function which forces the internal ref type to become non-uniquely referenced
     func holdReference(_ data: Data, apply: () -> Void) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         heldData = data
         apply()
         heldData = nil
+        #endif // !SKIP
     }
     
     // MARK: -
     
     // String of course has its own way to get data, but this way tests our own data struct
     func dataFrom(_ string : String) -> Data {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Create a Data out of those bytes
         return string.utf8CString.withUnsafeBufferPointer { (ptr) in
             ptr.baseAddress!.withMemoryRebound(to: UInt8.self, capacity: ptr.count) {
@@ -190,6 +218,7 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
                 return Data(bytes: $0, count: ptr.count - 1)
             }
         }
+        #endif // !SKIP
     }
     
     #if !SKIP
@@ -564,6 +593,9 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
     #endif // SKIP
     
     func test_writeToURLOptions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let saveData = try! Data(contentsOf: testBundle().url(forResource: "Test", withExtension: "plist")!)
         let savePath = URL(fileURLWithPath: NSTemporaryDirectory() + "Test1.plist")
         do {
@@ -574,18 +606,26 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         } catch {
             XCTFail()
         }
+        #endif // !SKIP
     }
 
 #if !os(Windows)
     // NOTE: `umask(3)` is process global. Therefore, the behavior is unknown if `withUmask(_:_:)` is used simultaneously.
     private func withUmask(_ mode: mode_t, _ block: () -> Void) {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let original = umask(mode)
         block()
         umask(original)
+        #endif // !SKIP
     }
 #endif
 
     func test_writeToURLPermissions() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && !os(Windows)
         withUmask(0) {
             do {
@@ -606,9 +646,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             }
         }
 #endif
+        #endif // !SKIP
     }
 
     func test_writeToURLPermissionsWithAtomic() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && !os(Windows)
         withUmask(0) {
             do {
@@ -629,9 +673,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             }
         }
 #endif
+        #endif // !SKIP
     }
 
     func test_writeToURLSpecialFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //#if os(Windows)
 //        let url = URL(fileURLWithPath: "CON")
 //#else
@@ -640,27 +688,39 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
 //        let url = URL(fileURLWithPath: "/dev/stdout")
 //#endif
 //        XCTAssertNoThrow(try Data("Output to STDOUT\n".utf8).write(to: url))
+        #endif // !SKIP
     }
 
     func test_emptyDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected = "<>"
         
         let bytes: [UInt8] = []
         let data = NSData(bytes: bytes, length: bytes.count)
         
 //        XCTAssertEqual(expected, data.description)
+        #endif // !SKIP
     }
     
     func test_description() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected =  "<ff4c3e00 55>"
         
         let bytes: [UInt8] = [0xff, 0x4c, 0x3e, 0x00, 0x55]
         let data = NSData(bytes: bytes, length: bytes.count)
         
 //        XCTAssertEqual(data.description, expected)
+        #endif // !SKIP
     }
     
     func test_longDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // taken directly from Foundation
         let expected = "<ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8ff6e 4482d8ff 6e4482d8 ff6e4482 d8ff6e44 82d8>"
         
@@ -668,39 +728,59 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         let data = NSData(bytes: bytes, length: bytes.count)
         
 //        XCTAssertEqual(expected, data.description)
+        #endif // !SKIP
     }
     
     func test_debugDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected =  "<ff4c3e00 55>"
         
         let bytes: [UInt8] = [0xff, 0x4c, 0x3e, 0x00, 0x55]
         let data = NSData(bytes: bytes, length: bytes.count)
         
         XCTAssertEqual(data.debugDescription, expected)
+        #endif // !SKIP
     }
     
     func test_limitDebugDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected = "<ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff>"
         let bytes = [UInt8](repeating: 0xff, count: 1024)
         let data = NSData(bytes: bytes, length: bytes.count)
         XCTAssertEqual(data.debugDescription, expected)
+        #endif // !SKIP
     }
     
     func test_longDebugDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected = "<ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ... ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff>"
         let bytes = [UInt8](repeating: 0xff, count: 100_000)
         let data = NSData(bytes: bytes, length: bytes.count)
 //        XCTAssertEqual(data.debugDescription, expected)
+        #endif // !SKIP
     }
 
     func test_edgeDebugDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected = "<ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ... ffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ff>"
         let bytes = [UInt8](repeating: 0xff, count: 1025)
         let data = NSData(bytes: bytes, length: bytes.count)
 //        XCTAssertEqual(data.debugDescription, expected)
+        #endif // !SKIP
     }
 
     func test_edgeNoCopyDescription() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expected = "<ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ... ffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ff>"
         var bytes = [UInt8](repeating: 0xff, count: 1025)
 
@@ -711,9 +791,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
 //            XCTAssertEqual(data.debugDescription, expected)
             XCTAssertEqual(data.bytes, UnsafeRawPointer(baseAddress))
         }
+        #endif // !SKIP
     }
 
     func test_initializeWithBase64EncodedDataGetsDecodedData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "ARMA virumque cano, Troiae qui primus ab oris\nItaliam, fato profugus, Laviniaque venit"
         let encodedText = "QVJNQSB2aXJ1bXF1ZSBjYW5vLCBUcm9pYWUgcXVpIHByaW11cyBhYiBvcmlzCkl0YWxpYW0sIGZhdG8gcHJvZnVndXMsIExhdmluaWFxdWUgdmVuaXQ="
         guard let encodedData = encodedText.data(using: .utf8) else {
@@ -731,9 +815,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
 
         XCTAssertEqual(decodedText, plainText)
         XCTAssertTrue(decodedData == plainText.data(using: .utf8)!)
+        #endif // !SKIP
     }
     
     func test_initializeWithBase64EncodedDataWithNonBase64CharacterIsNil() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encodedText = "QVJNQSB2aXJ1bXF1ZSBjYW5vLCBUcm9pYWUgcXVpIHBya$W11cyBhYiBvcmlzCkl0YWxpYW0sIGZhdG8gcHJvZnVndXMsIExhdmluaWFxdWUgdmVuaXQ="
         guard let encodedData = encodedText.data(using: .utf8) else {
             XCTFail("Could not get UTF-8 data")
@@ -741,9 +829,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         }
         let decodedData = NSData(base64Encoded: encodedData, options: [])
         XCTAssertNil(decodedData)
+        #endif // !SKIP
     }
     
     func test_initializeWithBase64EncodedDataWithNonBase64CharacterWithOptionToAllowItSkipsCharacter() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "ARMA virumque cano, Troiae qui primus ab oris\nItaliam, fato profugus, Laviniaque venit"
         let encodedText = "QVJNQSB2aXJ1bXF1ZSBjYW5vLCBUcm9pYWUgcXVpIHBya$W11cyBhYiBvcmlzCkl0YWxpYW0sIGZhdG8gcHJvZnVndXMsIExhdmluaWFxdWUgdmVuaXQ="
         guard let encodedData = encodedText.data(using: .utf8) else {
@@ -761,9 +853,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         
         XCTAssertEqual(decodedText, plainText)
         XCTAssertTrue(decodedData == plainText.data(using: .utf8)!)
+        #endif // !SKIP
     }
     
     func test_initializeWithBase64EncodedStringGetsDecodedData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "ARMA virumque cano, Troiae qui primus ab oris\nItaliam, fato profugus, Laviniaque venit"
         let encodedText = "QVJNQSB2aXJ1bXF1ZSBjYW5vLCBUcm9pYWUgcXVpIHByaW11cyBhYiBvcmlzCkl0YWxpYW0sIGZhdG8gcHJvZnVndXMsIExhdmluaWFxdWUgdmVuaXQ="
         guard let decodedData = Data(base64Encoded: encodedText, options: []) else {
@@ -776,9 +872,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         }
         
         XCTAssertEqual(decodedText, plainText)
+        #endif // !SKIP
     }
     
     func test_base64EncodedDataGetsEncodedText() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "Constitit, et lacrimans, `Quis iam locus’ inquit `Achate,\nquae regio in terris nostri non plena laboris?`"
         let encodedText = "Q29uc3RpdGl0LCBldCBsYWNyaW1hbnMsIGBRdWlzIGlhbSBsb2N1c+KAmSBpbnF1aXQgYEFjaGF0ZSwKcXVhZSByZWdpbyBpbiB0ZXJyaXMgbm9zdHJpIG5vbiBwbGVuYSBsYWJvcmlzP2A="
         guard let data = plainText.data(using: .utf8) else {
@@ -791,9 +891,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             return
         }
         XCTAssertEqual(encodedTextResult, encodedText)
+        #endif // !SKIP
     }
     
     func test_base64EncodedDataWithOptionToInsertLineFeedsContainsLineFeed() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "Constitit, et lacrimans, `Quis iam locus’ inquit `Achate,\nquae regio in terris nostri non plena laboris?`"
         let encodedText = "Q29uc3RpdGl0LCBldCBsYWNyaW1hbnMsIGBRdWlzIGlhbSBsb2N1c+KAmSBpbnF1\naXQgYEFjaGF0ZSwKcXVhZSByZWdpbyBpbiB0ZXJyaXMgbm9zdHJpIG5vbiBwbGVu\nYSBsYWJvcmlzP2A="
         guard let data = plainText.data(using: .utf8) else {
@@ -806,9 +910,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             return
         }
         XCTAssertEqual(encodedTextResult, encodedText)
+        #endif // !SKIP
     }
     
     func test_base64EncodedDataWithOptionToInsertCarriageReturnContainsCarriageReturn() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "Constitit, et lacrimans, `Quis iam locus’ inquit `Achate,\nquae regio in terris nostri non plena laboris?`"
         let encodedText = "Q29uc3RpdGl0LCBldCBsYWNyaW1hbnMsIGBRdWlzIGlhbSBsb2N1c+KAmSBpbnF1aXQgYEFjaGF0\rZSwKcXVhZSByZWdpbyBpbiB0ZXJyaXMgbm9zdHJpIG5vbiBwbGVuYSBsYWJvcmlzP2A="
         guard let data = plainText.data(using: .utf8) else {
@@ -821,9 +929,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             return
         }
         XCTAssertEqual(encodedTextResult, encodedText)
+        #endif // !SKIP
     }
     
     func test_base64EncodedDataWithOptionToInsertCarriageReturnAndLineFeedContainsBoth() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "Revocate animos, maestumque timorem mittite: forsan et haec olim meminisse iuvabit."
         let encodedText = "UmV2b2NhdGUgYW5pbW9zLCBtYWVzdHVtcXVlIHRpbW9yZW0gbWl0dGl0ZTogZm9yc2FuIGV0IGhh\r\nZWMgb2xpbSBtZW1pbmlzc2UgaXV2YWJpdC4="
         guard let data = plainText.data(using: .utf8) else {
@@ -836,9 +948,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             return
         }
         XCTAssertEqual(encodedTextResult, encodedText)
+        #endif // !SKIP
     }
     
     func test_base64EncodeDoesNotAddLineSeparatorsWhenStringFitsInLine() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         XCTAssertEqual(
             Data(repeating: 0, count: 48).base64EncodedString(options: .lineLength64Characters),
@@ -851,9 +967,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "each 3 byte is converted into 4 characterss. 57 / 3 * 4 <= 76, therefore result should not have line separator."
         )
+        #endif // !SKIP
     }
     
     func test_base64EncodeAddsLineSeparatorsWhenStringDoesNotFitInLine() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         XCTAssertEqual(
             Data(repeating: 0, count: 49).base64EncodedString(options: .lineLength64Characters),
@@ -866,9 +986,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\nAA==",
             "each 3 byte is converted into 4 characterss. 58 / 3 * 4 > 76, therefore result should have lines with separator."
         )
+        #endif // !SKIP
     }
     
     func test_base64EncodedStringGetsEncodedText() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let plainText = "Revocate animos, maestumque timorem mittite: forsan et haec olim meminisse iuvabit."
         let encodedText = "UmV2b2NhdGUgYW5pbW9zLCBtYWVzdHVtcXVlIHRpbW9yZW0gbWl0dGl0ZTogZm9yc2FuIGV0IGhhZWMgb2xpbSBtZW1pbmlzc2UgaXV2YWJpdC4="
         guard let data = plainText.data(using: .utf8) else {
@@ -878,16 +1002,24 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         let encodedTextResult = data.base64EncodedString()
         XCTAssertEqual(encodedTextResult, encodedText)
 
+        #endif // !SKIP
     }
 
     func test_base64EncodeEmptyData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(Data().base64EncodedString(), "")
         XCTAssertEqual(NSData().base64EncodedString(), "")
         XCTAssertEqual(Data().base64EncodedData(), Data())
         XCTAssertEqual(NSData().base64EncodedData(), Data())
+        #endif // !SKIP
     }
 
     func test_base64DecodeWithPadding1() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encodedPadding1 = "AoR="
         let dataPadding1Bytes : [UInt8] = [0x02,0x84]
         let dataPadding1 = NSData(bytes: dataPadding1Bytes, length: dataPadding1Bytes.count)
@@ -898,9 +1030,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             return
         }
         XCTAssert(dataPadding1.isEqual(to: decodedPadding1))
+        #endif // !SKIP
     }
 
     func test_base64DecodeWithPadding2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let encodedPadding2 = "Ao=="
         let dataPadding2Bytes : [UInt8] = [0x02]
         let dataPadding2 = NSData(bytes: dataPadding2Bytes, length: dataPadding2Bytes.count)
@@ -911,9 +1047,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             return
         }
         XCTAssert(dataPadding2.isEqual(to: decodedPadding2))
+        #endif // !SKIP
     }
 
     func test_rangeOfData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseData : [UInt8] = [0x00,0x01,0x02,0x03,0x04]
         let base = NSData(bytes: baseData, length: baseData.count)
         let baseFullRange = NSRange(location : 0,length : baseData.count)
@@ -967,9 +1107,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         XCTAssert(NSEqualRanges(base.range(of: empty, options: [.backwards], in: baseFullRange),notFoundRange))
         XCTAssert(NSEqualRanges(base.range(of: empty, options: [.backwards,.anchored], in: baseFullRange),notFoundRange))
         
+        #endif // !SKIP
     }
 
     func test_sr10689_rangeOfDataProtocol() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // https://bugs.swift.org/browse/SR-10689
         
         let base = Data([0x00, 0x01, 0x02, 0x03, 0x00, 0x01, 0x02, 0x03,
@@ -1058,34 +1202,54 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             assertLastRange(base, oneByte, range: 6...6, expectedStartIndex: 6)
             assertLastRange(base, oneByte, range: 8...9, expectedStartIndex: nil)
         }
+        #endif // !SKIP
     }
 
     // Check all of the NSMutableData constructors are available.
     func test_initNSMutableData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let mData = NSMutableData()
         XCTAssertEqual(mData.length, 0)
+        #endif // !SKIP
     }
 
     func test_initNSMutableDataWithLength() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let mData = NSMutableData(length: 30)
         XCTAssertNotNil(mData)
         XCTAssertEqual(mData!.length, 30)
+        #endif // !SKIP
     }
 
     func test_initNSMutableDataWithCapacity() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let mData = NSMutableData(capacity: 30)
         XCTAssertNotNil(mData)
         XCTAssertEqual(mData!.length, 0)
+        #endif // !SKIP
     }
 
     func test_initNSMutableDataFromData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([1, 2, 3])
         let mData = NSMutableData(data: data)
         XCTAssertEqual(mData.length, 3)
         XCTAssertEqual(NSData(data: data), mData)
+        #endif // !SKIP
     }
 
     func test_initNSMutableDataFromBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([1, 2, 3, 4, 5, 6])
         var testBytes: [UInt8] = [1, 2, 3, 4, 5, 6]
 
@@ -1105,9 +1269,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
 
         let md5 = NSMutableData(bytesNoCopy: &testBytes, length: testBytes.count, freeWhenDone: false)
         XCTAssertEqual(md5, NSData(data: data))
+        #endif // !SKIP
     }
 
     func test_initNSMutableDataContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testDir = testBundle().resourcePath
         let filename = testDir!.appending("/NSStringTestData.txt")
         let url = URL(fileURLWithPath: filename)
@@ -1148,9 +1316,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         XCTAssertNil(try? NSMutableData(contentsOfFile: badFilename, options: []))
         XCTAssertNil(NSMutableData(contentsOf: badUrl))
         XCTAssertNil(try? NSMutableData(contentsOf: badUrl, options:  []))
+        #endif // !SKIP
     }
 
     func test_initNSMutableDataBase64() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let srcData = Data([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
         let base64Data = srcData.base64EncodedData()
         let base64String = srcData.base64EncodedString()
@@ -1167,9 +1339,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         // Test bad input
         XCTAssertNil(NSMutableData(base64Encoded: Data([1,2,3]), options: []))
         XCTAssertNil(NSMutableData(base64Encoded: "x", options: []))
+        #endif // !SKIP
     }
 
     func test_replaceBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 0, 0, 0, 0])
         let newData = Data([1, 2, 3, 4, 5])
 
@@ -1200,9 +1376,13 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         }
         let expected = makeData([0, 8, 9, 10, 0])
         XCTAssertEqual(mData, expected)
+        #endif // !SKIP
     }
 
     func test_replaceBytesWithNil() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func makeData(_ data: [UInt8]) -> NSMutableData {
             return NSMutableData(bytes: data, length: data.count)
         }
@@ -1211,14 +1391,22 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
         mData.replaceBytes(in: NSRange(location: 1, length: 3), withBytes: nil, length: 0)
         let expected = makeData([1, 5])
         XCTAssertEqual(mData, expected)
+        #endif // !SKIP
     }
 
     func test_initDataWithCapacity() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data(capacity: 123)
         XCTAssertEqual(data.count, 0)
+        #endif // !SKIP
     }
 
     func test_initDataWithCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dataSize = 1024
         let data = Data(count: dataSize)
         XCTAssertEqual(data.count, dataSize)
@@ -1226,17 +1414,25 @@ class TestNSData: XCTestCase { // : LoopbackServerTest {
             XCTFail("Byte at index: \(index) is not zero: \(data[index])")
             return
         }
+        #endif // !SKIP
     }
 
     func test_emptyStringToData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = "".data(using: .utf8)!
         XCTAssertEqual(0, data.count, "data from empty string is empty")
+        #endif // !SKIP
     }
 }
 
 // Tests from Swift SDK Overlay
 extension TestNSData {
     func testBasicConstruction() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         // Make sure that we were able to create some data
         let hello = dataFrom("hello")
@@ -1252,9 +1448,13 @@ extension TestNSData {
         XCTAssertEqual(hello[0], 0x68, "First byte should not have changed")
         XCTAssertEqual(hello.count, helloLength, "Length of first data should not have changed")
         XCTAssertEqual(helloWorld.count, hello.count + world.count, "The total length should include both buffers")
+        #endif // !SKIP
     }
     
     func testInitializationWithArray() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([1, 2, 3])
         XCTAssertEqual(3, data.count)
         
@@ -1263,9 +1463,13 @@ extension TestNSData {
         
         let data3 = Data([1, 2, 3, 4, 5][1..<3])
         XCTAssertEqual(2, data3.count)
+        #endif // !SKIP
     }
     
     func testMutableData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let hello = dataFrom("hello")
         let helloLength = hello.count
         XCTAssertEqual(hello[0], 0x68, "Unexpected first byte")
@@ -1289,11 +1493,15 @@ extension TestNSData {
 
         // Verify that the first data is still correct
         XCTAssertEqual(hello[0], 0x68, "The first byte should still be 0x68")
+        #endif // !SKIP
     }
     
 
     
     func testBridgingDefault() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let hello = dataFrom("hello")
         // Convert from struct Data to NSData
         if let s = NSString(data: hello, encoding: String.Encoding.utf8.rawValue) {
@@ -1305,9 +1513,13 @@ extension TestNSData {
         if let resultingData = NSString(string: "goodbye").data(using: String.Encoding.utf8.rawValue) {
             XCTAssertEqual(resultingData[0], goodbye[0], "First byte should be equal")
         }
+        #endif // !SKIP
     }
     
     func testBridgingMutable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Create a mutable data
         var helloWorld = dataFrom("hello")
         helloWorld.append(dataFrom("world"))
@@ -1317,18 +1529,26 @@ extension TestNSData {
             XCTAssertTrue(s.isEqual(to: "helloworld"), "The strings should be equal")
         }
         
+        #endif // !SKIP
     }
     
   
     func testEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d1 = dataFrom("hello")
         let d2 = dataFrom("hello")
         
         // Use == explicitly here to make sure we're calling the right methods
         XCTAssertTrue(d1 == d2, "Data should be equal")
+        #endif // !SKIP
     }
     
     func testDataInSet() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d1 = dataFrom("Hello")
         let d2 = dataFrom("Hello")
         let d3 = dataFrom("World")
@@ -1339,19 +1559,31 @@ extension TestNSData {
         s.insert(d3)
         
         XCTAssertEqual(s.count, 2, "Expected only two entries in the Set")
+        #endif // !SKIP
     }
     
     func testFirstRangeEmptyData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Data([1, 2, 3])
         XCTAssertNil(d.firstRange(of: Data()))
+        #endif // !SKIP
     }
     
     func testLastRangeEmptyData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Data([1, 2, 3])
         XCTAssertNil(d.lastRange(of: Data()))
+        #endif // !SKIP
     }
     
     func testReplaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var hello = dataFrom("Hello")
         let world = dataFrom("World")
         
@@ -1364,9 +1596,13 @@ extension TestNSData {
         
         goodbyeWorld.replaceSubrange(0..<5, with: goodbye)
         XCTAssertEqual(goodbyeWorld, expected)
+        #endif // !SKIP
     }
     
     func testReplaceSubrange2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let hello = dataFrom("Hello")
         let world = dataFrom(" World")
         let goodbye = dataFrom("Goodbye")
@@ -1379,9 +1615,13 @@ extension TestNSData {
             mutateMe.replaceSubrange(found, with: goodbye)
         }
         XCTAssertEqual(mutateMe, expected)
+        #endif // !SKIP
     }
     
     func testReplaceSubrange3() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // The expected result
         let expectedBytes : [UInt8] = [1, 2, 9, 10, 11, 12, 13]
         let expected = expectedBytes.withUnsafeBufferPointer {
@@ -1400,9 +1640,13 @@ extension TestNSData {
             a.replaceSubrange(2..<5, with: $0)
         }
         XCTAssertEqual(expected, a)
+        #endif // !SKIP
     }
     
     func testReplaceSubrange4() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let expectedBytes : [UInt8] = [1, 2, 9, 10, 11, 12, 13]
         let expected = Data(expectedBytes)
         
@@ -1414,9 +1658,13 @@ extension TestNSData {
         let b : [UInt8] = [9, 10, 11, 12, 13]
         a.replaceSubrange(2..<5, with: b)
         XCTAssertEqual(expected, a)
+        #endif // !SKIP
     }
     
     func testReplaceSubrange5() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var d = Data([1, 2, 3])
         d.replaceSubrange(0..<0, with: [4])
         XCTAssertEqual(Data([4, 1, 2, 3]), d)
@@ -1435,9 +1683,13 @@ extension TestNSData {
         
         d.replaceSubrange(d.count..<d.count, with: [5])
         XCTAssertEqual(Data([1, 9, 8, 4, 5]), d)
+        #endif // !SKIP
     }
     
     func testRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let helloWorld = dataFrom("Hello World")
         let goodbye = dataFrom("Goodbye")
         let hello = dataFrom("Hello")
@@ -1456,9 +1708,13 @@ extension TestNSData {
             let found = helloWorld.range(of: hello, in: 7..<helloWorld.count)
             XCTAssertTrue(found == nil || found!.isEmpty)
         }
+        #endif // !SKIP
     }
     
     func testInsertData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let hello = dataFrom("Hello")
         let world = dataFrom(" World")
         let expected = dataFrom("Hello World")
@@ -1468,18 +1724,26 @@ extension TestNSData {
         helloWorld.replaceSubrange(0..<0, with: hello)
         
         XCTAssertEqual(helloWorld, expected)
+        #endif // !SKIP
     }
     
     func testLoops() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let hello = dataFrom("Hello")
         var count = 0
         for _ in hello {
             count += 1
         }
         XCTAssertEqual(count, 5)
+        #endif // !SKIP
     }
     
     func testGenericAlgorithms() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let hello = dataFrom("Hello World")
         
         let isCapital = { (byte : UInt8) in byte >= 65 && byte <= 90 }
@@ -1492,9 +1756,13 @@ extension TestNSData {
         
         let allLower = hello.map { isCapital($0) ? $0 + 31 : $0 }
         XCTAssertEqual(allLower.count, hello.count)
+        #endif // !SKIP
     }
     
     func testCustomDeallocator() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var deallocatorCalled = false
         
         // Scope the data to a block to control lifecycle
@@ -1510,9 +1778,13 @@ extension TestNSData {
         }
         
         XCTAssertTrue(deallocatorCalled, "Custom deallocator was never called")
+        #endif // !SKIP
     }
     
     func testCopyBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let c = 10
         let underlyingBuffer = malloc(c * MemoryLayout<UInt16>.stride)!
         let u16Ptr = underlyingBuffer.bindMemory(to: UInt16.self, capacity: c)
@@ -1530,9 +1802,13 @@ extension TestNSData {
         
         XCTAssertEqual(buffer[0], 0xFFFF)
         free(underlyingBuffer)
+        #endif // !SKIP
     }
     
     func testCopyBytes_undersized() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a : [UInt8] = [1, 2, 3, 4, 5]
         let data = a.withUnsafeBufferPointer {
             return Data(buffer: $0)
@@ -1555,9 +1831,13 @@ extension TestNSData {
         }
         
         free(underlyingBuffer)
+        #endif // !SKIP
     }
     
     func testCopyBytes_oversized() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a : [Int32] = [1, 0, 1, 0, 1]
         let data = a.withUnsafeBufferPointer {
             return Data(buffer: $0)
@@ -1573,9 +1853,13 @@ extension TestNSData {
         XCTAssertEqual(expectedSize, copiedCount)
         
         free(underlyingBuffer)
+        #endif // !SKIP
     }
     
     func testCopyBytes_ranges() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         
         do {
             // Equal sized buffer, data
@@ -1655,24 +1939,36 @@ extension TestNSData {
             free(underlyingBuffer)
             
         }
+        #endif // !SKIP
     }
     
     func test_base64Data_small() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = "Hello World".data(using: .utf8)!
         let base64 = data.base64EncodedString()
         XCTAssertEqual("SGVsbG8gV29ybGQ=", base64, "trivial base64 encoding should work")
+        #endif // !SKIP
     }
     
     func test_base64DataDecode_small() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dataEncoded = "SGVsbG8sIG5ldyBXb3JsZA==".data(using: .utf8)!
         let dataDecoded = NSData(base64Encoded: dataEncoded)!
         let string = (dataDecoded as Data).withUnsafeBytes { buffer in
             return String(bytes: buffer, encoding: .utf8)
         }
         XCTAssertEqual("Hello, new World", string, "trivial base64 decoding should work")
+        #endif // !SKIP
     }
 
     func test_dataHash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(NSData().hash, 0)
         XCTAssertEqual(NSMutableData().hash, 0)
 
@@ -1681,24 +1977,36 @@ extension TestNSData {
         let md1 = NSMutableData(data: data)
         XCTAssertEqual(d1.hash, 72772266)
         XCTAssertEqual(md1.hash, 72772266)
+        #endif // !SKIP
    }
     
     func test_base64Data_medium() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut at tincidunt arcu. Suspendisse nec sodales erat, sit amet imperdiet ipsum. Etiam sed ornare felis. Nunc mauris turpis, bibendum non lectus quis, malesuada placerat turpis. Nam adipiscing non massa et semper. Nulla convallis semper bibendum. Aliquam dictum nulla cursus mi ultricies, at tincidunt mi sagittis. Nulla faucibus at dui quis sodales. Morbi rutrum, dui id ultrices venenatis, arcu urna egestas felis, vel suscipit mauris arcu quis risus. Nunc venenatis ligula at orci tristique, et mattis purus pulvinar. Etiam ultricies est odio. Nunc eleifend malesuada justo, nec euismod sem ultrices quis. Etiam nec nibh sit amet lorem faucibus dapibus quis nec leo. Praesent sit amet mauris vel lacus hendrerit porta mollis consectetur mi. Donec eget tortor dui. Morbi imperdiet, arcu sit amet elementum interdum, quam nisl tempor quam, vitae feugiat augue purus sed lacus. In ac urna adipiscing purus venenatis volutpat vel et metus. Nullam nec auctor quam. Phasellus porttitor felis ac nibh gravida suscipit tempus at ante. Nunc pellentesque iaculis sapien a mattis. Aenean eleifend dolor non nunc laoreet, non dictum massa aliquam. Aenean quis turpis augue. Praesent augue lectus, mollis nec elementum eu, dignissim at velit. Ut congue neque id ullamcorper pellentesque. Maecenas euismod in elit eu vehicula. Nullam tristique dui nulla, nec convallis metus suscipit eget. Cras semper augue nec cursus blandit. Nulla rhoncus et odio quis blandit. Praesent lobortis dignissim velit ut pulvinar. Duis interdum quam adipiscing dolor semper semper. Nunc bibendum convallis dui, eget mollis magna hendrerit et. Morbi facilisis, augue eu fringilla convallis, mauris est cursus dolor, eu posuere odio nunc quis orci. Ut eu justo sem. Phasellus ut erat rhoncus, faucibus arcu vitae, vulputate erat. Aliquam nec magna viverra, interdum est vitae, rhoncus sapien. Duis tincidunt tempor ipsum ut dapibus. Nullam commodo varius metus, sed sollicitudin eros. Etiam nec odio et dui tempor blandit posuere.".data(using: .utf8)!
         let base64 = data.base64EncodedString()
         XCTAssertEqual("TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gVXQgYXQgdGluY2lkdW50IGFyY3UuIFN1c3BlbmRpc3NlIG5lYyBzb2RhbGVzIGVyYXQsIHNpdCBhbWV0IGltcGVyZGlldCBpcHN1bS4gRXRpYW0gc2VkIG9ybmFyZSBmZWxpcy4gTnVuYyBtYXVyaXMgdHVycGlzLCBiaWJlbmR1bSBub24gbGVjdHVzIHF1aXMsIG1hbGVzdWFkYSBwbGFjZXJhdCB0dXJwaXMuIE5hbSBhZGlwaXNjaW5nIG5vbiBtYXNzYSBldCBzZW1wZXIuIE51bGxhIGNvbnZhbGxpcyBzZW1wZXIgYmliZW5kdW0uIEFsaXF1YW0gZGljdHVtIG51bGxhIGN1cnN1cyBtaSB1bHRyaWNpZXMsIGF0IHRpbmNpZHVudCBtaSBzYWdpdHRpcy4gTnVsbGEgZmF1Y2lidXMgYXQgZHVpIHF1aXMgc29kYWxlcy4gTW9yYmkgcnV0cnVtLCBkdWkgaWQgdWx0cmljZXMgdmVuZW5hdGlzLCBhcmN1IHVybmEgZWdlc3RhcyBmZWxpcywgdmVsIHN1c2NpcGl0IG1hdXJpcyBhcmN1IHF1aXMgcmlzdXMuIE51bmMgdmVuZW5hdGlzIGxpZ3VsYSBhdCBvcmNpIHRyaXN0aXF1ZSwgZXQgbWF0dGlzIHB1cnVzIHB1bHZpbmFyLiBFdGlhbSB1bHRyaWNpZXMgZXN0IG9kaW8uIE51bmMgZWxlaWZlbmQgbWFsZXN1YWRhIGp1c3RvLCBuZWMgZXVpc21vZCBzZW0gdWx0cmljZXMgcXVpcy4gRXRpYW0gbmVjIG5pYmggc2l0IGFtZXQgbG9yZW0gZmF1Y2lidXMgZGFwaWJ1cyBxdWlzIG5lYyBsZW8uIFByYWVzZW50IHNpdCBhbWV0IG1hdXJpcyB2ZWwgbGFjdXMgaGVuZHJlcml0IHBvcnRhIG1vbGxpcyBjb25zZWN0ZXR1ciBtaS4gRG9uZWMgZWdldCB0b3J0b3IgZHVpLiBNb3JiaSBpbXBlcmRpZXQsIGFyY3Ugc2l0IGFtZXQgZWxlbWVudHVtIGludGVyZHVtLCBxdWFtIG5pc2wgdGVtcG9yIHF1YW0sIHZpdGFlIGZldWdpYXQgYXVndWUgcHVydXMgc2VkIGxhY3VzLiBJbiBhYyB1cm5hIGFkaXBpc2NpbmcgcHVydXMgdmVuZW5hdGlzIHZvbHV0cGF0IHZlbCBldCBtZXR1cy4gTnVsbGFtIG5lYyBhdWN0b3IgcXVhbS4gUGhhc2VsbHVzIHBvcnR0aXRvciBmZWxpcyBhYyBuaWJoIGdyYXZpZGEgc3VzY2lwaXQgdGVtcHVzIGF0IGFudGUuIE51bmMgcGVsbGVudGVzcXVlIGlhY3VsaXMgc2FwaWVuIGEgbWF0dGlzLiBBZW5lYW4gZWxlaWZlbmQgZG9sb3Igbm9uIG51bmMgbGFvcmVldCwgbm9uIGRpY3R1bSBtYXNzYSBhbGlxdWFtLiBBZW5lYW4gcXVpcyB0dXJwaXMgYXVndWUuIFByYWVzZW50IGF1Z3VlIGxlY3R1cywgbW9sbGlzIG5lYyBlbGVtZW50dW0gZXUsIGRpZ25pc3NpbSBhdCB2ZWxpdC4gVXQgY29uZ3VlIG5lcXVlIGlkIHVsbGFtY29ycGVyIHBlbGxlbnRlc3F1ZS4gTWFlY2VuYXMgZXVpc21vZCBpbiBlbGl0IGV1IHZlaGljdWxhLiBOdWxsYW0gdHJpc3RpcXVlIGR1aSBudWxsYSwgbmVjIGNvbnZhbGxpcyBtZXR1cyBzdXNjaXBpdCBlZ2V0LiBDcmFzIHNlbXBlciBhdWd1ZSBuZWMgY3Vyc3VzIGJsYW5kaXQuIE51bGxhIHJob25jdXMgZXQgb2RpbyBxdWlzIGJsYW5kaXQuIFByYWVzZW50IGxvYm9ydGlzIGRpZ25pc3NpbSB2ZWxpdCB1dCBwdWx2aW5hci4gRHVpcyBpbnRlcmR1bSBxdWFtIGFkaXBpc2NpbmcgZG9sb3Igc2VtcGVyIHNlbXBlci4gTnVuYyBiaWJlbmR1bSBjb252YWxsaXMgZHVpLCBlZ2V0IG1vbGxpcyBtYWduYSBoZW5kcmVyaXQgZXQuIE1vcmJpIGZhY2lsaXNpcywgYXVndWUgZXUgZnJpbmdpbGxhIGNvbnZhbGxpcywgbWF1cmlzIGVzdCBjdXJzdXMgZG9sb3IsIGV1IHBvc3VlcmUgb2RpbyBudW5jIHF1aXMgb3JjaS4gVXQgZXUganVzdG8gc2VtLiBQaGFzZWxsdXMgdXQgZXJhdCByaG9uY3VzLCBmYXVjaWJ1cyBhcmN1IHZpdGFlLCB2dWxwdXRhdGUgZXJhdC4gQWxpcXVhbSBuZWMgbWFnbmEgdml2ZXJyYSwgaW50ZXJkdW0gZXN0IHZpdGFlLCByaG9uY3VzIHNhcGllbi4gRHVpcyB0aW5jaWR1bnQgdGVtcG9yIGlwc3VtIHV0IGRhcGlidXMuIE51bGxhbSBjb21tb2RvIHZhcml1cyBtZXR1cywgc2VkIHNvbGxpY2l0dWRpbiBlcm9zLiBFdGlhbSBuZWMgb2RpbyBldCBkdWkgdGVtcG9yIGJsYW5kaXQgcG9zdWVyZS4=", base64, "medium base64 encoding should work")
+        #endif // !SKIP
     }
 
     func test_base64DataDecode_medium() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dataEncoded = "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gVXQgYXQgdGluY2lkdW50IGFyY3UuIFN1c3BlbmRpc3NlIG5lYyBzb2RhbGVzIGVyYXQsIHNpdCBhbWV0IGltcGVyZGlldCBpcHN1bS4gRXRpYW0gc2VkIG9ybmFyZSBmZWxpcy4gTnVuYyBtYXVyaXMgdHVycGlzLCBiaWJlbmR1bSBub24gbGVjdHVzIHF1aXMsIG1hbGVzdWFkYSBwbGFjZXJhdCB0dXJwaXMuIE5hbSBhZGlwaXNjaW5nIG5vbiBtYXNzYSBldCBzZW1wZXIuIE51bGxhIGNvbnZhbGxpcyBzZW1wZXIgYmliZW5kdW0uIEFsaXF1YW0gZGljdHVtIG51bGxhIGN1cnN1cyBtaSB1bHRyaWNpZXMsIGF0IHRpbmNpZHVudCBtaSBzYWdpdHRpcy4gTnVsbGEgZmF1Y2lidXMgYXQgZHVpIHF1aXMgc29kYWxlcy4gTW9yYmkgcnV0cnVtLCBkdWkgaWQgdWx0cmljZXMgdmVuZW5hdGlzLCBhcmN1IHVybmEgZWdlc3RhcyBmZWxpcywgdmVsIHN1c2NpcGl0IG1hdXJpcyBhcmN1IHF1aXMgcmlzdXMuIE51bmMgdmVuZW5hdGlzIGxpZ3VsYSBhdCBvcmNpIHRyaXN0aXF1ZSwgZXQgbWF0dGlzIHB1cnVzIHB1bHZpbmFyLiBFdGlhbSB1bHRyaWNpZXMgZXN0IG9kaW8uIE51bmMgZWxlaWZlbmQgbWFsZXN1YWRhIGp1c3RvLCBuZWMgZXVpc21vZCBzZW0gdWx0cmljZXMgcXVpcy4gRXRpYW0gbmVjIG5pYmggc2l0IGFtZXQgbG9yZW0gZmF1Y2lidXMgZGFwaWJ1cyBxdWlzIG5lYyBsZW8uIFByYWVzZW50IHNpdCBhbWV0IG1hdXJpcyB2ZWwgbGFjdXMgaGVuZHJlcml0IHBvcnRhIG1vbGxpcyBjb25zZWN0ZXR1ciBtaS4gRG9uZWMgZWdldCB0b3J0b3IgZHVpLiBNb3JiaSBpbXBlcmRpZXQsIGFyY3Ugc2l0IGFtZXQgZWxlbWVudHVtIGludGVyZHVtLCBxdWFtIG5pc2wgdGVtcG9yIHF1YW0sIHZpdGFlIGZldWdpYXQgYXVndWUgcHVydXMgc2VkIGxhY3VzLiBJbiBhYyB1cm5hIGFkaXBpc2NpbmcgcHVydXMgdmVuZW5hdGlzIHZvbHV0cGF0IHZlbCBldCBtZXR1cy4gTnVsbGFtIG5lYyBhdWN0b3IgcXVhbS4gUGhhc2VsbHVzIHBvcnR0aXRvciBmZWxpcyBhYyBuaWJoIGdyYXZpZGEgc3VzY2lwaXQgdGVtcHVzIGF0IGFudGUuIE51bmMgcGVsbGVudGVzcXVlIGlhY3VsaXMgc2FwaWVuIGEgbWF0dGlzLiBBZW5lYW4gZWxlaWZlbmQgZG9sb3Igbm9uIG51bmMgbGFvcmVldCwgbm9uIGRpY3R1bSBtYXNzYSBhbGlxdWFtLiBBZW5lYW4gcXVpcyB0dXJwaXMgYXVndWUuIFByYWVzZW50IGF1Z3VlIGxlY3R1cywgbW9sbGlzIG5lYyBlbGVtZW50dW0gZXUsIGRpZ25pc3NpbSBhdCB2ZWxpdC4gVXQgY29uZ3VlIG5lcXVlIGlkIHVsbGFtY29ycGVyIHBlbGxlbnRlc3F1ZS4gTWFlY2VuYXMgZXVpc21vZCBpbiBlbGl0IGV1IHZlaGljdWxhLiBOdWxsYW0gdHJpc3RpcXVlIGR1aSBudWxsYSwgbmVjIGNvbnZhbGxpcyBtZXR1cyBzdXNjaXBpdCBlZ2V0LiBDcmFzIHNlbXBlciBhdWd1ZSBuZWMgY3Vyc3VzIGJsYW5kaXQuIE51bGxhIHJob25jdXMgZXQgb2RpbyBxdWlzIGJsYW5kaXQuIFByYWVzZW50IGxvYm9ydGlzIGRpZ25pc3NpbSB2ZWxpdCB1dCBwdWx2aW5hci4gRHVpcyBpbnRlcmR1bSBxdWFtIGFkaXBpc2NpbmcgZG9sb3Igc2VtcGVyIHNlbXBlci4gTnVuYyBiaWJlbmR1bSBjb252YWxsaXMgZHVpLCBlZ2V0IG1vbGxpcyBtYWduYSBoZW5kcmVyaXQgZXQuIE1vcmJpIGZhY2lsaXNpcywgYXVndWUgZXUgZnJpbmdpbGxhIGNvbnZhbGxpcywgbWF1cmlzIGVzdCBjdXJzdXMgZG9sb3IsIGV1IHBvc3VlcmUgb2RpbyBudW5jIHF1aXMgb3JjaS4gVXQgZXUganVzdG8gc2VtLiBQaGFzZWxsdXMgdXQgZXJhdCByaG9uY3VzLCBmYXVjaWJ1cyBhcmN1IHZpdGFlLCB2dWxwdXRhdGUgZXJhdC4gQWxpcXVhbSBuZWMgbWFnbmEgdml2ZXJyYSwgaW50ZXJkdW0gZXN0IHZpdGFlLCByaG9uY3VzIHNhcGllbi4gRHVpcyB0aW5jaWR1bnQgdGVtcG9yIGlwc3VtIHV0IGRhcGlidXMuIE51bGxhbSBjb21tb2RvIHZhcml1cyBtZXR1cywgc2VkIHNvbGxpY2l0dWRpbiBlcm9zLiBFdGlhbSBuZWMgb2RpbyBldCBkdWkgdGVtcG9yIGJsYW5kaXQgcG9zdWVyZS4=".data(using: .utf8)!
         let dataDecoded = NSData(base64Encoded: dataEncoded)!
         let string = (dataDecoded as Data).withUnsafeBytes { buffer in
             return String(bytes: buffer, encoding: .utf8)
         }
         XCTAssertEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut at tincidunt arcu. Suspendisse nec sodales erat, sit amet imperdiet ipsum. Etiam sed ornare felis. Nunc mauris turpis, bibendum non lectus quis, malesuada placerat turpis. Nam adipiscing non massa et semper. Nulla convallis semper bibendum. Aliquam dictum nulla cursus mi ultricies, at tincidunt mi sagittis. Nulla faucibus at dui quis sodales. Morbi rutrum, dui id ultrices venenatis, arcu urna egestas felis, vel suscipit mauris arcu quis risus. Nunc venenatis ligula at orci tristique, et mattis purus pulvinar. Etiam ultricies est odio. Nunc eleifend malesuada justo, nec euismod sem ultrices quis. Etiam nec nibh sit amet lorem faucibus dapibus quis nec leo. Praesent sit amet mauris vel lacus hendrerit porta mollis consectetur mi. Donec eget tortor dui. Morbi imperdiet, arcu sit amet elementum interdum, quam nisl tempor quam, vitae feugiat augue purus sed lacus. In ac urna adipiscing purus venenatis volutpat vel et metus. Nullam nec auctor quam. Phasellus porttitor felis ac nibh gravida suscipit tempus at ante. Nunc pellentesque iaculis sapien a mattis. Aenean eleifend dolor non nunc laoreet, non dictum massa aliquam. Aenean quis turpis augue. Praesent augue lectus, mollis nec elementum eu, dignissim at velit. Ut congue neque id ullamcorper pellentesque. Maecenas euismod in elit eu vehicula. Nullam tristique dui nulla, nec convallis metus suscipit eget. Cras semper augue nec cursus blandit. Nulla rhoncus et odio quis blandit. Praesent lobortis dignissim velit ut pulvinar. Duis interdum quam adipiscing dolor semper semper. Nunc bibendum convallis dui, eget mollis magna hendrerit et. Morbi facilisis, augue eu fringilla convallis, mauris est cursus dolor, eu posuere odio nunc quis orci. Ut eu justo sem. Phasellus ut erat rhoncus, faucibus arcu vitae, vulputate erat. Aliquam nec magna viverra, interdum est vitae, rhoncus sapien. Duis tincidunt tempor ipsum ut dapibus. Nullam commodo varius metus, sed sollicitudin eros. Etiam nec odio et dui tempor blandit posuere.", string, "medium base64 decoding should work")
+        #endif // !SKIP
     }
 
     func test_openingNonExistentFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var didCatchError = false
 
         do {
@@ -1708,9 +2016,13 @@ extension TestNSData {
         }
 
         XCTAssertTrue(didCatchError)
+        #endif // !SKIP
     }
 
     func test_contentsOfFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let testDir = testBundle().resourcePath
         let filename = testDir!.appending("/NSStringTestData.txt")
 
@@ -1724,9 +2036,13 @@ extension TestNSData {
                 XCTAssertEqual(str, "swift-corelibs-foundation")
             }
         }
+        #endif // !SKIP
     }
 
     func test_contentsOfZeroFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if os(Linux)
         guard FileManager.default.fileExists(atPath: "/proc/self") else {
             return
@@ -1754,9 +2070,13 @@ extension TestNSData {
             XCTFail("Cannot read /proc/self/maps: \(String(describing: error))")
         }
 #endif
+        #endif // !SKIP
     }
 
     func test_wrongSizedFile() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if os(Linux)
         // Some files in /sys report a non-zero st_size often bigger than the contents
         guard let data = NSData.init(contentsOfFile: "/sys/kernel/profiling") else {
@@ -1765,9 +2085,13 @@ extension TestNSData {
         }
         XCTAssert(data.length > 0)
 #endif
+        #endif // !SKIP
     }
 
     func test_contentsOfURL() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        do {
 //            let urlString = "http://127.0.0.1:\(TestURLSession.serverPort)/country.txt"
 //            let url = try XCTUnwrap(URL(string: urlString))
@@ -1806,9 +2130,13 @@ extension TestNSData {
 //                }
 //            }
 //        }
+        #endif // !SKIP
     }
 
     func test_basicReadWrite() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent("testfile")
         let count = 1 << 24
         let randomMemory = malloc(count)!
@@ -1823,9 +2151,13 @@ extension TestNSData {
         }
         
         try? FileManager.default.removeItem(at: url)
+        #endif // !SKIP
     }
     
     func test_writeFailure() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let url = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent("testfile")
         
         let data = Data()
@@ -1857,9 +2189,13 @@ extension TestNSData {
         }
         
         try? FileManager.default.removeItem(at: url)
+        #endif // !SKIP
     }
     
     func test_genericBuffers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let a : [Int32] = [1, 0, 1, 0, 1]
         var data = a.withUnsafeBufferPointer {
             return Data(buffer: $0)
@@ -1882,8 +2218,10 @@ extension TestNSData {
         XCTAssertEqual(copiedCount, expectedSize)
         
         free(underlyingBuffer)
+        #endif // !SKIP
     }
-    
+
+    #if !SKIP
     // intentionally structured so sizeof() != strideof()
     struct MyStruct {
         var time: UInt64
@@ -1897,8 +2235,12 @@ extension TestNSData {
             z = 3
         }
     }
+    #endif
     
     func test_bufferSizeCalculation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Make sure that Data is correctly using strideof instead of sizeof.
         // n.b. if sizeof(MyStruct) == strideof(MyStruct), this test is not as useful as it could be
         
@@ -1954,9 +2296,13 @@ extension TestNSData {
             let byteCount = data.copyBytes(to: buffer)
             XCTAssertEqual(6 * MemoryLayout<MyStruct>.stride, byteCount)
         }
+        #endif // !SKIP
     }
 
     func test_repeatingValueInitialization() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var d = Data(repeating: 0x01, count: 3)
         let elements = repeatElement(UInt8(0x02), count: 3) // ensure we fall into the sequence case
         d.append(contentsOf: elements)
@@ -1968,9 +2314,13 @@ extension TestNSData {
         XCTAssertEqual(d[3], 0x02)
         XCTAssertEqual(d[4], 0x02)
         XCTAssertEqual(d[5], 0x02)
+        #endif // !SKIP
     }
     
     func test_sliceAppending() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // https://bugs.swift.org/browse/SR-4473
         var fooData = Data()
         let barData = Data([0, 1, 2, 3, 4, 5])
@@ -1979,26 +2329,38 @@ extension TestNSData {
         XCTAssertEqual(fooData[0], 0x03)
         XCTAssertEqual(fooData[1], 0x04)
         XCTAssertEqual(fooData[2], 0x05)
+        #endif // !SKIP
     }
     
     func test_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // https://bugs.swift.org/browse/SR-4462
         let data = Data([0x01, 0x02])
         var dataII = Data(base64Encoded: data.base64EncodedString())!
         dataII.replaceSubrange(0..<1, with: Data())
         XCTAssertEqual(dataII[0], 0x02)
+        #endif // !SKIP
     }
     
     func test_sliceWithUnsafeBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base = Data([0, 1, 2, 3, 4, 5])
         let slice = base[2..<4]
         let segment = slice.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) -> [UInt8] in
             return [buffer[0], buffer[1]]
         }
         XCTAssertEqual(segment, [UInt8(2), UInt8(3)])
+        #endif // !SKIP
     }
     
     func test_sliceIteration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base = Data([0, 1, 2, 3, 4, 5])
         let slice = base[2..<4]
         var found = [UInt8]()
@@ -2007,77 +2369,117 @@ extension TestNSData {
         }
         XCTAssertEqual(found[0], 2)
         XCTAssertEqual(found[1], 3)
+        #endif // !SKIP
     }
 
         func test_validateMutation_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
             var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[5] = 0xFF
         }
             XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 0xFF, 6, 7, 8, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         data.append("hello", count: 5)
         XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0x5)
+        #endif // !SKIP
     }
     
     func test_validateMutation_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let other = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         data.append(other)
         XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let seq = repeatElement(UInt8(1), count: 10)
         data.append(contentsOf: seq)
         XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 1)
+        #endif // !SKIP
     }
     
     func test_validateMutation_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         data.append(contentsOf: bytes)
         XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 0, 0, 0, 8, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -2085,17 +2487,25 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0)
         }
         XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let bytes: [UInt8] = [0xFF, 0xFF]
         data.replaceSubrange(range, with: bytes)
         XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -2103,74 +2513,114 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0.baseAddress!, count: 2)
         }
         XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         data.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) in
             buffer[1] = 0xFF
         }
         XCTAssertEqual(data, Data([4, 0xFF, 6, 7, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let other = Data([0xFF, 0xFF])
         data.append(other)
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let seq = repeatElement(UInt8(0xFF), count: 2)
         data.append(contentsOf: seq)
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         data.append(contentsOf: bytes)
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data([4, 0, 0, 0, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -2178,17 +2628,25 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0)
         }
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
         data.replaceSubrange(range, with: bytes)
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -2196,9 +2654,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0.baseAddress!, count: 2)
         }
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
@@ -2206,18 +2668,26 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 0xFF, 6, 7, 8, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             data.append("hello", count: 5)
             XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 0x9)
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x68)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let other = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -2225,9 +2695,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2235,9 +2709,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let seq = repeatElement(UInt8(1), count: 10)
@@ -2245,9 +2723,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 1)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2255,17 +2737,25 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 9)], 9)
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 0, 0, 0, 8, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2273,9 +2763,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2283,9 +2777,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2295,9 +2793,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2305,9 +2807,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: bytes)
             XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2317,9 +2823,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0, 1, 2, 3, 0xFF, 0xFF, 9]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
@@ -2327,62 +2837,90 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([4, 0xFF, 6, 7, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             data.append("hello", count: 5)
             XCTAssertEqual(data[data.startIndex.advanced(by: 4)], 0x8)
             XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0x68)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let other = Data([0xFF, 0xFF])
             data.append(other)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
             bytes.withUnsafeBufferPointer { data.append($0) }
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let seq = repeatElement(UInt8(0xFF), count: 2)
             data.append(contentsOf: seq)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
             data.append(contentsOf: bytes)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data([4, 0, 0, 0, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -2390,9 +2928,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -2400,9 +2942,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -2412,9 +2958,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -2422,9 +2972,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: bytes)
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -2434,78 +2988,118 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[5] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append("hello", count: 5)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
         XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0x68)
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let other = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         data.append(other)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
         XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
         XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let seq = repeatElement(UInt8(1), count: 10)
         data.append(contentsOf: seq)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
         XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 1)
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         data.append(contentsOf: bytes)
         XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
         XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x00, 0x00, 0x00, 0x72, 0x6c, 0x64]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xFF, 0xFF, 0x6c, 0x64]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xFF, 0xFF, 0x6c, 0x64]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -2513,33 +3107,49 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0)
         }
         XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xFF, 0xFF, 0x6c, 0x64]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let bytes: [UInt8] = [0xFF, 0xFF]
         data.replaceSubrange(range, with: bytes)
         XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xFF, 0xFF, 0x6c, 0x64]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_immutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
         let bytes: [UInt8] = [0xFF, 0xFF]
         data.replaceSubrange(range, with: bytes)
         XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xFF, 0xFF, 0x6c, 0x64]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))[4..<9]
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2547,18 +3157,26 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
         }
         data.append(Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2566,36 +3184,52 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
         }
         data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
         }
         data.append(contentsOf: [0xFF, 0xFF])
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
         }
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data([4, 0, 0, 0, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2603,9 +3237,13 @@ extension TestNSData {
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2613,9 +3251,13 @@ extension TestNSData {
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2626,9 +3268,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: buffer)
         }
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2637,9 +3283,13 @@ extension TestNSData {
         let replacement: [UInt8] = [0xFF, 0xFF]
         data.replaceSubrange(range, with:replacement)
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = base.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2650,9 +3300,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0.baseAddress!, count: 2)
         }
         XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
@@ -2660,18 +3314,26 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             data.append("hello", count: 5)
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
             XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0x68)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let other = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -2679,9 +3341,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
             XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let bytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2689,9 +3355,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
             XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let seq = repeatElement(UInt8(1), count: 10)
@@ -2699,9 +3369,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
             XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 1)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let bytes: [UInt8] = [1, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -2709,17 +3383,25 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 10)], 0x64)
             XCTAssertEqual(data[data.startIndex.advanced(by: 11)], 1)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x00, 0x00, 0x00, 0x72, 0x6c, 0x64]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2727,9 +3409,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let range: Range<Data.Index> = data.startIndex.advanced(by: 4)..<data.startIndex.advanced(by: 9)
@@ -2737,9 +3423,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let replacement: [UInt8] = [0xFF, 0xFF]
@@ -2749,9 +3439,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0x68, 0xff, 0xff, 0x64]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let replacement: [UInt8] = [0xFF, 0xFF]
@@ -2759,9 +3453,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0x68, 0xff, 0xff, 0x64]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_immutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         holdReference(data) {
             let replacement: [UInt8] = [0xFF, 0xFF]
@@ -2771,9 +3469,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0x68, 0xff, 0xff, 0x64]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))[4..<9]
         holdReference(data) {
             data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
@@ -2781,9 +3483,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2793,9 +3499,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2804,18 +3514,26 @@ extension TestNSData {
             data.append(Data([0xFF, 0xFF]))
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))[4..<9]
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
             bytes.withUnsafeBufferPointer{ data.append($0) }
             XCTAssertEqual(data, Data([0x6f, 0x20, 0x77, 0x6f, 0x72, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2825,9 +3543,13 @@ extension TestNSData {
             data.append(contentsOf: bytes)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2837,9 +3559,13 @@ extension TestNSData {
             data.append(contentsOf: bytes)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2848,9 +3574,13 @@ extension TestNSData {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data([4, 0, 0, 0, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2860,9 +3590,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2872,9 +3606,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2885,9 +3623,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2898,9 +3640,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: bytes)
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_immutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))[4..<9]
@@ -2911,9 +3657,13 @@ extension TestNSData {
             bytes.withUnsafeBytes { data.replaceSubrange(range, with: $0.baseAddress!, count: 2) }
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2923,9 +3673,13 @@ extension TestNSData {
             ptr[5] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2934,9 +3688,13 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2944,9 +3702,13 @@ extension TestNSData {
         data.append(contentsOf: [7, 8, 9])
         data.append(Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2955,9 +3717,13 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2965,9 +3731,13 @@ extension TestNSData {
         data.append(contentsOf: [7, 8, 9])
         data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2975,9 +3745,13 @@ extension TestNSData {
         data.append(contentsOf: [7, 8, 9])
         data.append(contentsOf: [0xFF, 0xFF])
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2985,9 +3759,13 @@ extension TestNSData {
         data.append(contentsOf: [7, 8, 9])
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data([0, 1, 2, 3, 4, 0, 0, 0, 8, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -2997,9 +3775,13 @@ extension TestNSData {
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([0, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3009,9 +3791,13 @@ extension TestNSData {
         let replacement = Data([0xFF, 0xFF])
         data.replaceSubrange(range, with: replacement)
         XCTAssertEqual(data, Data([0, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3023,9 +3809,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0)
         }
         XCTAssertEqual(data, Data([0, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3034,9 +3824,13 @@ extension TestNSData {
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: [0xFF, 0xFF])
         XCTAssertEqual(data, Data([0, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_mutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var data = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3048,9 +3842,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0.baseAddress!, count: $0.count)
         }
         XCTAssertEqual(data, Data([0, 0xFF, 0xFF, 9]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
@@ -3058,9 +3856,13 @@ extension TestNSData {
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3070,9 +3872,13 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3081,36 +3887,52 @@ extension TestNSData {
         var data = base[4..<9]
         data.append(Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
         let bytes: [UInt8] = [1, 2, 3]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data([0x6f, 0x20, 0x77, 0x6f, 0x72, 0x1, 0x2, 0x3]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
         let seq = repeatElement(UInt8(1), count: 3)
         data.append(contentsOf: seq)
         XCTAssertEqual(data, Data([0x6f, 0x20, 0x77, 0x6f, 0x72, 0x1, 0x1, 0x1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
         let bytes: [UInt8] = [1, 2, 3]
         data.append(contentsOf: bytes)
         XCTAssertEqual(data, Data([0x6f, 0x20, 0x77, 0x6f, 0x72, 0x1, 0x2, 0x3]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3119,27 +3941,39 @@ extension TestNSData {
         var data = base[4..<9]
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data([4, 0, 0, 0, 8]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([0x6f, 0xFF, 0xFF, 0x72]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
         let range: Range<Data.Index> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
         XCTAssertEqual(data, Data([0x6f, 0xFF, 0xFF, 0x72]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
@@ -3149,9 +3983,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: buffer)
         }
         XCTAssertEqual(data, Data([0x6f, 0xFF, 0xFF, 0x72]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
@@ -3159,9 +3997,13 @@ extension TestNSData {
         let replacement: [UInt8] = [0xFF, 0xFF]
         data.replaceSubrange(range, with:replacement)
         XCTAssertEqual(data, Data([0x6f, 0xFF, 0xFF, 0x72]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_mutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
@@ -3171,9 +4013,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: $0.baseAddress!, count: 2)
         }
         XCTAssertEqual(data, Data([0x6f, 0xFF, 0xFF, 0x72]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3182,9 +4028,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3192,9 +4042,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 16)], 6)
             XCTAssertEqual(data[data.startIndex.advanced(by: 17)], 0x68)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3202,9 +4056,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 16)], 6)
             XCTAssertEqual(data[data.startIndex.advanced(by: 17)], 0x68)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3213,9 +4071,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 16)], 6)
             XCTAssertEqual(data[data.startIndex.advanced(by: 17)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3224,9 +4086,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 16)], 6)
             XCTAssertEqual(data[data.startIndex.advanced(by: 17)], 1)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3235,18 +4101,26 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 16)], 6)
             XCTAssertEqual(data[data.startIndex.advanced(by: 17)], 1)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x00, 0x00, 0x00, 0x72, 0x6c, 0x64, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3255,9 +4129,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3266,9 +4144,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3279,9 +4161,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3290,9 +4176,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: replacement)
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_mutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))
         data.append(contentsOf: [1, 2, 3, 4, 5, 6])
         holdReference(data) {
@@ -3303,9 +4193,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([0x68, 0x65, 0x6c, 0x6c, 0xff, 0xff, 0x6c, 0x64, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<9]
@@ -3315,9 +4209,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes: [UInt8] = [0, 1, 2]
         var base = bytes.withUnsafeBytes { (ptr) in
             return Data(referencing: NSData(bytes: ptr.baseAddress!, length: ptr.count))
@@ -3331,9 +4229,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data([1, 2, 3, 6, 7, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3344,9 +4246,13 @@ extension TestNSData {
             data.append(Data([0xFF, 0xFF]))
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3358,9 +4264,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer{ data.append($0) }
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3372,9 +4282,13 @@ extension TestNSData {
             data.append(contentsOf: bytes)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3386,9 +4300,13 @@ extension TestNSData {
             data.append(contentsOf: bytes)
             XCTAssertEqual(data, Data([4, 5, 6, 7, 8, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3399,9 +4317,13 @@ extension TestNSData {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data([4, 0, 0, 0, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3413,9 +4335,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3427,9 +4353,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data([0xFF, 0xFF]))
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3442,9 +4372,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3457,9 +4391,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: bytes)
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_mutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let baseBytes: [UInt8] = [0, 1, 2, 3, 4, 5, 6]
         var base = baseBytes.withUnsafeBufferPointer {
             return Data(referencing: NSData(bytes: $0.baseAddress!, length: $0.count))
@@ -3472,31 +4410,47 @@ extension TestNSData {
             bytes.withUnsafeBytes { data.replaceSubrange(range, with: $0.baseAddress!, count: 2) }
             XCTAssertEqual(data, Data([4, 0xFF, 0xFF, 8]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[5] = 0xFF
         }
         XCTAssertEqual(data, Data([1, 1, 1, 1, 1, 0xFF, 1, 1, 1, 1]))
+        #endif // !SKIP
     }
     
 #if false // this requires factory patterns
     func test_validateMutation_customBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         data.append(Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { (buffer) in
@@ -3504,41 +4458,65 @@ extension TestNSData {
         }
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
         
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         data.append(contentsOf: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0, 0, 0, 1, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let range: Range<Int> = 1..<4
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1, 1, 1, 1, 1, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let range: Range<Int> = 1..<4
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1, 1, 1, 1, 1, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let bytes: [UInt8] = [0xFF, 0xFF]
         let range: Range<Int> = 1..<4
@@ -3546,16 +4524,24 @@ extension TestNSData {
             data.replaceSubrange(range, with: buffer)
         }
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1, 1, 1, 1, 1, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let range: Range<Int> = 1..<4
         data.replaceSubrange(range, with: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1, 1, 1, 1, 1, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         let bytes: [UInt8] = [0xFF, 0xFF]
         let range: Range<Int> = 1..<5
@@ -3563,74 +4549,114 @@ extension TestNSData {
             data.replaceSubrange(range, with: buffer.baseAddress!, count: buffer.count)
         }
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1, 1, 1, 1, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBytes { ptr in
             data.append(ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: ptr.count)
         }
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         data.append(Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { (buffer) in
             data.append(buffer)
         }
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let seq = repeatElement(UInt8(0xFF), count: 2)
         data.append(contentsOf: seq)
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         data.append(contentsOf: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         data.resetBytes(in: 5..<8)
         XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -3638,16 +4664,24 @@ extension TestNSData {
             data.replaceSubrange(range, with: buffer)
         }
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
@@ -3655,9 +4689,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: buffer.baseAddress!, count: 2)
         }
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
@@ -3665,9 +4703,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
@@ -3676,68 +4718,100 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             data.append(Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
             bytes.withUnsafeBufferPointer { data.append($0) }
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             data.append(contentsOf: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0, 0, 0, 1, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
@@ -3745,18 +4819,26 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
             data.replaceSubrange(range, with: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
@@ -3766,9 +4848,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
@@ -3776,9 +4862,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
@@ -3787,68 +4877,100 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             data.append(Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let bytes: [UInt8] = [0xFF, 0xFF]
             bytes.withUnsafeBufferPointer { data.append($0) }
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             data.append(contentsOf: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [1, 1, 1, 1, 1, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             data.resetBytes(in: 5..<8)
             XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -3856,18 +4978,26 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
             data.replaceSubrange(range, with: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<9]
         holdReference(data) {
             let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
@@ -3877,55 +5007,83 @@ extension TestNSData {
             }
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 1]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[5] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         data.append(Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
         XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         data.append(contentsOf: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         data.resetBytes(in: 5..<8)
@@ -3934,51 +5092,75 @@ extension TestNSData {
         XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0)
         XCTAssertEqual(data[data.startIndex.advanced(by: 6)], 0)
         XCTAssertEqual(data[data.startIndex.advanced(by: 7)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_customMutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -3986,52 +5168,76 @@ extension TestNSData {
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         data.append(Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.append($0) }
         XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         data.append(contentsOf: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4040,27 +5246,39 @@ extension TestNSData {
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0)
         XCTAssertEqual(data[data.startIndex.advanced(by: 2)], 0)
         XCTAssertEqual(data[data.startIndex.advanced(by: 3)], 0)
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
         XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4068,18 +5286,26 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
         XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
         let range: Range<Int> = data.startIndex.advanced(by: 1)..<data.endIndex.advanced(by: -1)
         data.replaceSubrange(range, with: [0xFF, 0xFF])
         XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_customMutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4087,9 +5313,13 @@ extension TestNSData {
         let bytes: [UInt8] = [0xFF, 0xFF]
         bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0.baseAddress!, count: $0.count) }
         XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4098,9 +5328,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 5)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4108,18 +5342,26 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
             XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
             data.append(Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4127,27 +5369,39 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.append($0) }
             XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
             data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
             XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
             data.append(contentsOf: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 10))
         holdReference(data) {
             data.resetBytes(in: 5..<8)
@@ -4157,9 +5411,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 6)], 0)
             XCTAssertEqual(data[data.startIndex.advanced(by: 7)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4167,9 +5425,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0])) 
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4177,9 +5439,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0])) 
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4188,9 +5454,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0])) 
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4198,9 +5468,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0])) 
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_cow_customMutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesData(length: 1))
         data.count = 10
         holdReference(data) {
@@ -4209,9 +5483,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0.baseAddress!, count: $0.count) }
             XCTAssertEqual(data, Data(bytes: [1, 0xFF, 0xFF, 0])) 
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_withUnsafeMutableBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4221,9 +5499,13 @@ extension TestNSData {
             }
             XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_appendBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4232,9 +5514,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.append($0.baseAddress!, count: $0.count) }
             XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_appendData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4242,9 +5528,13 @@ extension TestNSData {
             data.append(Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_appendBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4253,9 +5543,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.append($0) }
             XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_appendSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4263,9 +5557,13 @@ extension TestNSData {
             data.append(contentsOf: repeatElement(UInt8(0xFF), count: 2))
             XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_appendContentsOf() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4273,9 +5571,13 @@ extension TestNSData {
             data.append(contentsOf: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [0, 0, 0, 0, 0, 0xFF, 0xFF]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_resetBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4285,9 +5587,13 @@ extension TestNSData {
             XCTAssertEqual(data[data.startIndex.advanced(by: 2)], 0)
             XCTAssertEqual(data[data.startIndex.advanced(by: 3)], 0)
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_replaceSubrange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4296,9 +5602,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_replaceSubrangeRange() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4307,9 +5617,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: Data(bytes: [0xFF, 0xFF]))
             XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_replaceSubrangeWithBuffer() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4319,9 +5633,13 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0) }
             XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_replaceSubrangeWithCollection() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4330,9 +5648,13 @@ extension TestNSData {
             data.replaceSubrange(range, with: [0xFF, 0xFF])
             XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
         }
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_cow_customMutableBacking_replaceSubrangeWithBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<9]
@@ -4342,10 +5664,14 @@ extension TestNSData {
             bytes.withUnsafeBufferPointer { data.replaceSubrange(range, with: $0.baseAddress!, count: $0.count) }
             XCTAssertEqual(data, Data(bytes: [0, 0xFF, 0xFF, 0]))
         }
+        #endif // !SKIP
     }
 #endif
     
     func test_sliceHash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let base1 = Data([0, 0xFF, 0xFF, 0])
         let base2 = Data([0, 0xFF, 0xFF, 0])
         let base3 = Data([0xFF, 0xFF, 0xFF, 0])
@@ -4357,16 +5683,24 @@ extension TestNSData {
         XCTAssertEqual(slice1.hashValue, sliceEmulation.hashValue)
         XCTAssertEqual(slice1.hashValue, slice2.hashValue)
         XCTAssertEqual(slice2.hashValue, slice3.hashValue)
+        #endif // !SKIP
     }
 
     func test_slice_resize_growth() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<9]
         data.resetBytes(in: data.endIndex.advanced(by: -1)..<data.endIndex.advanced(by: 1))
         XCTAssertEqual(data, Data([4, 5, 6, 7, 0, 0]))
+        #endif // !SKIP
     }
     
     /*
     func test_sliceEnumeration() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = DispatchData.empty
         let bytes: [UInt8] = [0, 1, 2, 3, 4]
         base.append(bytes.withUnsafeBytes { DispatchData(bytes: $0) })
@@ -4386,10 +5720,14 @@ extension TestNSData {
         XCTAssertEqual(Data(bytes: [3, 4]), regionData[0]) //fails
         XCTAssertEqual(Data(bytes: [0, 1, 2, 3, 4]), regionData[1]) //passes
         XCTAssertEqual(Data(bytes: [0]), regionData[2]) //fails
+        #endif // !SKIP
     }
  */
     
     func test_sliceInsertion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // https://bugs.swift.org/browse/SR-5810
         let baseData = Data([0, 1, 2, 3, 4, 5])
         var sliceData = baseData[2..<4]
@@ -4400,9 +5738,13 @@ extension TestNSData {
         XCTAssertEqual(sliceData.startIndex, 2)
         XCTAssertEqual(sliceDataEndIndexBeforeInsertion, 4)
         XCTAssertEqual(sliceData.endIndex, sliceDataEndIndexBeforeInsertion + 1)
+        #endif // !SKIP
     }
     
     func test_sliceDeletion() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // https://bugs.swift.org/browse/SR-5810
         let baseData = Data([0, 1, 2, 3, 4, 5, 6, 7])
         let sliceData = baseData[2..<6]
@@ -4413,25 +5755,37 @@ extension TestNSData {
         XCTAssertEqual(sliceData[sliceData.startIndex + numberOfElementsToDelete], mutableSliceData.first)
         XCTAssertEqual(mutableSliceData.startIndex, 2)
         XCTAssertEqual(mutableSliceData.endIndex, sliceData.endIndex - numberOfElementsToDelete)
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_withUnsafeMutableBytes_lengthLessThanLowerBound() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])[4..<6]
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data, Data([4, 0xFF]))
+        #endif // !SKIP
     }
     
     func test_validateMutation_slice_immutableBacking_withUnsafeMutableBytes_lengthLessThanLowerBound() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: NSData(bytes: "hello world", length: 11))[4..<6]
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
 
     func test_validateMutation_slice_mutableBacking_withUnsafeMutableBytes_lengthLessThanLowerBound() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: NSData(bytes: "hello world", length: 11))
         base.append(contentsOf: [1, 2, 3, 4, 5, 6])
         var data = base[4..<6]
@@ -4439,17 +5793,25 @@ extension TestNSData {
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
 
     func test_validateMutation_slice_customBacking_withUnsafeMutableBytes_lengthLessThanLowerBound() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = Data(referencing: AllOnesImmutableData(length: 10))[4..<6]
         data.withUnsafeMutableBytes { (ptr: UnsafeMutableRawBufferPointer) in
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
 
     func test_validateMutation_slice_customMutableBacking_withUnsafeMutableBytes_lengthLessThanLowerBound() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var base = Data(referencing: AllOnesData(length: 1))
         base.count = 10
         var data = base[4..<6]
@@ -4457,9 +5819,13 @@ extension TestNSData {
             ptr[1] = 0xFF
         }
         XCTAssertEqual(data[data.startIndex.advanced(by: 1)], 0xFF)
+        #endif // !SKIP
     }
 
     func testCustomData() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let length = 5
         let allOnesData = Data(referencing: AllOnesData(length: length))
         XCTAssertEqual(1, allOnesData[0], "First byte of all 1s data should be 1")
@@ -4484,9 +5850,13 @@ extension TestNSData {
 
         // Verify that the first data is still 1
         XCTAssertEqual(allOnesData[0], 1, "The first byte should still be 1")
+        #endif // !SKIP
     }
  
     func testBridgingCustom() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // Let's use an AllOnesData with some Objective-C code
         let allOnes = AllOnesData(length: 64)
 
@@ -4516,9 +5886,13 @@ extension TestNSData {
             XCTAssertTrue(false, "Unable to read back data")
             return
         }
+        #endif // !SKIP
     }
 
     func test_discontiguousEnumerateBytes() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dataToEncode = "Hello World".data(using: .utf8)!
 
         let subdata1 = dataToEncode.withUnsafeBytes { bytes in
@@ -4540,18 +5914,26 @@ extension TestNSData {
         XCTAssertEqual(2, numChunks, "composing two dispatch_data should enumerate as structural data as 2 chunks")
         XCTAssertEqual(0, offsets[0], "composing two dispatch_data should enumerate as structural data with the first offset as the location of the region")
         XCTAssertEqual(dataToEncode.count, offsets[1], "composing two dispatch_data should enumerate as structural data with the first offset as the location of the region")
+        #endif // !SKIP
     }
 
     func test_doubleDeallocation() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var data = "12345679".data(using: .utf8)!
         let len = data.withUnsafeMutableBytes { (bytes: UnsafeMutableRawBufferPointer) -> Int in
             let slice = Data(bytesNoCopy: bytes.baseAddress!, count: 1, deallocator: .none)
             return slice.count
         }
         XCTAssertEqual(len, 1)
+        #endif // !SKIP
     }
 
     func test_rangeZoo() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let r1: Range = 0..<1
         let r2: Range = 0..<1
         let r3 = ClosedRange(0..<1)
@@ -4566,29 +5948,45 @@ extension TestNSData {
         XCTAssertEqual(slice2[0], 8)
         XCTAssertEqual(slice3[0], 8)
         XCTAssertEqual(slice4[0], 8)
+        #endif // !SKIP
     }
 
     func test_sliceIndexing() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
         let slice = d[5..<10]
         XCTAssertEqual(slice[5], d[5])
+        #endif // !SKIP
     }
 
     func test_sliceEquality() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
         let slice = d[5..<7]
         let expected = Data([5, 6])
         XCTAssertEqual(expected, slice)
+        #endif // !SKIP
     }
 
     func test_sliceEquality2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d = Data([5, 6, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
         let slice1 = d[0..<2]
         let slice2 = d[5..<7]
         XCTAssertEqual(slice1, slice2)
+        #endif // !SKIP
     }
 
     func test_splittingHttp() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         func split(_ data: Data, on delimiter: String) -> [Data] {
             let dataDelimiter = delimiter.data(using: .utf8)!
             var found = [Data]()
@@ -4618,18 +6016,26 @@ extension TestNSData {
             "Host: www.example.com",
             ""
             ], splitFields)
+        #endif // !SKIP
     }
 
     func test_map() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d1 = Data([81, 0, 0, 0, 14])
         let d2 = d1[1...4]
         XCTAssertEqual(4, d2.count)
         let expected: [UInt8] = [0, 0, 0, 14]
         let actual = d2.map { $0 }
         XCTAssertEqual(expected, actual)
+        #endif // !SKIP
     }
 
     func test_dropFirst() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([0, 1, 2, 3, 4, 5])
         let sliced = data.dropFirst()
         XCTAssertEqual(data.count - 1, sliced.count)
@@ -4638,9 +6044,13 @@ extension TestNSData {
         XCTAssertEqual(UInt8(3), sliced[3])
         XCTAssertEqual(UInt8(4), sliced[4])
         XCTAssertEqual(UInt8(5), sliced[5])
+        #endif // !SKIP
     }
 
     func test_dropFirst2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([0, 1, 2, 3, 4, 5])
         let sliced = data.dropFirst(2)
         XCTAssertEqual(data.count - 2, sliced.count)
@@ -4648,9 +6058,13 @@ extension TestNSData {
         XCTAssertEqual(UInt8(3), sliced[3])
         XCTAssertEqual(UInt8(4), sliced[4])
         XCTAssertEqual(UInt8(5), sliced[5])
+        #endif // !SKIP
     }
 
     func test_copyBytes1() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var array: [UInt8] = [0, 1, 2, 3]
         let data = Data(array)
 
@@ -4658,9 +6072,13 @@ extension TestNSData {
             data[1..<3].copyBytes(to: $0.baseAddress!, from: 1..<3)
         }
         XCTAssertEqual([UInt8(1), UInt8(2), UInt8(2), UInt8(3)], array)
+        #endif // !SKIP
     }
 
     func test_copyBytes2() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let array: [UInt8] = [0, 1, 2, 3]
         let data = Data(array)
 
@@ -4670,9 +6088,13 @@ extension TestNSData {
         let end = data.index(before: data.endIndex)
         let slice = data[start..<end]
         XCTAssertEqual(expectedSlice[expectedSlice.startIndex], slice[slice.startIndex])
+        #endif // !SKIP
     }
 
     func test_sliceOfSliceViaRangeExpression() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
         let slice = data[2..<7]
@@ -4681,18 +6103,26 @@ extension TestNSData {
         let sliceOfSlice2 = slice[(slice.startIndex + 2)...] // also triggers range expression
         XCTAssertEqual(Data([2, 3]), sliceOfSlice1)
         XCTAssertEqual(Data([4, 5, 6]), sliceOfSlice2)
+        #endif // !SKIP
     }
 
     func test_appendingSlices() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let d1 = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         let slice = d1[1..<2]
         var d2 = Data()
         d2.append(slice)
         XCTAssertEqual(Data([1]), slice)
+        #endif // !SKIP
     }
     
     // This test uses `repeatElement` to produce a sequence -- the produced sequence reports its actual count as its `.underestimatedCount`.
     func test_appendingNonContiguousSequence_exactCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var d = Data()
         
         // d should go from .empty representation to .inline.
@@ -4713,11 +6143,15 @@ extension TestNSData {
                           0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
                           0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
                           0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F]), d)
+        #endif // !SKIP
     }
     
     // This test is like test_appendingNonContiguousSequence_exactCount but uses a sequence which reports 0 for its `.underestimatedCount`.
     // This attempts to hit the worst-case scenario of `Data.append<S>(_:)` -- a discontiguous sequence of unknown length.
     func test_appendingNonContiguousSequence_underestimatedCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         var d = Data()
         
         // d should go from .empty representation to .inline.
@@ -4738,9 +6172,13 @@ extension TestNSData {
                           0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
                           0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
                           0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F]), d)
+        #endif // !SKIP
     }
 
     func test_sequenceInitializers() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let seq = repeatElement(UInt8(0x02), count: 3) // ensure we fall into the sequence case
 
         let dataFromSeq = Data(seq)
@@ -4774,16 +6212,24 @@ extension TestNSData {
 
         let dataFromSliceOfData = Data(sliceOfData)
         XCTAssertEqual(sliceOfData, dataFromSliceOfData)
+        #endif // !SKIP
     }
 
     func test_reversedDataInit() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = Data([1, 2, 3, 4, 5, 6, 7, 8, 9])
         let reversedData = Data(data.reversed())
         let expected = Data([9, 8, 7, 6, 5, 4, 3, 2, 1])
         XCTAssertEqual(expected, reversedData)
+        #endif // !SKIP
     }
 
     func test_replaceSubrangeReferencingMutable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let mdataObj = NSMutableData(bytes: [0x01, 0x02, 0x03, 0x04], length: 4)
         var data = Data(referencing: mdataObj)
         let expected = data.count
@@ -4791,9 +6237,13 @@ extension TestNSData {
         XCTAssertEqual(expected, data.count)
         data.replaceSubrange(4 ..< 4, with: Data([]))
         XCTAssertEqual(expected, data.count)
+        #endif // !SKIP
     }
 
     func test_replaceSubrangeReferencingImmutable() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let dataObj = NSData(bytes: [0x01, 0x02, 0x03, 0x04], length: 4)
         var data = Data(referencing: dataObj)
         let expected = data.count
@@ -4801,16 +6251,24 @@ extension TestNSData {
         XCTAssertEqual(expected, data.count)
         data.replaceSubrange(4 ..< 4, with: Data([]))
         XCTAssertEqual(expected, data.count)
+        #endif // !SKIP
     }
 
     func test_rangeOfSlice() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let data = "FooBar".data(using: .ascii)!
         let slice = data[3...] // Bar
         let range = slice.range(of: "a".data(using: .ascii)!)
         XCTAssertEqual(range, 4..<5)
+        #endif // !SKIP
     }
 
     func test_nskeyedarchiving() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let bytes: [UInt8] = [0xd, 0xe, 0xa, 0xd, 0xb, 0xe, 0xe, 0xf]
         let data = NSData(bytes: bytes, length: bytes.count)
 
@@ -4821,9 +6279,13 @@ extension TestNSData {
         let unarchiver = NSKeyedUnarchiver(forReadingWith: encodedData)
         let decodedData = NSData(coder: unarchiver)
         XCTAssertEqual(data, decodedData)
+        #endif // !SKIP
     }
 
     func test_nsdataSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) {
             let bytes: [UInt8] = Array(0x00...0xFF)
             let data = bytes.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
@@ -4832,9 +6294,13 @@ extension TestNSData {
                 expectEqual(data[Int(byte)], byte)
             }
         }
+        #endif // !SKIP
     }
 
     func test_dispatchSequence() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         if #available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *) {
             let bytes1: [UInt8] = Array(0x00..<0xF0)
             let bytes2: [UInt8] = Array(0xF0..<0xFF)
@@ -4853,9 +6319,13 @@ extension TestNSData {
                 expectEqual(data[Int(byte)], byte)
             }
         }
+        #endif // !SKIP
     }
 
     func test_Data_increaseCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
          guard #available(macOS 9999, iOS 9999, watchOS 9999, tvOS 9999, *) else { return }
          let initials: [Range<UInt8>] = [
              0..<0,
@@ -4876,9 +6346,13 @@ extension TestNSData {
                      data)
              }
          }
+        #endif // !SKIP
      }
 
      func test_Data_decreaseCount() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
          guard #available(macOS 9999, iOS 9999, watchOS 9999, tvOS 9999, *) else { return }
          let initials: [Range<UInt8>] = [
              0..<0,
@@ -4900,9 +6374,9 @@ extension TestNSData {
                      data)
              }
          }
+        #endif // !SKIP
      }
 }
 
 
-#endif
 

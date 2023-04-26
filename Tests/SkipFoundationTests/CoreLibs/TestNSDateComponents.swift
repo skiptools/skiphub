@@ -8,7 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if !SKIP
 
 // This source file is part of the Swift.org open source project
 //
@@ -22,6 +21,9 @@ import XCTest
 class TestNSDateComponents: XCTestCase {
 
     func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let c1 = NSDateComponents()
         c1.year = 2018
         c1.month = 8
@@ -111,9 +113,13 @@ class TestNSDateComponents: XCTestCase {
             byMutating: \NSDateComponents.weekdayOrdinal,
             throughValues: 0...20)
         // isLeapMonth does not have enough values to test it here.
+        #endif // !SKIP
     }
 
     func test_copyNSDateComponents() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let components = NSDateComponents()
         components.year = 1987
         components.month = 3
@@ -133,9 +139,13 @@ class TestNSDateComponents: XCTestCase {
         components.hour = 12
         XCTAssertEqual(components.hour, 12)
         XCTAssertEqual(copy.hour, 14)
+        #endif // !SKIP
     }
 
     func test_dateDifferenceComponents() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // 1970-01-01 00:00:00
         let date1 = Date(timeIntervalSince1970: 0)
 
@@ -231,9 +241,13 @@ class TestNSDateComponents: XCTestCase {
         XCTAssertEqual(diff9.isLeapMonth, false)
         XCTAssertNil(diff9.calendar)
         XCTAssertNil(diff9.timeZone)
+        #endif // !SKIP
     }
 
     func test_nanoseconds() throws {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         // 1971-06-21 00:00:00
         let date1 = Date(timeIntervalSince1970: 46310400)
 
@@ -263,9 +277,13 @@ class TestNSDateComponents: XCTestCase {
         XCTAssertEqual(diff4.minute, -16)
         XCTAssertEqual(diff4.second, -40)
         XCTAssertEqual(diff4.nanosecond, -455549950)
+        #endif // !SKIP
     }
 
     func test_currentCalendar() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         let month = Calendar.current.dateComponents([.month], from: Date(timeIntervalSince1970: 1554678000)).month // 2019-04-07 23:00:00.000 Sunday
         XCTAssertEqual(month, 4)
 
@@ -279,6 +297,7 @@ class TestNSDateComponents: XCTestCase {
         XCTAssertEqual(Calendar.current.compare(d1, to: d2, toGranularity: .month), .orderedSame)
         XCTAssertEqual(Calendar.current.compare(d1, to: d2, toGranularity: .weekday), .orderedAscending)
         XCTAssertEqual(Calendar.current.compare(d2, to: d1, toGranularity: .weekday), .orderedDescending)
+        #endif // !SKIP
     }
 
     #if !SKIP
@@ -294,5 +313,4 @@ class TestNSDateComponents: XCTestCase {
     #endif // SKIP
 }
 
-#endif
 
