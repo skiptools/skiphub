@@ -116,7 +116,6 @@ jobs:
       - name: Pre-build ${{ matrix.target }}
         if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
-        if: false
         run: |
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
 

@@ -74,6 +74,9 @@ public extension String {
     public static func `init`(contentsOfURL url: SkipURL) throws -> String {
         return url.rawValue.readText()
     }
+
+    public func lowercased() -> String { toLowerCase() }
+    public func uppercased() -> String { toUpperCase() }
 }
 
 public func String(data: SkipData, encoding: StringEncoding) -> String? {

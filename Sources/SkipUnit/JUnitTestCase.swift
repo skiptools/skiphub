@@ -369,21 +369,23 @@ extension JUnitTestCase {
                         || failure.type.hasPrefix("org.opentest4j.") {
                         issueType = .assertionFailure
                     } else {
-                        issueType = .thrownError
+                        // we might rather mark it as a `thrownError`, but Xcode seems to only report a single thrownError, whereas it will report multiple `assertionFailure`
+                        // issueType = .thrownError
+                        issueType = .assertionFailure
                     }
 
                     let (kotlinLocation, swiftLocation) = extractSourceLocation(dir: dir, failure: failure)
 
 
-                    // we managed to link up the Kotlin line with the Swift source file, so add an initial issue with the swift location
-                    if let swiftLocation = swiftLocation {
-                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
-                        record(issue)
-                    }
-
                     // and report the Kotlin error so the user can jump to the right place
                     do {
                         let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
+                        record(issue)
+                    }
+
+                    // we managed to link up the Kotlin line with the Swift source file, so add an initial issue with the swift location
+                    if let swiftLocation = swiftLocation {
+                        let issue = XCTIssue(type: issueType, compactDescription: failure.message, detailedDescription: failure.contents, sourceCodeContext: XCTSourceCodeContext(location: swiftLocation), associatedError: nil, attachments: [])
                         record(issue)
                     }
                 }
