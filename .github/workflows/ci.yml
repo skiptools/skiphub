@@ -11,7 +11,7 @@ on:
 env:
   #DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
   DEVELOPER_DIR: /Applications/Xcode_14.3.app/Contents/Developer
-  SKIP_FASTPASS: YES
+  #SKIP_FASTPASS: YES
 
 jobs:
   ci:
@@ -115,7 +115,7 @@ jobs:
 
       # Pre-build to work around concurrency issues
       - name: Pre-build ${{ matrix.target }}
-        if: false
+        #if: false
         #if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: |
@@ -177,7 +177,7 @@ jobs:
 
       - name: Swift Tests (All)
         working-directory: skiphub
-        run: swift test -c ${CONFIG}
+        run: swift test -j 1 -c ${CONFIG}
 
       - name: Gradle Tests (Android)
         working-directory: skiphub
