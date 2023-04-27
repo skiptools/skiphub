@@ -87,97 +87,84 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-#      # Attempt to run the tests in parallel mode.
-#      # When successful this will bypass the individual framework tests.
-#      - name: Fast Tests
-#        if: false
-#        working-directory: skiphub
-#        #run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-#        run: swift test && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-#
-#      - name: Fast Tests (2)
-#        if: false
-#        #if: env.SKIP_FASTPASS != 'YES'
-#        working-directory: skiphub
-#        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-#
-#      - name: Fast Tests (3)
-#        if: false
-#        #if: env.SKIP_FASTPASS != 'YES'
-#        working-directory: skiphub
-#        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-#
-#      - name: Fast Tests (4)
-#        if: false
-#        #if: env.SKIP_FASTPASS != 'YES'
-#        working-directory: skiphub
-#        run: swift test --parallel && echo 'SKIP_FASTPASS=YES' >> $GITHUB_ENV || (rm -rf .build ; echo "Skip parallel tests failed so tests will be run individually")
-
       # Pre-build to work around concurrency issues
-      - name: Pre-build ${{ matrix.target }}
+      - name: Build ${{ matrix.target }}
         #if: false
         #if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: |
-          swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
+          #swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
+          swift build --jobs 1
 
-      - name: SkipLib Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipLibTests
-      - name: SkipLib Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipLibKtTests || swift test -c ${CONFIG} --filter SkipLibKtTests || swift test -c ${CONFIG} --filter SkipLibKtTests || swift test -c ${CONFIG} --filter SkipLibKtTests
+      #- name: SkipLib Swift Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipLibTests
+      #- name: SkipLib Kotlin Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipLibKtTests
 
-      - name: SkipFoundation Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipFoundationTests
-      - name: SkipFoundation Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipFoundationKtTests || swift test -c ${CONFIG} --filter SkipFoundationKtTests || swift test -c ${CONFIG} --filter SkipFoundationKtTests || swift test -c ${CONFIG} --filter SkipFoundationKtTests || swift test -c ${CONFIG} --filter SkipFoundationKtTests
+      #- name: SkipFoundation Swift Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipFoundationTests
+      #- name: SkipFoundation Kotlin Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
 
-      - name: SkipKit Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipKitTests
-      - name: SkipKit Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipKitKtTests || swift test -c ${CONFIG} --filter SkipKitKtTests || swift test -c ${CONFIG} --filter SkipKitKtTests || swift test -c ${CONFIG} --filter SkipKitKtTests || swift test -c ${CONFIG} --filter SkipKitKtTests
+      #- name: SkipKit Swift Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipKitTests
+      #- name: SkipKit Kotlin Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipKitKtTests
 
-      - name: SkipUI Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipUITests
-      - name: SkipUI Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipUIKtTests || swift test -c ${CONFIG} --filter SkipUIKtTests || swift test -c ${CONFIG} --filter SkipUIKtTests || swift test -c ${CONFIG} --filter SkipUIKtTests || swift test -c ${CONFIG} --filter SkipUIKtTests
+      #- name: SkipUI Swift Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipUITests
+      #- name: SkipUI Kotlin Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter SkipUIKtTests
 
-      - name: ExampleLib Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleLibTests
-      - name: ExampleLib Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleLibKtTests || swift test -c ${CONFIG} --filter ExampleLibKtTests || swift test -c ${CONFIG} --filter ExampleLibKtTests || swift test -c ${CONFIG} --filter ExampleLibKtTests || swift test -c ${CONFIG} --filter ExampleLibKtTests
+      #- name: ExampleLib Swift Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter ExampleLibTests
+      #- name: ExampleLib Kotlin Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter ExampleLibKtTests
 
-      - name: ExampleApp Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleAppTests
-      - name: ExampleApp Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
-        working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests
+      #- name: ExampleApp Swift Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter ExampleAppTests
+      #- name: ExampleApp Kotlin Tests
+      #  if: env.SKIP_FASTPASS != 'YES'
+      #  working-directory: skiphub
+      #  run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
-      - name: Swift Tests (All)
+      - name: Debug Tests (Serial)
         working-directory: skiphub
-        run: swift test -j 1 -c ${CONFIG}
+        run: swift test --jobs 1 -c debug
+
+      - name: Debug Tests (Parallel)
+        working-directory: skiphub
+        run: swift test --parallel -c debug
+
+      - name: Release Tests (Serial)
+        working-directory: skiphub
+        run: swift test --jobs 1 -c release
+
+      - name: Release Tests (Parallel)
+        working-directory: skiphub
+        run: swift test --parallel -c release
 
       - name: Gradle Tests (Android)
         working-directory: skiphub
@@ -204,3 +191,4 @@ jobs:
           # note CONFIG Release/Debug needs to be capitalized for xcodebuild
           xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
           # | xcpretty && exit ${PIPESTATUS[0]}
+
