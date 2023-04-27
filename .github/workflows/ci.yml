@@ -11,6 +11,7 @@ on:
 env:
   #DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
   DEVELOPER_DIR: /Applications/Xcode_14.3.app/Contents/Developer
+  SKIP_FASTPASS: YES
 
 jobs:
   ci:
@@ -114,7 +115,8 @@ jobs:
 
       # Pre-build to work around concurrency issues
       - name: Pre-build ${{ matrix.target }}
-        if: env.SKIP_FASTPASS != 'YES'
+        if: false
+        #if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: |
           swift build --target SkipUnitKt && swift build --target SkipLibKt && swift build --target SkipFoundationKt && swift build --target SkipKitKt && swift build --target SkipUIKt && swift build --target ExampleLibKt && swift build --target ExampleAppKt && swift build
@@ -172,6 +174,10 @@ jobs:
         if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests || swift test -c ${CONFIG} --filter ExampleAppKtTests
+
+      - name: Swift Tests (All)
+        working-directory: skiphub
+        run: swift test -c ${CONFIG}
 
       - name: Gradle Tests (Android)
         working-directory: skiphub

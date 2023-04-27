@@ -15,20 +15,24 @@ let PlatformJSONNull: Any = org.json.JSONObject.NULL
 
 #if SKIP
 public typealias JSONSerialization = PlatformJSONSerialization
-private typealias NSNumber = java.lang.Number
+typealias NSNumber = java.lang.Number
+
+struct NSNull {
+}
 
 fileprivate extension java.lang.Number {
     var doubleValue: Double { doubleValue() }
     var intValue: Int { intValue() }
     var longValue: Int64 { longValue() }
 }
+
 #endif
 
 struct CannotConvertString: Error { }
 
 // SKIP DECLARE: public class PlatformJSONSerialization
 internal class PlatformJSONSerialization {
-    public enum ReadingOptions : Int {
+    public enum ReadingOptions: Int {
         case mutableContainers
         case mutableLeaves
         case fragmentsAllowed
@@ -37,13 +41,25 @@ internal class PlatformJSONSerialization {
         case allowFragments
     }
 
-    public static func jsonObject(with jsonData: Data, options: [PlatformJSONSerialization.ReadingOptions] = []) throws -> Any? {
+    public enum WritingOptions: Int {
+        case prettyPrinted
+        case sortedKeys
+        case fragmentsAllowed
+        case withoutEscapingSlashes
+    }
+
+    public static func jsonObject(with jsonData: Data, options: [ReadingOptions] = []) throws -> Any? {
         guard let string = String(data: jsonData, encoding: String.Encoding.utf8) else {
             throw CannotConvertString()
         }
         let obj = try JSONObject(json: string)
         return convert(obj: obj)
     }
+
+    public static func data(withJSONObject obj: Any, options opt: [WritingOptions] = []) throws -> Data {
+        fatalError("TODO: data(withJSONObject:)")
+    }
+
 
     private static func convert(obj: JSONObject) -> Any? {
         var result: [String: Any] = [:]

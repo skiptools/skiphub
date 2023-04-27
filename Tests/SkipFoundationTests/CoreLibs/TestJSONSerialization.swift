@@ -6,6 +6,16 @@
 import Foundation
 import XCTest
 
+
+// Skims to get tests working with typealias extensions
+#if SKIP
+typealias ReadingOptions = PlatformJSONSerialization.ReadingOptions
+typealias WritingOptions = PlatformJSONSerialization.WritingOptions
+#else
+typealias ReadingOptions = JSONSerialization.ReadingOptions
+typealias WritingOptions = JSONSerialization.WritingOptions
+#endif
+
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -1314,24 +1324,24 @@ extension TestJSONSerialization {
             ("test_serializePrettyPrinted", test_serializePrettyPrinted),
         ]
     }
+    #endif
 
-    func trySerialize(_ obj: Any, options: JSONSerialization.WritingOptions = []) throws -> String {
+    // func trySerialize(_ obj: Any, options: JSONSerialization.WritingOptions = []) throws -> String {
+    func trySerialize(_ obj: Any, options: [WritingOptions] = []) throws -> String {
         #if SKIP
         throw XCTSkip("TODO")
-        #else
         let data = try JSONSerialization.data(withJSONObject: obj, options: options)
-        guard let string = String(data: data, encoding: .utf8) else {
+        #else
+        let data = try JSONSerialization.data(withJSONObject: obj, options: .init(options))
+        #endif
+        guard let string = String(data: data, encoding: String.Encoding.utf8) else {
             XCTFail("Unable to create string")
             return ""
         }
         return string
-        #endif // !SKIP
     }
 
     func test_serialize_emptyObject() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let dict1 = [String: Any]()
         XCTAssertEqual(try trySerialize(dict1), "{}")
             
@@ -1346,7 +1356,6 @@ extension TestJSONSerialization {
 
         let array2 = [NSNumber]()
         XCTAssertEqual(try trySerialize(array2), "[]")
-        #endif // !SKIP
     }
     
     //[SR-2151] https://bugs.swift.org/browse/SR-2151
@@ -1434,8 +1443,7 @@ extension TestJSONSerialization {
         excecute_testWholeNumbersWithIntInput()
         #endif // !SKIP
     }
-    #endif
-    
+
     func test_serialize_null() {
         #if SKIP
         throw XCTSkip("TODO")
@@ -1473,9 +1481,6 @@ extension TestJSONSerialization {
     }
 
     func test_serialize_complexObject() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let jsonDict = ["a": 4]
         XCTAssertEqual(try trySerialize(jsonDict), "{\"a\":4}")
 
@@ -1493,13 +1498,9 @@ extension TestJSONSerialization {
         
         let jsonArr4 = [["a":NSNull()],["b":NSNull()]]
         XCTAssertEqual(try trySerialize(jsonArr4), "[{\"a\":null},{\"b\":null}]")
-        #endif // !SKIP
     }
     
     func test_nested_array() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         var arr: [Any] = ["a"]
         XCTAssertEqual(try trySerialize(arr), "[\"a\"]")
         
@@ -1511,7 +1512,6 @@ extension TestJSONSerialization {
         
         arr = [[[["d"]]]]
         XCTAssertEqual(try trySerialize(arr), "[[[[\"d\"]]]]")
-        #endif // !SKIP
     }
     
     func test_nested_dictionary() {
@@ -1751,17 +1751,15 @@ extension TestJSONSerialization {
     }
 
     func test_serialize_fragments() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        XCTAssertEqual(try trySerialize(2, options: .fragmentsAllowed), "2")
-        XCTAssertEqual(try trySerialize(false, options: .fragmentsAllowed), "false")
-        XCTAssertEqual(try trySerialize(true, options: .fragmentsAllowed), "true")
-        XCTAssertEqual(try trySerialize(Float(1), options: .fragmentsAllowed), "1")
-        XCTAssertEqual(try trySerialize(Double(2), options: .fragmentsAllowed), "2")
-        XCTAssertEqual(try trySerialize(Decimal(Double(Float.leastNormalMagnitude)), options: .fragmentsAllowed), "0.000000000000000000000000000000000000011754943508222875648")
-        XCTAssertEqual(try trySerialize("test", options: .fragmentsAllowed), "\"test\"")
-        #endif // !SKIP
+        #if !SKIP
+        XCTAssertEqual(try trySerialize(2, options: [WritingOptions.fragmentsAllowed]), "2")
+        XCTAssertEqual(try trySerialize(false, options: [WritingOptions.fragmentsAllowed]), "false")
+        XCTAssertEqual(try trySerialize(true, options: [WritingOptions.fragmentsAllowed]), "true")
+        XCTAssertEqual(try trySerialize(Float(1), options: [WritingOptions.fragmentsAllowed]), "1")
+        XCTAssertEqual(try trySerialize(Double(2), options: [WritingOptions.fragmentsAllowed]), "2")
+        XCTAssertEqual(try trySerialize(Decimal(Double(Float.leastNormalMagnitude)), options: [WritingOptions.fragmentsAllowed]), "0.000000000000000000000000000000000000011754943508222875648")
+        XCTAssertEqual(try trySerialize("test", options: [WritingOptions.fragmentsAllowed]), "\"test\"")
+        #endif
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
@@ -1774,7 +1772,7 @@ extension TestJSONSerialization {
         let escapedString   = "\"This \\/\\\\\\/ is a \\\\ \\\\\\\\ \\\\\\\\\\\\ \\\"string\\\"\\n\\r\\t\\u0000\\u0001\\b\\f\\u000f\""
         let unescapedString = "\"This /\\\\/ is a \\\\ \\\\\\\\ \\\\\\\\\\\\ \\\"string\\\"\\n\\r\\t\\u0000\\u0001\\b\\f\\u000f\""
 
-        XCTAssertEqual(try trySerialize(testString, options: .fragmentsAllowed), escapedString)
+        XCTAssertEqual(try trySerialize(testString, options: [.fragmentsAllowed]), escapedString)
         XCTAssertEqual(try trySerialize(testString, options: [.withoutEscapingSlashes, .fragmentsAllowed]), unescapedString)
         #endif // !SKIP
     }
@@ -1954,34 +1952,26 @@ extension TestJSONSerialization {
     } 
 
     func test_serializeSortedKeys() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let dict1 = ["z": 1, "y": 1, "x": 1, "w": 1, "v": 1, "u": 1, "t": 1, "s": 1, "r": 1, "q": 1, ]
         let dict2 = ["aaaa": 1, "aaa": 1, "aa": 1, "a": 1]
         let dict3 = ["c": ["c":1,"b":1,"a":1],"b":["c":1,"b":1,"a":1],"a":["c":1,"b":1,"a":1]]
 
 #if true || DARWIN_COMPATIBILITY_TESTS
         if #available(macOS 10.13, *) {
-            XCTAssertEqual(try trySerialize(dict1, options: .sortedKeys), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
-            XCTAssertEqual(try trySerialize(dict2, options: .sortedKeys), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
-            XCTAssertEqual(try trySerialize(dict3, options: .sortedKeys), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
+            XCTAssertEqual(try trySerialize(dict1, options: [WritingOptions.sortedKeys]), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
+            XCTAssertEqual(try trySerialize(dict2, options: [WritingOptions.sortedKeys]), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
+            XCTAssertEqual(try trySerialize(dict3, options: [WritingOptions.sortedKeys]), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
         }
 #else
-        XCTAssertEqual(try trySerialize(dict1, options: .sortedKeys), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
-        XCTAssertEqual(try trySerialize(dict2, options: .sortedKeys), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
-        XCTAssertEqual(try trySerialize(dict3, options: .sortedKeys), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
+        XCTAssertEqual(try trySerialize(dict1, options: [WritingOptions.sortedKeys]), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
+        XCTAssertEqual(try trySerialize(dict2, options: [WritingOptions.sortedKeys]), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
+        XCTAssertEqual(try trySerialize(dict3, options: [WritingOptions.sortedKeys]), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
 #endif
-        #endif // !SKIP
     }
 
     func test_serializePrettyPrinted() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let dictionary = ["key": 4]
-        XCTAssertEqual(try trySerialize(dictionary, options: .prettyPrinted), "{\n  \"key\" : 4\n}")
-        #endif // !SKIP
+        XCTAssertEqual(try trySerialize(dictionary, options: [WritingOptions.prettyPrinted]), "{\n  \"key\" : 4\n}")
     }
     
     func test_bailOnDeepValidStructure() {
@@ -1993,10 +1983,12 @@ extension TestJSONSerialization {
             XCTFail("Should not have successfully parsed")
         }
         catch let nativeError {
-//            if let error = nativeError as? NSError {
-//                XCTAssertEqual(error.domain, "NSCocoaErrorDomain")
-//                XCTAssertEqual(error.code, 3840)
-//            }
+            #if !SKIP // problems caused by `catch let nativeError`
+            if let error = nativeError as? NSError {
+                XCTAssertEqual(error.domain, "NSCocoaErrorDomain")
+                XCTAssertEqual(error.code, 3840)
+            }
+            #endif
         }
     }
     
@@ -2032,5 +2024,4 @@ extension TestJSONSerialization {
         try? FileManager.default.removeItem(atPath: location)
     }
 }
-
 

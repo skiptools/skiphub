@@ -79,7 +79,7 @@ public extension String {
     public func uppercased() -> String { toUpperCase() }
 }
 
-public func String(data: SkipData, encoding: StringEncoding) -> String? {
+public func String(data: SkipData, encoding: String.Encoding) -> String? {
     String(data.rawValue, encoding.rawValue)
 }
 
