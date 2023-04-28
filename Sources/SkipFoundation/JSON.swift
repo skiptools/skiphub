@@ -80,12 +80,20 @@ internal class PlatformJSONSerialization {
         }
     }
 
-    public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any? {
+    public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any {
+        // TODO: permit all 5 UTF encodings as per JSONSerialization behavior
         guard let string = String(data: jsonData, encoding: String.Encoding.utf8) else {
             throw CannotConvertString()
         }
-        let obj = try JSONObject(json: string)
-        return convert(fromJSONObject: obj)
+
+        // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
+        do {
+            let arr = try JSONArray(json: string)
+            return convert(fromJSONArray: arr) as Any
+        } catch {
+            let obj = try JSONObject(json: string)
+            return convert(fromJSONObject: obj) as Any
+        }
     }
 
     public static func data(withJSONObject obj: Any, options opt: WritingOptions) throws -> Data {
@@ -109,6 +117,15 @@ internal class PlatformJSONSerialization {
         let resultValue: [String: Any]? = result
         return resultValue
     }
+
+    private static func convert(fromJSONArray arr: JSONArray) -> Any? {
+        var result: [Any?] = []
+        for index in 0..<arr.count {
+            result.append(convert(fromJSONValue: arr.get(index)))
+        }
+        return result
+    }
+
 
     private static func convert(fromJSONValue value: Any) -> Any? {
         #if SKIP
@@ -140,8 +157,7 @@ internal class PlatformJSONSerialization {
         case let value as Bool:
             return value ? "true" : "false"
         case let value as String:
-            let escapedValue = value.replacingOccurrences(of: "\"", with: "\\\"")
-            return "\"\(escapedValue)\""
+            return serializeString(value)
         case let value as AnyArrayType:
             return toJsonString(array: value, indent: nextIndent)
         case let value as AnyMapType:
@@ -212,6 +228,45 @@ internal class PlatformJSONSerialization {
         json += "]"
         return json
     }
+
+    private static func serializeString(_ str: String, withoutEscapingSlashes: Bool = false) -> String {
+        var json = ""
+        json += "\""
+
+        for c in str {
+            switch "\(c)" {
+            case "\"":
+                json += "\\\""
+            case "\\":
+                json += "\\\\"
+            case "/":
+                if withoutEscapingSlashes {
+                    json += "/"
+                } else {
+                    json += "\\/"
+                }
+            //case 0x8:
+            //    json += "\\b"
+            //case 0xc:
+            //    json += "\\f"
+            case "\n":
+                json += "\\n"
+            case "\r":
+                json += "\\r"
+            case "\t":
+                json += "\\t"
+            // case 0x0...0xf:
+            //     json += "\\u000\(String(cursor.pointee, radix: 16))"
+            // case 0x10...0x1f:
+            //     json += "\\u00\(String(cursor.pointee, radix: 16))"
+            default:
+                json += "\(c)"
+            }
+        }
+
+        json += "\""
+        return json
+    }
 }
 
 /// A Swift JSON parsing API to match the `org.json.JSONObject` Java API.
@@ -219,24 +274,16 @@ final class JSONObject {
     /// The internal JSON object, which will be a `org.json.JSONObject` in Kotlin and an `NSMutableDictionary` in Swift
     var json: PlatformJSONObject
 
-    init(_ json: PlatformJSONObject) {
+    init(_ json: PlatformJSONObject = PlatformJSONObject()) {
         self.json = json
-    }
-
-    init() {
-        #if SKIP
-        self.json = org.json.JSONObject()
-        #else
-        self.json = [String: Any]()
-        #endif
     }
 
     /// Parse the JSON using the system parser.
     init(json: String) throws {
         #if SKIP
-        self.json = try org.json.JSONObject(json)
+        self.json = try PlatformJSONObject(json)
         #else
-        self.json = (try JSONSerialization.jsonObject(with: Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? [String: Any]) ?? [:]
+        self.json = (try JSONSerialization.jsonObject(with: Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONObject) ?? [:]
         #endif
     }
 
@@ -267,6 +314,41 @@ final class JSONObject {
         json.isNull(key)
         #else
         json[key] == nil
+        #endif
+    }
+}
+
+/// A Swift JSON parsing API to match the `org.json.JSONArray` Java API.
+final class JSONArray {
+    /// The internal JSON object, which will be a `org.json.JSONArray` in Kotlin and an `NSMutableDictionary` in Swift
+    var json: PlatformJSONArray
+
+    init(_ json: PlatformJSONArray = PlatformJSONArray()) {
+        self.json = json
+    }
+
+    /// Parse the JSON using the system parser.
+    init(json: String) throws {
+        #if SKIP
+        self.json = try PlatformJSONArray(json)
+        #else
+        self.json = (try JSONSerialization.jsonObject(with: Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONArray) ?? []
+        #endif
+    }
+
+    var count: Int {
+        #if SKIP
+        return self.json.length()
+        #else
+        return self.json.count
+        #endif
+    }
+
+    func get(_ index: Int) -> Any {
+        #if SKIP
+        return self.json[index]
+        #else
+        return self.json[index]
         #endif
     }
 }

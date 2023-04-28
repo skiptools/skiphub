@@ -133,7 +133,7 @@ class TestJSON : XCTestCase {
     }
 
     func testJSONDeserialization() throws {
-        let obj = try XCTUnwrap(JSONSerialization.jsonObject(with: Data("""
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data("""
             {
                 "a": 1.1,
                 "b": true,
@@ -144,8 +144,10 @@ class TestJSON : XCTestCase {
                     "z": [[[[[false]]], true]]
                 }, [null]]
             }
-            """.utf8), options: ReadingOptions.fragmentsAllowed) as? [String: Any])
-        
+            """.utf8), options: ReadingOptions.fragmentsAllowed))
+
+        let obj = try XCTUnwrap(object as? [String: Any])
+
         XCTAssertEqual(1.1, obj["a"] as? Double)
         XCTAssertEqual(true, obj["b"] as? Bool)
         XCTAssertEqual("XYZ", obj["d"] as? String)

@@ -30,13 +30,11 @@ typealias WritingOptions = JSONSerialization.WritingOptions
 
 class TestJSONSerialization : XCTestCase {
     
-    #if !SKIP
     let supportedEncodings: [String.Encoding] = [
         .utf8,
         .utf16, .utf16BigEndian,
         .utf32LittleEndian, .utf32BigEndian
     ]
-    #endif
 
     #if !SKIP
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
@@ -447,23 +445,20 @@ extension TestJSONSerialization {
 
     //MARK: - Object Deserialization
     func deserialize_emptyObject(objectType: ObjectType) {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let subject = "{}"
         
         let data = Data(subject.utf8)
         var result: [String: Any]?
+        #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+        result = try getjsonObjectResult(data, objectType) as? [String: Any]
+        #else
         XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [String: Any])
+        #endif
 
         XCTAssertEqual(result?.count, 0)
-        #endif // !SKIP
     }
 
     func deserialize_multiStringObject(objectType: ObjectType) {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let subject = "{ \"hello\": \"world\", \"swift\": \"rocks\" }"
         
         for encoding in [String.Encoding.utf8, String.Encoding.utf16BigEndian] {
@@ -472,11 +467,14 @@ extension TestJSONSerialization {
                 return
             }
             var result: [String: Any]?
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [String: Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [String: Any])
+            #endif
             XCTAssertEqual(result?["hello"] as? String, "world")
             XCTAssertEqual(result?["swift"] as? String, "rocks")
         }
-        #endif // !SKIP
     }
 
     func deserialize_stringWithSpacesAtStart(objectType: ObjectType) {
@@ -600,9 +598,6 @@ extension TestJSONSerialization {
 
     //MARK: - Value parsing
     func deserialize_values(objectType: ObjectType) {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let subject = "[true, false, \"hello\", null, {}, []]"
 
         for encoding in supportedEncodings {
@@ -610,8 +605,15 @@ extension TestJSONSerialization {
                 XCTFail("Unable to convert string to data")
                 return
             }
-            var result: [Any]?
+            var result: [Any]? = nil
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+            #endif
+            #if SKIP
+            throw XCTSkip("TODO")
+            #else
             var iterator = result?.makeIterator()
             XCTAssertEqual(iterator?.next() as? Bool, true)
             XCTAssertEqual(iterator?.next() as? Bool, false)
@@ -619,9 +621,8 @@ extension TestJSONSerialization {
             XCTAssertNotNil(iterator?.next() as? NSNull)
             XCTAssertNotNil(iterator?.next() as? [String:Any])
             XCTAssertNotNil(iterator?.next() as? [Any])
+            #endif
         }
-        
-        #endif // !SKIP
     }
 
     func deserialize_values_as_reference_types(objectType: ObjectType) {
@@ -778,16 +779,29 @@ extension TestJSONSerialization {
 
     func deserialize_unicodeEscapeSequence(objectType: ObjectType) {
         #if SKIP
-        throw XCTSkip("TODO")
-        #else
+        if objectType == .stream {
+            throw XCTSkip("TODO: stream support")
+        }
+        #endif
         let subject = "[\"\\u2728\"]"
         let data = Data(subject.utf8)
-        var result: [Any]?
+        var result: [Any]? = nil
+        #if SKIP
+        do {
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+        } catch {
+            return XCTFail("Error deserializing object: \(error)")
+        }
+        #else
         XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+        #endif
         // result?[0] as? String returns an Optional<String> and RHS is promoted
         // to Optional<String>
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(result?.first as? String, "✨")
-        #endif // !SKIP
+        #endif
     }
 
     func deserialize_unicodeSurrogatePairEscapeSequence(objectType: ObjectType) {
@@ -1111,29 +1125,27 @@ extension TestJSONSerialization {
     }
 
 
-    #if !SKIP
     private func getjsonObjectResult(_ data: Data,
                                      _ objectType: ObjectType,
-                                     options opt: JSONSerialization.ReadingOptions = []) throws -> Any {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
+                                     options opt: ReadingOptions = ReadingOptions.mutableContainers) throws -> Any {
         var result: Any
         switch objectType {
         case .data:
             //Test with Data
             result = try JSONSerialization.jsonObject(with: data, options: opt)
         case .stream:
+            #if SKIP
+            throw XCTSkip("TODO")
+            #else
             //Test with stream
             let stream: InputStream = InputStream(data: data)
             stream.open()
             result = try JSONSerialization.jsonObject(with: stream, options: opt)
             stream.close()
+            #endif
         }
         return result
-        #endif // !SKIP
     }
-    #endif
 }
 
 // MARK: - isValidJSONObjectTests
@@ -1707,15 +1719,9 @@ extension TestJSONSerialization {
     }
 
     func test_serialize_stringEscaping() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         var json = ["foo"]
         XCTAssertEqual(try trySerialize(json), "[\"foo\"]")
 
-        json = ["a\0"]
-        XCTAssertEqual(try trySerialize(json), "[\"a\\u0000\"]")
-            
         json = ["b\\"]
         XCTAssertEqual(try trySerialize(json), "[\"b\\\\\"]")
         
@@ -1734,14 +1740,20 @@ extension TestJSONSerialization {
         json = ["g\'"]
         XCTAssertEqual(try trySerialize(json), "[\"g\'\"]")
         
-        json = ["h\u{7}"]
-        XCTAssertEqual(try trySerialize(json), "[\"h\\u0007\"]")
-        
-        json = ["i\u{1f}"]
-        XCTAssertEqual(try trySerialize(json), "[\"i\\u001f\"]")
-
         json = ["j/"]
         XCTAssertEqual(try trySerialize(json), "[\"j\\/\"]")
+
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        json = ["a\0"]
+        XCTAssertEqual(try trySerialize(json), "[\"a\\u0000\"]")
+
+        json = ["h\u{7}"]
+        XCTAssertEqual(try trySerialize(json), "[\"h\\u0007\"]")
+
+        json = ["i\u{1f}"]
+        XCTAssertEqual(try trySerialize(json), "[\"i\\u001f\"]")
         #endif // !SKIP
     }
 
