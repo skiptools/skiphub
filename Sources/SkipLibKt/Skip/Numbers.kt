@@ -27,15 +27,62 @@ val ULong.Companion.min: ULong get() = ULong.MIN_VALUE
 
 val Double.isNaN: Boolean get() = isNaN()
 
-fun Int(number: Number): Int = number.toInt()
-fun Byte(number: Number): Byte = number.toInt().toByte()
-fun Short(number: Number): Short = number.toInt().toShort()
-fun Long(number: Number): Long = number.toLong()
+fun Byte(number: Number): Byte = number.toByte()
+fun Byte(number: UByte): Byte = number.toByte()
+fun Byte(number: UShort): Byte = number.toByte()
+fun Byte(number: UInt): Byte = number.toByte()
+fun Byte(number: ULong): Byte = number.toByte()
 
-fun UInt(number: Number): UInt = number.toLong().toULong().toUInt()
-fun UByte(number: Number): UByte = number.toLong().toULong().toUByte()
-fun UShort(number: Number): UShort = number.toLong().toULong().toUShort()
+fun Short(number: Number): Short = number.toShort()
+fun Short(number: UByte): Short = number.toShort()
+fun Short(number: UShort): Short = number.toShort()
+fun Short(number: UInt): Short = number.toShort()
+fun Short(number: ULong): Short = number.toShort()
+
+fun Int(number: Number): Int = number.toInt()
+fun Int(number: UByte): Int = number.toInt()
+fun Int(number: UShort): Int = number.toInt()
+fun Int(number: UInt): Int = number.toInt()
+fun Int(number: ULong): Int = number.toInt()
+
+fun Long(number: Number): Long = number.toLong()
+fun Long(number: UByte): Long = number.toLong()
+fun Long(number: UShort): Long = number.toLong()
+fun Long(number: UInt): Long = number.toLong()
+fun Long(number: ULong): Long = number.toLong()
+
+fun UByte(number: Number): UByte = number.toLong().toUByte()
+fun UByte(number: UByte): UByte = number
+fun UByte(number: UShort): UByte = number.toUByte()
+fun UByte(number: UInt): UByte = number.toUByte()
+fun UByte(number: ULong): UByte = number.toUByte()
+
+fun UShort(number: Number): UShort = number.toLong().toUShort()
+fun UShort(number: UByte): UShort = number.toUShort()
+fun UShort(number: UShort): UShort = number
+fun UShort(number: UInt): UShort = number.toUShort()
+fun UShort(number: ULong): UShort = number.toUShort()
+
+fun UInt(number: Number): UInt = number.toLong().toUInt()
+fun UInt(number: UByte): UInt = number.toUInt()
+fun UInt(number: UShort): UInt = number.toUInt()
+fun UInt(number: UInt): UInt = number
+fun UInt(number: ULong): UInt = number.toUInt()
+
 fun ULong(number: Number): ULong = number.toLong().toULong()
+fun ULong(number: UByte): ULong = number.toULong()
+fun ULong(number: UShort): ULong = number.toULong()
+fun ULong(number: UInt): ULong = number.toULong()
+fun ULong(number: ULong): ULong = number
 
 fun Float(number: Number): Float = number.toFloat()
+fun Float(number: UByte): Float = number.toFloat()
+fun Float(number: UShort): Float = number.toFloat()
+fun Float(number: UInt): Float = number.toFloat()
+fun Float(number: ULong): Float = number.toFloat()
+
 fun Double(number: Number): Double = number.toDouble()
+fun Double(number: UByte): Double = number.toDouble()
+fun Double(number: UShort): Double = number.toDouble()
+fun Double(number: UInt): Double = number.toDouble()
+fun Double(number: ULong): Double = number.toDouble()
