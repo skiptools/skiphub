@@ -144,7 +144,7 @@ class TestJSON : XCTestCase {
                     "z": [[[[[false]]], true]]
                 }, [null]]
             }
-            """.utf8)) as? [String: Any])
+            """.utf8), options: ReadingOptions.fragmentsAllowed) as? [String: Any])
         
         XCTAssertEqual(1.1, obj["a"] as? Double)
         XCTAssertEqual(true, obj["b"] as? Bool)

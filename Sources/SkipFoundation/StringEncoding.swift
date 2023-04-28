@@ -18,6 +18,10 @@ extension String {
     //public var utf16: Data {
     //    return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_16))
     //}
+
+    public func replacingOccurrences(of search: String, with replacement: String) -> String {
+        return replace(search, replacement)
+    }
 }
 
 public struct StringEncoding : RawRepresentable, Hashable {

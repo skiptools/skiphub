@@ -1326,15 +1326,10 @@ extension TestJSONSerialization {
     }
     #endif
 
-    // func trySerialize(_ obj: Any, options: JSONSerialization.WritingOptions = []) throws -> String {
-    func trySerialize(_ obj: Any, options: [WritingOptions] = []) throws -> String {
-        #if SKIP
-        throw XCTSkip("TODO")
+    func trySerialize(_ obj: Any, options: WritingOptions = WritingOptions.fragmentsAllowed) throws -> String {
         let data = try JSONSerialization.data(withJSONObject: obj, options: options)
-        #else
-        let data = try JSONSerialization.data(withJSONObject: obj, options: .init(options))
-        #endif
-        guard let string = String(data: data, encoding: String.Encoding.utf8) else {
+
+         guard let string = String(data: data, encoding: String.Encoding.utf8) else {
             XCTFail("Unable to create string")
             return ""
         }
@@ -1515,21 +1510,21 @@ extension TestJSONSerialization {
     }
     
     func test_nested_dictionary() {
+        var dict: [AnyHashable : Any] = ["a":1]
+        XCTAssertEqual(try trySerialize(dict), "{\"a\":1}")
+
+        dict = ["a":["b":1]]
+        XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":1}}")
+
+        dict = ["a":["b":["c":1]]]
+        XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":{\"c\":1}}}")
+
+        dict = ["a":["b":["c":["d":1]]]]
+        XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":{\"c\":{\"d\":1}}}}")
+
         #if SKIP
         throw XCTSkip("TODO")
         #else
-        var dict: [AnyHashable : Any] = ["a":1]
-        XCTAssertEqual(try trySerialize(dict), "{\"a\":1}")
-        
-        dict = ["a":["b":1]]
-        XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":1}}")
-        
-        dict = ["a":["b":["c":1]]]
-        XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":{\"c\":1}}}")
-        
-        dict = ["a":["b":["c":["d":1]]]]
-        XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":{\"c\":{\"d\":1}}}}")
-        
         dict = ["a":["b":["c":[1, Optional<Any>.none]]]]
         XCTAssertEqual(try trySerialize(dict), "{\"a\":{\"b\":{\"c\":[1,null]}}}")
         #endif // !SKIP
@@ -1751,14 +1746,16 @@ extension TestJSONSerialization {
     }
 
     func test_serialize_fragments() {
-        #if !SKIP
-        XCTAssertEqual(try trySerialize(2, options: [WritingOptions.fragmentsAllowed]), "2")
-        XCTAssertEqual(try trySerialize(false, options: [WritingOptions.fragmentsAllowed]), "false")
-        XCTAssertEqual(try trySerialize(true, options: [WritingOptions.fragmentsAllowed]), "true")
-        XCTAssertEqual(try trySerialize(Float(1), options: [WritingOptions.fragmentsAllowed]), "1")
-        XCTAssertEqual(try trySerialize(Double(2), options: [WritingOptions.fragmentsAllowed]), "2")
-        XCTAssertEqual(try trySerialize(Decimal(Double(Float.leastNormalMagnitude)), options: [WritingOptions.fragmentsAllowed]), "0.000000000000000000000000000000000000011754943508222875648")
-        XCTAssertEqual(try trySerialize("test", options: [WritingOptions.fragmentsAllowed]), "\"test\"")
+        XCTAssertEqual(try trySerialize(2, options: WritingOptions.fragmentsAllowed), "2")
+        XCTAssertEqual(try trySerialize(false, options: WritingOptions.fragmentsAllowed), "false")
+        XCTAssertEqual(try trySerialize(true, options: WritingOptions.fragmentsAllowed), "true")
+        XCTAssertEqual(try trySerialize("test", options: WritingOptions.fragmentsAllowed), "\"test\"")
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+        XCTAssertEqual(try trySerialize(Float(1), options: WritingOptions.fragmentsAllowed), "1")
+        XCTAssertEqual(try trySerialize(Double(2), options: WritingOptions.fragmentsAllowed), "2")
+        XCTAssertEqual(try trySerialize(Decimal(Double(Float.leastNormalMagnitude)), options: WritingOptions.fragmentsAllowed), "0.000000000000000000000000000000000000011754943508222875648")
         #endif
     }
 
@@ -1956,22 +1953,14 @@ extension TestJSONSerialization {
         let dict2 = ["aaaa": 1, "aaa": 1, "aa": 1, "a": 1]
         let dict3 = ["c": ["c":1,"b":1,"a":1],"b":["c":1,"b":1,"a":1],"a":["c":1,"b":1,"a":1]]
 
-#if true || DARWIN_COMPATIBILITY_TESTS
-        if #available(macOS 10.13, *) {
-            XCTAssertEqual(try trySerialize(dict1, options: [WritingOptions.sortedKeys]), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
-            XCTAssertEqual(try trySerialize(dict2, options: [WritingOptions.sortedKeys]), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
-            XCTAssertEqual(try trySerialize(dict3, options: [WritingOptions.sortedKeys]), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
-        }
-#else
-        XCTAssertEqual(try trySerialize(dict1, options: [WritingOptions.sortedKeys]), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
-        XCTAssertEqual(try trySerialize(dict2, options: [WritingOptions.sortedKeys]), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
-        XCTAssertEqual(try trySerialize(dict3, options: [WritingOptions.sortedKeys]), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
-#endif
+        XCTAssertEqual(try trySerialize(dict1, options: WritingOptions.sortedKeys), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
+        XCTAssertEqual(try trySerialize(dict2, options: WritingOptions.sortedKeys), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
+        XCTAssertEqual(try trySerialize(dict3, options: WritingOptions.sortedKeys), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
     }
 
     func test_serializePrettyPrinted() {
         let dictionary = ["key": 4]
-        XCTAssertEqual(try trySerialize(dictionary, options: [WritingOptions.prettyPrinted]), "{\n  \"key\" : 4\n}")
+        XCTAssertEqual(try trySerialize(dictionary, options: WritingOptions.prettyPrinted), "{\n  \"key\" : 4\n}")
     }
     
     func test_bailOnDeepValidStructure() {
@@ -1979,7 +1968,7 @@ extension TestJSONSerialization {
         let testString = String(repeating: "[", count: repetition) +  String(repeating: "]", count: repetition)
         let data = testString.data(using: String.Encoding.utf8)!
         do {
-            _ = try JSONSerialization.jsonObject(with: data, options: [])
+            _ = try JSONSerialization.jsonObject(with: data, options: ReadingOptions.mutableContainers)
             XCTFail("Should not have successfully parsed")
         }
         catch let nativeError {
@@ -1997,7 +1986,7 @@ extension TestJSONSerialization {
         let testString = String(repeating: "[", count: repetition)
         let data = testString.data(using: String.Encoding.utf8)!
         do {
-            _ = try JSONSerialization.jsonObject(with: data, options: [])
+            _ = try JSONSerialization.jsonObject(with: data, options: ReadingOptions.mutableContainers)
             XCTFail("Should not have successfully parsed")
         }
         catch {

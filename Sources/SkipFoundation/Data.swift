@@ -30,6 +30,14 @@ public struct SkipData : RawRepresentable, Hashable, SkipDataProtocol {
     public init(_ skipData: SkipData) {
         self.rawValue = skipData.rawValue
     }
+
+    public init() {
+        #if SKIP
+        self.rawValue = PlatformData(size: 0)
+        #else
+        self.rawValue = PlatformData(count: 0)
+        #endif
+    }
 }
 
 #if !SKIP

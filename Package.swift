@@ -27,7 +27,7 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.4.10"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.4.11"),
     ],
     targets: [
         // Unit testing support: XCTest to JUnit conversion, Gradle test launch and results handling
