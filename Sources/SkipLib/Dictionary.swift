@@ -1,4 +1,5 @@
 // Copyright 2023 Skip
+// Copyright 2023 Skip
 //
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
@@ -11,29 +12,29 @@
 
 public struct Dictionary<Key, Value> {
     public init() {
-        Swift.fatalError()
+        fatalError()
     }
 
     #if !SKIP // Skip does not support this Swift syntax [subscriptDecl]
     public subscript(key: Key?) -> Value? {
         get {
-            Swift.fatalError()
+            fatalError()
         }
         set {
-            Swift.fatalError()
+            fatalError()
         }
     }
     #endif
 
     public var keys: Array<Key> {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var values: Array<Value> {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var count: Int {
-        Swift.fatalError()
+        fatalError()
     }
 }

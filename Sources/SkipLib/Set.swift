@@ -11,14 +11,14 @@
 
 public struct Set<Element>: Collection {
     public init() {
-        Swift.fatalError()
+        fatalError()
     }
 
     public init<S: Sequence<Element>>(_ sequence: S) {
-        Swift.fatalError()
+        fatalError()
     }
 
     public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
-        Swift.fatalError()
+        fatalError()
     }
 }

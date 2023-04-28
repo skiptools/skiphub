@@ -21,199 +21,199 @@ public protocol Sequence<Element> {
 extension Sequence {
     @available(*, unavailable)
     public func makeIterator() -> any IteratorProtocol<Element> {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var underestimatedCount: Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func withContiguousStorageIfAvailable<R>(_ body: (Any) throws -> R) rethrows -> R? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func shuffled<T: RandomNumberGenerator>(using generator: inout T) -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func shuffled() -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public var lazy: any Sequence<Element> {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func map<RE>(_ transform: (Element) throws -> RE) rethrows -> [RE] {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func forEach(_ body: (Element) throws -> Void) rethrows {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func first(where predicate: (Element) throws -> Bool) rethrows -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func split(maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true, whereSeparator isSeparator: (Element) throws -> Bool) rethrows -> [Element] /* ArraySlice<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func suffix(_ maxLength: Int) -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func dropFirst(_ k: Int = 1) -> [Element] /* DropFirstSequence<Self> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func dropLast(_ k: Int = 1) -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func drop(while predicate: (Element) throws -> Bool) rethrows -> [Element] /* DropWhileSequence<Self> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func prefix(_ maxLength: Int) -> [Element] /* PrefixSequence<Self> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func prefix(while predicate: (Element) throws -> Bool) rethrows -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func enumerated() -> [(Int, Element)] /* EnumeratedSequence<Self> */ {
-        Swift.fatalError()
+        fatalError()
     }
     
     @available(*, unavailable)
     public func min(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func max(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func starts(with possiblePrefix: Any, by areEquivalent: (Element, Element) throws -> Bool) rethrows -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func elementsEqual(_ other: Any, by areEquivalent: (Element, Element) throws -> Bool) rethrows -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func lexicographicallyPrecedes(_ other: Any, by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func contains(where predicate: (Element) throws -> Bool) rethrows -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func reduce<R>(_ initialResult: R, _ nextPartialResult: (_ partialResult: R, Element) throws -> R) rethrows -> R {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func reduce<R>(into initialResult: R, _ updateAccumulatingResult: (_ partialResult: inout R, Element) throws -> Void) rethrows -> R {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func allSatisfy(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func reversed() -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func flatMap<RE>(_ transform: (Element) throws -> any Sequence<RE>) rethrows -> [RE] {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func compactMap<RE>(_ transform: (Element) throws -> RE?) rethrows -> [RE] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func joined() -> any Sequence<Element> /* FlattenSequence<Self> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func joined(separator: any Sequence<Element>) -> any Sequence<Element> /* JoinedSequence<Self> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func split(separator: Element, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true) -> [Element] /* ArraySlice<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func starts(with possiblePrefix: Any) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func elementsEqual(_ other: Any) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func contains(_ element: Element) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func min() -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func max() -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func lexicographicallyPrecedes(_ other: Any) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func sorted() -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func joined(separator: String = "") -> String {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
@@ -229,186 +229,186 @@ extension Collection {
 
     @available(*, unavailable)
     public var startIndex: Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public var endIndex: Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     // SKIP NOWARN
     public subscript(position: Int) -> Element {
-        Swift.fatalError()
+        fatalError()
     }
 
     // SKIP NOWARN
     @available(*, unavailable)
     public subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public var indices: [Int] /* Collection<Int> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var isEmpty: Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var count: Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func index(_ i: Int, offsetBy distance: Int) -> Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func index(_ i: Int, offsetBy distance: Int, limitedBy limit: Int) -> Int? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func distance(from start: Int, to end: Int) -> Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func index(after i: Int) -> Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func formIndex(after i: inout Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func formIndex(_ i: inout Int, offsetBy distance: Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func formIndex(_ i: inout Int, offsetBy distance: Int, limitedBy limit: Int) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func randomElement() -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func randomElement(using generator: inout any RandomNumberGenerator) -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func popFirst() -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var first: Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func prefix(upTo end: Int) -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func suffix(from start: Int) -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func prefix(through end: Int) -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeFirst() -> Element {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeFirst(_ k: Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func firstIndex(of element: Element) -> Int? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func firstIndex(where predicate: (Element) throws -> Bool) rethrows -> Int? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func shuffle() {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func sort() {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func partition(by belongsInSecondPartition: (Element) throws -> Bool) rethrows -> Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func shuffle<T: RandomNumberGenerator>(using generator: inout T) {
-        Swift.fatalError()
+        fatalError()
     }
 
     // SKIP NOWARN
     @available(*, unavailable)
     public subscript(bounds: any RangeExpression<Int>) -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func trimmingPrefix(while predicate: (Element) throws -> Bool) rethrows -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func trimPrefix(while predicate: (Element) throws -> Bool) throws {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func firstRange(of other: Any) -> Range<Int>? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func ranges(of other: Any) -> [Range<Int>] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func split(separator: any Collection<Element>, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true) -> [[Element]] /* Collection<Collection<Element>> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func trimmingPrefix(_ prefix: any Sequence<Element>) -> [Element] /* Collection<Element> */ {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func trimPrefix(_ prefix: any Sequence<Element>) {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
@@ -421,100 +421,100 @@ extension BidirectionalCollection {
 
     @available(*, unavailable)
     public func index(before i: Int) -> Int {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func formIndex(before i: inout Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     public var last: Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     public func last(where predicate: (Element) throws -> Bool) rethrows -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func lastIndex(of element: Element) -> Int? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func lastIndex(where predicate: (Element) throws -> Bool) rethrows -> Int? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func difference(from other: Any) -> CollectionDifference<Element> {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func difference(from other: any Collection<Element>, by areEquivalent: (Element, Element) -> Bool) -> CollectionDifference<Element> {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func popLast() -> Element? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeLast(_ k: Int = 1) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func contains(_ regex: some RegexComponent) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func firstRange(of regex: some RegexComponent) -> Range<Int>? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func ranges(of regex: some RegexComponent) -> [Range<Int>] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func trimmingPrefix(_ regex: some RegexComponent) -> [Element] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func firstMatch(of r: some RegexComponent) -> Any? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func matches(of r: some RegexComponent) -> [Any] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func split(separator: some RegexComponent, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true) -> [[Element]] {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func starts(with regex: some RegexComponent) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func wholeMatch(of r: some RegexComponent) -> Any {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func prefixMatch(of r: some RegexComponent) -> Any {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
@@ -527,106 +527,106 @@ public protocol RangeReplaceableCollection : Collection {
 extension RangeReplaceableCollection {
     @available(*, unavailable)
     public mutating func replaceSubrange(_ subrange: any RangeExpression<Int>, with newElements: any Collection<Element>) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func reserveCapacity(_ n: Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     public mutating func append(_ newElement: Element) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func append(contentsOf newElements: any Sequence<Element>) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func insert(_ newElement: Element, at i: Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func insert(contentsOf newElements: any Sequence<Element>, at i: Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func remove(at i: Int) -> Element {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeSubrange(_ bounds: any RangeExpression<Int>) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeAll(keepingCapacity keepCapacity: Bool) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeAll(where shouldBeRemoved: (Element) throws -> Bool) rethrows {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func applying(_ difference: CollectionDifference<Element>) -> Self? {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func replacing(_ other: any Collection<Element>, with replacement: any Collection<Element>, subrange: Range<Int>, maxReplacements: Int = Int.max) -> Self {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func replacing(_ other: any Collection<Element>, with replacement: any Collection<Element>, maxReplacements: Int = Int.max) -> Self {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func replace(_ other: any Collection<Element>, with replacement: any Collection<Element>, maxReplacements: Int = Int.max) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func replacing(_ regex: some RegexComponent, with replacement: any Collection<Character>, maxReplacements: Int = Int.max) -> Self {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func replacing(_ regex: some RegexComponent, with replacement: any Collection<Character>, subrange: Range<Int>, maxReplacements: Int = Int.max) -> Self {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func replace(_ regex: some RegexComponent, with replacement: any Collection<Character>, maxReplacements: Int = Int.max) -> Self {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func replacing(_ regex: some RegexComponent, maxReplacements: Int = Int.max, with replacement: (Any) throws -> any Collection<Character>) rethrows {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func replacing(_ regex: some RegexComponent, subrange: Range<Int>, maxReplacements: Int = Int.max, with replacement: (Any) throws -> any Collection<Character>) rethrows -> Self {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func replace(_ regex: some RegexComponent, maxReplacements: Int = Int.max, with replacement: (Any) throws -> any Collection<Character>) rethrows {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func trimPrefix(_ regex: some RegexComponent) {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
@@ -637,10 +637,10 @@ extension MutableCollection {
     // SKIP NOWARN
     subscript(position: Int) -> Element {
         get {
-            Swift.fatalError()
+            fatalError()
         }
         set {
-            Swift.fatalError()
+            fatalError()
         }
     }
 
@@ -648,10 +648,10 @@ extension MutableCollection {
     @available(*, unavailable)
     subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
         get {
-            Swift.fatalError()
+            fatalError()
         }
         set {
-            Swift.fatalError()
+            fatalError()
         }
     }
 
@@ -659,21 +659,21 @@ extension MutableCollection {
     @available(*, unavailable)
     subscript(bounds: any RangeExpression<Int>) -> [Element] /* Collection<Element> */ {
         get {
-            Swift.fatalError()
+            fatalError()
         }
         set {
-            Swift.fatalError()
+            fatalError()
         }
     }
 
     @available(*, unavailable)
     mutating func swapAt(_ i: Int, _ j: Int) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func reverse() {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
@@ -688,37 +688,37 @@ public struct Range<Bound>: RangeExpression /* CustomStringConvertible, CustomDe
 
     @available(*, unavailable)
     public init(uncheckedBounds bounds: (Bound, Bound)) {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func contains(_ element: Bound) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public var isEmpty: Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func clamped(to limits: Range<Bound>) -> Range<Bound> {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func overlaps(_ other: Range<Bound>) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func overlaps(_ other: ClosedRange<Bound>) -> Bool {
-        Swift.fatalError()
+        fatalError()
     }
 
     @available(*, unavailable)
     public func relative(to collection: any Collection) -> Range<Bound> {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
@@ -726,27 +726,27 @@ public struct Range<Bound>: RangeExpression /* CustomStringConvertible, CustomDe
 
 @available(*, unavailable)
 public func repeatElement<T>(_ element: T, count n: Int) -> [T] /* Repeated<T> */ {
-    Swift.fatalError()
+    fatalError()
 }
 
 @available(*, unavailable)
 public func sequence<T>(first: T, next: @escaping (T) -> T?) -> [T] /* UnfoldFirstSequence<T> */ {
-    Swift.fatalError()
+    fatalError()
 }
 
 @available(*, unavailable)
 public func sequence<T, State>(state: State, next: @escaping (inout State) -> T?) -> [T] /* UnfoldSequence<T, State> */ {
-    Swift.fatalError()
+    fatalError()
 }
 
 @available(*, unavailable)
 public func stride<T>(from start: T, to end: T, by stride: T) -> any Sequence<T> {
-    Swift.fatalError()
+    fatalError()
 }
 
 @available(*, unavailable)
 public func stride<T>(from start: T, through end: T, by stride: T) -> any Sequence<T> {
-    Swift.fatalError()
+    fatalError()
 }
 
 // MARK: - Helpers

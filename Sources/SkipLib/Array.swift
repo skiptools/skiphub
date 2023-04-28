@@ -11,11 +11,11 @@
 
 public struct Array<Element>: RandomAccessCollection, RangeReplaceableCollection, MutableCollection {
     public init() {
-        Swift.fatalError()
+        fatalError()
     }
 
     public init<S: Sequence<Element>>(_ sequence: S) {
-        Swift.fatalError()
+        fatalError()
     }
 }
 
