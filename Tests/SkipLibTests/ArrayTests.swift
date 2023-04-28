@@ -210,6 +210,20 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(filtered[1], .three)
     }
 
+    func testEnumerated() {
+        var enumerated: [(Int, String)] = []
+        for (index, string) in ["A", "Z", "M"].enumerated() {
+            enumerated.append((index, string))
+        }
+        XCTAssertEqual(enumerated.count, 3)
+        XCTAssertEqual(enumerated[0].0, 0)
+        XCTAssertEqual(enumerated[0].1, "A")
+        XCTAssertEqual(enumerated[1].0, 1)
+        XCTAssertEqual(enumerated[1].1, "Z")
+        XCTAssertEqual(enumerated[2].0, 2)
+        XCTAssertEqual(enumerated[2].1, "M")
+    }
+
     func testArraySort() {
         let strings = ["A", "Z", "M"]
         let strings2 = strings.sorted()

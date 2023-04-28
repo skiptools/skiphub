@@ -98,8 +98,7 @@ extension Sequence {
         fatalError()
     }
 
-    @available(*, unavailable)
-    public func enumerated() -> [(Int, Element)] /* EnumeratedSequence<Self> */ {
+    public func enumerated() -> any Sequence<(Int, Element)> {
         fatalError()
     }
     

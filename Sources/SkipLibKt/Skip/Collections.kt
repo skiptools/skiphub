@@ -68,6 +68,23 @@ interface Sequence<Element>: IterableStorage<Element> {
         return iterableStorage.firstOrNull(where).sref()
     }
 
+    fun enumerated(): Sequence<Tuple2<Int, Element>> {
+        val iterable = object: Iterable<Tuple2<Int, Element>> {
+            override fun iterator(): Iterator<Tuple2<Int, Element>> {
+                var index = 0
+                val iter = iterableStorage.iterator()
+                return object: Iterator<Tuple2<Int, Element>> {
+                    override fun hasNext(): Boolean = iter.hasNext()
+                    override fun next(): Tuple2<Int, Element> = Tuple2(index++, iter.next())
+                }
+            }
+        }
+        return object: Sequence<Tuple2<Int, Element>> {
+            override val iterableStorage: Iterable<Tuple2<Int, Element>>
+                get() = iterable
+        }
+    }
+
     fun contains(where: (Element) -> Boolean): Boolean {
         iterableStorage.forEach { if (where(it)) return true }
         return false
