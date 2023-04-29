@@ -85,14 +85,17 @@ extension TestJSONSerialization {
             ("{} UTF-16BE w/BOM", [0xFE, 0xFF, 0x0, 0x7B, 0x0, 0x7D]),
             ("{} UTF-16LE w/BOM", [0xFF, 0xFE, 0x7B, 0x0, 0x7D, 0x0]),
             ("{} UTF-32BE w/BOM", [0x00, 0x00, 0xFE, 0xFF, 0x0, 0x0, 0x0, 0x7B, 0x0, 0x0, 0x0, 0x7D]),
-            ("{} UTF-32LE w/BOM", [0xFF, 0xFE, 0x00, 0x00, 0x7B, 0x0, 0x0, 0x0, 0x7D, 0x0, 0x0, 0x0]),
-            
+
+            // Skip: some of these commented-out tests are enabled in the swift-corelibs-foundation tests, but they fail against Foundation.JSONSerialization on macOS, so we disable them here
+
+            //("{} UTF-32LE w/BOM", [0xFF, 0xFE, 0x00, 0x00, 0x7B, 0x0, 0x0, 0x0, 0x7D, 0x0, 0x0, 0x0]),
+
             // RFC4627 Detection
             ("{} UTF-8", [0x7B, 0x7D]),
-            ("{} UTF-16BE", [0x0, 0x7B, 0x0, 0x7D]),
-            ("{} UTF-16LE", [0x7B, 0x0, 0x7D, 0x0]),
-            ("{} UTF-32BE", [0x0, 0x0, 0x0, 0x7B, 0x0, 0x0, 0x0, 0x7D]),
-            ("{} UTF-32LE", [0x7B, 0x0, 0x0, 0x0, 0x7D, 0x0, 0x0, 0x0]),
+            //("{} UTF-16BE", [0x0, 0x7B, 0x0, 0x7D]),
+            //("{} UTF-16LE", [0x7B, 0x0, 0x7D, 0x0]),
+            //("{} UTF-32BE", [0x0, 0x0, 0x0, 0x7B, 0x0, 0x0, 0x0, 0x7D]),
+            //("{} UTF-32LE", [0x7B, 0x0, 0x0, 0x0, 0x7D, 0x0, 0x0, 0x0]),
             
             //            // Single Characters
             //            ("'3' UTF-8", [0x33]),
@@ -102,7 +105,7 @@ extension TestJSONSerialization {
         
         for (description, encoded) in subjects {
             let result = try? JSONSerialization.jsonObject(with: Data(bytes:encoded, count: encoded.count), options: [])
-//            XCTAssertNotNil(result, description)
+            XCTAssertNotNil(result, description)
         }
         #endif // !SKIP
     }
@@ -493,7 +496,11 @@ extension TestJSONSerialization {
             return
         }
         var result: [String: Any]?
+        #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+        result = try getjsonObjectResult(data, objectType) as? [String: Any]
+        #else
         XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [String: Any])
+        #endif
         XCTAssertEqual(result?["title"] as? String, " hello world!!")
         #endif // !SKIP
     }
@@ -548,7 +555,11 @@ extension TestJSONSerialization {
                 return
             }
             var result: [Any]?
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+            #endif
             var iterator = result?.makeIterator()
             XCTAssertEqual(iterator?.next() as? String, "hello")
             XCTAssertEqual(iterator?.next() as? String, "swift⚡️")
@@ -559,7 +570,8 @@ extension TestJSONSerialization {
     func deserialize_unicodeString(objectType: ObjectType) {
         #if SKIP
         throw XCTSkip("TODO")
-        #else
+        #endif
+
         /// Ģ has the same LSB as quotation mark " (U+0022) so test guarding against this case
         let subject = "[\"unicode\", \"Ģ\", \"😢\"]"
         for encoding in [String.Encoding.utf16LittleEndian, String.Encoding.utf16BigEndian, String.Encoding.utf32LittleEndian, String.Encoding.utf32BigEndian] {
@@ -568,13 +580,16 @@ extension TestJSONSerialization {
                 return
             }
             var result: [Any]?
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+            #endif
             var iterator = result?.makeIterator()
             XCTAssertEqual(iterator?.next() as? String, "unicode")
             XCTAssertEqual(iterator?.next() as? String, "Ģ")
             XCTAssertEqual(iterator?.next() as? String, "😢")
         }
-        #endif // !SKIP
     }
     
     func deserialize_highlyNestedArray(objectType: ObjectType) {
@@ -642,7 +657,11 @@ extension TestJSONSerialization {
                 return
             }
             var result: [Any]?
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+            #endif
             var iterator = result?.makeIterator()
             XCTAssertEqual(iterator?.next() as? NSNumber, true)
             XCTAssertEqual(iterator?.next() as? NSNumber, false)
@@ -667,7 +686,11 @@ extension TestJSONSerialization {
                 return
             }
             var result: [Any]?
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+            #endif
             var iterator = result?.makeIterator()
             XCTAssertEqual(iterator?.next() as? Int,    1)
             XCTAssertEqual(iterator?.next() as? Int,    -1)
@@ -739,7 +762,11 @@ extension TestJSONSerialization {
                 return
             }
             var result: [Any]?
+            #if SKIP // no support for XCTAssertNoThrow(@autoclosure)
+            result = try getjsonObjectResult(data, objectType) as? [Any]
+            #else
             XCTAssertNoThrow(result = try getjsonObjectResult(data, objectType) as? [Any])
+            #endif
             var iterator = result?.makeIterator()
             XCTAssertEqual(iterator?.next() as? NSNumber, 1)
             XCTAssertEqual(iterator?.next() as? NSNumber, -1)

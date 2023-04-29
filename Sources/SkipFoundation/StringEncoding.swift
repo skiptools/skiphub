@@ -24,7 +24,7 @@ extension String {
     }
 }
 
-public struct StringEncoding : RawRepresentable, Hashable {
+public struct StringEncoding : RawRepresentable, Hashable, CustomStringConvertible {
     public static let utf8 = StringEncoding(rawValue: Charsets.UTF_8)
     public static let utf16 = StringEncoding(rawValue: Charsets.UTF_16)
     public static let utf16LittleEndian = StringEncoding(rawValue: Charsets.UTF_16LE)
@@ -41,6 +41,10 @@ public struct StringEncoding : RawRepresentable, Hashable {
 
     public init(_ rawValue: java.nio.charset.Charset) {
         self.rawValue = rawValue
+    }
+
+    public var description: String {
+        rawValue.description
     }
 }
 

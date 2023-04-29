@@ -49,12 +49,8 @@ class TestUUID : XCTestCase {
     }
     
     func test_UUIDInvalid() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let uuid = UUID(uuidString: "Invalid UUID")
         XCTAssertNil(uuid, "The convenience initializer `init?(uuidString string:)` must return nil for an invalid UUID string.")
-        #endif // !SKIP
     }
     
     // `uuidString` should return an uppercase string
@@ -69,12 +65,8 @@ class TestUUID : XCTestCase {
     }
     
     func test_UUIDdescription() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let uuid = UUID()
         XCTAssertEqual(uuid.description, uuid.uuidString, "The description must be the same as the uuidString.")
-        #endif // !SKIP
     }
     
     func test_UUIDNSCoding() {

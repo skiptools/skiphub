@@ -80,21 +80,40 @@ internal class PlatformJSONSerialization {
         }
     }
 
-    public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any {
+    /// Attempt to create a String from the data using one of the 5 supported JSON encodings: `[.utf8, .utf16, .utf16BigEndian, .utf32, .utf32BigEndian]`
+    private static func createString(from jsonData: Data) throws -> String {
         var string: String? = nil
 
         // check for each of the 5 supported encodings
         // FIXME: very inefficient; use optimized heuristics
-        for encoding: String.Encoding in [.utf8, .utf16, .utf16BigEndian, .utf32, .utf32BigEndian, .utf8] {
-            string = String(data: jsonData, encoding: encoding)
-            if jsonData == string?.data(using: encoding) {
+        for encoding: String.Encoding in [.utf8, .utf16, .utf16BigEndian, .utf32LittleEndian, .utf32BigEndian] {
+            //string = String(data: jsonData, encoding: encoding)
+            //print("### DATA", jsonData.count, "IN ENCODING:", encoding, string != nil)
+            //if jsonData == string?.data(using: encoding) {
+            //    break
+            //}
+
+            do {
+                #if SKIP
+                string = jsonData.rawValue.toString(encoding.rawValue)
+                //print("### DATA", jsonData.count, " IN ENCODING:", encoding, string.count)
                 break
+                #endif
+            } catch {
+                // invalid encoding
+                //print("### DATA", jsonData.count, " NOT IN ENCODING:", encoding, error)
+
             }
         }
 
         guard let string = string else {
             throw CannotConvertString()
         }
+        return string
+    }
+
+    public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any {
+        let string = try createString(from: jsonData)
 
         // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
         do {
