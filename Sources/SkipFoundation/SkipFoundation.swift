@@ -62,9 +62,6 @@ internal protocol Operation {
 internal protocol OperationQueue {
 }
 
-internal struct URLRequest {
-}
-
 internal class XMLParser {
 }
 
