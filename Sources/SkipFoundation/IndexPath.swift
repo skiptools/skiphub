@@ -7,7 +7,7 @@
 #if !SKIP
 import struct Foundation.IndexPath
 public typealias IndexPath = Foundation.IndexPath
-public typealias PlatformIndexPath = Foundation.IndexPath
+internal typealias PlatformIndexPath = Foundation.IndexPath
 #else
 public typealias IndexPath = SkipIndexPath
 public typealias PlatformIndexPath = skip.lib.Array<Int>
@@ -15,10 +15,12 @@ public typealias PlatformIndexPath = skip.lib.Array<Int>
 
 public typealias SkipIndexPathElement = Int
 
-public struct SkipIndexPath : RawRepresentable, Hashable {
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipIndexPath: RawRepresentable<PlatformIndexPath>, MutableStruct
+internal struct SkipIndexPath : RawRepresentable, Hashable, CustomStringConvertible {
     //public typealias Element = Int // "Kotlin does not support typealias declarations within functions and types. Consider moving this to a top level declaration"
 
-    public let rawValue: PlatformIndexPath
+    public var rawValue: PlatformIndexPath
 
     public init(rawValue: PlatformIndexPath) {
         self.rawValue = rawValue
@@ -34,6 +36,10 @@ public struct SkipIndexPath : RawRepresentable, Hashable {
 
     public init(index: SkipIndexPathElement) {
         self.rawValue = [index]
+    }
+
+    var description: String {
+        return rawValue.description
     }
 
 //    public typealias Index = Array<Int>.Index

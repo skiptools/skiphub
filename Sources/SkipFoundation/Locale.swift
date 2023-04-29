@@ -6,19 +6,15 @@
 #if !SKIP
 import struct Foundation.Locale
 public typealias Locale = Foundation.Locale
-public typealias PlatformLocale = Foundation.Locale
+internal typealias PlatformLocale = Foundation.Locale
 #else
 public typealias Locale = SkipLocale
 public typealias PlatformLocale = java.util.Locale
 #endif
 
-// two different ways of simulator constructor extensions
-
-// SKIP INSERT: public operator fun SkipLocale.Companion.invoke(identifier: String): SkipLocale { return SkipLocale(PlatformLocale(identifier)) }
-
-// SKXX INSERT: public fun Locale(identifier: String): SkipLocale { return SkipLocale(PlatformLocale(identifier)) }
-
-public struct SkipLocale : RawRepresentable, Hashable {
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipLocale: RawRepresentable<PlatformLocale>
+internal struct SkipLocale : RawRepresentable, Hashable {
     public let rawValue: PlatformLocale
 
     public init(rawValue: PlatformLocale) {
@@ -27,6 +23,14 @@ public struct SkipLocale : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformLocale) {
         self.rawValue = rawValue
+    }
+
+    public init(identifier: String) {
+        #if !SKIP
+        self.rawValue = PlatformLocale(identifier: identifier)
+        #else
+        self.rawValue = PlatformLocale(identifier)
+        #endif
     }
 }
 

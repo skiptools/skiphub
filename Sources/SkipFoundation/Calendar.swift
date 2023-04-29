@@ -16,9 +16,9 @@ internal typealias PlatformCalendar = Foundation.Calendar
 #endif
 
 // override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: public class SkipCalendar: RawRepresentable<PlatformCalendar>
+// SKIP DECLARE: public class SkipCalendar: RawRepresentable<PlatformCalendar>, MutableStruct
 internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertible {
-    public let rawValue: PlatformCalendar
+    public var rawValue: PlatformCalendar
 
     public init(rawValue: PlatformCalendar) {
         self.rawValue = rawValue

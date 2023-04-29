@@ -7,15 +7,16 @@
 #if !SKIP
 import struct Foundation.IndexSet
 public typealias IndexSet = Foundation.IndexSet
-public typealias PlatformIndexSet = Foundation.IndexSet
+internal typealias PlatformIndexSet = Foundation.IndexSet
 #else
 public typealias IndexSet = SkipIndexSet
 public typealias PlatformIndexSet = skip.lib.Set<Int>
 #endif
 
-
-public struct SkipIndexSet : RawRepresentable, Hashable {
-    public let rawValue: PlatformIndexSet
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipIndexSet: RawRepresentable<PlatformIndexSet>, MutableStruct
+internal struct SkipIndexSet : RawRepresentable, Hashable, CustomStringConvertible {
+    public var rawValue: PlatformIndexSet
 
     public init(rawValue: PlatformIndexSet) {
         self.rawValue = rawValue
@@ -23,6 +24,10 @@ public struct SkipIndexSet : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformIndexSet = PlatformIndexSet()) {
         self.rawValue = rawValue
+    }
+
+    var description: String {
+        return rawValue.description
     }
 
 //    public typealias Element = Int

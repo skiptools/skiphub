@@ -22,6 +22,10 @@ public struct SkipBundle : RawRepresentable, Hashable {
     public init(_ rawValue: PlatformBundle) {
         self.rawValue = rawValue
     }
+
+    var description: String {
+        return rawValue.description
+    }
 }
 
 #if !SKIP
@@ -29,7 +33,7 @@ public struct SkipBundle : RawRepresentable, Hashable {
 extension PlatformBundle {
     /// The location of a bundle to use for looking up localized strings, such as the main bundle, or a bundle at a specific file URL.
     @available(macOS 13, iOS 16, tvOS 16, watchOS 8, *)
-    public var location: LocalizedStringResource.BundleDescription {
+    var location: LocalizedStringResource.BundleDescription {
         .atURL(bundleURL)
     }
 }

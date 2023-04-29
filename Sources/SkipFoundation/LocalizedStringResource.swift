@@ -6,13 +6,13 @@
 #if !SKIP
 import struct Foundation.LocalizedStringResource
 @available(macOS 13, iOS 16, tvOS 16, watchOS 8, *)
-public typealias LocalizedStringResource = Foundation.LocalizedStringResource
+typealias LocalizedStringResource = Foundation.LocalizedStringResource
 #else
-public typealias LocalizedStringResource = SkipLocalizedStringResource
+typealias LocalizedStringResource = SkipLocalizedStringResource
 #endif
 
 
-public final class SkipLocalizedStringResource {
+final class SkipLocalizedStringResource {
     public let key: String
     public let defaultValue: String? // TODO: String.LocalizationValue
     public let table: String?

@@ -7,15 +7,16 @@
 #if !SKIP
 import struct Foundation.DateInterval
 public typealias DateInterval = Foundation.DateInterval
-public typealias PlatformDateInterval = Foundation.DateInterval
+internal typealias PlatformDateInterval = Foundation.DateInterval
 #else
 public typealias DateInterval = SkipDateInterval
 public typealias PlatformDateInterval = java.time.Duration
 #endif
 
-
-public struct SkipDateInterval : RawRepresentable, Hashable {
-    public let rawValue: PlatformDateInterval
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipDateInterval: RawRepresentable<PlatformDateInterval>, MutableStruct
+internal struct SkipDateInterval : RawRepresentable, Hashable, CustomStringConvertible {
+    public var rawValue: PlatformDateInterval
 
     public init(rawValue: PlatformDateInterval) {
         self.rawValue = rawValue
@@ -23,5 +24,9 @@ public struct SkipDateInterval : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformDateInterval) {
         self.rawValue = rawValue
+    }
+
+    var description: String {
+        return rawValue.description
     }
 }

@@ -24,4 +24,8 @@
 //    public init(_ rawValue: PlatformXXX = PlatformXXX()) {
 //        self.rawValue = rawValue
 //    }
+//
+//    var description: String {
+//        return rawValue.description
+//    }
 //}

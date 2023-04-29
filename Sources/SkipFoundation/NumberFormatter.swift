@@ -13,7 +13,7 @@ public typealias PlatformNumberFormatter = java.text.NumberFormat
 #endif
 
 public struct SkipNumberFormatter : RawRepresentable, Hashable {
-    public let rawValue: PlatformNumberFormatter
+    public var rawValue: PlatformNumberFormatter
 
     public init(rawValue: PlatformNumberFormatter) {
         self.rawValue = rawValue

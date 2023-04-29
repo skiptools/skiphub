@@ -7,15 +7,17 @@
 //#if !SKIP
 //import struct Foundation.XXX
 //public typealias XXX = Foundation.XXX
-//public typealias PlatformXXX = Foundation.XXX
+//internal typealias PlatformXXX = Foundation.XXX
 //#else
 //public typealias XXX = SkipXXX
 //public typealias PlatformXXX = java.util.XXX
 //#endif
 //
 //
-//public struct SkipXXX : RawRepresentable, Hashable {
-//    public let rawValue: PlatformXXX
+//// override the Kotlin type to be public while keeping the Swift version internal:
+//// SKIP DECLARE: class SkipXXX: RawRepresentable<PlatformXXX>, MutableStruct
+//internal struct SkipXXX : RawRepresentable, Hashable, CustomStringConvertible {
+//    public var rawValue: PlatformXXX
 //
 //    public init(rawValue: PlatformXXX) {
 //        self.rawValue = rawValue
@@ -24,12 +26,8 @@
 //    public init(_ rawValue: PlatformXXX = PlatformXXX()) {
 //        self.rawValue = rawValue
 //    }
-//}
 //
-//#if !SKIP
-//extension SkipXXX {
+//    var description: String {
+//        return rawValue.description
+//    }
 //}
-//#else
-//extension SkipXXX {
-//}
-//#endif

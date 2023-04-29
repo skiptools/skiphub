@@ -6,7 +6,7 @@
 #if !SKIP
 import struct Foundation.UUID
 public typealias UUID = Foundation.UUID
-public typealias PlatformUUID = Foundation.UUID
+internal typealias PlatformUUID = Foundation.UUID
 #else
 public typealias UUID = SkipUUID
 public typealias PlatformUUID = java.util.UUID
@@ -20,8 +20,9 @@ public func UUID(uuidString: String) -> SkipUUID? {
 }
 #endif
 
-public struct SkipUUID : RawRepresentable, Hashable {
-    public let rawValue: PlatformUUID
+// SKIP DECLARE: class SkipUUID: RawRepresentable<PlatformUUID>, MutableStruct
+internal struct SkipUUID : RawRepresentable, Hashable, CustomStringConvertible {
+    public var rawValue: PlatformUUID
 
     public init(_ rawValue: PlatformUUID) {
         self.rawValue = rawValue

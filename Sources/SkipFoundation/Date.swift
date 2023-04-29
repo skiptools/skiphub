@@ -33,8 +33,10 @@ public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
 
 #endif
 
-public struct SkipDate : RawRepresentable, Hashable {
-    public let rawValue: PlatformDate
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipDate: RawRepresentable<PlatformDate>, MutableStruct
+internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible {
+    public var rawValue: PlatformDate
 
     public init(rawValue: PlatformDate) {
         self.rawValue = rawValue
@@ -42,6 +44,10 @@ public struct SkipDate : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformDate = PlatformDate()) {
         self.rawValue = rawValue
+    }
+
+    var description: String {
+        return rawValue.description
     }
 }
 

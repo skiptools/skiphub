@@ -6,15 +6,16 @@
 #if !SKIP
 import struct Foundation.TimeZone
 public typealias TimeZone = Foundation.TimeZone
-public typealias PlatformTimeZone = Foundation.TimeZone
+internal typealias PlatformTimeZone = Foundation.TimeZone
 #else
 public typealias TimeZone = SkipTimeZone
 public typealias PlatformTimeZone = java.util.TimeZone
 #endif
 
-
-public struct SkipTimeZone : RawRepresentable, Hashable {
-    public let rawValue: PlatformTimeZone
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipTimeZone: RawRepresentable<PlatformTimeZone>, MutableStruct
+internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertible {
+    public var rawValue: PlatformTimeZone
 
     public init(rawValue: PlatformTimeZone) {
         self.rawValue = rawValue
@@ -22,6 +23,10 @@ public struct SkipTimeZone : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformTimeZone) {
         self.rawValue = rawValue
+    }
+
+    var description: String {
+        return rawValue.description
     }
 
 //    public static var current: TimeZone { get }

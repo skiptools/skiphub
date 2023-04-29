@@ -7,14 +7,16 @@
 #if !SKIP
 import struct Foundation.CharacterSet
 public typealias CharacterSet = Foundation.CharacterSet
-public typealias PlatformCharacterSet = Foundation.CharacterSet
+internal typealias PlatformCharacterSet = Foundation.CharacterSet
 #else
 public typealias CharacterSet = SkipCharacterSet
 public typealias PlatformCharacterSet = skip.lib.Set<Character>
 #endif
 
-public struct SkipCharacterSet : RawRepresentable, Hashable {
-    public let rawValue: PlatformCharacterSet
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipCharacterSet: RawRepresentable<PlatformCharacterSet>, MutableStruct
+internal struct SkipCharacterSet : RawRepresentable, Hashable {
+    public var rawValue: PlatformCharacterSet
 
     public init(rawValue: PlatformCharacterSet) {
         self.rawValue = rawValue
@@ -22,5 +24,9 @@ public struct SkipCharacterSet : RawRepresentable, Hashable {
 
     public init(_ rawValue: PlatformCharacterSet = PlatformCharacterSet()) {
         self.rawValue = rawValue
+    }
+
+    var description: String {
+        return rawValue.description
     }
 }

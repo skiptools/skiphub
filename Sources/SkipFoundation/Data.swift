@@ -18,8 +18,10 @@ public protocol SkipDataProtocol {
     var rawValue: PlatformData { get }
 }
 
-public struct SkipData : RawRepresentable, Hashable, SkipDataProtocol {
-    public let rawValue: PlatformData
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipData: RawRepresentable<PlatformData>, MutableStruct, SkipDataProtocol
+internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomStringConvertible {
+    public var rawValue: PlatformData
 
     public init(rawValue: PlatformData) {
         self.rawValue = rawValue
@@ -31,6 +33,10 @@ public struct SkipData : RawRepresentable, Hashable, SkipDataProtocol {
 
     public init(_ skipData: SkipData) {
         self.rawValue = skipData.rawValue
+    }
+
+    var description: String {
+        return rawValue.description
     }
 
     public init() {

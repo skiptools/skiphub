@@ -6,22 +6,27 @@
 #if !SKIP
 import class Foundation.DateFormatter
 public typealias DateFormatter = Foundation.DateFormatter
-public typealias PlatformDateFormatter = Foundation.DateFormatter
+internal typealias PlatformDateFormatter = Foundation.DateFormatter
 #else
 public typealias DateFormatter = SkipDateFormatter
 public typealias PlatformDateFormatter = java.text.DateFormat
 #endif
 
 
-public struct SkipDateFormatter : RawRepresentable, Hashable {
+// SKIP DECLARE: class SkipDateFormatter: RawRepresentable<PlatformDateFormatter>
+internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConvertible {
     public let rawValue: PlatformDateFormatter
 
-    public init(rawValue: PlatformDateFormatter) {
+    public required init(rawValue: PlatformDateFormatter) {
         self.rawValue = rawValue
     }
 
     public init(_ rawValue: PlatformDateFormatter) {
         self.rawValue = rawValue
+    }
+
+    public var description: String {
+        return rawValue.description
     }
 }
 

@@ -6,14 +6,14 @@
 #if !SKIP
 import class Foundation.FileManager
 public typealias FileManager = Foundation.FileManager
-public typealias PlatformFileManager = Foundation.FileManager
+internal typealias PlatformFileManager = Foundation.FileManager
 #else
 public typealias FileManager = SkipFileManager
 #endif
 
 // SKIP DECLARE: public class SkipFileManager
 /// An interface to the file system compatible with ``Foundation.FileManager``
-class SkipFileManager {
+internal class SkipFileManager {
 #if SKIP
     /// Returns the shared single file manager
     public static var `default` = SkipFileManager()

@@ -7,14 +7,15 @@
 #if !SKIP
 import class Foundation.Scanner
 public typealias Scanner = Foundation.Scanner
-public typealias PlatformScanner = Foundation.Scanner
+internal typealias PlatformScanner = Foundation.Scanner
 #else
 public typealias Scanner = SkipScanner
 public typealias PlatformScanner = java.util.Scanner
 #endif
 
-
-public class SkipScanner : RawRepresentable, Hashable {
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipScanner: RawRepresentable<PlatformScanner>
+internal class SkipScanner : RawRepresentable, Hashable, CustomStringConvertible {
     public let rawValue: PlatformScanner
 
     public required init(rawValue: PlatformScanner) {
@@ -33,6 +34,9 @@ public class SkipScanner : RawRepresentable, Hashable {
         #endif
     }
 
+    var description: String {
+        return rawValue.description
+    }
 
     public enum NumberRepresentation: Hashable {
         case decimal

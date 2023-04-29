@@ -83,7 +83,7 @@ public protocol RandomNumberGenerator {
 }
 
 public struct SystemRandomNumberGenerator : RawRepresentable, RandomNumberGenerator {
-    public let rawValue: PlatformSystemRandomNumberGenerator
+    public var rawValue: PlatformSystemRandomNumberGenerator
 
     public init(rawValue: PlatformSystemRandomNumberGenerator) {
         self.rawValue = rawValue
@@ -116,7 +116,7 @@ public struct SystemRandomNumberGenerator : RawRepresentable, RandomNumberGenera
 
 
 public struct PseudoRandomNumberGenerator : RawRepresentable {
-    public let rawValue: PlatformPseudoRandomNumberGenerator
+    public var rawValue: PlatformPseudoRandomNumberGenerator
 
     public init(rawValue: PlatformPseudoRandomNumberGenerator) {
         self.rawValue = rawValue
