@@ -32,6 +32,20 @@ final class OptionSetTests: XCTestCase {
     func testInsert() {
         var set: TestOptionSet = []
         XCTAssertFalse(set.contains(.s1))
-        //~~~set.insert(.s1)
+        let (inserted, member) = set.insert(.s1)
+        XCTAssertTrue(inserted)
+        XCTAssertEqual(member, .s1)
+        let (inserted2, member2) = set.insert(.s1)
+        XCTAssertFalse(inserted2)
+        XCTAssertEqual(member2, .s1)
+        XCTAssertTrue(set.contains(.s1))
+
+        XCTAssertFalse(set.contains(.s2))
+        XCTAssertFalse(set.contains(.s3))
+        let (insertedAll, memberAll) = set.insert(.all)
+        XCTAssertTrue(insertedAll)
+        XCTAssertEqual(memberAll, .all)
+        XCTAssertTrue(set.contains(.s2))
+        XCTAssertTrue(set.contains(.s3))
     }
 }

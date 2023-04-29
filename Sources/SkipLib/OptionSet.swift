@@ -17,7 +17,7 @@ extension OptionSet {
         fatalError()
     }
 
-    public mutating func insert(_ member: Self) {
+    public mutating func insert(_ member: Self) -> (inserted: Bool, memberAfterInsert: Self) {
         fatalError()
     }
 }
