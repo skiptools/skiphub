@@ -81,8 +81,18 @@ internal class PlatformJSONSerialization {
     }
 
     public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any {
-        // TODO: permit all 5 UTF encodings as per JSONSerialization behavior
-        guard let string = String(data: jsonData, encoding: String.Encoding.utf8) else {
+        var string: String? = nil
+
+        // check for each of the 5 supported encodings
+        // FIXME: very inefficient; use optimized heuristics
+        for encoding: String.Encoding in [.utf8, .utf16, .utf16BigEndian, .utf32, .utf32BigEndian, .utf8] {
+            string = String(data: jsonData, encoding: encoding)
+            if jsonData == string?.data(using: encoding) {
+                break
+            }
+        }
+
+        guard let string = string else {
             throw CannotConvertString()
         }
 

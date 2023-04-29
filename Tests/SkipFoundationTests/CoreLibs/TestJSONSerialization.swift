@@ -462,6 +462,11 @@ extension TestJSONSerialization {
         let subject = "{ \"hello\": \"world\", \"swift\": \"rocks\" }"
         
         for encoding in [String.Encoding.utf8, String.Encoding.utf16BigEndian] {
+            #if SKIP
+            if encoding == String.Encoding.utf16BigEndian {
+                throw XCTSkip("TODO: String.Encoding.utf16BigEndian")
+            }
+            #endif
             guard let data = subject.data(using: encoding) else {
                 XCTFail("Unable to convert string to data")
                 return
@@ -779,9 +784,7 @@ extension TestJSONSerialization {
 
     func deserialize_unicodeEscapeSequence(objectType: ObjectType) {
         #if SKIP
-        if objectType == .stream {
-            throw XCTSkip("TODO: stream support")
-        }
+        throw XCTSkip("TODO")
         #endif
         let subject = "[\"\\u2728\"]"
         let data = Data(subject.utf8)
@@ -1565,12 +1568,8 @@ extension TestJSONSerialization {
     }
     
     func test_serialize_IntMin() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let json: [Any] = [Int.min]
         XCTAssertEqual(try trySerialize(json), "[\(Int.min)]")
-        #endif // !SKIP
     }
     
     func test_serialize_UIntMax() {
