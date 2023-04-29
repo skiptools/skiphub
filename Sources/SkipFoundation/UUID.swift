@@ -6,7 +6,7 @@
 #if !SKIP
 import struct Foundation.UUID
 public typealias UUID = Foundation.UUID
-public typealias PlatformUUID = Foundation.NSUUID
+public typealias PlatformUUID = Foundation.UUID
 #else
 public typealias UUID = SkipUUID
 public typealias PlatformUUID = java.util.UUID

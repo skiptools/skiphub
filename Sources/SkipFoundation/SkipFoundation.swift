@@ -44,13 +44,7 @@ internal protocol Decodable {
 internal protocol Codable: Encodable, Decodable {
 }
 
-internal protocol Scanner {
-}
-
 internal protocol SocketPort {
-}
-
-internal protocol CharacterSet {
 }
 
 internal protocol AttributedString {
@@ -237,13 +231,7 @@ internal protocol NSKeyedUnarchiver {
 internal protocol ComparisonResult {
 }
 
-internal protocol DateInterval {
-}
-
 internal protocol DateIntervalFormatter {
-}
-
-internal protocol DataProtocol {
 }
 
 internal struct EnergyFormatter {
@@ -259,9 +247,6 @@ internal protocol HTTPCookieStorage {
 }
 
 internal protocol ISO8601DateFormatter {
-}
-
-internal protocol IndexSet {
 }
 
 internal protocol FileHandle {

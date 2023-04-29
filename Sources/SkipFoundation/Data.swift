@@ -7,9 +7,11 @@
 import struct Foundation.Data
 public typealias Data = Foundation.Data
 public typealias PlatformData = Foundation.Data
+public typealias DataProtocol = Foundation.DataProtocol
 #else
 public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
+public typealias DataProtocol = SkipDataProtocol
 #endif
 
 public protocol SkipDataProtocol {

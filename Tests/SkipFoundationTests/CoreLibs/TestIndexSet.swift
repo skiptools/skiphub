@@ -20,10 +20,10 @@ import XCTest
 
 class TestIndexSet : XCTestCase {
     func test_BasicConstruction() {
+        let set = IndexSet()
         #if SKIP
         throw XCTSkip("TODO")
         #else
-        let set = IndexSet()
         let set2 = IndexSet(integersIn: 4..<11)
         XCTAssertEqual(set.count, 0)
         XCTAssertEqual(set.first, nil)

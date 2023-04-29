@@ -6,7 +6,7 @@
 #if !SKIP
 import struct Foundation.Locale
 public typealias Locale = Foundation.Locale
-public typealias PlatformLocale = Foundation.NSLocale
+public typealias PlatformLocale = Foundation.Locale
 #else
 public typealias Locale = SkipLocale
 public typealias PlatformLocale = java.util.Locale
