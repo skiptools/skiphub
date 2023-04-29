@@ -45,6 +45,15 @@ interface MutableListStorage<Element>: CollectionStorage<Element> {
 }
 
 interface Sequence<Element>: IterableStorage<Element> {
+    fun makeIterator(): IteratorProtocol<Element> {
+        val iter = iterator()
+        return object: IteratorProtocol<Element> {
+            override fun next(): Element? {
+                return if (iter.hasNext()) iter.next() else null
+            }
+        }
+    }
+    
     val underestimatedCount: Int
         get() = 0
 
@@ -164,6 +173,10 @@ interface MutableCollection<Element>: Collection<Element>, MutableListStorage<El
         mutableListStorage[position] = element.sref()
         didMutateStorage()
     }
+}
+
+interface IteratorProtocol<Element> {
+    fun next(): Element?
 }
 
 //~~~

@@ -19,7 +19,6 @@ public protocol Sequence<Element> {
 }
 
 extension Sequence {
-    @available(*, unavailable)
     public func makeIterator() -> any IteratorProtocol<Element> {
         fatalError()
     }
@@ -786,7 +785,6 @@ public struct FlattenSequence<Element> {
 public struct IndexingIterator<Elements> {
 }
 
-@available(*, unavailable)
 public protocol IteratorProtocol<Element> {
     associatedtype Element
     mutating func next() -> Element?
