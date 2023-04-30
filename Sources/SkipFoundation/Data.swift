@@ -48,6 +48,14 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
     }
 }
 
+public extension Data {
+    /// The UTF8-encoded String for this data
+    var utf8String: String? {
+        String(data: self, encoding: .utf8)
+    }
+}
+
+
 #if !SKIP
 
 #else

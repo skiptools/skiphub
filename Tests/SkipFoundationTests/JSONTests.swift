@@ -171,4 +171,32 @@ class TestJSON : XCTestCase {
 
         XCTAssertEqual(1, (e[4] as? [Any])?.count)
     }
+
+    #if !SKIP
+    func testJSONEnum() throws {
+        let json = try JSON("""
+        {
+            "a": 1,
+            "b": true,
+            "c": 0.1
+        }
+        """.utf8)
+
+        XCTAssertEqual(1, json["a"])
+        XCTAssertEqual(true, json["b"])
+        XCTAssertEqual(0.1, json["c"])
+    }
+
+    func testJSONEncodable() throws {
+        struct Person : Encodable {
+            let firstName, lastName: String
+        }
+        let person = Person(firstName: "Jon", lastName: "Doe")
+        let json = try person.json()
+        XCTAssertEqual("Jon", json["firstName"])
+        XCTAssertEqual("Doe", json["lastName"])
+        XCTAssertEqual(#"{"firstName":"Jon","lastName":"Doe"}"#, try json.stringify())
+    }
+
+    #endif
 }
