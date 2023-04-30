@@ -14,8 +14,37 @@ import XCTest
 class TestJSON : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
+    func testJSONParse() throws {
+        let json = try JSON.parse("""
+        {
+            "a": 1.1,
+            "b": true,
+            "d": "XYZ",
+            "e": [-9, true, null, {
+                "x": "q",
+                "y": 0.1,
+                "z": [[[[[false]]], true]]
+            }, [null]]
+        }
+        """)
+
+        XCTAssertEqual(JSON.number(1.1), json.obj?["a"])
+        XCTAssertEqual(JSON.bool(true), json.obj?["b"])
+        XCTAssertEqual(nil, json.obj?["c"])
+        XCTAssertEqual(JSON.string("XYZ"), json.obj?["d"])
+        XCTAssertEqual(5, json.obj?["e"]?.count)
+
+        #if !SKIP // TODO: subscripts and literal initializers
+        XCTAssertEqual(1.1, json["a"])
+        XCTAssertEqual(true, json["b"])
+        XCTAssertEqual(nil, json["c"])
+        XCTAssertEqual("XYZ", json["d"])
+        XCTAssertEqual(5, json["e"]?.count)
+        #endif
+    }
+
     func checkJSON(_ json: String) throws {
-        XCTAssertEqual(json, try JSONObject(json: json).stringify(pretty: false, sorted: true))
+        XCTAssertEqual(json, try JSONObjectAny(json: json).stringify(pretty: false, sorted: true))
     }
 
     func testJSONParsing() throws {
@@ -71,8 +100,8 @@ class TestJSON : XCTestCase {
         }
         """
 
-        // note that unlike Swift JSON, the JSONObject key/values are in the same order as the document
-        let jsonObject = try JSONObject(json: jsonString)
+        // note that unlike Swift JSON, the JSONObjectAny key/values are in the same order as the document
+        let jsonObject = try JSONObjectAny(json: jsonString)
 
         let plainString = try jsonObject.stringify(pretty: false, sorted: true)
 
@@ -127,7 +156,7 @@ class TestJSON : XCTestCase {
 
         // good timing test
         logger.info("parsing string: \(bigString.count)")
-        let _ = try JSONObject(json: bigString)
+        let _ = try JSONObjectAny(json: bigString)
         //let prettyBigString = try prettyBigObject.stringify(pretty: true, sorted: true)
 
     }
@@ -172,21 +201,8 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(1, (e[4] as? [Any])?.count)
     }
 
+
     #if !SKIP
-    func testJSONEnum() throws {
-        let json = try JSON("""
-        {
-            "a": 1,
-            "b": true,
-            "c": 0.1
-        }
-        """.utf8)
-
-        XCTAssertEqual(1, json["a"])
-        XCTAssertEqual(true, json["b"])
-        XCTAssertEqual(0.1, json["c"])
-    }
-
     func testJSONEncodable() throws {
         struct Person : Encodable {
             let firstName, lastName: String
@@ -197,6 +213,5 @@ class TestJSON : XCTestCase {
         XCTAssertEqual("Doe", json["lastName"])
         XCTAssertEqual(#"{"firstName":"Jon","lastName":"Doe"}"#, try json.stringify())
     }
-
     #endif
 }

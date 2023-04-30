@@ -8,10 +8,12 @@ import struct Foundation.Data
 public typealias Data = Foundation.Data
 public typealias PlatformData = Foundation.Data
 public typealias DataProtocol = Foundation.DataProtocol
+public typealias StringProtocol = Swift.StringProtocol
 #else
 public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
 public typealias DataProtocol = SkipDataProtocol
+public typealias StringProtocol = kotlin.CharSequence
 #endif
 
 public protocol SkipDataProtocol {

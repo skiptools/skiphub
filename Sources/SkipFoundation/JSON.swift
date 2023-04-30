@@ -18,23 +18,146 @@ import class Foundation.JSONEncoder
 import class Foundation.ISO8601DateFormatter
 #endif
 
-#if SKIP
-public typealias JArray = skip.lib.Array<JSON>
-public typealias JObject = skip.lib.Dictionary<String, JSON>
-#else
-public typealias JArray = Array<JSON>
-public typealias JObject = Dictionary<String, JSON>
-#endif
-
-/// A unit of JSON.
+/// A unit of JSON
 public enum JSON : Hashable {
     case null
-    case bool(Bool)
-    case number(Double)
-    case string(String)
-    case array(JArray)
-    case obj(JObject)
+    case bool(JSONBool)
+    case number(JSONNumber)
+    case string(JSONString)
+    case array(JSONArray)
+    case obj(JSONObject)
 }
+
+
+public typealias JSONString = String
+public typealias JSONNumber = Double
+public typealias JSONBool = Bool
+public typealias JSONArray = Array<JSON>
+public typealias JSONObject = Dictionary<JSONKey, JSON>
+public typealias JSONKey = String
+
+extension JSON {
+    /// Parses this JSON from a String.
+    public static func parse(_ json: any StringProtocol) throws -> JSON {
+        try PlatformJSONSerialization.json(from: json)
+    }
+}
+
+public extension JSON {
+    /// Returns the ``Bool`` value of type ``boolean``.
+    var boolean: JSONBool? {
+        switch self {
+        case .bool(let b):
+            return b
+        default:
+            return nil
+        }
+    }
+
+    /// Returns the ``Double`` value of type ``number``.
+    var number: JSONNumber? {
+        switch self {
+        case .number(let f):
+            return f
+        default:
+            return nil
+        }
+    }
+
+    /// Returns the ``String`` value of type ``string``.
+    var string: JSONString? {
+        switch self {
+        case .string(let s):
+            return s
+        default:
+            return nil
+        }
+    }
+
+    /// Returns the ``Array<JSON>`` value of type ``array``.
+    var array: JSONArray? {
+        switch self {
+        case .array(let array):
+            return array
+        default:
+            return nil
+        }
+    }
+
+    /// Returns the ``dictionary<String, JSON>`` value of type ``obj``.
+    var obj: JSONObject? {
+        switch self {
+        case .obj(let obj):
+            return obj
+        default:
+            return nil
+        }
+    }
+
+    /// Returns the number of elements for an ``arr`` or key/values for an ``obj``
+    var count: Int? {
+        switch self {
+        case .array(let array):
+            return array.count
+        case .obj(let obj):
+            return obj.count
+        default:
+            return nil
+        }
+    }
+
+    /// Get the value of the given key if this is a dictionary
+    func get(key: JSONKey) -> JSON? {
+        guard case .obj(let obj) = self else { return nil }
+        return obj[key]
+    }
+
+    /// Get the value of the given key if this is a dictionary
+    func get(index: Int) -> JSON? {
+        guard case .array(let array) = self else { return nil }
+        if index < 0 || index >= array.count { return nil }
+        return array[index]
+    }
+}
+
+#if !SKIP // TODO: Custom subscript support
+
+public extension JSON {
+
+    /// JSON has a string subscript when it is an object type; setting a value on a non-obj type has no effect
+    subscript(key: String) -> JSON? {
+        get {
+            guard case .obj(let obj) = self else { return .none }
+            return obj[key]
+        }
+
+//        set {
+//            guard case .obj(var obj) = self else { return }
+//            obj[key] = newValue
+//            self = .obj(obj)
+//        }
+    }
+
+    /// JSON has a save indexed subscript when it is an array type; setting a value on a non-array type has no effect
+    subscript(index: Int) -> JSON? {
+        get {
+            guard case .array(let array) = self else { return .none }
+            if index < 0 || index >= array.count { return .none }
+            return array[index]
+        }
+
+//        set {
+//            guard case .arr(var arr) = self else { return }
+//            if index < 0 || index >= arr.count { return }
+//            arr[index] = newValue ?? JSON.nul
+//            self = .arr(arr)
+//        }
+    }
+
+}
+
+#endif
+
 
 #if !SKIP // TODO: Encodable support
 extension JSON : Encodable {
@@ -86,107 +209,6 @@ extension JSON : Decodable {
 }
 #endif
 
-public extension JSON {
-    /// Returns the ``Bool`` value of type ``boolean``.
-    var boolean: Bool? {
-        switch self {
-        case .bool(let b):
-            return b
-        default:
-            return nil
-        }
-    }
-
-    /// Returns the ``Double`` value of type ``number``.
-    var number: Double? {
-        switch self {
-        case .number(let f):
-            return f
-        default:
-            return nil
-        }
-    }
-
-    /// Returns the ``String`` value of type ``string``.
-    var string: String? {
-        switch self {
-        case .string(let s):
-            return s
-        default:
-            return nil
-        }
-    }
-
-    /// Returns the ``Array<JSON>`` value of type ``array``.
-    var array: JArray? {
-        switch self {
-        case .array(let array):
-            return array
-        default:
-            return nil
-        }
-    }
-
-    /// Returns the ``dictionary<String, JSON>`` value of type ``obj``.
-    var obj: JObject? {
-        switch self {
-        case .obj(let obj):
-            return obj
-        default:
-            return nil
-        }
-    }
-
-    /// Returns the number of elements for an ``arr`` or key/values for an ``obj``
-    var count: Int? {
-        switch self {
-        case .array(let array):
-            return array.count
-        case .obj(let obj):
-            return obj.count
-        default:
-            return nil
-        }
-    }
-}
-
-#if !SKIP // TODO: Custom subscript support
-
-public extension JSON {
-
-    /// JSON has a string subscript when it is an object type; setting a value on a non-obj type has no effect
-    subscript(key: String) -> JSON? {
-        get {
-            guard case .obj(let obj) = self else { return .none }
-            return obj[key]
-        }
-
-//        set {
-//            guard case .obj(var obj) = self else { return }
-//            obj[key] = newValue
-//            self = .obj(obj)
-//        }
-    }
-
-    /// JSON has a save indexed subscript when it is an array type; setting a value on a non-array type has no effect
-    subscript(index: Int) -> JSON? {
-        get {
-            guard case .array(let array) = self else { return .none }
-            if index < 0 || index >= array.count { return .none }
-            return array[index]
-        }
-
-//        set {
-//            guard case .arr(var arr) = self else { return }
-//            if index < 0 || index >= arr.count { return }
-//            arr[index] = newValue ?? JSON.nul
-//            self = .arr(arr)
-//        }
-    }
-
-}
-
-#endif
 
 #if !SKIP // TODO: ExpressibleByLiteral support
 
@@ -241,15 +263,13 @@ extension JSON : ExpressibleByDictionaryLiteral {
     }
 }
 
+#endif
 
-extension JSON {
-    /// Parses the given `Data` into a `JSON` structure.
-    public init<S: Sequence>(_ json: S, decoder: @autoclosure () -> JSONDecoder = JSONDecoder(), allowsJSON5: Bool = true, dataDecodingStrategy: JSONDecoder.DataDecodingStrategy? = nil, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil, nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy? = nil, keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws where S.Element == UInt8 {
-        self = try JSON.parse(json: json, decoder: decoder(), allowsJSON5: allowsJSON5, dataDecodingStrategy: dataDecodingStrategy, dateDecodingStrategy: dateDecodingStrategy, nonConformingFloatDecodingStrategy: nonConformingFloatDecodingStrategy, keyDecodingStrategy: keyDecodingStrategy, userInfo: userInfo)
-    }
+#if !SKIP // TODO: JSONDecoder support
 
+extension Decodable {
     /// Initialized this instance from a JSON string
-    public static func parse<T: Decodable, S: Sequence>(json: S, decoder: @autoclosure () -> JSONDecoder = JSONDecoder(), allowsJSON5: Bool = true, dataDecodingStrategy: JSONDecoder.DataDecodingStrategy? = nil, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil, nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy? = nil, keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> T where S.Element == UInt8 {
+    public static func decode<T: Decodable, S: Sequence>(fromJSON json: S, decoder: @autoclosure () -> JSONDecoder = JSONDecoder(), allowsJSON5: Bool = true, dataDecodingStrategy: JSONDecoder.DataDecodingStrategy? = nil, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil, nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy? = nil, keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> T where S.Element == UInt8 {
         let decoder = decoder()
         #if !os(Linux) && !os(Android) && !os(Windows)
         if #available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *) {

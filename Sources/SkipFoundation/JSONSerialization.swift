@@ -94,11 +94,11 @@ internal class PlatformJSONSerialization {
             //}
 
             do {
-                #if SKIP
+#if SKIP
                 string = jsonData.rawValue.toString(encoding.rawValue)
                 //print("### DATA", jsonData.count, " IN ENCODING:", encoding, string.count)
                 break
-                #endif
+#endif
             } catch {
                 // invalid encoding
                 //print("### DATA", jsonData.count, " NOT IN ENCODING:", encoding, error)
@@ -112,18 +112,135 @@ internal class PlatformJSONSerialization {
         return string
     }
 
+    // MARK: Conversion of JSONObject/JSONArray to Any
+
     public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any {
         let string = try createString(from: jsonData)
 
         // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
         do {
-            let arr = try JSONArray(json: string)
-            return convert(fromJSONArray: arr) as Any
+            let arr = try JSONArrayAny(json: string)
+            return convertToAny(fromJSONArray: arr) as Any
         } catch {
-            let obj = try JSONObject(json: string)
-            return convert(fromJSONObject: obj) as Any
+            let obj = try JSONObjectAny(json: string)
+            return convertToAny(fromJSONObject: obj) as Any
         }
     }
+
+    private static func convertToAny(fromJSONObject obj: JSONObjectAny) -> Any? {
+        var result: [String: Any] = [:]
+        for key in obj.keys() {
+            if obj.isNull(key: key) {
+                result[key] = nil
+            } else if let value = obj.get(key: key) {
+                result[key] = convertToAny(fromJSONValue: value)
+            }
+        }
+        let resultValue: [String: Any]? = result
+        return resultValue
+    }
+
+    private static func convertToAny(fromJSONArray arr: JSONArrayAny) -> Any? {
+        var result: [Any?] = []
+        for index in 0..<arr.count {
+            result.append(convertToAny(fromJSONValue: arr.get(index)))
+        }
+        return result
+    }
+
+
+    private static func convertToAny(fromJSONValue value: Any) -> Any? {
+#if SKIP
+        if value === PlatformJSONNull {
+            return nil
+        }
+#else
+        if value is NSNull {
+            return nil
+        }
+#endif
+        if let number = (value as? NSNumber) {
+            return number.doubleValue
+        } else if let obj = (value as? PlatformJSONObject) {
+            return convertToAny(fromJSONObject: JSONObjectAny(obj))
+        } else if let array = (value as? PlatformJSONArray) {
+            return Array(array.map(convertToAny(fromJSONValue:)))
+        } else {
+            return value
+        }
+    }
+}
+
+extension PlatformJSONSerialization {
+    /// Create a JSON instance from to given String.
+    public static func json(from jsonString: any StringProtocol) throws -> JSON {
+        // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
+        do {
+            let obj = try JSONObjectAny(json: jsonString.description)
+            return convertToJSON(fromJSONObject: obj)
+        } catch {
+            let arr = try JSONArrayAny(json: jsonString.description)
+            return convertToJSON(fromJSONArray: arr)
+        }
+    }
+
+    private static func convertToJSON(fromJSONObject obj: JSONObjectAny) -> JSON {
+        var result: JSONObject = [:]
+        for key in obj.keys() {
+            if obj.isNull(key: key) {
+                result[key] = JSON.null
+            } else if let value = obj.get(key: key) {
+                result[key] = convertToJSON(fromJSONValue: value)
+            }
+        }
+        return JSON.obj(result)
+    }
+
+    private static func convertToJSON(fromJSONArray arr: JSONArrayAny) -> JSON {
+        var result: JSONArray = []
+        for index in 0..<arr.count {
+            result.append(convertToJSON(fromJSONValue: arr.get(index)))
+        }
+        return JSON.array(result)
+    }
+
+
+    private static func convertToJSON(fromJSONValue value: Any) -> JSON {
+        #if SKIP
+        if value === PlatformJSONNull {
+            return JSON.null
+        }
+        #else
+        if value is NSNull {
+            return JSON.null
+        }
+        #endif
+        if let number = (value as? NSNumber) {
+            #if !SKIP
+            // when parsing into Any instances, JSONSerialization treats booleans as NSNumbers with a value of 1, so we need to check for this and correctly return a boolean
+            let booleanType = String(cString: NSNumber(value: true).objCType)
+            if String(cString: number.objCType) == booleanType {
+                return JSON.bool(number.boolValue)
+            }
+            #endif
+            return JSON.number(number.doubleValue)
+        } else if let boolean = (value as? Bool) {
+            return JSON.bool(boolean)
+        } else if let str = (value as? JSONString) {
+            return JSON.string(str)
+        } else if let obj = (value as? PlatformJSONObject) {
+            return convertToJSON(fromJSONObject: JSONObjectAny(obj))
+        } else if let array = (value as? PlatformJSONArray) {
+            return convertToJSON(fromJSONArray: JSONArrayAny(array))
+        } else {
+            return JSON.null
+        }
+    }
+}
+
+// MARK: Conversion of Any to a JSON String
+
+extension PlatformJSONSerialization {
 
     public static func data(withJSONObject obj: Any, options opt: WritingOptions) throws -> Data {
         // "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch"
@@ -132,49 +249,6 @@ internal class PlatformJSONSerialization {
 
         let string = convertToJsonString(obj, indent: pretty ? 0 : nil)
         return Data(string.utf8)
-    }
-
-    private static func convert(fromJSONObject obj: JSONObject) -> Any? {
-        var result: [String: Any] = [:]
-        for key in obj.keys() {
-            if obj.isNull(key: key) {
-                result[key] = nil
-            } else if let value = obj.get(key: key) {
-                result[key] = convert(fromJSONValue: value)
-            }
-        }
-        let resultValue: [String: Any]? = result
-        return resultValue
-    }
-
-    private static func convert(fromJSONArray arr: JSONArray) -> Any? {
-        var result: [Any?] = []
-        for index in 0..<arr.count {
-            result.append(convert(fromJSONValue: arr.get(index)))
-        }
-        return result
-    }
-
-
-    private static func convert(fromJSONValue value: Any) -> Any? {
-        #if SKIP
-        if value === PlatformJSONNull {
-            return nil
-        }
-        #else
-        if value is NSNull {
-            return nil
-        }
-        #endif
-        if let number = (value as? NSNumber) {
-            return number.doubleValue
-        } else if let obj = (value as? PlatformJSONObject) {
-            return convert(fromJSONObject: JSONObject(obj))
-        } else if let array = (value as? PlatformJSONArray) {
-            return Array(array.map(convert(fromJSONValue:)))
-        } else {
-            return value
-        }
     }
 
     private static func convertToJsonString(_ value: Any?, indent: Int?) -> String {
@@ -299,7 +373,7 @@ internal class PlatformJSONSerialization {
 }
 
 /// A Swift JSON parsing API to match the `org.json.JSONObject` Java API.
-final class JSONObject {
+final class JSONObjectAny {
     /// The internal JSON object, which will be a `org.json.JSONObject` in Kotlin and an `NSMutableDictionary` in Swift
     var json: PlatformJSONObject
 
@@ -348,7 +422,7 @@ final class JSONObject {
 }
 
 /// A Swift JSON parsing API to match the `org.json.JSONArray` Java API.
-final class JSONArray {
+final class JSONArrayAny {
     /// The internal JSON object, which will be a `org.json.JSONArray` in Kotlin and an `NSMutableDictionary` in Swift
     var json: PlatformJSONArray
 
@@ -383,7 +457,7 @@ final class JSONArray {
 }
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-extension JSONObject {
+extension JSONObjectAny {
     /// Returns the JSON string representing this Object.
     func stringify(pretty: Bool = false, sorted: Bool = false) throws -> String {
         #if !SKIP
