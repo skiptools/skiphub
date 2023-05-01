@@ -120,6 +120,132 @@ public extension JSON {
     }
 }
 
+/// Needed to prevent conflict with inner type referencing String as a JSON case object
+public typealias NativeString = String
+
+extension JSON {
+    public func stringify(pretty: Bool = false) -> NativeString {
+        return toJsonString(indent: pretty ? 2 : nil)
+    }
+
+    private func toJsonString(indent: Int? = nil) -> NativeString {
+        let nextIndent = indent == nil ? nil : indent! + 2
+
+        switch self {
+        // FIXME: Skip Null conflict
+        //case .null:
+        //    return "null"
+        case .bool(let b):
+            return b ? "true" : "false"
+        case .number(let n):
+            return n.description
+        case .string(let s):
+            return serializeString(s)
+        case .array(let a):
+            return toJsonString(array: a, indent: nextIndent)
+        case .obj(let o):
+            return toJsonString(dictionary: o, indent: nextIndent)
+        default:
+            return "null"
+        }
+    }
+
+    private func toJsonString(dictionary: JSONObject, indent: Int?) -> NativeString {
+        let nextIndent = indent == nil ? nil : indent! + 2
+
+        var json = "{"
+        if indent != nil { json += "\n" }
+
+        let sortedKeys = dictionary.keys.sorted()
+        let keyCount = sortedKeys.count
+        for (index, key) in sortedKeys.enumerated() {
+            guard let value = dictionary[key] else {
+                continue
+            }
+            let jsonString = value.toJsonString(indent: nextIndent)
+            if let indent = indent {
+                for _ in 1...indent {
+                    json += " "
+                }
+            }
+            json += "\""
+            json += key
+            json += "\""
+            if indent != nil { json += " " }
+            json += ":"
+            if indent != nil { json += " " }
+            json += jsonString
+
+            if index < keyCount - 1 {
+                json += ","
+            }
+            if indent != nil { json += "\n" }
+        }
+
+        json += "}"
+        return json
+    }
+
+    private func toJsonString(array: JSONArray, indent: Int?) -> NativeString {
+        let nextIndent = indent == nil ? nil : indent! + 2
+        var json = "["
+        if indent != nil { json += "\n" }
+        for (index, value) in array.enumerated() {
+            if let indent = indent {
+                for _ in 1...indent {
+                    json += " "
+                }
+            }
+            json += value.toJsonString(indent: nextIndent)
+            if index < array.count - 1 {
+                json += ","
+            }
+            if indent != nil { json += "\n" }
+        }
+        json += "]"
+        return json
+    }
+
+    private func serializeString(_ str: NativeString, withoutEscapingSlashes: Bool = false) -> NativeString {
+        var json = ""
+        json += "\""
+
+        for c in str {
+            switch "\(c)" {
+            case "\"":
+                json += "\\\""
+            case "\\":
+                json += "\\\\"
+            case "/":
+                if withoutEscapingSlashes {
+                    json += "/"
+                } else {
+                    json += "\\/"
+                }
+            //case 0x8:
+            //    json += "\\b"
+            //case 0xc:
+            //    json += "\\f"
+            case "\n":
+                json += "\\n"
+            case "\r":
+                json += "\\r"
+            case "\t":
+                json += "\\t"
+            // case 0x0...0xf:
+            //     json += "\\u000\(String(cursor.pointee, radix: 16))"
+            // case 0x10...0x1f:
+            //     json += "\\u00\(String(cursor.pointee, radix: 16))"
+            default:
+                json += "\(c)"
+            }
+        }
+
+        json += "\""
+        return json
+    }
+}
+
 #if !SKIP // TODO: Custom subscript support
 
 public extension JSON {
@@ -2132,55 +2258,6 @@ fileprivate struct _JSONKey: CodingKey {
     fileprivate static let `super` = _JSONKey(stringValue: "super")!
 }
 
-extension Encodable {
-    /// Encode this instance as JSON data.
-    /// - Parameters:
-    ///   - encoder: the encoder to use, defaulting to a stock `JSONEncoder`
-    ///   - outputFormatting: formatting options, defaulting to `.sortedKeys` and `.withoutEscapingSlashes`
-    ///   - dateEncodingStrategy: the strategy for decoding `Date` instances
-    ///   - dataEncodingStrategy: the strategy for decoding `Data` instances
-    ///   - nonConformingFloatEncodingStrategy: the strategy for handling non-conforming floats
-    ///   - keyEncodingStrategy: the strategy for encoding keys
-    ///   - userInfo: additional user info to pass to the encoder
-    /// - Returns: the JSON-encoded `Data`
-    public func stringify(encoder: @autoclosure () -> JSONEncoder = JSONEncoder(), outputFormatting: JSONEncoder.OutputFormatting? = nil, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy? = nil, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy? = nil, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> String {
-        let formatting: JSONEncoder.OutputFormatting
-        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
-            formatting = outputFormatting ?? [.sortedKeys, .withoutEscapingSlashes]
-        } else {
-            formatting = outputFormatting ?? [.sortedKeys]
-        }
-
-        let encoder = encoder()
-        //if let formatting = formatting {
-            encoder.outputFormatting = formatting
-        //}
-
-        if let dateEncodingStrategy = dateEncodingStrategy {
-            encoder.dateEncodingStrategy = dateEncodingStrategy
-        }
-
-        if let dataEncodingStrategy = dataEncodingStrategy {
-            encoder.dataEncodingStrategy = dataEncodingStrategy
-        }
-
-        if let nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy {
-            encoder.nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy
-        }
-
-        if let keyEncodingStrategy = keyEncodingStrategy {
-            encoder.keyEncodingStrategy = keyEncodingStrategy
-        }
-
-        if let userInfo = userInfo {
-            encoder.userInfo = userInfo
-        }
-
-        let data = try encoder.encode(self)
-        return String(data: data, encoding: .utf8)!
-    }
-}
-
 private let debugJSONEncoder: JSONEncoder = {
     let encoder = JSONEncoder()
     if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
@@ -2222,7 +2299,54 @@ let canonicalJSONEncoder: JSONEncoder = {
 }()
 
 
+extension Encodable {
+    /// Encode this instance as JSON data.
+    /// - Parameters:
+    ///   - encoder: the encoder to use, defaulting to a stock `JSONEncoder`
+    ///   - outputFormatting: formatting options, defaulting to `.sortedKeys` and `.withoutEscapingSlashes`
+    ///   - dateEncodingStrategy: the strategy for decoding `Date` instances
+    ///   - dataEncodingStrategy: the strategy for decoding `Data` instances
+    ///   - nonConformingFloatEncodingStrategy: the strategy for handling non-conforming floats
+    ///   - keyEncodingStrategy: the strategy for encoding keys
+    ///   - userInfo: additional user info to pass to the encoder
+    /// - Returns: the JSON-encoded `Data`
+    internal func toJSONString(encoder: @autoclosure () -> JSONEncoder = JSONEncoder(), outputFormatting: JSONEncoder.OutputFormatting? = nil, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy? = nil, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy? = nil, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> String {
+        let formatting: JSONEncoder.OutputFormatting
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+            formatting = outputFormatting ?? [.sortedKeys, .withoutEscapingSlashes]
+        } else {
+            formatting = outputFormatting ?? [.sortedKeys]
+        }
 
+        let encoder = encoder()
+        //if let formatting = formatting {
+            encoder.outputFormatting = formatting
+        //}
+
+        if let dateEncodingStrategy = dateEncodingStrategy {
+            encoder.dateEncodingStrategy = dateEncodingStrategy
+        }
+
+        if let dataEncodingStrategy = dataEncodingStrategy {
+            encoder.dataEncodingStrategy = dataEncodingStrategy
+        }
+
+        if let nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy {
+            encoder.nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy
+        }
+
+        if let keyEncodingStrategy = keyEncodingStrategy {
+            encoder.keyEncodingStrategy = keyEncodingStrategy
+        }
+
+        if let userInfo = userInfo {
+            encoder.userInfo = userInfo
+        }
+
+        let data = try encoder.encode(self)
+        return String(data: data, encoding: .utf8)!
+    }
+}
 
 extension Decodable where Self : Encodable {
 
@@ -2236,11 +2360,11 @@ extension Decodable where Self : Encodable {
     /// - Returns: a tuple with both the parsed codable instance, as well as an optional `difference` JSON that will be nil if the codability was an exact match
     public static func codableComplete(data: Data, encoder: JSONEncoder? = nil, decoder: JSONDecoder? = nil) throws -> (instance: Self, difference: JSON?) {
         let item = try (decoder ?? debugJSONDecoder).decode(Self.self, from: data)
-        let itemJSON = try item.stringify(encoder: encoder ?? canonicalJSONEncoder)
+        let itemJSON = try item.toJSONString(encoder: encoder ?? canonicalJSONEncoder)
 
         // parse into a generic JSON and ensure that both the items are serialized the same
         let raw = try (decoder ?? debugJSONDecoder).decode(JSON.self, from: data)
-        let rawJSON = try raw.stringify(encoder: encoder ?? canonicalJSONEncoder)
+        let rawJSON = try raw.toJSONString(encoder: encoder ?? canonicalJSONEncoder)
 
         return (instance: item, difference: itemJSON == rawJSON ? JSON?.none : raw)
     }

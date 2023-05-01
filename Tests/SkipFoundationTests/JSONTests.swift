@@ -45,6 +45,8 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(JSON.string("XYZ"), json.obj?["d"])
         XCTAssertEqual(5, json.obj?["e"]?.count)
 
+        XCTAssertEqual(#"{"a":1.1,"b":true,"d":"XYZ","e":[-9.0,true,null,{"x":"q","y":0.1,"z":[[[[[false]]],true]]},[null]]}"#, json.stringify())
+
         #if !SKIP // TODO: subscripts and literal initializers
         XCTAssertEqual(1.1, json["a"])
         XCTAssertEqual(true, json["b"])
