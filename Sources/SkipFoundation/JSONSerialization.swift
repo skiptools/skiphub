@@ -175,12 +175,31 @@ extension PlatformJSONSerialization {
     /// Create a JSON instance from to given String.
     public static func json(from jsonString: any StringProtocol) throws -> JSON {
         // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
-        do {
+        #if SKIP
+        let trimmedText = jsonString.trimStart()
+        #else
+        let trimmedText = jsonString.trimmingCharacters(in: .whitespacesAndNewlines)
+        #endif
+
+        #if SKIP
+        let startsWithCurlyBrace = trimmedText.startsWith("{")
+        let startsWithSquareBrace = trimmedText.startsWith("[")
+        #else
+        let startsWithCurlyBrace = trimmedText.hasPrefix("{")
+        let startsWithSquareBrace = trimmedText.hasPrefix("[")
+        #endif
+
+        if startsWithCurlyBrace {
             let obj = try JSONObjectAny(json: jsonString.description)
             return convertToJSON(fromJSONObject: obj)
-        } catch {
+        } else if startsWithSquareBrace {
             let arr = try JSONArrayAny(json: jsonString.description)
             return convertToJSON(fromJSONArray: arr)
+        } else {
+            // neither array nor object, so
+            // parse as an Array, then return the initial instance
+            let arr = try JSONArrayAny(json: "[" + jsonString + "]")
+            return convertToJSON(fromJSONArray: arr).array![0]
         }
     }
 

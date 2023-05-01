@@ -15,6 +15,17 @@ class TestJSON : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
     func testJSONParse() throws {
+        XCTAssertEqual(JSON.null, try JSON.parse("null"))
+        XCTAssertEqual(JSON.string("ABC"), try JSON.parse(#""ABC""#))
+        XCTAssertEqual(JSON.bool(true), try JSON.parse("true"))
+        XCTAssertEqual(JSON.bool(false), try JSON.parse("false"))
+        XCTAssertEqual(JSON.number(0.1), try JSON.parse("0.1"))
+        #if SKIP
+        XCTAssertEqual(JSON.number(0.0), try JSON.parse("0"))
+        #else
+        XCTAssertEqual(JSON.number(0), try JSON.parse("0"))
+        #endif
+
         let json = try JSON.parse("""
         {
             "a": 1.1,

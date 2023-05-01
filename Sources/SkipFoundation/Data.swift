@@ -58,9 +58,7 @@ public extension Data {
 }
 
 
-#if !SKIP
-
-#else
+#if SKIP
 
 // SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: SkipURL): String { return contentsOf.rawValue.readText() }
 
@@ -101,8 +99,22 @@ public extension String {
         return url.rawValue.readText()
     }
 
+}
+
+public extension String {
     public func lowercased() -> String { toLowerCase() }
     public func uppercased() -> String { toUpperCase() }
+
+//    public func hasPrefix(_ string: String) -> Bool { startsWith(string) }
+//    public func hasSuffix(_ string: String) -> Bool { endsWith(string) }
+}
+
+public extension StringProtocol {
+    public func lowercased() -> String { toLowerCase() }
+    public func uppercased() -> String { toUpperCase() }
+
+    public func hasPrefix(_ string: String) -> Bool { startsWith(string) }
+    public func hasSuffix(_ string: String) -> Bool { endsWith(string) }
 }
 
 public func String(data: SkipData, encoding: String.Encoding) -> String? {
