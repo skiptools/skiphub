@@ -125,14 +125,12 @@ public typealias NativeString = String
 
 extension JSON {
     public func stringify(pretty: Bool = false) -> NativeString {
-        return toJsonString(indent: pretty ? 2 : nil)
+        return toJsonString(indent: pretty ? 0 : nil)
     }
 
     private func toJsonString(indent: Int? = nil) -> NativeString {
-        let nextIndent = indent == nil ? nil : indent! + 2
-
         switch self {
-        // FIXME: Skip Null conflict
+        // FIXME: Skip Null case not getting underscore
         //case .null:
         //    return "null"
         case .bool(let b):
@@ -142,9 +140,9 @@ extension JSON {
         case .string(let s):
             return serializeString(s)
         case .array(let a):
-            return toJsonString(array: a, indent: nextIndent)
+            return toJsonString(array: a, indent: indent)
         case .obj(let o):
-            return toJsonString(dictionary: o, indent: nextIndent)
+            return toJsonString(dictionary: o, indent: indent)
         default:
             return "null"
         }
@@ -162,26 +160,19 @@ extension JSON {
             guard let value = dictionary[key] else {
                 continue
             }
-            let jsonString = value.toJsonString(indent: nextIndent)
-            if let indent = indent {
-                for _ in 1...indent {
-                    json += " "
-                }
-            }
+            json += String(repeating: " ", count: nextIndent ?? 0)
             json += "\""
             json += key
             json += "\""
             if indent != nil { json += " " }
             json += ":"
             if indent != nil { json += " " }
-            json += jsonString
-
-            if index < keyCount - 1 {
-                json += ","
-            }
+            json += value.toJsonString(indent: nextIndent)
+            if index < keyCount - 1 { json += "," }
             if indent != nil { json += "\n" }
         }
 
+        json += String(repeating: " ", count: indent ?? 0)
         json += "}"
         return json
     }
@@ -191,17 +182,12 @@ extension JSON {
         var json = "["
         if indent != nil { json += "\n" }
         for (index, value) in array.enumerated() {
-            if let indent = indent {
-                for _ in 1...indent {
-                    json += " "
-                }
-            }
+            json += String(repeating: " ", count: nextIndent ?? 0)
             json += value.toJsonString(indent: nextIndent)
-            if index < array.count - 1 {
-                json += ","
-            }
+            if index < array.count - 1 { json += "," }
             if indent != nil { json += "\n" }
         }
+        json += String(repeating: " ", count: indent ?? 0)
         json += "]"
         return json
     }
