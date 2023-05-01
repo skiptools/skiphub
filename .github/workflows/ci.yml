@@ -2,7 +2,7 @@ name: skiphub ci
 
 on:
   push:
-    branches: 'main'
+    #branches: 'main'
   schedule:
     - cron:  '0 10 * * *'
   workflow_dispatch:

@@ -30,6 +30,7 @@ class TestPropertyListEncoder : XCTestCase {
 }
 
 extension TestPropertyListEncoder {
+    #if !SKIP
     class TestBaseClass: Codable {
         enum IntEnum: Int, Codable, Equatable {
             case one = 1
@@ -58,7 +59,8 @@ extension TestPropertyListEncoder {
             self.innerStruct = innerStruct
         }
     }
-    
+    #endif
+
     func test_basicEncodeDecode() throws {
         #if SKIP
         throw XCTSkip("TODO")
@@ -128,6 +130,7 @@ extension TestPropertyListEncoder {
     </plist>
     """
     
+    #if !SKIP
     struct InfoPlist: Codable, Equatable {
         let CFBundleDevelopmentRegion: String
         let CFBundleExecutable: String?
@@ -139,7 +142,8 @@ extension TestPropertyListEncoder {
         let CFBundleDataArrayKey: [Data]
         let CFBundleDateKey: Date
     }
-    
+    #endif
+
     func test_xmlDecoder() throws {
         #if SKIP
         throw XCTSkip("TODO")
