@@ -455,12 +455,10 @@ extension BidirectionalCollection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func popLast() -> Element? {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func removeLast(_ k: Int = 1) {
         fatalError()
     }
@@ -542,7 +540,6 @@ extension RangeReplaceableCollection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func insert(_ newElement: Element, at i: Int) {
         fatalError()
     }

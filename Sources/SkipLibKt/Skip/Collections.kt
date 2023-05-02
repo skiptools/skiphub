@@ -165,6 +165,27 @@ interface RangeReplaceableCollection<Element>: Collection<Element>, MutableListS
         mutableListStorage.add(newElement.sref())
         didMutateStorage()
     }
+
+	fun insert(newElement: Element, at: Int) {
+		willMutateStorage()
+		mutableListStorage.add(at, newElement.sref())
+		didMutateStorage()
+	}
+
+	fun popLast(): Element? {
+		willMutateStorage()
+		val lastElement = mutableListStorage.removeLast().sref()
+		didMutateStorage()
+		return lastElement
+	}
+
+	fun removeLast(k: Int = 1) {
+		if (k > 0) {
+			willMutateStorage()
+			mutableListStorage.subList(mutableListStorage.size - k, mutableListStorage.size).clear()
+			didMutateStorage()
+		}
+	}
 }
 
 interface MutableCollection<Element>: Collection<Element>, MutableListStorage<Element> {

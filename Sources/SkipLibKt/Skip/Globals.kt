@@ -8,6 +8,10 @@ package skip.lib
 import kotlin.reflect.*
 
 fun fatalError(message: String = "fatalError"): Nothing = error(message)
+fun assertionFailure(message: String = "assertionFailure"): Nothing = error(message)
+fun preconditionFailure(message: String = "preconditionFailure"): Nothing = error(message)
+fun precondition(condition: Boolean, message: String = "precondition"): Unit = require(condition, { message })
+
 
 fun type(of: Any): KClass<*> {
     return of::class

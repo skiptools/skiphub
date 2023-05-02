@@ -35,15 +35,6 @@ public typealias NSUUID = SkipUUID
 public protocol AnyClass {
 }
 
-internal protocol Encodable {
-}
-
-internal protocol Decodable {
-}
-
-internal protocol Codable: Encodable, Decodable {
-}
-
 internal protocol SocketPort {
 }
 

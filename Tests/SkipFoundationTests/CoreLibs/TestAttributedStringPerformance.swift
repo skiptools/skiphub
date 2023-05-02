@@ -20,11 +20,15 @@ import XCTest
 //
 //===----------------------------------------------------------------------===//
 
-
 /// Performance tests for `AttributedString` and its associated objects
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 final class TestAttributedStringPerformance: XCTestCase {
-    
+
+    /// Override measure until Skip has support for it
+    override func measure(_ block: () -> Void) {
+        block()
+    }
+
     /// Set to true to record a baseline for equivalent operations on `NSAttributedString`
     static let runWithNSAttributedString = false
     

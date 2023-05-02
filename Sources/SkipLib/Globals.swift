@@ -9,8 +9,29 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+/// Unconditionally prints a given message and stops execution.
 public func fatalError(message: String = "fatalError") -> Never {
     Swift.fatalError()
+}
+
+/// Performs a traditional C-style assert with an optional message.
+public func assert(_ condition: Bool, _ message: String? = nil) {
+    fatalError()
+}
+
+/// Checks a necessary condition for making forward progress.
+public func precondition(_ condition: Bool, _ message: String? = nil) {
+    fatalError()
+}
+
+/// Indicates that an internal sanity check failed.
+@inlinable public func assertionFailure(_ message: String? = nil) {
+    fatalError()
+}
+
+/// Indicates that a precondition was violated.
+public func preconditionFailure(_ message: String? = nil) -> Never {
+    fatalError()
 }
 
 public func type(of: Any) -> Any.Type {

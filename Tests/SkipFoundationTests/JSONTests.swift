@@ -10,43 +10,38 @@ import Foundation
 import OSLog
 import XCTest
 
-#if SKIP
-protocol CodingKey {
-}
-
-protocol Encodable {
-}
-
-protocol Decodable {
-}
-
-// FIXME: internal typealias Codable = Any
-// typealias Codable = Encodable & Decodable
-
-protocol Codable : Encodable, Decodable {
-}
-
-#endif
-
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class TestJSON : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
-    struct Entity : Encodable {
-        // “Skip is unable to determine the type of this property for use in decoding. Add an explicit type to the declaration”
-        //var firstName, lastName: String
+    struct EntityDefaultKeys : Encodable {
         var firstName: String
         var lastName: String
     }
 
+    struct EntityCustomKeys : Encodable {
+        var nameFirst: String
+        var nameLast: String
+
+        enum CodingKeys : String, RawRepresentable, CodingKey {
+            case nameFirst = "firstName"
+            case nameLast = "lastName"
+        }
+    }
+
     func testJSONEncodable() throws {
-        var person = Entity(firstName: "Jon", lastName: "Doe")
-        #if !SKIP
-        let json = try person.json()
-        XCTAssertEqual("Jon", json["firstName"])
-        XCTAssertEqual("Doe", json["lastName"])
-        XCTAssertEqual(#"{"firstName":"Jon","lastName":"Doe"}"#, json.stringify())
+        var person = EntityCustomKeys(nameFirst: "Jon", nameLast: "Doe")
+
+        XCTAssertEqual("firstName", EntityCustomKeys.CodingKeys.nameFirst.rawValue)
+
+        #if SKIP
+        throw XCTSkip("TODO: JEncoder")
         #endif
+
+        let json = try person.json()
+        XCTAssertEqual("Jon", json.obj?["firstName"])
+        XCTAssertEqual("Doe", json.obj?["lastName"])
+        XCTAssertEqual(#"{"firstName":"Jon","lastName":"Doe"}"#, json.stringify())
     }
 
     func testJSONParse() throws {

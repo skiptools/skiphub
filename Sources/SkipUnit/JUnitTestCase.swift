@@ -254,11 +254,14 @@ extension JUnitTestCase {
                 print("reporting error in file:", fileURLString, "line:", lineNumber)
                 let kotlinLocation = XCTSourceCodeLocation(fileURL: fileURL, lineNumber: lineNumber)
 
-                let desc = lineComponents.last?.description ?? String(trimmedLine)
+                let desc = lineComponents.dropFirst(1).joined(separator: ":")
 
                 // report the Kotlin error
                 do {
-                    let issue = XCTIssue(type: .system, compactDescription: desc, detailedDescription: desc, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocation), associatedError: nil, attachments: [])
+                    // attempt the map the error back any originally linking source projects, since it is better the be editing the canonical Xcode version of the file as Xcode is able to provide details about it
+                    let kotlinLocationOrig = XCTSourceCodeLocation(fileURL: URL(fileURLWithPath: (try? FileManager.default.destinationOfSymbolicLink(atPath: kotlinLocation.fileURL.path)) ?? kotlinLocation.fileURL.path), lineNumber: kotlinLocation.lineNumber)
+
+                    let issue = XCTIssue(type: .system, compactDescription: desc, detailedDescription: desc, sourceCodeContext: XCTSourceCodeContext(location: kotlinLocationOrig), associatedError: nil, attachments: [])
                     record(issue)
                 }
 

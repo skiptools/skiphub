@@ -6,6 +6,8 @@
 import Foundation
 import XCTest
 
+#if false // no Skip supprot for NSOperationQueue
+
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -996,4 +998,6 @@ class SyncOperation: Operation {
 
 }
 
+
+#endif
 
