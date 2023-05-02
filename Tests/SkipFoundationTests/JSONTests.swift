@@ -33,12 +33,16 @@ class TestJSON : XCTestCase {
         var person = EntityCustomKeys(nameFirst: "Jon", nameLast: "Doe")
 
         XCTAssertEqual("firstName", EntityCustomKeys.CodingKeys.nameFirst.rawValue)
+        XCTAssertEqual("Jon", person.nameFirst)
+        XCTAssertEqual("Doe", person.nameLast)
 
-        #if SKIP
-        throw XCTSkip("TODO: JEncoder")
+        #if SKIP // FIXME: java.lang.ExceptionInInitializerError in protocol extension outside file
+        throw XCTSkip("FIXME: java.lang.ExceptionInInitializerError")
+        let json = try JSON(encoding: person)
+        #else
+        let json = try person.json()
         #endif
 
-        let json = try person.json()
         XCTAssertEqual("Jon", json.obj?["firstName"])
         XCTAssertEqual("Doe", json.obj?["lastName"])
         XCTAssertEqual(#"{"firstName":"Jon","lastName":"Doe"}"#, json.stringify())

@@ -115,6 +115,23 @@ public extension JSON {
 /// Needed to prevent conflict with inner type referencing String as a JSON case object
 public typealias NativeString = String
 
+public extension Encodable {
+    /// Creates an in-memory JSON representation of the instance's encoding.
+    ///
+    /// - Parameter options: the options for serializing the data
+    /// - Returns: A J containing the structure of the encoded instance
+    func json(options: JSONEncodingOptions? = nil) throws -> JSON {
+        try JSON(encoding: self, options: options)
+    }
+}
+
+extension JSON {
+    /// Creates a JSON instance by encoding the given encodable
+    public init<T: Encodable>(encoding value: T, options: JSONEncodingOptions? = nil) throws {
+        self = try JEncoder(options: options).encode(value)
+    }
+}
+
 extension JSON {
     public func stringify(pretty: Bool = false) -> NativeString {
         return toJsonString(indent: pretty ? 0 : nil)
@@ -795,18 +812,6 @@ extension Decodable {
     }
 }
 #endif
-
-
-
-extension Encodable {
-    /// Creates an in-memory JSON representation of the instance's encoding.
-    ///
-    /// - Parameter options: the options for serializing the data
-    /// - Returns: A J containing the structure of the encoded instance
-    public func json(options: JSONEncodingOptions? = nil) throws -> JSON {
-        try JEncoder(options: options).encode(self)
-    }
-}
 
 
 // MARK: Internal JSON Encoding / Decoding
