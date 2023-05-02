@@ -126,251 +126,189 @@ public protocol KeyedEncodingContainerProtocol {
 
 extension KeyedEncodingContainerProtocol {
     public mutating func encodeConditional<T>(_ object: T, forKey key: CodingKey) throws where T : AnyObject, T : Encodable {
-        fatalError("TODO")
+        fatalError("TODO: encodeConditional")
     }
 
     public mutating func encodeIfPresent(_ value: Bool?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: String?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: Double?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: Float?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
 #if !SKIP // Int = Int32 in Kotlin
     public mutating func encodeIfPresent(_ value: Int?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: UInt?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 #endif
 
     public mutating func encodeIfPresent(_ value: Int8?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: Int16?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: Int32?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: Int64?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: UInt8?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: UInt16?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: UInt32?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent(_ value: UInt64?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 
     public mutating func encodeIfPresent<T>(_ value: T?, forKey key: CodingKey) throws where T : Encodable {
-        fatalError("TODO")
+        fatalError("TODO: encodeIfPresent")
     }
 }
 
 public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerProtocol {
     public init(_ container: Any) {
-        fatalError("TODO")
     }
+
     public var codingPath: [CodingKey] {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.codingPath")
+        return []
     }
     public mutating func encodeNil(forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeNil")
     }
     public mutating func encode(_ value: Bool, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encode")
     }
     public mutating func encode(_ value: String, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encode")
     }
     public mutating func encode(_ value: Double, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encode")
     }
     public mutating func encode(_ value: Float, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encode")
     }
 #if !SKIP // Int = Int32 in Kotlin
     public mutating func encode(_ value: Int, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encode")
     }
     public mutating func encode(_ value: UInt, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encode")
     }
     public mutating func encodeIfPresent(_ value: Int?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: UInt?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
 #endif
     public mutating func encode(_ value: Int8, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: Int16, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: Int32, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: Int64, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: UInt8, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: UInt16, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: UInt32, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode(_ value: UInt64, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encode<T>(_ value: T, forKey key: CodingKey) throws where T : Encodable {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeConditional<T>(_ object: T, forKey key: CodingKey) throws where T : AnyObject, T : Encodable {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Bool?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: String?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Double?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Float?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Int8?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Int16?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Int32?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: Int64?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: UInt8?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: UInt16?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: UInt32?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent(_ value: UInt64?, forKey key: CodingKey) throws {
-        fatalError("TODO")
+        //fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func encodeIfPresent<T>(_ value: T?, forKey key: CodingKey) throws where T : Encodable {
-        fatalError("TODO")
+        fatalError("TODO: KeyedEncodingContainer.encodeIfPresent")
     }
     public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: CodingKey) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-        fatalError("TODO")
+        fatalError("TODO: KeyedEncodingContainer.nestedContainer")
     }
     public mutating func nestedUnkeyedContainer(forKey key: CodingKey) -> UnkeyedEncodingContainer {
-        fatalError("TODO")
+        fatalError("TODO: KeyedEncodingContainer.nestedUnkeyedContainer")
     }
     public mutating func superEncoder() -> Encoder {
-        fatalError("TODO")
+        fatalError("TODO: KeyedEncodingContainer.superEncoder")
     }
     public mutating func superEncoder(forKey key: CodingKey) -> Encoder {
-        fatalError("TODO")
+        fatalError("TODO: KeyedEncodingContainer.superEncoder")
     }
-//    public mutating func encodeConditional<T>(_ object: T, forKey key: K) throws where T : AnyObject, T : Encodable {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Bool?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: String?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Double?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Float?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Int?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Int8?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Int16?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Int32?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: Int64?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: UInt?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: UInt8?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: UInt16?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: UInt32?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent(_ value: UInt64?, forKey key: K) throws {
-//        fatalError("TODO")
-//    }
-//
-//    public mutating func encodeIfPresent<T>(_ value: T?, forKey key: K) throws where T : Encodable {
-//        fatalError("TODO")
-//    }
 }
 
 public protocol KeyedDecodingContainerProtocol {
@@ -419,67 +357,67 @@ public protocol KeyedDecodingContainerProtocol {
 extension KeyedDecodingContainerProtocol {
 
     public func decodeIfPresent(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: String.Type, forKey key: CodingKey) throws -> String? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: Double.Type, forKey key: CodingKey) throws -> Double? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: Float.Type, forKey key: CodingKey) throws -> Float? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     #if !SKIP // Int = Int32 in Kotlin
     public func decodeIfPresent(_ type: Int.Type, forKey key: CodingKey) throws -> Int? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
     #endif
 
     public func decodeIfPresent(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     #if !SKIP // Int = Int32 in Kotlin
     public func decodeIfPresent(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
     #endif
 
     public func decodeIfPresent(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 
     public func decodeIfPresent<T>(_ type: T.Type, forKey key: CodingKey) throws -> T? where T : Decodable {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainerProtocol")
     }
 }
 
@@ -487,128 +425,128 @@ extension KeyedDecodingContainerProtocol {
 public struct KeyedDecodingContainer<Key: CodingKey> : KeyedDecodingContainerProtocol {
 #if SKIP // Container type
     public init(_ container: Any) {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
 #else
     public init<Container>(_ container: Container) {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
 #endif
     public var codingPath: [CodingKey] {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public var allKeys: [CodingKey] {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func contains(_ key: CodingKey) -> Bool {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeNil(forKey key: CodingKey) throws -> Bool {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: String.Type, forKey key: CodingKey) throws -> String {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: Double.Type, forKey key: CodingKey) throws -> Double {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: Float.Type, forKey key: CodingKey) throws -> Float {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
 #if !SKIP // Int = Int32 in Kotlin
     public func decode(_ type: Int.Type, forKey key: CodingKey) throws -> Int {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Int.Type, forKey key: CodingKey) throws -> Int? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
 #endif
     public func decode(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64 {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decode<T>(_ type: T.Type, forKey key: CodingKey) throws -> T where T : Decodable {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: String.Type, forKey key: CodingKey) throws -> String? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Double.Type, forKey key: CodingKey) throws -> Double? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Float.Type, forKey key: CodingKey) throws -> Float? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64? {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func decodeIfPresent<T>(_ type: T.Type, forKey key: CodingKey) throws -> T? where T : Decodable {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: CodingKey) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func nestedUnkeyedContainer(forKey key: CodingKey) throws -> UnkeyedDecodingContainer {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func superDecoder() throws -> Decoder {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
     public func superDecoder(forKey key: CodingKey) throws -> Decoder {
-        fatalError("TODO")
+        fatalError("TODO: KeyedDecodingContainer")
     }
 }
 
@@ -870,7 +808,7 @@ extension CodingUserInfoKey : Swift.Hashable {
 public struct CodingUserInfoKey : RawRepresentable, Equatable, Hashable, Sendable {
 
     public var hashValue: Int {
-        fatalError("TODO")
+        fatalError("TODO: hashValue")
     }
 
 
@@ -907,13 +845,13 @@ public enum DecodingError : Error {
     case keyNotFound(CodingKey, DecodingError.Context)
     case dataCorrupted(DecodingError.Context)
     public static func dataCorruptedError<C>(forKey key: CodingKey, in container: C, debugDescription: String) -> DecodingError where C : KeyedDecodingContainerProtocol {
-        fatalError("TODO")
+        fatalError("TODO: dataCorruptedError")
     }
     public static func dataCorruptedError(in container: UnkeyedDecodingContainer, debugDescription: String) -> DecodingError {
-        fatalError("TODO")
+        fatalError("TODO: dataCorruptedError")
     }
     public static func dataCorruptedError(in container: SingleValueDecodingContainer, debugDescription: String) -> DecodingError {
-        fatalError("TODO")
+        fatalError("TODO: dataCorruptedError")
     }
 }
 

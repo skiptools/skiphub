@@ -121,14 +121,7 @@ public extension Encodable {
     /// - Parameter options: the options for serializing the data
     /// - Returns: A J containing the structure of the encoded instance
     func json(options: JSONEncodingOptions? = nil) throws -> JSON {
-        try JSON(encoding: self, options: options)
-    }
-}
-
-extension JSON {
-    /// Creates a JSON instance by encoding the given encodable
-    public init<T: Encodable>(encoding value: T, options: JSONEncodingOptions? = nil) throws {
-        self = try JEncoder(options: options).encode(value)
+        try JSONObjectEncoder(options: options).encode(self)
     }
 }
 
@@ -873,11 +866,11 @@ private protocol TopLevelJSONDecoder {
 //    ///   - json: the JSON to load the instance from
 //    ///   - options: the options for deserializing the data such as the decoding strategies for dates and data.
 //    public init(json: JSON, options: JSONDecodingOptions? = nil) throws {
-//        try self = JDecoder(options: options).decode(Self.self, from: json)
+//        try self = JSONObjectDecoder(options: options).decode(Self.self, from: json)
 //    }
 //}
 
-internal final class JEncoder : TopLevelJSONEncoder {
+internal final class JSONObjectEncoder : TopLevelJSONEncoder {
     let options: JSONEncodingOptions
 
     /// Initializes `self` with default strategies.
@@ -922,8 +915,8 @@ internal final class JEncoder : TopLevelJSONEncoder {
 }
 
 
-/// `JDecoder` facilitates the decoding of `J` values into `Decodable` types.
-internal final class JDecoder : TopLevelJSONDecoder {
+/// `JSONObjectDecoder` facilitates the decoding of `J` values into `Decodable` types.
+internal final class JSONObjectDecoder : TopLevelJSONDecoder {
     let options: JSONDecodingOptions
 
     /// Initializes `self` with default strategies.

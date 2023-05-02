@@ -37,10 +37,15 @@ class TestJSON : XCTestCase {
         XCTAssertEqual("Doe", person.nameLast)
 
         #if SKIP // FIXME: java.lang.ExceptionInInitializerError in protocol extension outside file
-        throw XCTSkip("FIXME: java.lang.ExceptionInInitializerError")
-        let json = try JSON(encoding: person)
+        //throw XCTSkip("FIXME: java.lang.ExceptionInInitializerError")
+        //let json = try JSON(encoding: person)
+        let json: JSON = try JSONObjectEncoder().encode(person)
         #else
-        let json = try person.json()
+        let json: JSON = try person.json()
+        #endif
+
+        #if SKIP // FIXME: implement encoding
+        throw XCTSkip("TODO: encoding")
         #endif
 
         XCTAssertEqual("Jon", json.obj?["firstName"])
