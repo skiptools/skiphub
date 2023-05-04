@@ -26,7 +26,7 @@ typealias ExceptionPtr = UnsafeMutablePointer<JSValueRef?>
 #endif
 
 // override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: public class SkipJSContext
+// SKIP DECLARE: open class SkipJSContext
 internal class SkipJSContext {
     public let context: JSContextRef
     public private(set) var exception: SkipJSValue? = nil

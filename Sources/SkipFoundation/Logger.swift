@@ -20,7 +20,7 @@ public typealias OSLog = os.OSLog
 public typealias OSLogType = os.OSLogType
 #endif
 
-// SKIP DECLARE: public class SkipLogger
+// SKIP DECLARE: open class SkipLogger
 /// Logger cover for versions before Logger was available (which coincides with Concurrency)
 ///
 /// - Note: Unlike other Foundation equivalent wrappers, `SkipLogger` cannot be exposed in

@@ -14,7 +14,7 @@ public typealias PlatformScanner = java.util.Scanner
 #endif
 
 // override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipScanner: RawRepresentable<PlatformScanner>
+// SKIP DECLARE: open class SkipScanner: RawRepresentable<PlatformScanner>
 internal class SkipScanner : RawRepresentable, Hashable, CustomStringConvertible {
     public let rawValue: PlatformScanner
 

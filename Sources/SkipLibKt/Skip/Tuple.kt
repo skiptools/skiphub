@@ -15,7 +15,7 @@ data class Tuple2<E0, E1>(val _e0: E0, val _e1: E1) {
     val element1: E1
         get() = _e1.sref()
 
-    fun sref(onUpdate: ((Tuple2<E0, E1>) -> Unit)? = null): Tuple2<E0, E1> {
+    fun sref(@Suppress("UNUSED_PARAMETER") onUpdate: ((Tuple2<E0, E1>) -> Unit)? = null): Tuple2<E0, E1> {
         val e0 = _e0.sref()
         val e1 = _e1.sref()
         if (e0 !== _e0 || e1 !== _e1) {
@@ -33,7 +33,7 @@ data class Tuple3<E0, E1, E2>(val _e0: E0, val _e1: E1, val _e2: E2) {
     val element2: E2
         get() = _e2.sref()
 
-    fun sref(onUpdate: ((Tuple3<E0, E1, E2>) -> Unit)? = null): Tuple3<E0, E1, E2> {
+    fun sref(@Suppress("UNUSED_PARAMETER") onUpdate: ((Tuple3<E0, E1, E2>) -> Unit)? = null): Tuple3<E0, E1, E2> {
         val e0 = _e0.sref()
         val e1 = _e1.sref()
         val e2 = _e2.sref()
@@ -54,7 +54,7 @@ data class Tuple4<E0, E1, E2, E3>(val _e0: E0, val _e1: E1, val _e2: E2, val _e3
     val element3: E3
         get() = _e3.sref()
 
-    fun sref(onUpdate: ((Tuple4<E0, E1, E2, E3>) -> Unit)? = null): Tuple4<E0, E1, E2, E3> {
+    fun sref(@Suppress("UNUSED_PARAMETER") onUpdate: ((Tuple4<E0, E1, E2, E3>) -> Unit)? = null): Tuple4<E0, E1, E2, E3> {
         val e0 = _e0.sref()
         val e1 = _e1.sref()
         val e2 = _e2.sref()
@@ -78,7 +78,7 @@ data class Tuple5<E0, E1, E2, E3, E4>(val _e0: E0, val _e1: E1, val _e2: E2, val
     val element4: E4
         get() = _e4.sref()
 
-    fun sref(onUpdate: ((Tuple5<E0, E1, E2, E3, E4>) -> Unit)? = null): Tuple5<E0, E1, E2, E3, E4> {
+    fun sref(@Suppress("UNUSED_PARAMETER") onUpdate: ((Tuple5<E0, E1, E2, E3, E4>) -> Unit)? = null): Tuple5<E0, E1, E2, E3, E4> {
         val e0 = _e0.sref()
         val e1 = _e1.sref()
         val e2 = _e2.sref()

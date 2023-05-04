@@ -11,7 +11,7 @@ internal typealias PlatformFileManager = Foundation.FileManager
 public typealias FileManager = SkipFileManager
 #endif
 
-// SKIP DECLARE: public class SkipFileManager
+// SKIP DECLARE: open class SkipFileManager
 /// An interface to the file system compatible with ``Foundation.FileManager``
 internal class SkipFileManager {
 #if SKIP

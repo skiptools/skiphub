@@ -13,7 +13,7 @@ public typealias PlatformDateFormatter = java.text.DateFormat
 #endif
 
 
-// SKIP DECLARE: class SkipDateFormatter: RawRepresentable<PlatformDateFormatter>
+// SKIP DECLARE: open class SkipDateFormatter: RawRepresentable<PlatformDateFormatter>
 internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConvertible {
     public let rawValue: PlatformDateFormatter
 

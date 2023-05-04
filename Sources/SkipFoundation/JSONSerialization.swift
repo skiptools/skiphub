@@ -44,7 +44,7 @@ typealias AnyArrayType = Array<Any>
 // SKIP REPLACE: internal typealias AnyMapType = skip.lib.Dictionary<*, *>
 typealias AnyMapType = [String: Any]
 
-// SKIP DECLARE: public class PlatformJSONSerialization
+// SKIP DECLARE: open class PlatformJSONSerialization
 internal class PlatformJSONSerialization {
     public struct WritingOptions : OptionSet {
         public let rawValue: Int
