@@ -5,15 +5,26 @@
 // as published by the Free Software Foundation https://fsf.org
 
 /// A unit of JSON
-public enum JSON : Hashable {
+public enum JSON : Hashable, CustomStringConvertible {
     case null
     case bool(JSONBool)
     case number(JSONNumber)
     case string(JSONString)
     case array(JSONArray)
     case obj(JSONObject)
-}
 
+    public var description: String {
+        switch self {
+        //case .null: return "JSON.null" // error: “Unresolved reference: NullCase”
+        case .bool(let x): return "JSON.bool(\(x))"
+        case .number(let x): return "JSON.number(\(x))"
+        case .string(let x): return "JSON.string(\"\(x)\")"
+        case .array(let x): return "JSON.array(\(x))"
+        case .obj(let x): return "JSON.obj(\(x))"
+        default: return "JSON.null"
+        }
+    }
+}
 
 public typealias JSONString = String
 public typealias JSONNumber = Double
@@ -57,7 +68,7 @@ public extension JSON {
     }
 
     /// Returns the ``String`` value of type ``string``.
-    var string: JSONString? {
+    var string: String? {
         switch self {
         case .string(let s):
             return s
@@ -120,7 +131,7 @@ public extension Encodable {
     ///
     /// - Parameter options: the options for serializing the data
     /// - Returns: A J containing the structure of the encoded instance
-    func json(options: JSONEncodingOptions? = nil) throws -> JSON {
+    func json(options: SkipJSONEncodingOptions? = nil) throws -> JSON {
         try JSONObjectEncoder(options: options).encode(self)
     }
 }
@@ -140,7 +151,7 @@ extension JSON {
         case .number(let n):
             return n.description
         case .string(let s):
-            return serializeString(s)
+            return escapeString(s)
         case .array(let a):
             return toJsonString(array: a, indent: indent)
         case .obj(let o):
@@ -194,7 +205,7 @@ extension JSON {
         return json
     }
 
-    private func serializeString(_ str: NativeString, withoutEscapingSlashes: Bool = false) -> NativeString {
+    private func escapeString(_ str: NativeString, withoutEscapingSlashes: Bool = false) -> NativeString {
         var json = ""
         json += "\""
 
@@ -416,8 +427,11 @@ import class Foundation.ISO8601DateFormatter
 
 // MARK: JSONDecoder
 
+#if SKIP
+public typealias JSONDecoder = SkipJSONDecoder
+#endif
 
-open class JSONDecoder {
+open class SkipJSONDecoder {
 
     /// The strategy to use for decoding `Date` values.
     public enum DateDecodingStrategy : Sendable {
@@ -491,16 +505,16 @@ open class JSONDecoder {
     }
 
     /// The strategy to use in decoding dates. Defaults to `.deferredToDate`.
-    open var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate
+    open var dateDecodingStrategy: SkipJSONDecoder.DateDecodingStrategy = .deferredToDate
 
     /// The strategy to use in decoding binary data. Defaults to `.base64`.
-    open var dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .base64
+    open var dataDecodingStrategy: SkipJSONDecoder.DataDecodingStrategy = .base64
 
     /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`.
-    open var nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy = .throw
+    open var nonConformingFloatDecodingStrategy: SkipJSONDecoder.NonConformingFloatDecodingStrategy = .throw
 
     /// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
-    open var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys
+    open var keyDecodingStrategy: SkipJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
 
     /// Contextual user-provided information for use during decoding.
     open var userInfo: [CodingUserInfoKey : Any] = [:]
@@ -513,7 +527,6 @@ open class JSONDecoder {
 
     /// Initializes `self` with default strategies.
     public init() {
-        fatalError("TODO: JSONDecoder.init")
     }
 
     /// Decodes a top-level value of the given type from the given JSON representation.
@@ -524,26 +537,29 @@ open class JSONDecoder {
     /// - throws: `DecodingError.dataCorrupted` if values requested from the payload are corrupted, or if the given data is not valid JSON.
     /// - throws: An error if any value throws an error during decoding.
     open func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
-        fatalError("TODO: JSONDecoder.decode")
+        fatalError("TODO: SkipJSONDecoder.decode")
     }
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-//extension JSONDecoder : TopLevelDecoder {
+//extension SkipJSONDecoder : TopLevelDecoder {
 //
 //    /// The type this decoder accepts.
 //    public typealias Input = Data
 //}
 
 @available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
-extension JSONDecoder : @unchecked Sendable {
+extension SkipJSONDecoder : @unchecked Sendable {
 }
 
 
 // MARK: JSONEncoder
 
+#if SKIP
+public typealias JSONEncoder = SkipJSONEncoder
+#endif
 
-open class JSONEncoder {
+open class SkipJSONEncoder {
 
     /// The formatting of the output JSON data.
     public struct OutputFormatting : OptionSet, Sendable {
@@ -557,21 +573,21 @@ open class JSONEncoder {
         }
 
         /// Produce human-readable JSON with indented output.
-        public static let prettyPrinted: JSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 0))
+        public static let prettyPrinted: SkipJSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 0))
 
         /// Produce JSON with dictionary keys sorted in lexicographic order.
         @available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *)
-        public static let sortedKeys: JSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 1))
+        public static let sortedKeys: SkipJSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 1))
 
         /// By default slashes get escaped ("/" → "\/", "http://apple.com/" → "http:\/\/apple.com\/")
         /// for security reasons, allowing outputted JSON to be safely embedded within HTML/XML.
         /// In contexts where this escaping is unnecessary, the JSON is known to not be embedded,
         /// or is intended only for display, this option avoids this escaping.
         @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-        public static let withoutEscapingSlashes: JSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 3))
+        public static let withoutEscapingSlashes: SkipJSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 3))
 
 //        /// The type of the elements of an array literal.
-//        public typealias ArrayLiteralElement = JSONEncoder.OutputFormatting
+//        public typealias ArrayLiteralElement = SkipJSONEncoder.OutputFormatting
 //
 //        /// The element type of the option set.
 //        ///
@@ -667,26 +683,25 @@ open class JSONEncoder {
     }
 
     /// The output format to produce. Defaults to `[]`.
-    open var outputFormatting: JSONEncoder.OutputFormatting = []
+    open var outputFormatting: SkipJSONEncoder.OutputFormatting = []
 
     /// The strategy to use in encoding dates. Defaults to `.deferredToDate`.
-    open var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .deferredToDate
+    open var dateEncodingStrategy: SkipJSONEncoder.DateEncodingStrategy = .deferredToDate
 
     /// The strategy to use in encoding binary data. Defaults to `.base64`.
-    open var dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64
+    open var dataEncodingStrategy: SkipJSONEncoder.DataEncodingStrategy = .base64
 
     /// The strategy to use in encoding non-conforming numbers. Defaults to `.throw`.
-    open var nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy = .throw
+    open var nonConformingFloatEncodingStrategy: SkipJSONEncoder.NonConformingFloatEncodingStrategy = .throw
 
     /// The strategy to use for encoding keys. Defaults to `.useDefaultKeys`.
-    open var keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+    open var keyEncodingStrategy: SkipJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
 
     /// Contextual user-provided information for use during encoding.
     open var userInfo: [CodingUserInfoKey : Any] = [:]
 
     /// Initializes `self` with default strategies.
     public init() {
-        fatalError("TODO: JSONEncoder.init")
     }
 
     /// Encodes the given top-level value and returns its JSON representation.
@@ -696,39 +711,43 @@ open class JSONEncoder {
     /// - throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - throws: An error if any value throws an error during encoding.
     open func encode<T>(_ value: T) throws -> Data where T : Encodable {
-        fatalError("TODO: JSONEncoder.encode")
+        try value.json().stringify(pretty: outputFormatting.contains([SkipJSONEncoder.OutputFormatting.prettyPrinted])).data(using: .utf8)!
     }
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-//extension JSONEncoder : TopLevelEncoder {
+//extension SkipJSONEncoder : TopLevelEncoder {
 //
 //    /// The type this encoder produces.
 //    public typealias Output = Data
 //}
 
 @available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
-extension JSONEncoder : @unchecked Sendable {
+extension SkipJSONEncoder : @unchecked Sendable {
 }
 
+#if SKIP
+public typealias JSONDecodingOptions = SkipJSONDecodingOptions
+#endif
+
 /// A set of options for decoding an entity from a `JSON` instance.
-open class JSONDecodingOptions {
+open class SkipJSONDecodingOptions {
     /// The strategy to use in decoding dates. Defaults to `.deferredToDate`.
-    open var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy
+    open var dateDecodingStrategy: SkipJSONDecoder.DateDecodingStrategy
 
     /// The strategy to use in decoding binary data. Defaults to `.base64`.
-    open var dataDecodingStrategy: JSONDecoder.DataDecodingStrategy
+    open var dataDecodingStrategy: SkipJSONDecoder.DataDecodingStrategy
 
     /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`.
-    open var nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy
+    open var nonConformingFloatDecodingStrategy: SkipJSONDecoder.NonConformingFloatDecodingStrategy
 
     /// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
-    open var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy
+    open var keyDecodingStrategy: SkipJSONDecoder.KeyDecodingStrategy
 
     /// Contextual user-provided information for use during decoding.
     open var userInfo: [CodingUserInfoKey : Any]
 
-    public init(dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate, dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .base64, nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy = .throw, keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
+    public init(dateDecodingStrategy: SkipJSONDecoder.DateDecodingStrategy = .deferredToDate, dataDecodingStrategy: SkipJSONDecoder.DataDecodingStrategy = .base64, nonConformingFloatDecodingStrategy: SkipJSONDecoder.NonConformingFloatDecodingStrategy = .throw, keyDecodingStrategy: SkipJSONDecoder.KeyDecodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
         self.dateDecodingStrategy = dateDecodingStrategy
         self.dataDecodingStrategy = dataDecodingStrategy
         self.nonConformingFloatDecodingStrategy = nonConformingFloatDecodingStrategy
@@ -737,27 +756,31 @@ open class JSONDecodingOptions {
     }
 }
 
+#if SKIP
+public typealias JSONEncodingOptions = SkipJSONEncodingOptions
+#endif
+
 /// A set of options for encoding an entity from a `JSON` instance.
-open class JSONEncodingOptions {
+open class SkipJSONEncodingOptions {
     /// The output format to produce. Defaults to `[]`.
-    open var outputFormatting: JSONEncoder.OutputFormatting
+    open var outputFormatting: SkipJSONEncoder.OutputFormatting
 
     /// The strategy to use in encoding dates. Defaults to `.deferredToDate`.
-    open var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy
+    open var dateEncodingStrategy: SkipJSONEncoder.DateEncodingStrategy
 
     /// The strategy to use in encoding binary data. Defaults to `.base64`.
-    open var dataEncodingStrategy: JSONEncoder.DataEncodingStrategy
+    open var dataEncodingStrategy: SkipJSONEncoder.DataEncodingStrategy
 
     /// The strategy to use in encoding non-conforming numbers. Defaults to `.throw`.
-    open var nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy
+    open var nonConformingFloatEncodingStrategy: SkipJSONEncoder.NonConformingFloatEncodingStrategy
 
     /// The strategy to use for encoding keys. Defaults to `.useDefaultKeys`.
-    open var keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
+    open var keyEncodingStrategy: SkipJSONEncoder.KeyEncodingStrategy
 
     /// Contextual user-provided information for use during encoding.
     open var userInfo: [CodingUserInfoKey : Any]
 
-    public init(outputFormatting: JSONEncoder.OutputFormatting = .sortedKeys, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .deferredToDate, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy = .throw, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
+    public init(outputFormatting: SkipJSONEncoder.OutputFormatting = .sortedKeys, dateEncodingStrategy: SkipJSONEncoder.DateEncodingStrategy = .deferredToDate, dataEncodingStrategy: SkipJSONEncoder.DataEncodingStrategy = .base64, nonConformingFloatEncodingStrategy: SkipJSONEncoder.NonConformingFloatEncodingStrategy = .throw, keyEncodingStrategy: SkipJSONEncoder.KeyEncodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
         self.outputFormatting = outputFormatting
         self.dateEncodingStrategy = dateEncodingStrategy
         self.dataEncodingStrategy = dataEncodingStrategy
@@ -871,11 +894,11 @@ private protocol TopLevelJSONDecoder {
 //}
 
 internal final class JSONObjectEncoder : TopLevelJSONEncoder {
-    let options: JSONEncodingOptions
+    let options: SkipJSONEncodingOptions
 
     /// Initializes `self` with default strategies.
-    public init(options: JSONEncodingOptions? = nil) {
-        self.options = options ?? JSONEncodingOptions()
+    public init(options: SkipJSONEncodingOptions? = nil) {
+        self.options = options ?? SkipJSONEncodingOptions()
     }
 
     /// Encodes the given top-level value and returns its script object representation.
@@ -917,11 +940,11 @@ internal final class JSONObjectEncoder : TopLevelJSONEncoder {
 
 /// `JSONObjectDecoder` facilitates the decoding of `J` values into `Decodable` types.
 internal final class JSONObjectDecoder : TopLevelJSONDecoder {
-    let options: JSONDecodingOptions
+    let options: SkipJSONDecodingOptions
 
     /// Initializes `self` with default strategies.
-    public init(options: JSONDecodingOptions? = nil) {
-        self.options = options ?? JSONDecodingOptions()
+    public init(options: SkipJSONDecodingOptions? = nil) {
+        self.options = options ?? SkipJSONDecodingOptions()
     }
 
     /// Decodes a top-level value of the given type from the given script representation.
@@ -957,7 +980,7 @@ internal final class JSONObjectDecoder : TopLevelJSONDecoder {
 
 
 fileprivate class JSONElementEncoder: Encoder {
-    fileprivate let options: JSONEncodingOptions
+    fileprivate let options: SkipJSONEncodingOptions
 
     /// The encoder's storage.
     fileprivate var storage: _JSONEncodingStorage
@@ -971,7 +994,7 @@ fileprivate class JSONElementEncoder: Encoder {
     }
 
     /// Initializes `self` with the given top-level encoder options.
-    fileprivate init(options: JSONEncodingOptions, codingPath: [CodingKey] = []) {
+    fileprivate init(options: SkipJSONEncodingOptions, codingPath: [CodingKey] = []) {
         self.options = options
         self.storage = _JSONEncodingStorage()
         self.codingPath = codingPath
@@ -1054,13 +1077,13 @@ fileprivate struct _JSONEncodingStorage {
         return self.containers.count
     }
 
-    fileprivate mutating func pushKeyedContainer(_ options: JSONEncodingOptions) -> _JSONContainer {
+    fileprivate mutating func pushKeyedContainer(_ options: SkipJSONEncodingOptions) -> _JSONContainer {
         let dictionary = _JSONContainer(json: JSON.obj([:]))
         self.containers.append(dictionary)
         return dictionary
     }
 
-    fileprivate mutating func pushUnkeyedContainer(_ options: JSONEncodingOptions) throws -> _JSONContainer {
+    fileprivate mutating func pushUnkeyedContainer(_ options: SkipJSONEncodingOptions) throws -> _JSONContainer {
         let array = _JSONContainer(json: JSON.array([]))
         self.containers.append(array)
         return array
@@ -1296,19 +1319,19 @@ extension JSONElementEncoder {
     #if !SKIP // TODO: Date
     fileprivate func box(_ date: Date) throws -> _JSONContainer {
         switch self.options.dateEncodingStrategy {
-        case JSONEncoder.DateEncodingStrategy.deferredToDate:
+        case SkipJSONEncoder.DateEncodingStrategy.deferredToDate:
             // Must be called with a surrounding with(pushedKey:) call.
             // Dates encode as single-value objects; this can't both throw and push a container, so no need to catch the error.
             try date.encode(to: self)
             return _JSONContainer(json: self.storage.popContainer().json)
 
-        case JSONEncoder.DateEncodingStrategy.secondsSince1970:
+        case SkipJSONEncoder.DateEncodingStrategy.secondsSince1970:
             return _JSONContainer(json: JSON.number(date.timeIntervalSince1970))
 
-        case JSONEncoder.DateEncodingStrategy.millisecondsSince1970:
+        case SkipJSONEncoder.DateEncodingStrategy.millisecondsSince1970:
             return _JSONContainer(json: JSON.number(1000.0 * date.timeIntervalSince1970))
 
-        case JSONEncoder.DateEncodingStrategy.iso8601:
+        case SkipJSONEncoder.DateEncodingStrategy.iso8601:
             #if !SKIP
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
                 return _JSONContainer(json: JSON.string(_iso8601Formatter.string(from: date)))
@@ -1319,10 +1342,10 @@ extension JSONElementEncoder {
             fatalError("ISO8601DateFormatter is unavailable on this platform.")
             #endif
 
-        case JSONEncoder.DateEncodingStrategy.formatted(let formatter):
+        case SkipJSONEncoder.DateEncodingStrategy.formatted(let formatter):
             return _JSONContainer(json: JSON.string(formatter.string(from: date)))
 
-        case JSONEncoder.DateEncodingStrategy.custom(let closure):
+        case SkipJSONEncoder.DateEncodingStrategy.custom(let closure):
             let depth = self.storage.count
             do {
                 try closure(date, self)
@@ -1353,7 +1376,7 @@ extension JSONElementEncoder {
     #if !SKIP // TODO: Data
     func box(_ data: Data) throws -> _JSONContainer {
         switch self.options.dataEncodingStrategy {
-        case JSONEncoder.DataEncodingStrategy.deferredToData:
+        case SkipJSONEncoder.DataEncodingStrategy.deferredToData:
             // Must be called with a surrounding with(pushedKey:) call.
             let depth = self.storage.count
             do {
@@ -1370,10 +1393,10 @@ extension JSONElementEncoder {
 
             return self.storage.popContainer()
 
-        case JSONEncoder.DataEncodingStrategy.base64:
+        case SkipJSONEncoder.DataEncodingStrategy.base64:
             return .init(json: JSON.string(data.base64EncodedString()))
 
-        case JSONEncoder.DataEncodingStrategy.custom(let closure):
+        case SkipJSONEncoder.DataEncodingStrategy.custom(let closure):
             let depth = self.storage.count
             do {
                 try closure(data, self)
@@ -1653,7 +1676,7 @@ fileprivate final class _JSONReferencingEncoder: JSONElementEncoder {
 
 
 fileprivate final class _JSONDecoder: Decoder {
-    let options: JSONDecodingOptions
+    let options: SkipJSONDecodingOptions
 
     /// The decoder's storage.
     fileprivate var storage: _JSONDecodingStorage
@@ -1667,7 +1690,7 @@ fileprivate final class _JSONDecoder: Decoder {
     }
 
     /// Initializes `self` with the given top-level container and options.
-    fileprivate init(options: JSONDecodingOptions, referencing container: JSON, at codingPath: [CodingKey] = []) {
+    fileprivate init(options: SkipJSONDecodingOptions, referencing container: JSON, at codingPath: [CodingKey] = []) {
         self.options = options
         self.storage = _JSONDecodingStorage()
         self.storage.push(container: container)
@@ -2654,10 +2677,10 @@ extension _JSONDecoder {
     #if !SKIP
     fileprivate func unbox(_ value: JSON, as type: Date.Type) throws -> Date? {
         switch options.dateDecodingStrategy {
-        case JSONDecoder.DateDecodingStrategy.deferredToDate:
+        case SkipJSONDecoder.DateDecodingStrategy.deferredToDate:
             return try Date(from: self)
 
-        case JSONDecoder.DateDecodingStrategy.secondsSince1970:
+        case SkipJSONDecoder.DateDecodingStrategy.secondsSince1970:
             guard let number = value.number else {
                 // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date secondsSince1970."))
@@ -2665,7 +2688,7 @@ extension _JSONDecoder {
 
             return Date(timeIntervalSince1970: number)
 
-        case JSONDecoder.DateDecodingStrategy.millisecondsSince1970:
+        case SkipJSONDecoder.DateDecodingStrategy.millisecondsSince1970:
             guard let number = value.number else {
                 // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date millisecondsSince1970."))
@@ -2673,7 +2696,7 @@ extension _JSONDecoder {
 
             return Date(timeIntervalSince1970: number / 1000.0)
 
-        case JSONDecoder.DateDecodingStrategy.iso8601:
+        case SkipJSONDecoder.DateDecodingStrategy.iso8601:
             #if !SKIP
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
                 guard let string = value.string,
@@ -2690,7 +2713,7 @@ extension _JSONDecoder {
             fatalError("ISO8601DateFormatter is unavailable on this platform.")
             #endif
 
-        case JSONDecoder.DateDecodingStrategy.formatted(let formatter):
+        case SkipJSONDecoder.DateDecodingStrategy.formatted(let formatter):
             guard let string = value.string else {
                 // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
@@ -2701,7 +2724,7 @@ extension _JSONDecoder {
             }
             return date
 
-        case JSONDecoder.DateDecodingStrategy.custom(let closure):
+        case SkipJSONDecoder.DateDecodingStrategy.custom(let closure):
             return try closure(self)
 
         @unknown default:
@@ -2714,10 +2737,10 @@ extension _JSONDecoder {
     #if !SKIP
     fileprivate func unbox(_ value: JSON, as type: Data.Type) throws -> Data? {
         switch options.dataDecodingStrategy {
-        case JSONDecoder.DataDecodingStrategy.deferredToData:
+        case SkipJSONDecoder.DataDecodingStrategy.deferredToData:
             return try Data(from: self)
 
-        case JSONDecoder.DataDecodingStrategy.base64:
+        case SkipJSONDecoder.DataDecodingStrategy.base64:
             guard let string = value.string else {
                 // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected data to be Base64."))
@@ -2730,7 +2753,7 @@ extension _JSONDecoder {
 
             return data
 
-        case JSONDecoder.DataDecodingStrategy.custom(let closure):
+        case SkipJSONDecoder.DataDecodingStrategy.custom(let closure):
             return try closure(self)
 
         @unknown default:
@@ -2862,7 +2885,7 @@ let canonicalJSONEncoder: JSONEncoder = {
     return encoder
 }()
 
-
+#if !SKIP
 extension Encodable {
     /// Encode this instance as JSON data.
     /// - Parameters:
@@ -2877,9 +2900,9 @@ extension Encodable {
     internal func toJSONString(encoder: () -> JSONEncoder = { JSONEncoder() }, outputFormatting: JSONEncoder.OutputFormatting? = nil, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy? = nil, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy? = nil, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> String {
         let formatting: JSONEncoder.OutputFormatting
         if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
-            formatting = outputFormatting ?? [.sortedKeys, .withoutEscapingSlashes]
+            formatting = outputFormatting ?? [JSONEncoder.OutputFormatting.sortedKeys, JSONEncoder.OutputFormatting.withoutEscapingSlashes]
         } else {
-            formatting = outputFormatting ?? [.sortedKeys]
+            formatting = outputFormatting ?? [JSONEncoder.OutputFormatting.sortedKeys]
         }
 
         let encoder = encoder()
@@ -2911,6 +2934,7 @@ extension Encodable {
         return String(data: data, encoding: String.Encoding.utf8)!
     }
 }
+#endif
 
 extension Decodable where Self : Encodable {
 
@@ -2935,4 +2959,3 @@ extension Decodable where Self : Encodable {
     }
     #endif
 }
-

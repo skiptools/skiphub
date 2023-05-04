@@ -17,40 +17,46 @@ class TestJSON : XCTestCase {
     struct EntityDefaultKeys : Encodable {
         var firstName: String
         var lastName: String
+        var age: Int
     }
 
     struct EntityCustomKeys : Encodable {
         var nameFirst: String
         var nameLast: String
+        var age: Int
 
         enum CodingKeys : String, RawRepresentable, CodingKey {
             case nameFirst = "firstName"
             case nameLast = "lastName"
+            case age
         }
     }
 
     func testJSONEncodable() throws {
-        var person = EntityCustomKeys(nameFirst: "Jon", nameLast: "Doe")
+        let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", age: 44)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let json = try encoder.encode(person)
+        #if SKIP
+        XCTAssertEqual(#"{"age":44.0,"firstName":"Jon","lastName":"Doe"}"#, String(data: json, encoding: String.Encoding.utf8))
+        #else
+        XCTAssertEqual(#"{"age":44,"firstName":"Jon","lastName":"Doe"}"#, String(data: json, encoding: String.Encoding.utf8))
+        #endif
+    }
+
+    func testEncodeToJSON() throws {
+        let person = EntityCustomKeys(nameFirst: "Jon", nameLast: "Doe", age: 44)
 
         XCTAssertEqual("firstName", EntityCustomKeys.CodingKeys.nameFirst.rawValue)
         XCTAssertEqual("Jon", person.nameFirst)
         XCTAssertEqual("Doe", person.nameLast)
+        XCTAssertEqual(44, person.age)
 
-        #if SKIP // FIXME: java.lang.ExceptionInInitializerError in protocol extension outside file
-        //throw XCTSkip("FIXME: java.lang.ExceptionInInitializerError")
-        //let json = try JSON(encoding: person)
-        let json: JSON = try JSONObjectEncoder().encode(person)
-        #else
         let json: JSON = try person.json()
-        #endif
-
-        #if SKIP // FIXME: implement encoding
-        throw XCTSkip("TODO: encoding")
-        #endif
-
-        XCTAssertEqual("Jon", json.obj?["firstName"])
-        XCTAssertEqual("Doe", json.obj?["lastName"])
-        XCTAssertEqual(#"{"firstName":"Jon","lastName":"Doe"}"#, json.stringify())
+        XCTAssertEqual(JSON.number(44.0), json.obj?["age"])
+        XCTAssertEqual(JSON.string("Jon"), json.obj?["firstName"])
+        XCTAssertEqual(JSON.string("Doe"), json.obj?["lastName"])
+        XCTAssertEqual(#"{"age":44.0,"firstName":"Jon","lastName":"Doe"}"#, json.stringify())
     }
 
     func testJSONParse() throws {
@@ -78,6 +84,15 @@ class TestJSON : XCTestCase {
         }
         """)
 
+        #if !SKIP // TODO: subscripts and literal initializers
+        XCTAssertEqual(1.1, json["a"])
+        XCTAssertEqual(true, json["b"])
+        XCTAssertEqual(nil, json["c"])
+        XCTAssertEqual("XYZ", json["d"])
+        XCTAssertEqual(5, json["e"]?.count)
+        #endif
+
+        // equivalent (but more verbose) comparisons
         XCTAssertEqual(JSON.number(1.1), json.obj?["a"])
         XCTAssertEqual(JSON.bool(true), json.obj?["b"])
         XCTAssertEqual(nil, json.obj?["c"])
@@ -122,14 +137,6 @@ class TestJSON : XCTestCase {
           ]
         }
         """)
-
-        #if !SKIP // TODO: subscripts and literal initializers
-        XCTAssertEqual(1.1, json["a"])
-        XCTAssertEqual(true, json["b"])
-        XCTAssertEqual(nil, json["c"])
-        XCTAssertEqual("XYZ", json["d"])
-        XCTAssertEqual(5, json["e"]?.count)
-        #endif
     }
 
     func checkJSON(_ json: String) throws {
