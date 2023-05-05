@@ -126,68 +126,83 @@ public protocol KeyedEncodingContainerProtocol {
 
 extension KeyedEncodingContainerProtocol {
     public mutating func encodeConditional<T>(_ object: T, forKey key: CodingKey) throws where T : Encodable {
-        fatalError("TODO: encodeConditional")
+        try encode(object, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: Bool?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: String?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: Double?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: Float?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
 #if !SKIP // Int = Int32 in Kotlin
     public mutating func encodeIfPresent(_ value: Int?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
     public mutating func encodeIfPresent(_ value: UInt?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 #endif
 
     public mutating func encodeIfPresent(_ value: Int8?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: Int16?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: Int32?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: Int64?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: UInt8?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: UInt16?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: UInt32?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent(_ value: UInt64?, forKey key: CodingKey) throws {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 
     public mutating func encodeIfPresent<T>(_ value: T?, forKey key: CodingKey) throws where T : Encodable {
-        fatalError("TODO: encodeIfPresent")
+        guard let value = value else { return }
+        try encode(value, forKey: key)
     }
 }
 

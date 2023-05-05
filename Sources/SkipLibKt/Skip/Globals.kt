@@ -31,6 +31,14 @@ fun <T : Comparable<T>> max(a: T, b: T): T {
 	return if (a >= b) a else b
 }
 
+fun round(x: Double): Double {
+	return kotlin.math.round(x)
+}
+
+fun round(x: Float): Float {
+	return kotlin.math.round(x)
+}
+
 class NullReturnException: Exception() {
 }
 

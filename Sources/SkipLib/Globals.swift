@@ -49,3 +49,11 @@ public func min<T>(_ x: T, _ y: T) -> T where T : Comparable {
 public func max<T>(_ x: T, _ y: T) -> T where T : Comparable {
     fatalError()
 }
+
+public func round(_ x: Double) -> Double {
+    fatalError()
+}
+
+public func round(_ x: Float) -> Float {
+    fatalError()
+}

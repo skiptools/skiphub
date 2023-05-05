@@ -17,7 +17,17 @@ class TestJSON : XCTestCase {
     struct EntityDefaultKeys : Encodable {
         var firstName: String
         var lastName: String
-        var age: Int
+        var age: Int?
+        var height: Double?
+        var isStudent: Bool?
+    }
+
+    func testJSONEncodable() throws {
+        let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let json = try encoder.encode(person)
+        XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, String(data: json, encoding: String.Encoding.utf8))
     }
 
     struct EntityCustomKeys : Encodable {
@@ -30,18 +40,6 @@ class TestJSON : XCTestCase {
             case nameLast = "lastName"
             case age
         }
-    }
-
-    func testJSONEncodable() throws {
-        let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", age: 44)
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        let json = try encoder.encode(person)
-        #if SKIP
-        XCTAssertEqual(#"{"age":44.0,"firstName":"Jon","lastName":"Doe"}"#, String(data: json, encoding: String.Encoding.utf8))
-        #else
-        XCTAssertEqual(#"{"age":44,"firstName":"Jon","lastName":"Doe"}"#, String(data: json, encoding: String.Encoding.utf8))
-        #endif
     }
 
     func testEncodeToJSON() throws {
