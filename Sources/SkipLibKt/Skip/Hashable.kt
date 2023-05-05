@@ -20,9 +20,7 @@ class Hasher {
         result = Companion.combine(result, value)
     }
 
-    fun finalize(): Int {
-        return result
-    }
+    fun finalize(): Int = result
 
     companion object {
         fun combine(result: Int, value: Any?): Int {

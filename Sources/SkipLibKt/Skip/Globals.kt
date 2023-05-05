@@ -13,9 +13,7 @@ fun preconditionFailure(message: String = "preconditionFailure"): Nothing = erro
 fun precondition(condition: Boolean, message: String = "precondition"): Unit = require(condition, { message })
 
 
-fun type(of: Any): KClass<*> {
-    return of::class
-}
+fun type(of: Any): KClass<*> = of::class
 
 fun <T> swap(a: InOut<T>, b: InOut<T>) {
     val t = a.value

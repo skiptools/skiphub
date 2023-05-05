@@ -97,7 +97,7 @@ extension Sequence {
         fatalError()
     }
 
-    public func enumerated() -> any Sequence<(Int, Element)> {
+    public func enumerated() -> any Sequence<(offset: Int, element: Element)> {
         fatalError()
     }
     
@@ -240,12 +240,6 @@ extension Collection {
         fatalError()
     }
 
-    // SKIP NOWARN
-    @available(*, unavailable)
-    public subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
-        fatalError()
-    }
-
     @available(*, unavailable)
     public var indices: [Int] /* Collection<Int> */ {
         fatalError()
@@ -369,8 +363,7 @@ extension Collection {
     }
 
     // SKIP NOWARN
-    @available(*, unavailable)
-    public subscript(bounds: any RangeExpression<Int>) -> [Element] /* Collection<Element> */ {
+    public subscript(bounds: Range<Int>) -> any Collection<Element> {
         fatalError()
     }
 
@@ -640,19 +633,7 @@ extension MutableCollection {
     }
 
     // SKIP NOWARN
-    @available(*, unavailable)
-    subscript(bounds: Range<Int>) -> [Element] /* Collection<Element> */ {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
-    }
-
-    // SKIP NOWARN
-    @available(*, unavailable)
-    subscript(bounds: any RangeExpression<Int>) -> [Element] /* Collection<Element> */ {
+    subscript(bounds: Range<Int>) -> any Collection<Element> {
         get {
             fatalError()
         }
@@ -668,51 +649,6 @@ extension MutableCollection {
 
     @available(*, unavailable)
     public mutating func reverse() {
-        fatalError()
-    }
-}
-
-public protocol RangeExpression<Bound> {
-    associatedtype Bound
-}
-
-@available(*, unavailable)
-public struct Range<Bound>: RangeExpression /* CustomStringConvertible, CustomDebugStringConvertible, Hashable, Codable */ where Bound : Comparable {
-    public let lowerBound: Bound
-    public let upperBound: Bound
-
-    @available(*, unavailable)
-    public init(uncheckedBounds bounds: (Bound, Bound)) {
-        fatalError()
-    }
-
-    @available(*, unavailable)
-    public func contains(_ element: Bound) -> Bool {
-        fatalError()
-    }
-
-    @available(*, unavailable)
-    public var isEmpty: Bool {
-        fatalError()
-    }
-
-    @available(*, unavailable)
-    public func clamped(to limits: Range<Bound>) -> Range<Bound> {
-        fatalError()
-    }
-
-    @available(*, unavailable)
-    public func overlaps(_ other: Range<Bound>) -> Bool {
-        fatalError()
-    }
-
-    @available(*, unavailable)
-    public func overlaps(_ other: ClosedRange<Bound>) -> Bool {
-        fatalError()
-    }
-
-    @available(*, unavailable)
-    public func relative(to collection: any Collection) -> Range<Bound> {
         fatalError()
     }
 }
@@ -800,22 +736,28 @@ public struct KeyValuePairs<Key, Value> {
 }
 
 @available(*, unavailable)
-public struct PartialRangeFrom<Bound>: RangeExpression where Bound : Comparable {
-    public let lowerBound: Bound
+public struct PartialRangeFrom<Bound> {
 }
 
 @available(*, unavailable)
-public struct PartialRangeThrough<Bound>: RangeExpression where Bound : Comparable {
-    public let upperBound: Bound
+public struct PartialRangeThrough<Bound> {
 }
 
 @available(*, unavailable)
-public struct PartialRangeUpTo<Bound>: RangeExpression where Bound : Comparable {
-    public let upperBound: Bound
+public struct PartialRangeUpTo<Bound> {
 }
 
 @available(*, unavailable)
 public struct PrefixSequence<Base> {
+}
+
+@available(*, unavailable)
+public protocol RangeExpression<Bound> {
+    associatedtype Bound
+}
+
+// Mark available only so that we can support subscript(Range<Int>)
+public struct Range<Bound> {
 }
 
 @available(*, unavailable)

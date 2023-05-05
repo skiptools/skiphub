@@ -13,22 +13,40 @@ interface IterableStorage<Element>: Iterable<Element> {
     override fun iterator(): Iterator<Element> {
         val iter = iterableStorage.iterator()
         return object: Iterator<Element> {
-            override fun hasNext(): Boolean {
-                return iter.hasNext()
-            }
-
-            override fun next(): Element {
-                return iter.next().sref()
-            }
+            override fun hasNext(): Boolean = iter.hasNext()
+            override fun next(): Element = iter.next().sref()
         }
     }
 }
 
 interface CollectionStorage<Element>: IterableStorage<Element> {
     val collectionStorage: kotlin.collections.Collection<Element>
+    val firstIndex: Int
+        get() = 0
+    val lastIndex: Int? // Exclusive
+        get() = null
+    val effectiveLastIndex: Int
+        get() = lastIndex ?: collectionStorage.size
+    fun willSliceStorage() = Unit
 
     override val iterableStorage: Iterable<Element>
-        get() = collectionStorage
+        get() {
+            if (firstIndex == 0 && lastIndex == null) {
+                return collectionStorage
+            }
+            return object: Iterable<Element> {
+                override fun iterator(): Iterator<Element> {
+                    return object: Iterator<Element> {
+                        private var index = firstIndex
+                        override fun hasNext(): Boolean {
+                            val lastIndex = lastIndex ?: collectionStorage.size
+                            return index < lastIndex
+                        }
+                        override fun next(): Element = collectionStorage.elementAt(index++)
+                    }
+                }
+            }
+        }
 }
 
 interface MutableListStorage<Element>: CollectionStorage<Element> {
@@ -37,11 +55,8 @@ interface MutableListStorage<Element>: CollectionStorage<Element> {
     override val collectionStorage: kotlin.collections.Collection<Element>
         get() = mutableListStorage
 
-    fun willMutateStorage() {
-    }
-
-    fun didMutateStorage() {
-    }
+    fun willMutateStorage() = Unit
+    fun didMutateStorage() = Unit
 }
 
 interface Sequence<Element>: IterableStorage<Element> {
@@ -53,13 +68,11 @@ interface Sequence<Element>: IterableStorage<Element> {
             }
         }
     }
-    
+
     val underestimatedCount: Int
         get() = 0
 
-    fun <T> withContiguousStorageIfAvailable(body: (Any) -> T): T? {
-        return null
-    }
+    fun <T> withContiguousStorageIfAvailable(body: (Any) -> T): T? = null
 
     fun <RE> map(transform: (Element) -> RE): Array<RE> {
         return Array(iterableStorage.map(transform), nocopy = true)
@@ -138,22 +151,40 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     }
 
     val isEmpty: Boolean
-        get() = collectionStorage.size == 0
+        get() = firstIndex >= effectiveLastIndex
 
     val count: Int
-        get() = collectionStorage.size
+        get() = effectiveLastIndex - firstIndex
 
     val first: Element?
-        get() = collectionStorage.first().sref()
+        get() = if (isEmpty) null else get(firstIndex)
+
+    operator fun get(range: IntRange): Collection<Element> {
+        // We translate open ranges to use Int.MIN_VALUE and MAX_VALUE in Kotlin
+        val lowerBound = if (range.start == Int.MIN_VALUE) 0 else range.start
+        val upperBound = if (range.endInclusive == Int.MAX_VALUE) null else range.endInclusive + 1
+
+        willSliceStorage()
+        val collection = this
+        return object: Collection<Element> {
+            override val collectionStorage = collection.collectionStorage
+            override val firstIndex = lowerBound
+            override val lastIndex = upperBound
+        }
+    }
 }
 
 interface BidirectionalCollection<Element>: Collection<Element> {
     fun last(where: (Element) -> Boolean): Element? {
-        return collectionStorage.lastOrNull(where).sref()
+        if (firstIndex == 0 && lastIndex == null) {
+            return collectionStorage.lastOrNull(where).sref()
+        } else {
+            return iterableStorage.lastOrNull(where).sref()
+        }
     }
 
     val last: Element?
-        get() = collectionStorage.last().sref()
+        get() = if (isEmpty) null else elementAt(effectiveLastIndex - 1).sref()
 }
 
 interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {

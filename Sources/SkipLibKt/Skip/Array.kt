@@ -37,13 +37,11 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
             return storage
         }
 
-    override fun willMutateStorage() {
-        willmutate()
+    override fun willSliceStorage() {
+        isStorageShared = true // Shared with slice
     }
-
-    override fun didMutateStorage() {
-        didmutate()
-    }
+    override fun willMutateStorage() = willmutate()
+    override fun didMutateStorage() = didmutate()
 
     constructor() {
         _mutableListStorage = ArrayList()
@@ -64,10 +62,10 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
                 } else {
                     _collectionStorage= collection._collectionStorage
                 }
-            } else if (collection is MutableListStorage<*>) {
+            } else if (collection is MutableListStorage<*> && collection.firstIndex == 0 && collection.lastIndex == null) {
                 _mutableListStorage = collection.mutableListStorage as MutableList<Element>
                 isStorageShared = shared
-            } else if (collection is CollectionStorage<*>) {
+            } else if (collection is CollectionStorage<*> && collection.firstIndex == 0 && collection.lastIndex == null) {
                 val collectionStorage = collection.collectionStorage
                 if (collectionStorage is List<*>) {
                     _collectionStorage = collectionStorage as List<Element>
@@ -121,11 +119,7 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         return other.collectionStorage == collectionStorage
     }
 
-    // MutableStruct
-
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
-    override fun scopy(): MutableStruct {
-        return Array(this, nocopy = true, shared = true)
-    }
+    override fun scopy(): MutableStruct = Array(this, nocopy = true, shared = true)
 }

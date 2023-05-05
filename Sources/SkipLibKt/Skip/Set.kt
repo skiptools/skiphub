@@ -142,7 +142,5 @@ class Set<Element>: Collection<Element>, MutableStruct {
 
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
-    override fun scopy(): MutableStruct {
-        return Set(this, nocopy = true)
-    }
+    override fun scopy(): MutableStruct = Set(this, nocopy = true)
 }

@@ -224,14 +224,14 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(enumerated[2].1, "M")
     }
 
-    func testArraySort() {
+    func testSort() {
         let strings = ["A", "Z", "M"]
         let strings2 = strings.sorted()
         XCTAssertEqual(strings, ["A", "Z", "M"])
         XCTAssertEqual(strings2, ["A", "M", "Z"])
     }
 
-    func testArrayFirstLast() {
+    func testFirstLast() {
         let strings = ["A", "Z", "M"]
 
         XCTAssertEqual("A", strings.first)
@@ -246,12 +246,59 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(false, strings.contains(where: { $0 == "Q" }))
     }
 
-    func testArrayFilterMapReduce() {
+    func testFilterMapReduce() {
         let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         let result = numbers.filter { $0 % 2 == 0 }
                             .map { $0 * 2 }
                             .reduce(0, { $0 + $1 })
         XCTAssertEqual(result, 60)
+    }
+
+    func testReadSlice() {
+        var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        func copy<T: Collection<Int>>(_ c: T) -> [Int] {
+            var a: [Int] = []
+            for i in c {
+                a.append(i)
+            }
+            return a
+        }
+
+        let closedSlice = numbers[1...3]
+        XCTAssertEqual(Array(closedSlice), [1, 2, 3])
+        XCTAssertEqual(copy(closedSlice), [1, 2, 3])
+
+        XCTAssertEqual(3, closedSlice.count)
+        XCTAssertEqual(closedSlice[1], 1)
+        XCTAssertEqual(closedSlice[2], 2)
+        XCTAssertEqual(closedSlice[3], 3)
+
+        let openUpperSlice = numbers[7...]
+        let openUpperSliceCopy = Array(openUpperSlice)
+        XCTAssertEqual(openUpperSliceCopy, [7, 8, 9])
+
+        XCTAssertEqual(3, openUpperSlice.count)
+        XCTAssertEqual(openUpperSlice[7], 7)
+        XCTAssertEqual(openUpperSlice[8], 8)
+        XCTAssertEqual(openUpperSlice[9], 9)
+
+        let openLowerSlice = numbers[..<3]
+        let openLowerSliceCopy = Array(openLowerSlice)
+        XCTAssertEqual(openLowerSliceCopy, [0, 1, 2])
+
+        XCTAssertEqual(3, openLowerSlice.count)
+        XCTAssertEqual(openLowerSlice[0], 0)
+        XCTAssertEqual(openLowerSlice[1], 1)
+        XCTAssertEqual(openLowerSlice[2], 2)
+
+        // Check that mutating the source does not affect the slice
+        numbers.append(10)
+        XCTAssertEqual(3, openUpperSlice.count)
+
+        let enums: [ElementEnum] = [.one, .two, .three]
+        let enumSlice = enums[1...]
+        XCTAssertEqual(enumSlice[1], .two)
     }
 
     func testDictionaryForEach() {
