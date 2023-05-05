@@ -261,20 +261,49 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(count, 10)
     }
 
+    func testInsert() {
+        var array = [1, 2]
+        array.insert(3, at: 1)
+        XCTAssertEqual(array.count, 3)
+        XCTAssertEqual(array[0], 1)
+        XCTAssertEqual(array[1], 3)
+        XCTAssertEqual(array[2], 2)
+
+        var array2 = array
+        array2.insert(4, at: 2)
+        XCTAssertEqual(array2.count, 4)
+        XCTAssertEqual(array2[0], 1)
+        XCTAssertEqual(array2[1], 3)
+        XCTAssertEqual(array2[2], 4)
+        XCTAssertEqual(array2[3], 2)
+
+        XCTAssertEqual(array.count, 3)
+    }
+
     func testZipCompactMap() {
-//        let names = ["Alice", "Bob", "Charlie"]
-//        let ages = [25, nil, 35]
-//        let result = zip(names, ages)
-//                        .compactMap { $0.1.map { "\($0) year old \($0 < 30 ? "youth" : "adult") \($0 > 1 ? "s" : "") named \($0.0)" } }
-//        XCTAssertEqual(result, ["25 year old youth named Alice", "35 year old adult named Charlie"])
+        #if SKIP
+        throw XCTSkip("testZipCompactMap")
+        #else
+        let names = ["Alice", "Bob", "Charlie"]
+        let ages = [25, nil, 35]
+        let result = zip(names, ages)
+            .compactMap { (name, age) in
+                age.map { "\($0) year old \($0 < 30 ? "youth" : "adult") named \(name)" }
+            }
+        XCTAssertEqual(result, ["25 year old youth named Alice", "35 year old adult named Charlie"])
+        #endif
     }
 
     func testLazyFilterMap() {
-//        let numbers = sequence(first: 0, next: { $0 + 1 })
-//        let result = numbers.lazy.filter { $0 % 2 == 0 }
-//                                .map { $0 * 3 }
-//                                .prefix(10)
-//        XCTAssertEqual(Array(result), [0, 6, 12, 18, 24, 30, 36, 42, 48, 54])
+        #if SKIP
+        throw XCTSkip("testLazyFilterMap")
+        #else
+        let numbers = sequence(first: 0, next: { $0 + 1 })
+        let result = numbers.lazy.filter { $0 % 2 == 0 }
+                                .map { $0 * 3 }
+                                .prefix(10)
+        XCTAssertEqual(Array(result), [0, 6, 12, 18, 24, 30, 36, 42, 48, 54])
+        #endif
     }
 }
 

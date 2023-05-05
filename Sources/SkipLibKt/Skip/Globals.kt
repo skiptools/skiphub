@@ -8,6 +8,10 @@ package skip.lib
 import kotlin.reflect.*
 
 fun fatalError(message: String = "fatalError"): Nothing = error(message)
+fun assertionFailure(message: String = "assertionFailure"): Nothing = error(message)
+fun preconditionFailure(message: String = "preconditionFailure"): Nothing = error(message)
+fun precondition(condition: Boolean, message: String = "precondition"): Unit = require(condition, { message })
+
 
 fun type(of: Any): KClass<*> {
     return of::class
@@ -25,6 +29,14 @@ fun <T : Comparable<T>> min(a: T, b: T): T {
 
 fun <T : Comparable<T>> max(a: T, b: T): T {
 	return if (a >= b) a else b
+}
+
+fun round(x: Double): Double {
+	return kotlin.math.round(x)
+}
+
+fun round(x: Float): Float {
+	return kotlin.math.round(x)
 }
 
 class NullReturnException: Exception() {

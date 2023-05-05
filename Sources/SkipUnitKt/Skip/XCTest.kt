@@ -11,7 +11,7 @@ typealias Test = org.junit.Test
 // Alias for an org.junit.AssumptionViolatedException, which will skip a test in the same way as conditionally throwing XCTSkip
 typealias XCTSkip = org.junit.AssumptionViolatedException
 
-// Mimics the API of XCTest for a JUnit 5 test
+// Mimics the API of XCTest for a JUnit 4 test
 // Behavior difference: JUnit assert* thows an exception, but XCTAssert* just reports the failure and continues
 // NOTE: the parameter order of JUnit 5's org.junit.jupiter.api.Assertions is the reverse of JUnit 4's org.junit.Assert
 interface XCTestCase {
@@ -109,5 +109,7 @@ interface XCTestCase {
     fun XCTAssertEqual(a: () -> Any?, b: () -> Any?, msg: () -> String) = org.junit.Assert.assertEquals(msg(), b(), a())
     fun XCTAssertNotEqual(a: () -> Any?, b: () -> Any?) = org.junit.Assert.assertNotEquals(b(), a())
     fun XCTAssertNotEqual(a: () -> Any?, b: () -> Any?, msg: () -> String) = org.junit.Assert.assertNotEquals(msg(), b(), a())
+
+	fun measure(block: () -> Unit) = block()
 }
 

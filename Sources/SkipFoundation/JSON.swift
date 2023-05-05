@@ -4,30 +4,27 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-#if !SKIP
-import struct Foundation.Date
-import struct Foundation.Data
-import struct Foundation.URL
-import struct Foundation.Decimal
-import class Foundation.NSDate
-import class Foundation.NSData
-import class Foundation.NSURL
-import class Foundation.NSDecimalNumber
-import class Foundation.JSONDecoder
-import class Foundation.JSONEncoder
-import class Foundation.ISO8601DateFormatter
-#endif
-
 /// A unit of JSON
-public enum JSON : Hashable {
+public enum JSON : Hashable, CustomStringConvertible {
     case null
     case bool(JSONBool)
     case number(JSONNumber)
     case string(JSONString)
     case array(JSONArray)
     case obj(JSONObject)
-}
 
+    public var description: String {
+        switch self {
+        //case .null: return "JSON.null" // error: “Unresolved reference: NullCase”
+        case .bool(let x): return "JSON.bool(\(x))"
+        case .number(let x): return "JSON.number(\(x))"
+        case .string(let x): return "JSON.string(\"\(x)\")"
+        case .array(let x): return "JSON.array(\(x))"
+        case .obj(let x): return "JSON.obj(\(x))"
+        default: return "JSON.null"
+        }
+    }
+}
 
 public typealias JSONString = String
 public typealias JSONNumber = Double
@@ -35,6 +32,12 @@ public typealias JSONBool = Bool
 public typealias JSONArray = Array<JSON>
 public typealias JSONObject = Dictionary<JSONKey, JSON>
 public typealias JSONKey = String
+
+struct UnknownDecodingError : Error {
+}
+
+struct UnknownEncodingError : Error {
+}
 
 extension JSON {
     /// Parses this JSON from a String.
@@ -65,7 +68,7 @@ public extension JSON {
     }
 
     /// Returns the ``String`` value of type ``string``.
-    var string: JSONString? {
+    var string: String? {
         switch self {
         case .string(let s):
             return s
@@ -123,6 +126,16 @@ public extension JSON {
 /// Needed to prevent conflict with inner type referencing String as a JSON case object
 public typealias NativeString = String
 
+public extension Encodable {
+    /// Creates an in-memory JSON representation of the instance's encoding.
+    ///
+    /// - Parameter options: the options for serializing the data
+    /// - Returns: A J containing the structure of the encoded instance
+    func json(options: SkipJSONEncodingOptions? = nil) throws -> JSON {
+        try JSONObjectEncoder(options: options).encode(self)
+    }
+}
+
 extension JSON {
     public func stringify(pretty: Bool = false) -> NativeString {
         return toJsonString(indent: pretty ? 0 : nil)
@@ -138,7 +151,7 @@ extension JSON {
         case .number(let n):
             return n.description
         case .string(let s):
-            return serializeString(s)
+            return escapeString(s)
         case .array(let a):
             return toJsonString(array: a, indent: indent)
         case .obj(let o):
@@ -192,7 +205,7 @@ extension JSON {
         return json
     }
 
-    private func serializeString(_ str: NativeString, withoutEscapingSlashes: Bool = false) -> NativeString {
+    private func escapeString(_ str: NativeString, withoutEscapingSlashes: Bool = false) -> NativeString {
         var json = ""
         json += "\""
 
@@ -310,6 +323,7 @@ extension JSON : Decodable {
                             do {
                                 self = try .obj(decode())
                             } catch DecodingError.typeMismatch {
+                                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                                 throw DecodingError.typeMismatch(Self.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Encoded payload not of an expected type"))
                             }
                         }
@@ -377,6 +391,407 @@ extension JSON : ExpressibleByDictionaryLiteral {
 
 #endif
 
+
+// MARK: JSONNumber constructors
+
+#if SKIP
+func JSONNumber(_ value: Int8) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: Int16) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: Int32) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: Int64) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: UInt8) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: UInt16) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: UInt32) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: UInt64) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: Float) -> JSONNumber { value.toDouble() }
+func JSONNumber(_ value: Double) -> JSONNumber { value }
+#endif
+
+
+// MARK: Foundation type imports constructors
+
+#if !SKIP
+import struct Foundation.Date
+import struct Foundation.Data
+import struct Foundation.URL
+import struct Foundation.Decimal
+import class Foundation.NSDate
+import class Foundation.NSData
+import class Foundation.NSURL
+import class Foundation.NSDecimalNumber
+import class Foundation.JSONDecoder
+import class Foundation.JSONEncoder
+import class Foundation.ISO8601DateFormatter
+#endif
+
+
+// MARK: JSONDecoder
+
+#if SKIP
+public typealias JSONDecoder = SkipJSONDecoder
+#endif
+
+open class SkipJSONDecoder {
+
+    /// The strategy to use for decoding `Date` values.
+    public enum DateDecodingStrategy : Sendable {
+
+        /// Defer to `Date` for decoding. This is the default strategy.
+        case deferredToDate
+
+        /// Decode the `Date` as a UNIX timestamp from a JSON number.
+        case secondsSince1970
+
+        /// Decode the `Date` as UNIX millisecond timestamp from a JSON number.
+        case millisecondsSince1970
+
+        /// Decode the `Date` as an ISO-8601-formatted string (in RFC 3339 format).
+        @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+        case iso8601
+
+        /// Decode the `Date` as a string parsed by the given formatter.
+        case formatted(DateFormatter)
+
+        /// Decode the `Date` as a custom value decoded by the given closure.
+        @preconcurrency case custom(@Sendable (_ decoder: Decoder) throws -> Date)
+    }
+
+    /// The strategy to use for decoding `Data` values.
+    public enum DataDecodingStrategy : Sendable {
+
+        /// Defer to `Data` for decoding.
+        case deferredToData
+
+        /// Decode the `Data` from a Base64-encoded string. This is the default strategy.
+        case base64
+
+        /// Decode the `Data` as a custom value decoded by the given closure.
+        @preconcurrency case custom(@Sendable (_ decoder: Decoder) throws -> Data)
+    }
+
+    /// The strategy to use for non-JSON-conforming floating-point values (IEEE 754 infinity and NaN).
+    public enum NonConformingFloatDecodingStrategy : Sendable {
+
+        /// Throw upon encountering non-conforming values. This is the default strategy.
+        case `throw`
+
+        /// Decode the values from the given representation strings.
+        case convertFromString(positiveInfinity: String, negativeInfinity: String, nan: String)
+    }
+
+    /// The strategy to use for automatically changing the value of keys before decoding.
+    public enum KeyDecodingStrategy : Sendable {
+
+        /// Use the keys specified by each type. This is the default strategy.
+        case useDefaultKeys
+
+        /// Convert from "snake_case_keys" to "camelCaseKeys" before attempting to match a key with the one specified by each type.
+        ///
+        /// The conversion to upper case uses `Locale.system`, also known as the ICU "root" locale. This means the result is consistent regardless of the current user's locale and language preferences.
+        ///
+        /// Converting from snake case to camel case:
+        /// 1. Capitalizes the word starting after each `_`
+        /// 2. Removes all `_`
+        /// 3. Preserves starting and ending `_` (as these are often used to indicate private variables or other metadata).
+        /// For example, `one_two_three` becomes `oneTwoThree`. `_one_two_three_` becomes `_oneTwoThree_`.
+        ///
+        /// - Note: Using a key decoding strategy has a nominal performance cost, as each string key has to be inspected for the `_` character.
+        case convertFromSnakeCase
+
+        /// Provide a custom conversion from the key in the encoded JSON to the keys specified by the decoded types.
+        /// The full path to the current decoding position is provided for context (in case you need to locate this key within the payload). The returned key is used in place of the last component in the coding path before decoding.
+        /// If the result of the conversion is a duplicate key, then only one value will be present in the container for the type to decode from.
+        @preconcurrency case custom(@Sendable (_ codingPath: [CodingKey]) -> CodingKey)
+    }
+
+    /// The strategy to use in decoding dates. Defaults to `.deferredToDate`.
+    open var dateDecodingStrategy: SkipJSONDecoder.DateDecodingStrategy = .deferredToDate
+
+    /// The strategy to use in decoding binary data. Defaults to `.base64`.
+    open var dataDecodingStrategy: SkipJSONDecoder.DataDecodingStrategy = .base64
+
+    /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`.
+    open var nonConformingFloatDecodingStrategy: SkipJSONDecoder.NonConformingFloatDecodingStrategy = .throw
+
+    /// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
+    open var keyDecodingStrategy: SkipJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
+
+    /// Contextual user-provided information for use during decoding.
+    open var userInfo: [CodingUserInfoKey : Any] = [:]
+
+    /// Set to `true` to allow parsing of JSON5. Defaults to `false`.
+    open var allowsJSON5: Bool = false
+
+    /// Set to `true` to assume the data is a top level Dictionary (no surrounding "{ }" required). Defaults to `false`. Compatible with both JSON5 and non-JSON5 mode.
+    open var assumesTopLevelDictionary: Bool = false
+
+    /// Initializes `self` with default strategies.
+    public init() {
+    }
+
+    /// Decodes a top-level value of the given type from the given JSON representation.
+    ///
+    /// - parameter type: The type of the value to decode.
+    /// - parameter data: The data to decode from.
+    /// - returns: A value of the requested type.
+    /// - throws: `DecodingError.dataCorrupted` if values requested from the payload are corrupted, or if the given data is not valid JSON.
+    /// - throws: An error if any value throws an error during decoding.
+    open func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
+        fatalError("TODO: SkipJSONDecoder.decode")
+    }
+}
+
+//@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+//extension SkipJSONDecoder : TopLevelDecoder {
+//
+//    /// The type this decoder accepts.
+//    public typealias Input = Data
+//}
+
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+extension SkipJSONDecoder : @unchecked Sendable {
+}
+
+
+// MARK: JSONEncoder
+
+#if SKIP
+public typealias JSONEncoder = SkipJSONEncoder
+#endif
+
+open class SkipJSONEncoder {
+
+    /// The formatting of the output JSON data.
+    public struct OutputFormatting : OptionSet, Sendable {
+
+        /// The format's default value.
+        public let rawValue: UInt
+
+        /// Creates an OutputFormatting value with the given raw value.
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
+
+        /// Produce human-readable JSON with indented output.
+        public static let prettyPrinted: SkipJSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 0))
+
+        /// Produce JSON with dictionary keys sorted in lexicographic order.
+        @available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *)
+        public static let sortedKeys: SkipJSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 1))
+
+        /// By default slashes get escaped ("/" → "\/", "http://apple.com/" → "http:\/\/apple.com\/")
+        /// for security reasons, allowing outputted JSON to be safely embedded within HTML/XML.
+        /// In contexts where this escaping is unnecessary, the JSON is known to not be embedded,
+        /// or is intended only for display, this option avoids this escaping.
+        @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+        public static let withoutEscapingSlashes: SkipJSONEncoder.OutputFormatting = OutputFormatting(rawValue: UInt(1 << 3))
+
+//        /// The type of the elements of an array literal.
+//        public typealias ArrayLiteralElement = SkipJSONEncoder.OutputFormatting
+//
+//        /// The element type of the option set.
+//        ///
+//        /// To inherit all the default implementations from the `OptionSet` protocol,
+//        /// the `Element` type must be `Self`, the default.
+//        public typealias Element = JSONEncoder.OutputFormatting
+//
+//        /// The raw type that can be used to represent all values of the conforming
+//        /// type.
+//        ///
+//        /// Every distinct value of the conforming type has a corresponding unique
+//        /// value of the `RawValue` type, but there may be values of the `RawValue`
+//        /// type that don't have a corresponding value of the conforming type.
+//        public typealias RawValue = UInt
+    }
+
+    /// The strategy to use for encoding `Date` values.
+    public enum DateEncodingStrategy : Sendable {
+
+        /// Defer to `Date` for choosing an encoding. This is the default strategy.
+        case deferredToDate
+
+        /// Encode the `Date` as a UNIX timestamp (as a JSON number).
+        case secondsSince1970
+
+        /// Encode the `Date` as UNIX millisecond timestamp (as a JSON number).
+        case millisecondsSince1970
+
+        /// Encode the `Date` as an ISO-8601-formatted string (in RFC 3339 format).
+        @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+        case iso8601
+
+        /// Encode the `Date` as a string formatted by the given formatter.
+        case formatted(DateFormatter)
+
+        /// Encode the `Date` as a custom value encoded by the given closure.
+        ///
+        /// If the closure fails to encode a value into the given encoder, the encoder will encode an empty automatic container in its place.
+        @preconcurrency case custom(@Sendable (Date, Encoder) throws -> Void)
+    }
+
+    /// The strategy to use for encoding `Data` values.
+    public enum DataEncodingStrategy : Sendable {
+
+        /// Defer to `Data` for choosing an encoding.
+        case deferredToData
+
+        /// Encoded the `Data` as a Base64-encoded string. This is the default strategy.
+        case base64
+
+        /// Encode the `Data` as a custom value encoded by the given closure.
+        ///
+        /// If the closure fails to encode a value into the given encoder, the encoder will encode an empty automatic container in its place.
+        @preconcurrency case custom(@Sendable (Data, Encoder) throws -> Void)
+    }
+
+    /// The strategy to use for non-JSON-conforming floating-point values (IEEE 754 infinity and NaN).
+    public enum NonConformingFloatEncodingStrategy : Sendable {
+
+        /// Throw upon encountering non-conforming values. This is the default strategy.
+        case `throw`
+
+        /// Encode the values using the given representation strings.
+        case convertToString(positiveInfinity: String, negativeInfinity: String, nan: String)
+    }
+
+    /// The strategy to use for automatically changing the value of keys before encoding.
+    public enum KeyEncodingStrategy : Sendable {
+
+        /// Use the keys specified by each type. This is the default strategy.
+        case useDefaultKeys
+
+        /// Convert from "camelCaseKeys" to "snake_case_keys" before writing a key to JSON payload.
+        ///
+        /// Capital characters are determined by testing membership in `CharacterSet.uppercaseLetters` and `CharacterSet.lowercaseLetters` (Unicode General Categories Lu and Lt).
+        /// The conversion to lower case uses `Locale.system`, also known as the ICU "root" locale. This means the result is consistent regardless of the current user's locale and language preferences.
+        ///
+        /// Converting from camel case to snake case:
+        /// 1. Splits words at the boundary of lower-case to upper-case
+        /// 2. Inserts `_` between words
+        /// 3. Lowercases the entire string
+        /// 4. Preserves starting and ending `_`.
+        ///
+        /// For example, `oneTwoThree` becomes `one_two_three`. `_oneTwoThree_` becomes `_one_two_three_`.
+        ///
+        /// - Note: Using a key encoding strategy has a nominal performance cost, as each string key has to be converted.
+        case convertToSnakeCase
+
+        /// Provide a custom conversion to the key in the encoded JSON from the keys specified by the encoded types.
+        /// The full path to the current encoding position is provided for context (in case you need to locate this key within the payload). The returned key is used in place of the last component in the coding path before encoding.
+        /// If the result of the conversion is a duplicate key, then only one value will be present in the result.
+        @preconcurrency case custom(@Sendable (_ codingPath: [CodingKey]) -> CodingKey)
+    }
+
+    /// The output format to produce. Defaults to `[]`.
+    open var outputFormatting: SkipJSONEncoder.OutputFormatting = []
+
+    /// The strategy to use in encoding dates. Defaults to `.deferredToDate`.
+    open var dateEncodingStrategy: SkipJSONEncoder.DateEncodingStrategy = .deferredToDate
+
+    /// The strategy to use in encoding binary data. Defaults to `.base64`.
+    open var dataEncodingStrategy: SkipJSONEncoder.DataEncodingStrategy = .base64
+
+    /// The strategy to use in encoding non-conforming numbers. Defaults to `.throw`.
+    open var nonConformingFloatEncodingStrategy: SkipJSONEncoder.NonConformingFloatEncodingStrategy = .throw
+
+    /// The strategy to use for encoding keys. Defaults to `.useDefaultKeys`.
+    open var keyEncodingStrategy: SkipJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+
+    /// Contextual user-provided information for use during encoding.
+    open var userInfo: [CodingUserInfoKey : Any] = [:]
+
+    /// Initializes `self` with default strategies.
+    public init() {
+    }
+
+    /// Encodes the given top-level value and returns its JSON representation.
+    ///
+    /// - parameter value: The value to encode.
+    /// - returns: A new `Data` value containing the encoded JSON data.
+    /// - throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - throws: An error if any value throws an error during encoding.
+    open func encode<T>(_ value: T) throws -> Data where T : Encodable {
+        try value.json().stringify(pretty: outputFormatting.contains([SkipJSONEncoder.OutputFormatting.prettyPrinted])).data(using: .utf8)!
+    }
+}
+
+//@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+//extension SkipJSONEncoder : TopLevelEncoder {
+//
+//    /// The type this encoder produces.
+//    public typealias Output = Data
+//}
+
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+extension SkipJSONEncoder : @unchecked Sendable {
+}
+
+#if SKIP
+public typealias JSONDecodingOptions = SkipJSONDecodingOptions
+#endif
+
+/// A set of options for decoding an entity from a `JSON` instance.
+open class SkipJSONDecodingOptions {
+    /// The strategy to use in decoding dates. Defaults to `.deferredToDate`.
+    open var dateDecodingStrategy: SkipJSONDecoder.DateDecodingStrategy
+
+    /// The strategy to use in decoding binary data. Defaults to `.base64`.
+    open var dataDecodingStrategy: SkipJSONDecoder.DataDecodingStrategy
+
+    /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`.
+    open var nonConformingFloatDecodingStrategy: SkipJSONDecoder.NonConformingFloatDecodingStrategy
+
+    /// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
+    open var keyDecodingStrategy: SkipJSONDecoder.KeyDecodingStrategy
+
+    /// Contextual user-provided information for use during decoding.
+    open var userInfo: [CodingUserInfoKey : Any]
+
+    public init(dateDecodingStrategy: SkipJSONDecoder.DateDecodingStrategy = .deferredToDate, dataDecodingStrategy: SkipJSONDecoder.DataDecodingStrategy = .base64, nonConformingFloatDecodingStrategy: SkipJSONDecoder.NonConformingFloatDecodingStrategy = .throw, keyDecodingStrategy: SkipJSONDecoder.KeyDecodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
+        self.dateDecodingStrategy = dateDecodingStrategy
+        self.dataDecodingStrategy = dataDecodingStrategy
+        self.nonConformingFloatDecodingStrategy = nonConformingFloatDecodingStrategy
+        self.keyDecodingStrategy = keyDecodingStrategy
+        self.userInfo = userInfo
+    }
+}
+
+#if SKIP
+public typealias JSONEncodingOptions = SkipJSONEncodingOptions
+#endif
+
+/// A set of options for encoding an entity from a `JSON` instance.
+open class SkipJSONEncodingOptions {
+    /// The output format to produce. Defaults to `[]`.
+    open var outputFormatting: SkipJSONEncoder.OutputFormatting
+
+    /// The strategy to use in encoding dates. Defaults to `.deferredToDate`.
+    open var dateEncodingStrategy: SkipJSONEncoder.DateEncodingStrategy
+
+    /// The strategy to use in encoding binary data. Defaults to `.base64`.
+    open var dataEncodingStrategy: SkipJSONEncoder.DataEncodingStrategy
+
+    /// The strategy to use in encoding non-conforming numbers. Defaults to `.throw`.
+    open var nonConformingFloatEncodingStrategy: SkipJSONEncoder.NonConformingFloatEncodingStrategy
+
+    /// The strategy to use for encoding keys. Defaults to `.useDefaultKeys`.
+    open var keyEncodingStrategy: SkipJSONEncoder.KeyEncodingStrategy
+
+    /// Contextual user-provided information for use during encoding.
+    open var userInfo: [CodingUserInfoKey : Any]
+
+    public init(outputFormatting: SkipJSONEncoder.OutputFormatting = .sortedKeys, dateEncodingStrategy: SkipJSONEncoder.DateEncodingStrategy = .deferredToDate, dataEncodingStrategy: SkipJSONEncoder.DataEncodingStrategy = .base64, nonConformingFloatEncodingStrategy: SkipJSONEncoder.NonConformingFloatEncodingStrategy = .throw, keyEncodingStrategy: SkipJSONEncoder.KeyEncodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
+        self.outputFormatting = outputFormatting
+        self.dateEncodingStrategy = dateEncodingStrategy
+        self.dataEncodingStrategy = dataEncodingStrategy
+        self.nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy
+        self.keyEncodingStrategy = keyEncodingStrategy
+        self.userInfo = userInfo
+    }
+}
+
+
+
 #if !SKIP // TODO: JSONDecoder support
 
 extension Decodable {
@@ -412,16 +827,24 @@ extension Decodable {
         return try decoder.decode(T.self, from: Data(json))
     }
 }
+#endif
 
 
 // MARK: Internal JSON Encoding / Decoding
 
-private extension _JSONContainer {
+
+extension _JSONContainer {
     func addElement(_ element: _JSONContainer) throws {
         guard let arr = self.json.array else {
             throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: [], debugDescription: "Element was not an array"))
         }
-        self.json = .array(arr + [element.json])
+        #if SKIP // “inferred type is List<JSON> but JSONArray /* = Array<JSON> */ was expected”
+        var newArray = arr
+        newArray.append(element.json)
+        self.json = JSON.array(newArray)
+        #else
+        self.json = JSON.array(arr + [element.json])
+        #endif
     }
 
     func insertElement(_ element: _JSONContainer, at index: Int) throws {
@@ -429,7 +852,7 @@ private extension _JSONContainer {
             throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: [], debugDescription: "Element was not an array"))
         }
         arr.insert(element.json, at: index)
-        self.json = .array(arr)
+        self.json = JSON.array(arr)
     }
 
     func setProperty(_ key: String, _ element: _JSONContainer) throws {
@@ -437,63 +860,7 @@ private extension _JSONContainer {
             throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: [], debugDescription: "Element was not an object"))
         }
         obj[key] = element.json
-        self.json = .obj(obj)
-    }
-}
-
-/// A set of options for decoding an entity from a `JSON` instance.
-open class JSONDecodingOptions {
-    /// The strategy to use in decoding dates. Defaults to `.deferredToDate`.
-    open var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy
-
-    /// The strategy to use in decoding binary data. Defaults to `.base64`.
-    open var dataDecodingStrategy: JSONDecoder.DataDecodingStrategy
-
-    /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`.
-    open var nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy
-
-    /// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
-    open var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy
-
-    /// Contextual user-provided information for use during decoding.
-    open var userInfo: [CodingUserInfoKey : Any]
-
-    public init(dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate, dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .base64, nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy = .throw, keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
-        self.dateDecodingStrategy = dateDecodingStrategy
-        self.dataDecodingStrategy = dataDecodingStrategy
-        self.nonConformingFloatDecodingStrategy = nonConformingFloatDecodingStrategy
-        self.keyDecodingStrategy = keyDecodingStrategy
-        self.userInfo = userInfo
-    }
-}
-
-/// A set of options for encoding an entity from a `JSON` instance.
-open class JSONEncodingOptions {
-    /// The output format to produce. Defaults to `[]`.
-    open var outputFormatting: JSONEncoder.OutputFormatting
-
-    /// The strategy to use in encoding dates. Defaults to `.deferredToDate`.
-    open var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy
-
-    /// The strategy to use in encoding binary data. Defaults to `.base64`.
-    open var dataEncodingStrategy: JSONEncoder.DataEncodingStrategy
-
-    /// The strategy to use in encoding non-conforming numbers. Defaults to `.throw`.
-    open var nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy
-
-    /// The strategy to use for encoding keys. Defaults to `.useDefaultKeys`.
-    open var keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
-
-    /// Contextual user-provided information for use during encoding.
-    open var userInfo: [CodingUserInfoKey : Any]
-
-    public init(outputFormatting: JSONEncoder.OutputFormatting = .sortedKeys, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .deferredToDate, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy = .throw, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .useDefaultKeys, userInfo: [CodingUserInfoKey : Any] = [:]) {
-        self.outputFormatting = outputFormatting
-        self.dateEncodingStrategy = dateEncodingStrategy
-        self.dataEncodingStrategy = dataEncodingStrategy
-        self.nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy
-        self.keyEncodingStrategy = keyEncodingStrategy
-        self.userInfo = userInfo
+        self.json = JSON.obj(obj)
     }
 }
 
@@ -512,16 +879,6 @@ private protocol TopLevelJSONDecoder {
 }
 #endif
 
-extension Encodable {
-    /// Creates an in-memory J representation of the instance's encoding.
-    ///
-    /// - Parameter options: the options for serializing the data
-    /// - Returns: A J containing the structure of the encoded instance
-    public func json(options: JSONEncodingOptions? = nil) throws -> JSON {
-        try JEncoder(options: options).encode(self)
-    }
-}
-
 //extension Decodable {
 //    /// Creates an instance from an encoded intermediate representation.
 //    ///
@@ -532,16 +889,16 @@ extension Encodable {
 //    ///   - json: the JSON to load the instance from
 //    ///   - options: the options for deserializing the data such as the decoding strategies for dates and data.
 //    public init(json: JSON, options: JSONDecodingOptions? = nil) throws {
-//        try self = JDecoder(options: options).decode(Self.self, from: json)
+//        try self = JSONObjectDecoder(options: options).decode(Self.self, from: json)
 //    }
 //}
 
-internal class JEncoder : TopLevelJSONEncoder {
-    let options: JSONEncodingOptions
+internal final class JSONObjectEncoder : TopLevelJSONEncoder {
+    let options: SkipJSONEncodingOptions
 
     /// Initializes `self` with default strategies.
-    public init(options: JSONEncodingOptions? = nil) {
-        self.options = options ?? JSONEncodingOptions()
+    public init(options: SkipJSONEncodingOptions? = nil) {
+        self.options = options ?? SkipJSONEncodingOptions()
     }
 
     /// Encodes the given top-level value and returns its script object representation.
@@ -565,9 +922,15 @@ internal class JEncoder : TopLevelJSONEncoder {
     internal func encodeToTopLevelContainer<Value: Encodable>(_ value: Value) throws -> JSON {
         let encoder = JSONElementEncoder(options: options)
         guard let topLevel = try encoder.box_(value) else {
+            #if !SKIP
             throw EncodingError.invalidValue(value,
                                              EncodingError.Context(codingPath: [],
                                                                    debugDescription: "Top-level \(Value.self) did not encode any values."))
+            #else // no reified parameters
+            throw EncodingError.invalidValue(value,
+                                             EncodingError.Context(codingPath: [],
+                                                                   debugDescription: "Top-level value did not encode any values."))
+            #endif
         }
 
         return topLevel.json
@@ -575,13 +938,13 @@ internal class JEncoder : TopLevelJSONEncoder {
 }
 
 
-/// `JDecoder` facilitates the decoding of `J` values into `Decodable` types.
-internal class JDecoder : TopLevelJSONDecoder {
-    let options: JSONDecodingOptions
+/// `JSONObjectDecoder` facilitates the decoding of `J` values into `Decodable` types.
+internal final class JSONObjectDecoder : TopLevelJSONDecoder {
+    let options: SkipJSONDecodingOptions
 
     /// Initializes `self` with default strategies.
-    public init(options: JSONDecodingOptions? = nil) {
-        self.options = options ?? JSONDecodingOptions()
+    public init(options: SkipJSONDecodingOptions? = nil) {
+        self.options = options ?? SkipJSONDecodingOptions()
     }
 
     /// Decodes a top-level value of the given type from the given script representation.
@@ -607,6 +970,7 @@ internal class JDecoder : TopLevelJSONDecoder {
     internal func decode<T: Decodable>(_ type: T.Type, fromTopLevel container: JSON) throws -> T {
         let decoder = _JSONDecoder(options: options, referencing: container)
         guard let value = try decoder.unbox(container, as: type) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: [], debugDescription: "The given data did not contain a top-level value."))
         }
 
@@ -616,7 +980,7 @@ internal class JDecoder : TopLevelJSONDecoder {
 
 
 fileprivate class JSONElementEncoder: Encoder {
-    fileprivate let options: JSONEncodingOptions
+    fileprivate let options: SkipJSONEncodingOptions
 
     /// The encoder's storage.
     fileprivate var storage: _JSONEncodingStorage
@@ -630,7 +994,7 @@ fileprivate class JSONElementEncoder: Encoder {
     }
 
     /// Initializes `self` with the given top-level encoder options.
-    fileprivate init(options: JSONEncodingOptions, codingPath: [CodingKey] = []) {
+    fileprivate init(options: SkipJSONEncodingOptions, codingPath: [CodingKey] = []) {
         self.options = options
         self.storage = _JSONEncodingStorage()
         self.codingPath = codingPath
@@ -649,7 +1013,7 @@ fileprivate class JSONElementEncoder: Encoder {
         return self.storage.count == self.codingPath.count
     }
 
-    public func container<Key>(keyedBy: Key.Type) -> KeyedEncodingContainer<Key> {
+    public func container<Key: CodingKey>(keyedBy: Key.Type) -> KeyedEncodingContainer<Key> {
         // If an existing keyed container was already requested, return that one.
         let topContainer: _JSONContainer
         if self.canEncodeNewValue {
@@ -713,13 +1077,13 @@ fileprivate struct _JSONEncodingStorage {
         return self.containers.count
     }
 
-    fileprivate mutating func pushKeyedContainer(_ options: JSONEncodingOptions) -> _JSONContainer {
+    fileprivate mutating func pushKeyedContainer(_ options: SkipJSONEncodingOptions) -> _JSONContainer {
         let dictionary = _JSONContainer(json: JSON.obj([:]))
         self.containers.append(dictionary)
         return dictionary
     }
 
-    fileprivate mutating func pushUnkeyedContainer(_ options: JSONEncodingOptions) throws -> _JSONContainer {
+    fileprivate mutating func pushUnkeyedContainer(_ options: SkipJSONEncodingOptions) throws -> _JSONContainer {
         let array = _JSONContainer(json: JSON.array([]))
         self.containers.append(array)
         return array
@@ -757,14 +1121,18 @@ fileprivate struct _JSONUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         self.container = container
     }
 
-    public mutating func encodeNil() throws { try container.addElement(.init(json: JSON.null)) }
+    public mutating func encodeNil() throws { try container.addElement(_JSONContainer(json: JSON.null)) }
     public mutating func encode(_ value: Bool) throws { try container.addElement(encoder.box(value)) }
+    #if !SKIP // Int and Int32 are the same in Skip
     public mutating func encode(_ value: Int) throws { try container.addElement(encoder.box(value)) }
+    #endif
     public mutating func encode(_ value: Int8) throws { try container.addElement(encoder.box(value)) }
     public mutating func encode(_ value: Int16) throws { try container.addElement(encoder.box(value)) }
     public mutating func encode(_ value: Int32) throws { try container.addElement(encoder.box(value)) }
     public mutating func encode(_ value: Int64) throws { try container.addElement(encoder.box(value)) }
+    #if !SKIP // Int and Int32 are the same in Skip
     public mutating func encode(_ value: UInt) throws { try container.addElement(encoder.box(value)) }
+    #endif
     public mutating func encode(_ value: UInt8) throws { try container.addElement(encoder.box(value)) }
     public mutating func encode(_ value: UInt16) throws { try container.addElement(encoder.box(value)) }
     public mutating func encode(_ value: UInt32) throws { try container.addElement(encoder.box(value)) }
@@ -779,7 +1147,7 @@ fileprivate struct _JSONUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         try self.container.addElement(self.encoder.box(value))
     }
 
-    public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> {
+    public mutating func nestedContainer<NestedKey: CodingKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> {
         self.codingPath.append(_JSONKey(index: self.count))
         defer { self.codingPath.removeLast() }
 
@@ -823,10 +1191,12 @@ extension JSONElementEncoder: SingleValueEncodingContainer {
         self.storage.push(container: self.box(value))
     }
 
+    #if !SKIP // Int and Int32 are the same in Skip
     public func encode(_ value: Int) throws {
         assertCanEncodeNewValue()
         self.storage.push(container: self.box(value))
     }
+    #endif
 
     public func encode(_ value: Int8) throws {
         assertCanEncodeNewValue()
@@ -848,10 +1218,12 @@ extension JSONElementEncoder: SingleValueEncodingContainer {
         self.storage.push(container: self.box(value))
     }
 
+    #if !SKIP // Int and Int32 are the same in Skip
     public func encode(_ value: UInt) throws {
         assertCanEncodeNewValue()
         self.storage.push(container: self.box(value))
     }
+    #endif
 
     public func encode(_ value: UInt8) throws {
         assertCanEncodeNewValue()
@@ -898,73 +1270,82 @@ extension JSONElementEncoder {
 
     /// Returns the given value boxed in a container appropriate for pushing onto the container stack.
     fileprivate func box(_ value: Bool) -> _JSONContainer {
-        .init(json: .bool(value))
+        _JSONContainer(json: JSON.bool(value))
     }
 
+    #if !SKIP // Int and Int32 are the same in Skip
     fileprivate func box(_ value: Int) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
+    #endif
     fileprivate func box(_ value: Int8) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: Int16) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: Int32) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: Int64) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
+    #if !SKIP // Int and Int32 are the same in Skip
     fileprivate func box(_ value: UInt) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
+    #endif
     fileprivate func box(_ value: UInt8) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: UInt16) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: UInt32) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: UInt64) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: Float) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: Double) -> _JSONContainer {
-        .init(json: .number(.init(value)))
+        _JSONContainer(json: JSON.number(JSONNumber(value)))
     }
     fileprivate func box(_ value: String) -> _JSONContainer {
-        .init(json: .string(value))
+        _JSONContainer(json: JSON.string(value))
     }
+    #if !SKIP // TODO: Date
     fileprivate func box(_ date: Date) throws -> _JSONContainer {
         switch self.options.dateEncodingStrategy {
-        case .deferredToDate:
+        case SkipJSONEncoder.DateEncodingStrategy.deferredToDate:
             // Must be called with a surrounding with(pushedKey:) call.
             // Dates encode as single-value objects; this can't both throw and push a container, so no need to catch the error.
             try date.encode(to: self)
-            return .init(json: self.storage.popContainer().json)
+            return _JSONContainer(json: self.storage.popContainer().json)
 
-        case .secondsSince1970:
-            return .init(json: .number(date.timeIntervalSince1970))
+        case SkipJSONEncoder.DateEncodingStrategy.secondsSince1970:
+            return _JSONContainer(json: JSON.number(date.timeIntervalSince1970))
 
-        case .millisecondsSince1970:
-            return .init(json: .number(1000.0 * date.timeIntervalSince1970))
+        case SkipJSONEncoder.DateEncodingStrategy.millisecondsSince1970:
+            return _JSONContainer(json: JSON.number(1000.0 * date.timeIntervalSince1970))
 
-        case .iso8601:
+        case SkipJSONEncoder.DateEncodingStrategy.iso8601:
+            #if !SKIP
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
-                return .init(json: .string(_iso8601Formatter.string(from: date)))
+                return _JSONContainer(json: JSON.string(_iso8601Formatter.string(from: date)))
             } else {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
+            #else
+            fatalError("ISO8601DateFormatter is unavailable on this platform.")
+            #endif
 
-        case .formatted(let formatter):
-            return .init(json: .string(formatter.string(from: date)))
+        case SkipJSONEncoder.DateEncodingStrategy.formatted(let formatter):
+            return _JSONContainer(json: JSON.string(formatter.string(from: date)))
 
-        case .custom(let closure):
+        case SkipJSONEncoder.DateEncodingStrategy.custom(let closure):
             let depth = self.storage.count
             do {
                 try closure(date, self)
@@ -979,20 +1360,23 @@ extension JSONElementEncoder {
 
             guard self.storage.count > depth else {
                 // The closure didn't encode anything. Return the default keyed container.
-                return .init(json: .obj([:]))
+                return _JSONContainer(json: JSON.obj([:]))
             }
 
             // We can pop because the closure encoded something.
             return self.storage.popContainer()
 
-        @unknown default:
-            return .init(json: .string(_iso8601Formatter.string(from: date)))
+//        @unknown default:
+//            return .init(json: JSON.string(_iso8601Formatter.string(from: date)))
         }
     }
+    #endif
 
+
+    #if !SKIP // TODO: Data
     func box(_ data: Data) throws -> _JSONContainer {
         switch self.options.dataEncodingStrategy {
-        case .deferredToData:
+        case SkipJSONEncoder.DataEncodingStrategy.deferredToData:
             // Must be called with a surrounding with(pushedKey:) call.
             let depth = self.storage.count
             do {
@@ -1009,10 +1393,10 @@ extension JSONElementEncoder {
 
             return self.storage.popContainer()
 
-        case .base64:
-            return .init(json: .string(data.base64EncodedString()))
+        case SkipJSONEncoder.DataEncodingStrategy.base64:
+            return .init(json: JSON.string(data.base64EncodedString()))
 
-        case .custom(let closure):
+        case SkipJSONEncoder.DataEncodingStrategy.custom(let closure):
             let depth = self.storage.count
             do {
                 try closure(data, self)
@@ -1027,31 +1411,46 @@ extension JSONElementEncoder {
 
             guard self.storage.count > depth else {
                 // The closure didn't encode anything. Return the default keyed container.
-                return .init(json: .obj([:]))
+                return .init(json: JSON.obj([:]))
             }
 
             // We can pop because the closure encoded something.
             return self.storage.popContainer()
         @unknown default:
-            return .init(json: .string(data.base64EncodedString()))
+            return .init(json: JSON.string(data.base64EncodedString()))
         }
     }
+    #endif
 
     fileprivate func box<T: Encodable>(_ value: T) throws -> _JSONContainer {
         return try self.box_(value) ?? .init(json: JSON.obj([:]))
     }
 
     fileprivate func box_<T: Encodable>(_ value: T) throws -> _JSONContainer? {
-        let type = Swift.type(of: value)
+        let type = type(of: value)
+        #if !SKIP // TODO: Date support
         if type == Date.self || type == NSDate.self {
             return try self.box((value as! Date))
-        } else if type == Data.self || type == NSData.self {
-            return try self.box((value as! Data))
-        } else if type == URL.self || type == NSURL.self {
-            return .init(json: .string((value as! URL).absoluteString))
-        } else if type == Decimal.self || type == NSDecimalNumber.self {
-            return .init(json: .number((value as! NSDecimalNumber).doubleValue))
         }
+        #endif
+
+        #if !SKIP // TODO: Data support
+        if type == Data.self || type == NSData.self {
+            return try self.box((value as! Data))
+        }
+        #endif
+
+        #if !SKIP // TODO: URL support
+        if type == URL.self || type == NSURL.self {
+            return .init(json: JSON.string((value as! URL).absoluteString))
+        }
+        #endif
+
+        #if !SKIP // TODO: Decimal support?
+        if type == Decimal.self || type == NSDecimalNumber.self {
+            return .init(json: JSON.number((value as! NSDecimalNumber).doubleValue))
+        }
+        #endif
 
         // The value should request a container from the JSONElementEncoder.
         let depth = self.storage.count
@@ -1075,7 +1474,15 @@ extension JSONElementEncoder {
     }
 }
 
-fileprivate struct _JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol {
+#if SKIP // typealias gymnastics to work around the lack of reified types and inner typealiases
+typealias EncodingContainerKey = CodingKey
+#endif
+
+fileprivate struct _JSONKeyedEncodingContainer<_EncodingContainerKey: CodingKey>: KeyedEncodingContainerProtocol {
+    #if !SKIP
+    typealias EncodingContainerKey = _EncodingContainerKey
+    #endif
+
     /// A reference to the encoder we're writing to.
     private let encoder: JSONElementEncoder
 
@@ -1092,73 +1499,77 @@ fileprivate struct _JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingCon
         self.container = container
     }
 
-    public mutating func encodeNil(forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .null))
+    public mutating func encodeNil(forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.null))
     }
 
-    public mutating func encode(_ value: Bool, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .bool(value)))
+    public mutating func encode(_ value: Bool, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.bool(value)))
     }
 
-    public mutating func encode(_ value: Int, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    #if !SKIP // Int and Int32 are the same in Skip
+    public mutating func encode(_ value: Int, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
+    }
+    #endif
+
+    public mutating func encode(_ value: Int8, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: Int8, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: Int16, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: Int16, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: Int32, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: Int32, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: Int64, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: Int64, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    #if !SKIP // Int and Int32 are the same in Skip
+    public mutating func encode(_ value: UInt, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
+    }
+    #endif
+
+    public mutating func encode(_ value: UInt8, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: UInt, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: UInt16, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: UInt8, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: UInt32, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: UInt16, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: UInt64, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: UInt32, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: String, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.string(value)))
     }
 
-    public mutating func encode(_ value: UInt64, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
+    public mutating func encode(_ value: Float, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(JSONNumber(value))))
     }
 
-    public mutating func encode(_ value: String, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .string(value)))
+    public mutating func encode(_ value: Double, forKey key: EncodingContainerKey) throws {
+        try container.setProperty(key.stringValue, _JSONContainer(json: JSON.number(value)))
     }
 
-    public mutating func encode(_ value: Float, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(.init(value))))
-    }
-
-    public mutating func encode(_ value: Double, forKey key: Key) throws {
-        try container.setProperty(key.stringValue, .init(json: .number(value)))
-    }
-
-    public mutating func encode<T: Encodable>(_ value: T, forKey key: Key) throws {
+    public mutating func encode<T: Encodable>(_ value: T, forKey key: EncodingContainerKey) throws {
         self.encoder.codingPath.append(key)
         defer { self.encoder.codingPath.removeLast() }
         try container.setProperty(key.stringValue, self.encoder.box(value))
     }
 
-    public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
+    public mutating func nestedContainer<NestedKey: CodingKey>(keyedBy keyType: NestedKey.Type, forKey key: EncodingContainerKey) -> KeyedEncodingContainer<NestedKey> {
         let dictionary = _JSONContainer(json: JSON.obj([:]))
         _ = try? self.container.setProperty(key.stringValue, dictionary)
 
@@ -1169,7 +1580,7 @@ fileprivate struct _JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingCon
         return KeyedEncodingContainer(container)
     }
 
-    public mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
+    public mutating func nestedUnkeyedContainer(forKey key: EncodingContainerKey) -> UnkeyedEncodingContainer {
         do {
             let array = _JSONContainer(json: JSON.array([]))
             try container.setProperty(key.stringValue, array)
@@ -1183,10 +1594,10 @@ fileprivate struct _JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingCon
     }
 
     public mutating func superEncoder() -> Encoder {
-        return _JSONReferencingEncoder(referencing: self.encoder, at: _JSONKey.super, wrapping: self.container)
+        return _JSONReferencingEncoder(referencing: self.encoder, at: _JSONKey.superKey, wrapping: self.container)
     }
 
-    public mutating func superEncoder(forKey key: Key) -> Encoder {
+    public mutating func superEncoder(forKey key: EncodingContainerKey) -> Encoder {
         return _JSONReferencingEncoder(referencing: self.encoder, at: key, wrapping: self.container)
     }
 }
@@ -1194,7 +1605,7 @@ fileprivate struct _JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingCon
 
 /// `_JSONReferencingEncoder` is a special subclass of JSONElementEncoder which has its own storage, but references the contents of a different encoder.
 /// It's used in `superEncoder()`, which returns a new encoder for encoding a superclass -- the lifetime of the encoder should not escape the scope it's created in, but it doesn't necessarily know when it's done being used (to write to the original container).
-fileprivate class _JSONReferencingEncoder: JSONElementEncoder {
+fileprivate final class _JSONReferencingEncoder: JSONElementEncoder {
     /// The type of container we're referencing.
     private enum Reference {
         /// Referencing a specific index in an array container.
@@ -1214,8 +1625,11 @@ fileprivate class _JSONReferencingEncoder: JSONElementEncoder {
     fileprivate init(referencing encoder: JSONElementEncoder, at index: Int, wrapping array: _JSONContainer) {
         self.encoder = encoder
         self.reference = .array(array, index)
+        #if SKIP // “Cannot access 'encoder' before superclass constructor has been called”
+        super.init(options: referencing.options, codingPath: referencing.codingPath)
+        #else
         super.init(options: encoder.options, codingPath: encoder.codingPath)
-
+        #endif
         self.codingPath.append(_JSONKey(index: index))
     }
 
@@ -1223,7 +1637,11 @@ fileprivate class _JSONReferencingEncoder: JSONElementEncoder {
     fileprivate init(referencing encoder: JSONElementEncoder, at key: CodingKey, wrapping dictionary: _JSONContainer) {
         self.encoder = encoder
         self.reference = .dictionary(dictionary, key.stringValue)
+        #if SKIP // “Cannot access 'encoder' before superclass constructor has been called”
+        super.init(options: referencing.options, codingPath: referencing.codingPath)
+        #else
         super.init(options: encoder.options, codingPath: encoder.codingPath)
+        #endif
 
         self.codingPath.append(key)
     }
@@ -1235,6 +1653,7 @@ fileprivate class _JSONReferencingEncoder: JSONElementEncoder {
         return self.storage.count == self.codingPath.count - self.encoder.codingPath.count - 1
     }
 
+    #if !SKIP // TODO: deinit? Replace with manual resource management?
     // Finalizes `self` by writing the contents of our storage to the referenced encoder's storage.
     deinit {
         let value: _JSONContainer
@@ -1252,11 +1671,12 @@ fileprivate class _JSONReferencingEncoder: JSONElementEncoder {
             try? dictionary.setProperty(key, value)
         }
     }
+    #endif
 }
 
 
-fileprivate class _JSONDecoder: Decoder {
-    let options: JSONDecodingOptions
+fileprivate final class _JSONDecoder: Decoder {
+    let options: SkipJSONDecodingOptions
 
     /// The decoder's storage.
     fileprivate var storage: _JSONDecodingStorage
@@ -1270,21 +1690,23 @@ fileprivate class _JSONDecoder: Decoder {
     }
 
     /// Initializes `self` with the given top-level container and options.
-    fileprivate init(options: JSONDecodingOptions, referencing container: JSON, at codingPath: [CodingKey] = []) {
+    fileprivate init(options: SkipJSONDecodingOptions, referencing container: JSON, at codingPath: [CodingKey] = []) {
         self.options = options
         self.storage = _JSONDecodingStorage()
         self.storage.push(container: container)
         self.codingPath = codingPath
     }
 
-    public func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
+    public func container<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
         guard !(self.storage.topContainer == .null) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(KeyedDecodingContainer<Key>.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get keyed decoding container -- found null value instead."))
         }
 
         guard let obj = self.storage.topContainer.obj else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String: Any].self, reality: self.storage.topContainer)
         }
 
@@ -1294,12 +1716,14 @@ fileprivate class _JSONDecoder: Decoder {
 
     public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         guard !(self.storage.topContainer == .null) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get unkeyed decoding container -- found null value instead."))
         }
 
         guard let arr = self.storage.topContainer.array else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [Any].self, reality: self.storage.topContainer)
         }
 
@@ -1338,7 +1762,15 @@ fileprivate struct _JSONDecodingStorage {
     }
 }
 
-fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
+#if SKIP // typealias gymnastics to work around the lack of reified types and inner typealiases
+typealias DecodingContainerKey = CodingKey
+#endif
+
+fileprivate struct _JSONKeyedDecodingContainer<_DecodingContainerKey: CodingKey>: KeyedDecodingContainerProtocol {
+    #if !SKIP
+    typealias DecodingContainerKey = _DecodingContainerKey
+    #endif
+
     /// A reference to the decoder we're reading from.
     private let decoder: _JSONDecoder
 
@@ -1355,20 +1787,25 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         self.codingPath = decoder.codingPath
     }
 
-    public var allKeys: [Key] {
-        return self.container.keys.compactMap { Key(stringValue: $0) }
+    public var allKeys: [DecodingContainerKey] {
+        #if SKIP // needs static initializers
+        fatalError("TODO: static initializers")
+        #else
+        return self.container.keys.compactMap { .init(stringValue: $0) }
+        #endif
     }
 
-    public func contains(_ key: Key) -> Bool {
+    public func contains(_ key: DecodingContainerKey) -> Bool {
         return self.container[key.stringValue] != nil
     }
 
-    public func decodeNil(forKey key: Key) throws -> Bool {
+    public func decodeNil(forKey key: DecodingContainerKey) throws -> Bool {
         (self.container[key.stringValue] == .null) != false
     }
 
-    public func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
+    public func decode(_ type: Bool.Type, forKey key: DecodingContainerKey) throws -> Bool {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1376,14 +1813,17 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Bool.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
+    #if !SKIP // Int = Int32 in Kotlin
+    public func decode(_ type: Int.Type, forKey key: DecodingContainerKey) throws -> Int {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1391,14 +1831,17 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Int.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
+    #endif
 
-    public func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
+    public func decode(_ type: Int8.Type, forKey key: DecodingContainerKey) throws -> Int8 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1406,14 +1849,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Int8.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
+    public func decode(_ type: Int16.Type, forKey key: DecodingContainerKey) throws -> Int16 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1421,14 +1866,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Int16.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
+    public func decode(_ type: Int32.Type, forKey key: DecodingContainerKey) throws -> Int32 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1436,14 +1883,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Int32.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
+    public func decode(_ type: Int64.Type, forKey key: DecodingContainerKey) throws -> Int64 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1451,14 +1900,17 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Int64.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
+    #if !SKIP // Int = Int32 in Kotlin
+    public func decode(_ type: UInt.Type, forKey key: DecodingContainerKey) throws -> UInt {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1466,14 +1918,17 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: UInt.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
+    #endif
 
-    public func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
+    public func decode(_ type: UInt8.Type, forKey key: DecodingContainerKey) throws -> UInt8 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1481,14 +1936,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: UInt8.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
+    public func decode(_ type: UInt16.Type, forKey key: DecodingContainerKey) throws -> UInt16 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1496,14 +1953,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: UInt16.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
+    public func decode(_ type: UInt32.Type, forKey key: DecodingContainerKey) throws -> UInt32 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1511,14 +1970,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: UInt32.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
+    public func decode(_ type: UInt64.Type, forKey key: DecodingContainerKey) throws -> UInt64 {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1526,28 +1987,32 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: UInt64.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
+    public func decode(_ type: Float.Type, forKey key: DecodingContainerKey) throws -> Float {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
         guard let value = try self.decoder.unbox(entry, as: Float.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
+    public func decode(_ type: Double.Type, forKey key: DecodingContainerKey) throws -> Double {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1555,14 +2020,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: Double.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode(_ type: String.Type, forKey key: Key) throws -> String {
+    public func decode(_ type: String.Type, forKey key: DecodingContainerKey) throws -> String {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1570,14 +2037,16 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: String.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
+    public func decode<T: Decodable>(_ type: T.Type, forKey key: DecodingContainerKey) throws -> T {
         guard let entry = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
         }
 
@@ -1585,23 +2054,26 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = try self.decoder.unbox(entry, as: type) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
         }
 
         return value
     }
 
-    public func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> {
+    public func nestedContainer<NestedKey : CodingKey>(keyedBy type: NestedKey.Type, forKey key: DecodingContainerKey) throws -> KeyedDecodingContainer<NestedKey> {
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(KeyedDecodingContainer<NestedKey>.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get nested keyed container -- no value found for key \"\(key.stringValue)\""))
         }
 
         guard let obj = value.obj else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String: Any].self, reality: value)
         }
 
@@ -1609,17 +2081,19 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
         return KeyedDecodingContainer(container)
     }
 
-    public func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
+    public func nestedUnkeyedContainer(forKey key: DecodingContainerKey) throws -> UnkeyedDecodingContainer {
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
         guard let value = self.container[key.stringValue] else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get nested unkeyed container -- no value found for key \"\(key.stringValue)\""))
         }
 
         guard let array = value.array else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [Any].self, reality: value)
         }
 
@@ -1635,10 +2109,10 @@ fileprivate struct _JSONKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingCon
     }
 
     public func superDecoder() throws -> Decoder {
-        return try _superDecoder(forKey: _JSONKey.super)
+        return try _superDecoder(forKey: _JSONKey.superKey)
     }
 
-    public func superDecoder(forKey key: Key) throws -> Decoder {
+    public func superDecoder(forKey key: DecodingContainerKey) throws -> Decoder {
         return try _superDecoder(forKey: key)
     }
 }
@@ -1674,6 +2148,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decodeNil() throws -> Bool {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(Any?.self, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1687,6 +2162,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: Bool.Type) throws -> Bool {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1694,6 +2170,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Bool.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1701,8 +2178,10 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         return decoded
     }
 
+    #if !SKIP // Int = Int32 in Kotlin
     public mutating func decode(_ type: Int.Type) throws -> Int {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1710,15 +2189,18 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Int.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
         self.currentIndex += 1
         return decoded
     }
+    #endif
 
     public mutating func decode(_ type: Int8.Type) throws -> Int8 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1726,6 +2208,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Int8.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1735,6 +2218,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: Int16.Type) throws -> Int16 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1742,6 +2226,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Int16.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1751,6 +2236,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: Int32.Type) throws -> Int32 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1758,6 +2244,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Int32.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1767,6 +2254,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: Int64.Type) throws -> Int64 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1774,6 +2262,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Int64.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1781,8 +2270,10 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         return decoded
     }
 
+    #if !SKIP // Int = Int32 in Kotlin
     public mutating func decode(_ type: UInt.Type) throws -> UInt {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1790,15 +2281,18 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: UInt.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
         self.currentIndex += 1
         return decoded
     }
+    #endif
 
     public mutating func decode(_ type: UInt8.Type) throws -> UInt8 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1806,6 +2300,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: UInt8.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1815,6 +2310,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: UInt16.Type) throws -> UInt16 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1822,6 +2318,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: UInt16.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1831,6 +2328,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: UInt32.Type) throws -> UInt32 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1838,6 +2336,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: UInt32.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1847,6 +2346,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: UInt64.Type) throws -> UInt64 {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1854,6 +2354,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: UInt64.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1863,6 +2364,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: Float.Type) throws -> Float {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1870,6 +2372,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Float.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1879,6 +2382,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: Double.Type) throws -> Double {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1886,6 +2390,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: Double.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1895,6 +2400,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode(_ type: String.Type) throws -> String {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1902,6 +2408,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: String.self) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1911,6 +2418,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
     public mutating func decode<T: Decodable>(_ type: T.Type) throws -> T {
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Unkeyed container is at end."))
         }
 
@@ -1918,6 +2426,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard let decoded = try self.decoder.unbox(self.container[self.currentIndex], as: type) else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath + [_JSONKey(index: self.currentIndex)], debugDescription: "Expected \(type) but found null instead."))
         }
 
@@ -1925,11 +2434,12 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         return decoded
     }
 
-    public mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> {
+    public mutating func nestedContainer<NestedKey: CodingKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> {
         self.decoder.codingPath.append(_JSONKey(index: self.currentIndex))
         defer { self.decoder.codingPath.removeLast() }
 
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(KeyedDecodingContainer<NestedKey>.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get nested keyed container -- unkeyed container is at end."))
@@ -1937,10 +2447,12 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
         let value = self.container[self.currentIndex]
         guard value != .null else {
-            throw DecodingError.valueNotFound(KeyedDecodingContainer<NestedKey>.self, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Cannot get keyed decoding container -- found null value instead."))
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
+                throw DecodingError.valueNotFound(KeyedDecodingContainer<NestedKey>.self, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Cannot get keyed decoding container -- found null value instead."))
         }
 
         guard let obj = value.obj else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String: JSON].self, reality: value)
         }
 
@@ -1954,6 +2466,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get nested unkeyed container -- unkeyed container is at end."))
@@ -1961,12 +2474,14 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
         let value = self.container[self.currentIndex]
         guard !(value == .null) else {
-            throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self,
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
+                throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self,
                                               DecodingError.Context(codingPath: self.codingPath,
                                                                     debugDescription: "Cannot get keyed decoding container -- found null value instead."))
         }
 
         guard let arr = value.array else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [Any].self, reality: value)
         }
 
@@ -1979,6 +2494,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
         defer { self.decoder.codingPath.removeLast() }
 
         guard !self.isAtEnd else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(Decoder.self, DecodingError.Context(codingPath: self.codingPath,
                                                                                   debugDescription: "Cannot get superDecoder() -- unkeyed container is at end."))
         }
@@ -1990,14 +2506,15 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 }
 
 extension _JSONDecoder: SingleValueDecodingContainer {
-    private func expectNonNull<T>(_ type: T.Type) throws {
-        if storage.topContainer == .null {
+    private func expectNonNull<T: Any>(_ type: T.Type) throws {
+        if storage.topContainer == JSON.null {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected \(type) but found null value instead."))
         }
     }
 
     public func decodeNil() -> Bool {
-        storage.topContainer == .null
+        storage.topContainer == JSON.null
     }
 
     public func decode(_ type: Bool.Type) throws -> Bool {
@@ -2005,10 +2522,12 @@ extension _JSONDecoder: SingleValueDecodingContainer {
         return try self.unbox(self.storage.topContainer, as: Bool.self)!
     }
 
+    #if !SKIP // Int = Int32 in Kotlin
     public func decode(_ type: Int.Type) throws -> Int {
         try expectNonNull(Int.self)
         return .init(try self.unboxNumber(self.storage.topContainer))
     }
+    #endif
 
     public func decode(_ type: Int8.Type) throws -> Int8 {
         try expectNonNull(Int8.self)
@@ -2030,10 +2549,12 @@ extension _JSONDecoder: SingleValueDecodingContainer {
         return .init(try self.unboxNumber(self.storage.topContainer))
     }
 
+    #if !SKIP // Int = Int32 in Kotlin
     public func decode(_ type: UInt.Type) throws -> UInt {
         try expectNonNull(UInt.self)
         return .init(try self.unboxNumber(self.storage.topContainer))
     }
+    #endif
 
     public func decode(_ type: UInt8.Type) throws -> UInt8 {
         try expectNonNull(UInt8.self)
@@ -2076,18 +2597,20 @@ extension _JSONDecoder: SingleValueDecodingContainer {
     }
 }
 
+#if !SKIP
 @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
 internal var _iso8601Formatter: ISO8601DateFormatter = {
     let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = .withInternetDateTime
+    formatter.formatOptions = ISO8601DateFormatter.Options.withInternetDateTime
     return formatter
 }()
-
+#endif
 
 extension _JSONDecoder {
     /// Returns the given value unboxed from a container.
     fileprivate func unbox(_ value: JSON, as type: Bool.Type) throws -> Bool? {
         guard let bool = value.boolean else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: type, reality: value)
         }
 
@@ -2096,46 +2619,89 @@ extension _JSONDecoder {
 
     fileprivate func unboxNumber(_ value: JSON) throws -> Double {
         guard let num = value.number else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: Double.self, reality: value)
         }
         return num
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: Float.Type) throws -> Float? {
+        try Float(unboxNumber(value))
     }
 
     fileprivate func unbox(_ value: JSON, as type: Double.Type) throws -> Double? {
         try unboxNumber(value)
     }
 
+    fileprivate func unbox(_ value: JSON, as type: Int8.Type) throws -> Int8? {
+        try Int8(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: Int16.Type) throws -> Int16? {
+        try Int16(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: Int32.Type) throws -> Int32? {
+        try Int32(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: Int64.Type) throws -> Int64? {
+        try Int64(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: UInt8.Type) throws -> UInt8? {
+        try UInt8(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: UInt16.Type) throws -> UInt16? {
+        try UInt16(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: UInt32.Type) throws -> UInt32? {
+        try UInt32(unboxNumber(value))
+    }
+
+    fileprivate func unbox(_ value: JSON, as type: UInt64.Type) throws -> UInt64? {
+        try UInt64(unboxNumber(value))
+    }
+
     fileprivate func unbox(_ value: JSON, as type: String.Type) throws -> String? {
         guard let str = value.string else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: type, reality: value)
         }
 
         return str
     }
 
+    #if !SKIP
     fileprivate func unbox(_ value: JSON, as type: Date.Type) throws -> Date? {
         switch options.dateDecodingStrategy {
-        case .deferredToDate:
+        case SkipJSONDecoder.DateDecodingStrategy.deferredToDate:
             return try Date(from: self)
 
-        case .secondsSince1970:
+        case SkipJSONDecoder.DateDecodingStrategy.secondsSince1970:
             guard let number = value.number else {
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date secondsSince1970."))
             }
 
             return Date(timeIntervalSince1970: number)
 
-        case .millisecondsSince1970:
+        case SkipJSONDecoder.DateDecodingStrategy.millisecondsSince1970:
             guard let number = value.number else {
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date millisecondsSince1970."))
             }
 
             return Date(timeIntervalSince1970: number / 1000.0)
 
-        case .iso8601:
+        case SkipJSONDecoder.DateDecodingStrategy.iso8601:
+            #if !SKIP
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
                 guard let string = value.string,
                       let date = _iso8601Formatter.date(from: string) else {
+                    // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                     throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
                 }
 
@@ -2143,71 +2709,101 @@ extension _JSONDecoder {
             } else {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
+            #else
+            fatalError("ISO8601DateFormatter is unavailable on this platform.")
+            #endif
 
-        case .formatted(let formatter):
+        case SkipJSONDecoder.DateDecodingStrategy.formatted(let formatter):
             guard let string = value.string else {
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
             }
             guard let date = formatter.date(from: string) else {
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Date string does not match format expected by formatter."))
             }
             return date
 
-        case .custom(let closure):
+        case SkipJSONDecoder.DateDecodingStrategy.custom(let closure):
             return try closure(self)
 
         @unknown default:
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Unhandled date decoding strategy."))
         }
     }
+    #endif
 
+    #if !SKIP
     fileprivate func unbox(_ value: JSON, as type: Data.Type) throws -> Data? {
         switch options.dataDecodingStrategy {
-        case .deferredToData:
+        case SkipJSONDecoder.DataDecodingStrategy.deferredToData:
             return try Data(from: self)
 
-        case .base64:
+        case SkipJSONDecoder.DataDecodingStrategy.base64:
             guard let string = value.string else {
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected data to be Base64."))
             }
 
             guard let data = Data(base64Encoded: string) else {
+                // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Encountered Data is not valid Base64."))
             }
 
             return data
 
-        case .custom(let closure):
+        case SkipJSONDecoder.DataDecodingStrategy.custom(let closure):
             return try closure(self)
 
         @unknown default:
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Unhandled data decoding strategy."))
         }
     }
+    #endif
 
+    #if !SKIP
     fileprivate func unbox(_ value: JSON, as type: URL.Type) throws -> URL? {
         guard let string = value.string else {
+            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected URL string."))
         }
 
         return URL(string: string)
     }
+    #endif
 
     fileprivate func unbox<T: Decodable>(_ value: JSON, as type: T.Type) throws -> T? {
+        #if !SKIP
         if type == Date.self || type == NSDate.self {
             return try self.unbox(value, as: Date.self) as? T
-        } else if type == Data.self || type == NSData.self {
-            return try self.unbox(value, as: Data.self) as? T
-        } else if type == URL.self || type == NSURL.self {
-            return try self.unbox(value, as: URL.self) as? T
-        } else {
-            self.storage.push(container: value)
-            defer { self.storage.popContainer() }
-            return try type.init(from: self)
         }
+        #endif
+
+        #if !SKIP
+        if type == Data.self || type == NSData.self {
+            return try self.unbox(value, as: Data.self) as? T
+        }
+        #endif
+
+        #if !SKIP
+        if type == URL.self || type == NSURL.self {
+            return try self.unbox(value, as: URL.self) as? T
+        }
+        #endif
+
+        self.storage.push(container: value)
+        defer { self.storage.popContainer() }
+        #if SKIP // needs static initializers
+        fatalError("TODO: static initializers")
+        #else
+        return try type.init(from: self)
+        #endif
     }
 }
 
+#if !SKIP // “Unresolved reference: Context”
 extension DecodingError {
     /// Returns a `.typeMismatch` error describing the expected type.
     ///
@@ -2221,6 +2817,7 @@ extension DecodingError {
         return .typeMismatch(expectation, Context(codingPath: path, debugDescription: description))
     }
 }
+#endif
 
 fileprivate struct _JSONKey: CodingKey {
     public var stringValue: String
@@ -2241,7 +2838,11 @@ fileprivate struct _JSONKey: CodingKey {
         self.intValue = index
     }
 
-    fileprivate static let `super` = _JSONKey(stringValue: "super")!
+    fileprivate static let superKey = _JSONKey(stringValue: "super")!
+
+    var rawValue: String {
+        stringValue
+    }
 }
 
 private let debugJSONEncoder: JSONEncoder = {
@@ -2284,7 +2885,7 @@ let canonicalJSONEncoder: JSONEncoder = {
     return encoder
 }()
 
-
+#if !SKIP
 extension Encodable {
     /// Encode this instance as JSON data.
     /// - Parameters:
@@ -2296,12 +2897,12 @@ extension Encodable {
     ///   - keyEncodingStrategy: the strategy for encoding keys
     ///   - userInfo: additional user info to pass to the encoder
     /// - Returns: the JSON-encoded `Data`
-    internal func toJSONString(encoder: @autoclosure () -> JSONEncoder = JSONEncoder(), outputFormatting: JSONEncoder.OutputFormatting? = nil, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy? = nil, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy? = nil, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> String {
+    internal func toJSONString(encoder: () -> JSONEncoder = { JSONEncoder() }, outputFormatting: JSONEncoder.OutputFormatting? = nil, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy? = nil, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy? = nil, nonConformingFloatEncodingStrategy: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy? = nil, userInfo: [CodingUserInfoKey : Any]? = nil) throws -> String {
         let formatting: JSONEncoder.OutputFormatting
         if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
-            formatting = outputFormatting ?? [.sortedKeys, .withoutEscapingSlashes]
+            formatting = outputFormatting ?? [JSONEncoder.OutputFormatting.sortedKeys, JSONEncoder.OutputFormatting.withoutEscapingSlashes]
         } else {
-            formatting = outputFormatting ?? [.sortedKeys]
+            formatting = outputFormatting ?? [JSONEncoder.OutputFormatting.sortedKeys]
         }
 
         let encoder = encoder()
@@ -2330,12 +2931,14 @@ extension Encodable {
         }
 
         let data = try encoder.encode(self)
-        return String(data: data, encoding: .utf8)!
+        return String(data: data, encoding: String.Encoding.utf8)!
     }
 }
+#endif
 
 extension Decodable where Self : Encodable {
 
+    #if !SKIP // “Kotlin does not support static members in protocols”
     /// Parses this codable into the given data structure, along with a raw `JSON`
     /// that will be used to verify that the codable instance contains all the expected properties.
     ///
@@ -2346,14 +2949,13 @@ extension Decodable where Self : Encodable {
     /// - Returns: a tuple with both the parsed codable instance, as well as an optional `difference` JSON that will be nil if the codability was an exact match
     public static func codableComplete(data: Data, encoder: JSONEncoder? = nil, decoder: JSONDecoder? = nil) throws -> (instance: Self, difference: JSON?) {
         let item = try (decoder ?? debugJSONDecoder).decode(Self.self, from: data)
-        let itemJSON = try item.toJSONString(encoder: encoder ?? canonicalJSONEncoder)
+        let itemJSON = try item.toJSONString(encoder: { encoder ?? canonicalJSONEncoder })
 
         // parse into a generic JSON and ensure that both the items are serialized the same
         let raw = try (decoder ?? debugJSONDecoder).decode(JSON.self, from: data)
-        let rawJSON = try raw.toJSONString(encoder: encoder ?? canonicalJSONEncoder)
+        let rawJSON = try raw.toJSONString(encoder: { encoder ?? canonicalJSONEncoder })
 
         return (instance: item, difference: itemJSON == rawJSON ? JSON?.none : raw)
     }
+    #endif
 }
-
-#endif
