@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "skiphub",
+    name: "Skip Package Hub",
     defaultLocalization: "en",
     products: [
         .library(name: "SkipUnit", targets: ["SkipUnit"]),
@@ -27,7 +27,7 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.4.16"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.4.18"),
     ],
     targets: [
         // Unit testing support: XCTest to JUnit conversion, Gradle test launch and results handling

@@ -326,6 +326,15 @@ This document lays out the structure of the SkipFoundation project, and provides
     | `XMLParser`+  | Unimplemented   | None          | `javax.xml.parsers.DocumentBuilderFactory`?  |
 
 
+SkipKit
+===============
+
+SkipKit is a project that aims to provide Android equivalent interfaces to device and system libraries such as DeviceServices, CoreLocation, and other iOS device-related interfaces.
+
+SkipUI
+===============
+
+The mission of the SkipUI project is to provide a functional equivalent of SwiftUI atop Jetpack Compose for Android.
 
 Modules
 =======
