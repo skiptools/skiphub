@@ -20,6 +20,7 @@ class TestJSON : XCTestCase {
         var age: Int?
         var height: Double?
         var isStudent: Bool?
+        //var friends: [EntityDefaultKeys]?
     }
 
     func testJSONEncodable() throws {
