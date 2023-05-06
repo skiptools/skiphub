@@ -238,7 +238,7 @@ public struct GradleDriver {
          Build time:   2023-03-03 16:41:37 UTC
          Revision:     7d6581558e226a580d91d399f7dfb9e3095c2b1d
 
-         Kotlin:       1.8.10
+         Kotlin:       1.8.20
          Groovy:       3.0.13
          Ant:          Apache Ant(TM) version 1.10.11 compiled on July 10 2021
          JVM:          19.0.2 (Homebrew 19.0.2)

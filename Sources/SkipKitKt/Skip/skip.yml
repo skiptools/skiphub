@@ -8,7 +8,7 @@ build:
   contents:
     - block: 'plugins'
       contents:
-        - 'kotlin("android") version "1.8.10"'
+        - 'kotlin("android") version "1.8.20"'
         - 'id("com.android.library") version "8.1.+"'
 
       # we need to replace the `kotlin-dsl` plugin or else
