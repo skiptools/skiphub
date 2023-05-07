@@ -149,9 +149,9 @@ fun String.firstIndex(of: String): Int? {
 }
 
 operator fun String.get(range: IntRange): String {
-    // We translate open ranges to use Int.MIN_VALUE and MAX_VALUE in Kotlin
-    val lowerBound = if (range.start == Int.MIN_VALUE) 0 else range.start
-    val upperBound = if (range.endInclusive == Int.MAX_VALUE) count() else range.endInclusive + 1
+    // We translate open ranges to use Int.min and Int.max in Kotlin
+    val lowerBound = if (range.start == Int.min) 0 else range.start
+    val upperBound = if (range.endInclusive == Int.max) count() else range.endInclusive + 1
     return slice(lowerBound until upperBound).toString()
 }
 

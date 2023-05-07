@@ -193,9 +193,9 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     }
 
     operator fun get(range: IntRange): Collection<Element> {
-        // We translate open ranges to use Int.MIN_VALUE and MAX_VALUE in Kotlin
-        val lowerBound = if (range.start == Int.MIN_VALUE) 0 else range.start
-        val upperBound = if (range.endInclusive == Int.MAX_VALUE) null else range.endInclusive + 1
+        // We translate open ranges to use Int.min and Int.max in Kotlin
+        val lowerBound = if (range.start == Int.min) 0 else range.start
+        val upperBound = if (range.endInclusive == Int.max) null else range.endInclusive + 1
 
         willSliceStorage()
         val collection = this
@@ -257,6 +257,17 @@ interface MutableCollection<Element>: Collection<Element>, MutableListStorage<El
     operator fun set(position: Int, element: Element) {
         willMutateStorage()
         mutableListStorage[position] = element.sref()
+        didMutateStorage()
+    }
+
+    operator fun set(bounds: IntRange, elements: Collection<Element>) {
+        // We translate open ranges to use Int.min and Int.max in Kotlin
+        val lowerBound = if (bounds.start == Int.min) 0 else bounds.start
+        val upperBound = if (bounds.endInclusive == Int.max) mutableListStorage.size else bounds.endInclusive + 1
+
+        willMutateStorage()
+        mutableListStorage.subList(lowerBound, upperBound).clear()
+        mutableListStorage.addAll(lowerBound, elements.collectionStorage.map { it.sref() })
         didMutateStorage()
     }
 }

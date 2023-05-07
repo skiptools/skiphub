@@ -301,6 +301,24 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(enumSlice[1], .two)
     }
 
+    func testWriteSlice() {
+        var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        numbers[1..<5] = []
+        XCTAssertEqual(numbers, [0, 5, 6, 7, 8, 9])
+
+        numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        numbers[1..<5] = [99, 100]
+        XCTAssertEqual(numbers, [0, 99, 100, 5, 6, 7, 8, 9])
+
+        numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        numbers[5...] = [99, 100]
+        XCTAssertEqual(numbers, [0, 1, 2, 3, 4, 99, 100])
+
+        numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        numbers[..<5] = [99, 100]
+        XCTAssertEqual(numbers, [99, 100, 5, 6, 7, 8, 9])
+    }
+
     func testDictionaryForEach() {
         let dictionary = ["apple": 3, "banana": 5, "cherry": 2]
         var count = 0
