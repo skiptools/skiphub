@@ -5,11 +5,16 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-// Use a Storage model wrapping an internal Kotlin iterable to be able to control when we sref() efficiently
+// WARNING: Replicate all implemented immutable Sequence, Collections API in String.kt
 
+// Note: We use a Storage model wrapping internal Kotlin collections to be able to control when we sref() efficiently
+
+// Base iterable support on which we can implement Swift.Sequence
 interface IterableStorage<Element>: Iterable<Element> {
+    // Kotlin iterable, not sref'd
     val iterableStorage: Iterable<Element>
 
+    // Iterator to use when content is exposed to consuming code - elements are sref'd
     override fun iterator(): Iterator<Element> {
         val iter = iterableStorage.iterator()
         return object: Iterator<Element> {
@@ -19,29 +24,31 @@ interface IterableStorage<Element>: Iterable<Element> {
     }
 }
 
+// Extended collection support on which we can implement Swift.Collection
 interface CollectionStorage<Element>: IterableStorage<Element> {
+    // Kotlin collection, not sref'd
     val collectionStorage: kotlin.collections.Collection<Element>
-    val firstIndex: Int
+
+    // Indexing to support slices
+    val storageStartIndex: Int
         get() = 0
-    val lastIndex: Int? // Exclusive
+    val storageEndIndex: Int? // Exclusive
         get() = null
-    val effectiveLastIndex: Int
-        get() = lastIndex ?: collectionStorage.size
+    val effectiveStorageEndIndex: Int
+        get() = storageEndIndex ?: collectionStorage.size
     fun willSliceStorage() = Unit
 
     override val iterableStorage: Iterable<Element>
         get() {
-            if (firstIndex == 0 && lastIndex == null) {
+            // If we're not a slice, we can return the native Kotlin collection
+            if (storageStartIndex == 0 && storageEndIndex == null) {
                 return collectionStorage
             }
             return object: Iterable<Element> {
                 override fun iterator(): Iterator<Element> {
                     return object: Iterator<Element> {
-                        private var index = firstIndex
-                        override fun hasNext(): Boolean {
-                            val lastIndex = lastIndex ?: collectionStorage.size
-                            return index < lastIndex
-                        }
+                        private var index = storageStartIndex
+                        override fun hasNext(): Boolean = index < effectiveStorageEndIndex
                         override fun next(): Element = collectionStorage.elementAt(index++)
                     }
                 }
@@ -49,6 +56,7 @@ interface CollectionStorage<Element>: IterableStorage<Element> {
         }
 }
 
+// Extended mutable support on which we can implement Swift.MutableCollection
 interface MutableListStorage<Element>: CollectionStorage<Element> {
     val mutableListStorage: MutableList<Element>
 
@@ -90,14 +98,22 @@ interface Sequence<Element>: IterableStorage<Element> {
         return iterableStorage.firstOrNull(where).sref()
     }
 
+    fun dropFirst(k: Int = 1): Array<Element> {
+        return Array(iterableStorage.drop(k), nocopy = true)
+    }
+
+    fun dropLast(k: Int = 1): Array<Element> {
+        return Array(iterableStorage.toList().dropLast(k), nocopy = true)
+    }
+
     fun enumerated(): Sequence<Tuple2<Int, Element>> {
         val iterable = object: Iterable<Tuple2<Int, Element>> {
             override fun iterator(): Iterator<Tuple2<Int, Element>> {
-                var index = 0
+                var offset = 0
                 val iter = this@Sequence.iterator()
                 return object: Iterator<Tuple2<Int, Element>> {
                     override fun hasNext(): Boolean = iter.hasNext()
-                    override fun next(): Tuple2<Int, Element> = Tuple2(index++, iter.next())
+                    override fun next(): Tuple2<Int, Element> = Tuple2(offset++, iter.next())
                 }
             }
         }
@@ -127,6 +143,10 @@ interface Sequence<Element>: IterableStorage<Element> {
         }
     }
 
+    fun reversed(): Array<Element> {
+        return Array(iterableStorage.reversed(), nocopy = true)
+    }
+
     fun <RE> flatMap(transform: (Element) -> Sequence<RE>): Array<RE> {
         return Array(iterableStorage.flatMap { transform(it).iterableStorage }, nocopy = true)
     }
@@ -146,18 +166,31 @@ interface Sequence<Element>: IterableStorage<Element> {
 }
 
 interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
+    val startIndex: Int
+        get() = storageStartIndex
+    val endIndex: Int
+        get() = storageEndIndex ?: count
+
     operator fun get(position: Int): Element {
         return collectionStorage.elementAt(position).sref()
     }
 
     val isEmpty: Boolean
-        get() = firstIndex >= effectiveLastIndex
-
+        get() = storageStartIndex >= effectiveStorageEndIndex
     val count: Int
-        get() = effectiveLastIndex - firstIndex
+        get() = effectiveStorageEndIndex - storageStartIndex
+
+    fun index(i: Int, offsetBy: Int): Int  = i + offsetBy
+    fun distance(from: Int, to: Int): Int  = to - from
+    fun index(after: Int): Int = after + 1
 
     val first: Element?
-        get() = if (isEmpty) null else get(firstIndex)
+        get() = if (isEmpty) null else get(storageStartIndex)
+
+    fun firstIndex(of: Element): Int? {
+        val index = indexOf(of)
+        return if (index == -1) null else index
+    }
 
     operator fun get(range: IntRange): Collection<Element> {
         // We translate open ranges to use Int.MIN_VALUE and MAX_VALUE in Kotlin
@@ -168,15 +201,16 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
         val collection = this
         return object: Collection<Element> {
             override val collectionStorage = collection.collectionStorage
-            override val firstIndex = lowerBound
-            override val lastIndex = upperBound
+            override val storageStartIndex = lowerBound
+            override val storageEndIndex = upperBound
         }
     }
 }
 
 interface BidirectionalCollection<Element>: Collection<Element> {
     fun last(where: (Element) -> Boolean): Element? {
-        if (firstIndex == 0 && lastIndex == null) {
+        // If we're not a slice we can use the collection directly, otherwise use our sliced iterator
+        if (storageStartIndex == 0 && storageEndIndex == null) {
             return collectionStorage.lastOrNull(where).sref()
         } else {
             return iterableStorage.lastOrNull(where).sref()
@@ -184,7 +218,7 @@ interface BidirectionalCollection<Element>: Collection<Element> {
     }
 
     val last: Element?
-        get() = if (isEmpty) null else elementAt(effectiveLastIndex - 1).sref()
+        get() = if (isEmpty) null else elementAt(effectiveStorageEndIndex - 1).sref()
 }
 
 interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
@@ -197,26 +231,26 @@ interface RangeReplaceableCollection<Element>: Collection<Element>, MutableListS
         didMutateStorage()
     }
 
-	fun insert(newElement: Element, at: Int) {
-		willMutateStorage()
-		mutableListStorage.add(at, newElement.sref())
-		didMutateStorage()
-	}
+    fun insert(newElement: Element, at: Int) {
+        willMutateStorage()
+        mutableListStorage.add(at, newElement.sref())
+        didMutateStorage()
+    }
 
-	fun popLast(): Element? {
-		willMutateStorage()
-		val lastElement = mutableListStorage.removeLast().sref()
-		didMutateStorage()
-		return lastElement
-	}
+    fun popLast(): Element? {
+        willMutateStorage()
+        val lastElement = mutableListStorage.removeLast().sref()
+        didMutateStorage()
+        return lastElement
+    }
 
-	fun removeLast(k: Int = 1) {
-		if (k > 0) {
-			willMutateStorage()
-			mutableListStorage.subList(mutableListStorage.size - k, mutableListStorage.size).clear()
-			didMutateStorage()
-		}
-	}
+    fun removeLast(k: Int = 1) {
+        if (k > 0) {
+            willMutateStorage()
+            mutableListStorage.subList(mutableListStorage.size - k, mutableListStorage.size).clear()
+            didMutateStorage()
+        }
+    }
 }
 
 interface MutableCollection<Element>: Collection<Element>, MutableListStorage<Element> {

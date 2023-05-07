@@ -4,6 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
+#if SKIP
+
 public enum Result<Success, Failure> where Failure : Error {
     case success(Success)
     case failure(Failure)
@@ -18,3 +20,5 @@ public enum Result<Success, Failure> where Failure : Error {
         }
     }
 }
+
+#endif

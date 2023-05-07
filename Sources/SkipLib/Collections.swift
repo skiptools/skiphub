@@ -9,6 +9,8 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 // We move the majority of the API into extensions to facilitate Kotlin implementation and allow
 // ourselves to communicate e.g. default function parameter values to the type inference engine.
 // We're also overly non-specific with some parameter types and overly specific with some return
@@ -72,12 +74,10 @@ extension Sequence {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func dropFirst(_ k: Int = 1) -> [Element] /* DropFirstSequence<Self> */ {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func dropLast(_ k: Int = 1) -> [Element] {
         fatalError()
     }
@@ -143,7 +143,6 @@ extension Sequence {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func reversed() -> [Element] {
         fatalError()
     }
@@ -225,12 +224,10 @@ extension Collection {
 
     // NOTE: All index functions used type Self.Index rather than the Int we use here
 
-    @available(*, unavailable)
     public var startIndex: Int {
         fatalError()
     }
 
-    @available(*, unavailable)
     public var endIndex: Int {
         fatalError()
     }
@@ -253,7 +250,6 @@ extension Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func index(_ i: Int, offsetBy distance: Int) -> Int {
         fatalError()
     }
@@ -263,12 +259,10 @@ extension Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func distance(from start: Int, to end: Int) -> Int {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func index(after i: Int) -> Int {
         fatalError()
     }
@@ -332,7 +326,6 @@ extension Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func firstIndex(of element: Element) -> Int? {
         fatalError()
     }
@@ -787,3 +780,5 @@ public struct StrideToIterator<Element> {
 @available(*, unavailable)
 public struct UnfoldSequence<Element, State> {
 }
+
+#endif

@@ -9,6 +9,8 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 public struct Set<Element>: Collection {
     public init() {
         fatalError()
@@ -22,3 +24,5 @@ public struct Set<Element>: Collection {
         fatalError()
     }
 }
+
+#endif

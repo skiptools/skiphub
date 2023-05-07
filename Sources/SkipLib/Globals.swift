@@ -9,6 +9,8 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 /// Unconditionally prints a given message and stops execution.
 public func fatalError(message: String = "fatalError") -> Never {
     Swift.fatalError()
@@ -57,3 +59,5 @@ public func round(_ x: Double) -> Double {
 public func round(_ x: Float) -> Float {
     fatalError()
 }
+
+#endif

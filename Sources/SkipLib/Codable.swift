@@ -852,12 +852,6 @@ public protocol SingleValueDecodingContainer {
 }
 
 
-#if !SKIP // so CodingUserInfoKey can be used as a dictionary key
-extension CodingUserInfoKey : Swift.Hashable {
-
-}
-#endif
-
 public struct CodingUserInfoKey : RawRepresentable, Equatable, Hashable, Sendable {
 
     public var hashValue: Int {

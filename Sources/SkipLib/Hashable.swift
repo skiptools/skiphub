@@ -9,6 +9,8 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 public protocol Hashable: Equatable {
     var hashValue: Int { get }
 }
@@ -32,3 +34,5 @@ public struct Hasher {
         fatalError()
     }
 }
+
+#endif

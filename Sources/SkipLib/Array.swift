@@ -9,6 +9,8 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 public struct Array<Element>: RandomAccessCollection, RangeReplaceableCollection, MutableCollection {
     public init() {
         fatalError()
@@ -19,3 +21,4 @@ public struct Array<Element>: RandomAccessCollection, RangeReplaceableCollection
     }
 }
 
+#endif

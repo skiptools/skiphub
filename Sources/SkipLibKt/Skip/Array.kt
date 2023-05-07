@@ -62,10 +62,10 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
                 } else {
                     _collectionStorage= collection._collectionStorage
                 }
-            } else if (collection is MutableListStorage<*> && collection.firstIndex == 0 && collection.lastIndex == null) {
+            } else if (collection is MutableListStorage<*> && collection.storageStartIndex == 0 && collection.storageEndIndex == null) {
                 _mutableListStorage = collection.mutableListStorage as MutableList<Element>
                 isStorageShared = shared
-            } else if (collection is CollectionStorage<*> && collection.firstIndex == 0 && collection.lastIndex == null) {
+            } else if (collection is CollectionStorage<*> && collection.storageStartIndex == 0 && collection.storageEndIndex == null) {
                 val collectionStorage = collection.collectionStorage
                 if (collectionStorage is List<*>) {
                     _collectionStorage = collectionStorage as List<Element>

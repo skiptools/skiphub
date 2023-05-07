@@ -10,12 +10,14 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 public struct Dictionary<Key, Value> {
     public init() {
         fatalError()
     }
 
-    #if !SKIP // Skip does not support this Swift syntax [subscriptDecl]
+    // SKIP NOWARN
     public subscript(key: Key?) -> Value? {
         get {
             fatalError()
@@ -24,7 +26,6 @@ public struct Dictionary<Key, Value> {
             fatalError()
         }
     }
-    #endif
 
     public var keys: Array<Key> {
         fatalError()
@@ -38,3 +39,5 @@ public struct Dictionary<Key, Value> {
         fatalError()
     }
 }
+
+#endif

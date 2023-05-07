@@ -9,6 +9,8 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
+
 public protocol CustomStringConvertible {
     var description: String { get }
 }
@@ -16,3 +18,5 @@ public protocol CustomStringConvertible {
 public protocol CustomDebugStringConvertible {
     var debugDescription: String { get }
 }
+
+#endif

@@ -128,4 +128,11 @@ final class StringTests: XCTestCase {
         let str2 = "Hello there,\n\nHow do you do?\n\n    Bye!"
         XCTAssertEqual(str, str2)
     }
+
+    func testStringSlice() {
+        let str = "abcdef"
+        let bindex = str.firstIndex(of: "b")!
+        let sub1 = str[bindex..<str.index(str.startIndex, offsetBy: 3)]
+        XCTAssertEqual(String(sub1), "bc")
+    }
 }
