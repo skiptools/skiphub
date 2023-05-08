@@ -103,6 +103,14 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         _mutableListStorage = storage
     }
 
+    operator fun plus(array: Array<Element>): Array<Element> {
+        if (array.isEmpty) return this
+        if (isEmpty) return array
+        val result = Array(this)
+        result.append(contentsOf = array)
+        return result
+    }
+
     override operator fun get(position: Int): Element {
         return collectionStorage.elementAt(position).sref({
             set(position, it)

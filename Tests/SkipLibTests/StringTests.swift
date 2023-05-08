@@ -134,5 +134,11 @@ final class StringTests: XCTestCase {
         let bindex = str.firstIndex(of: "b")!
         let sub1 = str[bindex..<str.index(str.startIndex, offsetBy: 3)]
         XCTAssertEqual(String(sub1), "bc")
+
+        let sub2 = str[sub1.startIndex...sub1.endIndex]
+        XCTAssertEqual(String(sub2), "bcd")
+
+        let str2 = str + sub2
+        XCTAssertEqual(str2, "abcdefbcd")
     }
 }

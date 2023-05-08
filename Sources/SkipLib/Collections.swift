@@ -521,7 +521,6 @@ extension RangeReplaceableCollection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func append(contentsOf newElements: any Sequence<Element>) {
         fatalError()
     }

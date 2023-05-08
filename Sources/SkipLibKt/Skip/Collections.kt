@@ -231,6 +231,12 @@ interface RangeReplaceableCollection<Element>: Collection<Element>, MutableListS
         didMutateStorage()
     }
 
+    fun append(contentsOf: Sequence<Element>) {
+        willMutateStorage()
+        mutableListStorage.addAll(contentsOf) // Will use sref'ing iterator to copy
+        didMutateStorage()
+    }
+
     fun insert(newElement: Element, at: Int) {
         willMutateStorage()
         mutableListStorage.add(at, newElement.sref())

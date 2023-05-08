@@ -50,8 +50,22 @@ final class ArrayTests: XCTestCase {
         array2.append(4)
         XCTAssertEqual(array2.count, 4)
         XCTAssertEqual(array2[3], 4)
-
         XCTAssertEqual(array.count, 3)
+
+        var combined: [Int] = []
+        combined.append(contentsOf: array)
+        XCTAssertEqual(combined, [1, 2, 3])
+        combined.append(contentsOf: array2)
+        XCTAssertEqual(combined, [1, 2, 3, 1, 2, 3, 4])
+    }
+
+    func testAdd() {
+        let array1 = [1, 2, 3]
+        let array2 = [4, 5, 6]
+        var combined = array1 + array2
+        XCTAssertEqual(combined, [1, 2, 3, 4, 5, 6])
+        combined += [7, 8]
+        XCTAssertEqual(combined, [1, 2, 3, 4, 5, 6, 7, 8])
     }
 
     func testAppendDidSet() {
@@ -74,6 +88,26 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(holder.array.count, 3)
         XCTAssertEqual(holder.arraySetCount, 3)
         XCTAssertEqual(array.count, 2)
+    }
+
+    func testAddDidSet() {
+        let holder = ArrayHolder()
+        XCTAssertEqual(holder.arraySetCount, 0)
+
+        holder.array += [1, 2, 3]
+        XCTAssertEqual(holder.array, [1, 2, 3])
+        XCTAssertEqual(holder.arraySetCount, 1)
+
+        var array = holder.array
+        array += [4]
+        XCTAssertEqual(array.count, 4)
+        XCTAssertEqual(holder.array.count, 3)
+        XCTAssertEqual(holder.arraySetCount, 1)
+
+        holder.array += [4, 5]
+        XCTAssertEqual(holder.array.count, 5)
+        XCTAssertEqual(holder.arraySetCount, 2)
+        XCTAssertEqual(array.count, 4)
     }
 
     func testSubscriptDidSet() {
