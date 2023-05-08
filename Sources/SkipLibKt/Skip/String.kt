@@ -27,6 +27,11 @@ fun String(repeating: String, count: Int): String {
     }.toString()
 }
 
+fun String.lowercased(): String = lowercase()
+fun String.uppercased(): String = uppercase()
+fun Substring.lowercased(): Substring = Substring(stringValue.lowercased(), startIndex)
+fun Substring.uppercased(): Substring = Substring(stringValue.uppercase(), startIndex)
+
 fun String.hasPrefix(prefix: String): Boolean = startsWith(prefix)
 fun String.hasPrefix(prefix: Substring): Boolean = startsWith(prefix.stringValue)
 fun Substring.hasPrefix(prefix: String): Boolean = stringValue.hasPrefix(prefix)
@@ -70,10 +75,12 @@ fun <RE> String.map(transform: (Char) -> RE): Array<RE> {
 }
 fun <RE> Substring.map(transform: (Char) -> RE): Array<RE> = stringValue.map(transform)
 
-fun String.filter(isIncluded: (Char) -> Boolean): Array<Char> {
-    return Array(filter(isIncluded), nocopy = true)
+fun String.filter(isIncluded: (Char) -> Boolean): String {
+    return StringBuilder().apply {
+        forEach { if (isIncluded(it)) append(it) }
+    }.toString()
 }
-fun Substring.filter(isIncluded: (Char) -> Boolean): Array<Char> = stringValue.filter(isIncluded)
+fun Substring.filter(isIncluded: (Char) -> Boolean): String = stringValue.filter(isIncluded)
 
 // String.forEach used as-is
 fun Substring.forEach(body: (Char) -> Unit) = stringValue.forEach(body)
@@ -82,11 +89,11 @@ fun String.first(where: (Char) -> Boolean): Char? = firstOrNull(where)
 fun Substring.first(where: (Char) -> Boolean): Char? = stringValue.first(where)
 
 fun String.dropFirst(k: Int = 1): String = drop(k)
-fun Substring.dropFirst(k: Int = 1): Substring = Substring(stringValue.dropFirst(k), startIndex)
+fun Substring.dropFirst(k: Int = 1): String = stringValue.drop(k)
 
 // String.dropLast(k) used as-is
 fun String.dropLast(): String = dropLast(1)
-fun Substring.dropLast(k: Int = 1): Substring = Substring(stringValue.dropLast(k), startIndex)
+fun Substring.dropLast(k: Int = 1): String = stringValue.dropLast(k)
 
 fun String.enumerated(): Sequence<Tuple2<Int, Char>> {
     val stringIterator = { iterator() }
@@ -233,4 +240,3 @@ val Substring.last: Char?
 
 fun Char(char: Char): Char = char
 fun Char(string: String): Char = string[0]
-

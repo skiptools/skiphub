@@ -33,6 +33,14 @@ public struct String: RandomAccessCollection {
         fatalError()
     }
 
+    public func lowercased() -> String {
+        fatalError()
+    }
+
+    public func uppercased() -> String {
+        fatalError()
+    }
+
     public func hasPrefix(_ prefix: String) -> Bool {
         fatalError()
     }
@@ -62,6 +70,14 @@ public struct String: RandomAccessCollection {
 public struct Substring: RandomAccessCollection {
     public typealias Element = Character
 
+    public func lowercased() -> String {
+        fatalError()
+    }
+    
+    public func uppercased() -> String {
+        fatalError()
+    }
+
     public func hasPrefix(_ prefix: String) -> Bool {
         fatalError()
     }
@@ -74,11 +90,15 @@ public struct Substring: RandomAccessCollection {
         fatalError()
     }
 
-    public func dropFirst(_ k: Int) -> Substring {
+    public func dropFirst(_ k: Int) -> String {
         fatalError()
     }
 
-    public func dropLast(_ k: Int) -> Substring {
+    public func dropLast(_ k: Int) -> String {
+        fatalError()
+    }
+
+    public func filter(_ isIncluded: (Character) throws -> Bool) rethrows -> String {
         fatalError()
     }
 
