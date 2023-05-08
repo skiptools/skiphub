@@ -6,7 +6,7 @@
 import XCTest
 
 final class StringTests: XCTestCase {
-    func testStringCreation() {
+    func testCreation() {
         let str1 = "Hello, world!"
         XCTAssertEqual(str1, "Hello, world!")
 
@@ -21,26 +21,17 @@ final class StringTests: XCTestCase {
         let str1 = "Hello, world!"
 
         let first = str1.first
-        XCTAssertEqual(first?.description, "H")
-        #if !SKIP
-        XCTAssertEqual(first, "H") // expected: java.lang.String<H> but was: java.lang.Character<H>
-        #endif
+        XCTAssertEqual(first, Character("H"))
 
         let last = str1.last
-        XCTAssertEqual(last?.description, "!")
-        #if !SKIP
-        XCTAssertEqual(last, "!")
-        #endif
+        XCTAssertEqual(last, Character("!"))
     }
 
     func testMultibyteCharacterFunctions() {
         let str1 = "你好，世界"
 
         let first = str1.first
-        #if !SKIP
-        XCTAssertEqual(first, "你") // expected: java.lang.String<H> but was: java.lang.Character<H>
-        #endif
-        XCTAssertEqual(first?.description, "你")
+        XCTAssertEqual(first, Character("你"))
 
         let firstLast = str1.reversed().last
         XCTAssertEqual(first, firstLast)
@@ -65,13 +56,13 @@ final class StringTests: XCTestCase {
         XCTAssertEqual(last?.isWholeNumber, false)
         XCTAssertEqual(last?.wholeNumberValue, nil)
         #endif
-        XCTAssertEqual(last?.description, "界")
+        XCTAssertEqual(last, Character("界"))
 
         let lastFirst = str1.reversed().first
         XCTAssertEqual(last, lastFirst)
     }
 
-    func testStringManipulation() {
+    func testManipulation() {
         var str = "Hello, world!"
         XCTAssertEqual(str.count, 13)
 
@@ -83,11 +74,11 @@ final class StringTests: XCTestCase {
 
         str.removeLast(13)
         XCTAssertEqual(str, "Hello, world!")
+        #endif
 
         let index = str.firstIndex(of: ",")!
         let substring = str[..<index]
-        XCTAssertEqual(substring, "Hello")
-        #endif
+        XCTAssertEqual(String(substring), "Hello")
     }
 
     func testStringSearching() {
@@ -98,12 +89,10 @@ final class StringTests: XCTestCase {
         XCTAssertTrue(str.contains("fox"))
 
         let index = str.firstIndex(of: "b")!
-        #if !SKIP
         XCTAssertEqual(str.distance(from: str.startIndex, to: index), 10)
-        #endif
     }
 
-    func testStringFirstDropFirst() {
+    func testFirstDropFirst() {
         let str = "hello, world!"
         let firstChar = str.first
         XCTAssertEqual(firstChar?.description, "h")
@@ -129,9 +118,12 @@ final class StringTests: XCTestCase {
         XCTAssertEqual(str, str2)
     }
 
-    func testStringSlice() {
+    func testSlice() {
         let str = "abcdef"
         let bindex = str.firstIndex(of: "b")!
+        let char = str[bindex]
+        XCTAssertTrue(char == "b")
+
         let sub1 = str[bindex..<str.index(str.startIndex, offsetBy: 3)]
         XCTAssertEqual(String(sub1), "bc")
 

@@ -13,7 +13,6 @@
 
 // References to "String.Index" are convert to "StringIndex" which is an integer in Kotlin
 public typealias StringIndex = Int
-public typealias Substring = String
 
 public struct String: RandomAccessCollection {
     public typealias Element = Character
@@ -23,6 +22,10 @@ public struct String: RandomAccessCollection {
     }
 
     public init(_ string: String) {
+        fatalError()
+    }
+
+    public init(_ substring: Substring) {
         fatalError()
     }
 
@@ -42,8 +45,51 @@ public struct String: RandomAccessCollection {
         fatalError()
     }
 
+    public func dropFirst(_ k: Int) -> String {
+        fatalError()
+    }
+
+    public func dropLast(_ k: Int) -> String {
+        fatalError()
+    }
+
     // SKIP NOWARN
-    public subscript(bounds: Range<Index>) -> String {
+    public subscript(bounds: Range<Index>) -> Substring {
+        fatalError()
+    }
+}
+
+public struct Substring: RandomAccessCollection {
+    public typealias Element = Character
+
+    public func hasPrefix(_ prefix: String) -> Bool {
+        fatalError()
+    }
+
+    public func hasSuffix(_ suffix: String) -> Bool {
+        fatalError()
+    }
+
+    public func contains(_ string: String) -> Bool {
+        fatalError()
+    }
+
+    public func dropFirst(_ k: Int) -> Substring {
+        fatalError()
+    }
+
+    public func dropLast(_ k: Int) -> Substring {
+        fatalError()
+    }
+
+    // SKIP NOWARN
+    public subscript(bounds: Range<Index>) -> Substring {
+        fatalError()
+    }
+}
+
+public struct Character {
+    public init(_ character: Character) {
         fatalError()
     }
 }

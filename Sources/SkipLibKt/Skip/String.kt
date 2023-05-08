@@ -228,3 +228,9 @@ val String.last: Char?
     get() = lastOrNull()
 val Substring.last: Char?
     get() = stringValue.last
+
+// MARK: - Character
+
+fun Char(char: Char): Char = char
+fun Char(string: String): Char = string[0]
+
