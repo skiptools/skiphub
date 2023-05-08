@@ -6,8 +6,15 @@
 # the blocks to add to the build.gradle.kts
 build:
   contents:
+    - block: 'plugins'
+      export: false
+      contents:
+        - '`kotlin-dsl`'
+
     - block: 'dependencies'
       export: false
       contents:
+        # JSON parsing
         - 'implementation("org.json:json:20230227")'
+        # Native C/C++ integration
         - 'implementation("net.java.dev.jna:jna:5.13.0")'

@@ -1,18 +1,23 @@
 # skip.tools per-configuration file
-skip:
-  package: 'skip.lib'
+
+#skip:
+#  package: 'skip.lib'
 
 # the blocks to add to the build.gradle.kts
 build:
   contents:
+    - block: 'dependencies'
+      contents:
+        - 'implementation("org.jetbrains.kotlin:kotlin-reflect")'
+        - 'testImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
+
     - block: 'plugins'
+      export: false
       contents:
         - '`kotlin-dsl`'
 
-#    - block: 'kotlin'
-#      contents:
-#        - 'jvmTarget = "11"'
-    - block: 'dependencies'
-      export: false
+    - block: 'java'
       contents:
-        - 'implementation("org.jetbrains.kotlin:kotlin-reflect")'
+        - block: 'toolchain'
+          contents:
+            - 'languageVersion.set(JavaLanguageVersion.of(17))'

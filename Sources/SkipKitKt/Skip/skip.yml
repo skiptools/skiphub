@@ -7,14 +7,10 @@
 build:
   contents:
     - block: 'plugins'
+      export: false
       contents:
         - 'kotlin("android") version "1.8.20"'
-        - 'id("com.android.library") version "8.0.0"'
-
-      # we need to replace the `kotlin-dsl` plugin or else
-      # error: “The 'java' plugin has been applied, but it is not compatible with the Android plugins.”
-      remove:
-        - '`kotlin-dsl`'
+        - 'id("com.android.library") version "8.0.1"'
 
     - block: 'android'
       contents:
@@ -27,11 +23,12 @@ build:
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
-            - 'sourceCompatibility = JavaVersion.VERSION_11'
-            - 'targetCompatibility = JavaVersion.VERSION_11'
+            - 'sourceCompatibility = JavaVersion.VERSION_17'
+            - 'targetCompatibility = JavaVersion.VERSION_17'
         - block: 'kotlinOptions'
           contents:
-            - 'jvmTarget = "11"'
+            - 'jvmTarget = "17"'
+
         - block: 'testOptions'
           contents:
             - 'unitTests.isIncludeAndroidResources = true'

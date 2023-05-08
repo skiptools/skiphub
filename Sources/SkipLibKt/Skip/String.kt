@@ -12,6 +12,7 @@ class Substring(val stringValue: String, val startIndex: Int) {
 fun String(string: String): String = string
 fun String(character: Char): String = character.toString()
 fun String(substring: Substring): String = substring.stringValue
+fun String(describing: Any?): String = describing?.toString() ?: "null"
 
 fun String(sequence: Sequence<Char>): String {
     return StringBuilder().apply {

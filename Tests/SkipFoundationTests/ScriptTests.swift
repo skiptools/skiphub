@@ -11,11 +11,11 @@ import OSLog
 import JavaScriptCore
 import XCTest
 
-#if !SKIP
-// MARK: Shims for API parity
-fileprivate typealias JSContext = SkipJSContext
-fileprivate typealias JSValue = SkipJSValue
-#endif
+//#if !SKIP
+//// MARK: Shims for API parity
+//fileprivate typealias JSContext = SkipJSContext
+//fileprivate typealias JSValue = SkipJSValue
+//#endif
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 class ScriptTests : XCTestCase {
@@ -34,6 +34,9 @@ class ScriptTests : XCTestCase {
         let num = try XCTUnwrap(ctx.evaluateScript("1 + 2.3"))
         
         XCTAssertEqual(3.3, num.toDouble())
+        #if SKIP
+        XCTAssertEqual("class skip.foundation.SkipJSValue", "\(type(of: num))")
+        #endif
         XCTAssertEqual("3.3", num.toString())
 
         func eval(_ script: String) throws -> JSValue {

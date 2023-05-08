@@ -101,20 +101,12 @@ public extension String {
 
 }
 
-public extension String {
-    public func lowercased() -> String { toLowerCase() }
-    public func uppercased() -> String { toUpperCase() }
-
-//    public func hasPrefix(_ string: String) -> Bool { startsWith(string) }
-//    public func hasSuffix(_ string: String) -> Bool { endsWith(string) }
-}
-
 public extension StringProtocol {
-    public func lowercased() -> String { toLowerCase() }
-    public func uppercased() -> String { toUpperCase() }
+    public func lowercased() -> String { description.lowercased() }
+    public func uppercased() -> String { description.uppercased() }
 
-    public func hasPrefix(_ string: String) -> Bool { startsWith(string) }
-    public func hasSuffix(_ string: String) -> Bool { endsWith(string) }
+    public func hasPrefix(_ string: String) -> Bool { description.hasPrefix(string) }
+    public func hasSuffix(_ string: String) -> Bool { description.hasSuffix(string) }
 }
 
 public func String(data: SkipData, encoding: String.Encoding) -> String? {

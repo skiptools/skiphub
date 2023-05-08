@@ -29,6 +29,10 @@ public struct String: RandomAccessCollection {
         fatalError()
     }
 
+    public init(describing instance: Any?) {
+        fatalError()
+    }
+
     public init(repeating: String, count: Int) {
         fatalError()
     }

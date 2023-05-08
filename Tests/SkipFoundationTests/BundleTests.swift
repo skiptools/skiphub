@@ -6,12 +6,7 @@
 @testable import SkipFoundation
 import XCTest
 
-#if !SKIP
-/// Name fix until skip supports Dictionary -> Map transpilation
-fileprivate typealias Map = Dictionary
-#endif
-
-@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+@available(macOS 13, iOS 16, watchOS 10, tvOS 16, *)
 final class BundleTests: XCTestCase {
     func testBundle() throws {
         if true {
@@ -54,13 +49,27 @@ final class BundleTests: XCTestCase {
 
         let data = try XCTUnwrap(locstr.data(using: String.Encoding.utf8, allowLossyConversion: false))
 
-        let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
+        do {
+            let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
 
-        let dict = try XCTUnwrap(plist as? Map<String, String>)
+            let dict = try XCTUnwrap(plist as? Dictionary<String, String>)
+            XCTAssertEqual(2, dict.keys.count)
+            XCTAssertEqual("Oui", dict["Yes"])
+            XCTAssertEqual("Le \"même\" texte en anglais", dict["The \"same\" text in English"])
+        }
 
-        XCTAssertEqual("Oui", dict["Yes"])
-        //logger.debug("KEYS: \(dict.keys)")
-        XCTAssertEqual("Le \"même\" texte en anglais", dict["The \"same\" text in English"])
+        // run the same test again, but this time verifying the SkipPropertyListSerialization implementation on Darwin
+        do {
+            #if !SKIP
+            typealias PropertyListSerialization = SkipPropertyListSerialization
+            #endif
+            let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
+
+            let dict = try XCTUnwrap(plist as? Dictionary<String, String>)
+            XCTAssertEqual(2, dict.keys.count)
+            XCTAssertEqual("Oui", dict["Yes"])
+            XCTAssertEqual("Le \"même\" texte en anglais", dict["The \"same\" text in English"])
+        }
     }
 
 

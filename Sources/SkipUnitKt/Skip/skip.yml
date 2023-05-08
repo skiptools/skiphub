@@ -9,8 +9,13 @@ build:
     - block: 'dependencies'
       export: false
       contents:
-        - 'implementation("org.jetbrains.kotlin:kotlin-test:1.8.20")'
-        - 'implementation("org.jetbrains.kotlin:kotlin-test-junit:1.8.20")'
+        - 'implementation("org.jetbrains.kotlin:kotlin-test")'
+        - 'implementation("org.jetbrains.kotlin:kotlin-test-junit")'
+
+    - block: 'plugins'
+      export: false
+      contents:
+        - '`kotlin-dsl`'
 
 # the blocks to add to the settings.gradle.kts
 settings:
@@ -38,3 +43,7 @@ settings:
         - block: 'repositories'
           contents:
             - 'mavenCentral()'
+
+    #- block: 'compileKotlin'
+    #  contents:
+    #    - 'kotlinOptions.jvmTarget = "17"'

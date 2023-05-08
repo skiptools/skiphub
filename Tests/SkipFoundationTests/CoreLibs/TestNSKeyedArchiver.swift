@@ -173,6 +173,7 @@ class TestNSKeyedArchiver : XCTestCase {
         #endif // !SKIP
     }
 
+    #if !SKIP // PropertyListSerialization.PropertyListFormat not being resolved
     private func test_archive(_ object: Any, classes: [AnyClass], allowsSecureCoding: Bool = true, outputFormat: PropertyListSerialization.PropertyListFormat) {
         #if SKIP
         throw XCTSkip("TODO")
@@ -203,7 +204,8 @@ class TestNSKeyedArchiver : XCTestCase {
         })
         #endif // !SKIP
     }
-    
+    #endif
+
     private func test_archive(_ object: Any, classes: [AnyClass], allowsSecureCoding: Bool = true) {
         #if SKIP
         throw XCTSkip("TODO")

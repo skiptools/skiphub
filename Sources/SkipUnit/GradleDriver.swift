@@ -17,7 +17,7 @@ public struct GradleDriver {
 
     /// The minimum version of Gradle that we can work with
     /// https://github.com/actions/runner-images/blob/main/images/macos/macos-12-Readme.md#project-management
-    public static let minimumGradleVersion = Version(8, 0, 1)
+    public static let minimumGradleVersion = Version(8, 1, 1)
 
     /// The path to the `gradle` tool
     public let gradlePath: URL
@@ -90,7 +90,7 @@ public struct GradleDriver {
             }
         }
 
-        throw GradleDriverError.toolPathNotFound(toolName)
+        throw GradleDriverError.gradleNotInstalled(toolName)
     }
 
     /// Executes `gradle` with the current default arguments and the additional args and returns an async stream of the lines from the combined standard err and standard out.
@@ -532,7 +532,7 @@ public struct GradleDriver {
 }
 
 public enum GradleDriverError : Error, LocalizedError {
-    case toolPathNotFound(String)
+    case gradleNotInstalled(String)
 
     /// The command did not return any output
     case commandNoResult(String)
@@ -552,10 +552,14 @@ public enum GradleDriverError : Error, LocalizedError {
     /// A property was expected to have been found in the given URL
     case missingProperty(url: URL, propertyName: String)
 
+    public var description: String {
+        errorDescription ?? ""
+    }
+
     public var errorDescription: String? {
         switch self {
-        case .toolPathNotFound(let string):
-            return "Could not locate tool: «\(string)»"
+        case .gradleNotInstalled(let string):
+            return "Could not locate tool: «\(string)». Gradle must be installed in order to run tests. Install it using homebrew with: brew install gradle"
         case .commandNoResult(let string):
             return "The command «\(string)» returned no result."
         case .noGradleVersion(let gradle, let props):

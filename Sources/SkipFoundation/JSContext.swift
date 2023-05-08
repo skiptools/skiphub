@@ -138,7 +138,7 @@ internal class SkipJSValue {
         guard let ref: JSStringRef = JavaScriptCore.JSValueToStringCopy(context.context, value, nil) else {
             return ""
         }
-        
+
         let chars = JavaScriptCore.JSStringGetCharactersPtr(ref)
         let len = JavaScriptCore.JSStringGetLength(ref)
         #if SKIP
@@ -146,7 +146,7 @@ internal class SkipJSValue {
         for i in 0..<len {
             buffer[i] = chars.getChar((i * 2).toLong())
         }
-        return String(buffer)
+        return buffer.concatToString()
         #else
         return String(utf16CodeUnits: chars!, count: len)
         #endif
@@ -222,15 +222,9 @@ internal class SkipJSValue {
         return length
     }
 
-    #if !SKIP
     deinit {
         JavaScriptCore.JSValueUnprotect(context.context, value)
     }
-    #else
-    func finalize() {
-        JavaScriptCore.JSValueUnprotect(context.context, value)
-    }
-    #endif
 }
 
 
