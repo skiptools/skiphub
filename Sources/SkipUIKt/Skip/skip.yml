@@ -7,8 +7,19 @@
 build:
   contents:
     - block: 'plugins'
+      export: false
       contents:
-        - 'id("org.jetbrains.compose") version "1.4.0"'
+        - 'kotlin("android") version "1.8.20"'
+        - 'id("com.android.library") version "8.0.1"'
+
+    - block: 'android'
+      contents:
+        - block: 'buildFeatures'
+          contents:
+            - 'compose = true'
+        - block: 'composeOptions'
+          contents:
+            - 'kotlinCompilerExtensionVersion = "1.4.6"'
 
     - block: 'dependencies'
       contents:
