@@ -7,6 +7,10 @@
 import XCTest
 
 /// A base test case for a JUnit test suite which will run the skip-transpiled test cases
+@available(macOS 10.15, *)
+@available(iOS, unavailable, message: "Gradle tests can only be run against macOS targets")
+@available(watchOS, unavailable, message: "Gradle tests can only be run against macOS targets")
+@available(tvOS, unavailable, message: "Gradle tests can only be run against macOS targets")
 open class JUnitTestCase: XCTestCase {
     /// The default maximum memory used by this test; defaults to `ProcessInfo.processInfo.physicalMemory` but can be overridden for individual tests
     ///
@@ -16,7 +20,7 @@ open class JUnitTestCase: XCTestCase {
     }
 }
 
-#if canImport(_Concurrency)
+#if os(macOS) || os(Linux)
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 extension JUnitTestCase {
 

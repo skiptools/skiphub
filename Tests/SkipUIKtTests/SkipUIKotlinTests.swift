@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 import SkipUnit
 
+#if os(macOS) // Skip transpiled tests can only be run against macOS
 /// This test case will run the transpiled tests for the Skip module.
 final class SkipUIKtTests: JUnitTestCase {
     /// This test case will run the transpiled tests defined in the Swift peer module.
@@ -13,3 +14,4 @@ final class SkipUIKtTests: JUnitTestCase {
         try await runTranspiledGradleTests()
     }
 }
+#endif

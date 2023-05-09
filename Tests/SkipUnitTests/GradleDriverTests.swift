@@ -6,6 +6,7 @@
 import XCTest
 @testable import SkipUnit
 
+#if os(macOS)
 #if !SKIP
 final class GradleDriverTests: XCTestCase {
     /// Initialize a new Gradle project with the Kotlin DSL and run the test cases,
@@ -140,4 +141,5 @@ final class GradleDriverTests: XCTestCase {
         }
     }
 }
+#endif
 #endif

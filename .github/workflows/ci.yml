@@ -62,7 +62,7 @@ jobs:
           gradle --version
           brew upgrade gradle
           gradle --version
-
+          brew install tree
 
       - name: Configure debug Flags
         # when in debug mode, we run against a local build of the toolchain
@@ -170,18 +170,16 @@ jobs:
         run: swift test --parallel -c release
 
       - name: Gradle Build (Android)
-        working-directory: skiphub
+        # folder links in Packages/Skip/ should have been created by tests
+        working-directory: skiphub/Packages/Skip/skiphub/ExampleAppKtTests/skip-transpiler
         run: |
-          PLUGIN_OUTPUT=.build/plugins/outputs/skiphub
-          cd ${PLUGIN_OUTPUT}/ExampleAppKtTests/skip-transpiler
-
-          brew install tree
+          # Print an ASCII visualization of the folder
           tree -lh -I build .
 
-          # check the ExampleApp project for errors
+          # check the project for errors
           gradle check --console=plain
 
-          # try to create the ExampleApp.apk
+          # Build the APK
           gradle assembleRelease --console=plain || echo FAILED assembleRelease
           #gradle assembleDebug --console=plain || echo FAILED assembleDebug
 
@@ -191,7 +189,10 @@ jobs:
         working-directory: skiphub
         run: |
           xcodebuild -showsdks
+
+          xcodebuild build -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+
           # note CONFIG Release/Debug needs to be capitalized for xcodebuild
-          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "skiphub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
-          # | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+
 
