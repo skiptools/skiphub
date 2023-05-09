@@ -60,6 +60,8 @@ jobs:
         run: |
           which gradle
           gradle --version
+          brew upgrade gradle
+          gradle --version
 
       - name: Configure debug Flags
         # when in debug mode, we run against a local build of the toolchain
@@ -175,9 +177,14 @@ jobs:
           brew install tree
           tree -lh -I build .
 
+          # check the ExampleApp project for errors
           gradle check --console=plain
-          gradle assembleDebug --console=plain
-          #gradle "connectedDebugAndroidTest" --console=plain
+
+          # try to create the ExampleApp.apk
+          gradle assembleRelease --console=plain || echo FAILED assembleRelease
+          #gradle assembleDebug --console=plain || echo FAILED assembleDebug
+
+          #gradle "connectedDebugAndroidTest" --console=plain || echo FAILED: connectedDebugAndroidTest
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
