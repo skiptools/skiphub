@@ -24,11 +24,11 @@ build:
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
-            - 'sourceCompatibility = JavaVersion.VERSION_11'
-            - 'targetCompatibility = JavaVersion.VERSION_11'
+            - 'sourceCompatibility = JavaVersion.VERSION_17'
+            - 'targetCompatibility = JavaVersion.VERSION_17'
         - block: 'kotlinOptions'
           contents:
-            - 'jvmTarget = "11"'
+            - 'jvmTarget = "17"'
 
         - block: 'testOptions'
           contents:

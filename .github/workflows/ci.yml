@@ -152,6 +152,7 @@ jobs:
         run: swift test --jobs 1 -c debug
 
       - name: Debug Tests (Parallel)
+        if: false
         working-directory: skiphub
         run: swift test --parallel -c debug
 
@@ -176,7 +177,7 @@ jobs:
 
           gradle check --console=plain
           gradle assembleDebug --console=plain
-          #gradle "connected${{ env.CONFIG }}AndroidTest" --console=plain
+          #gradle "connectedDebugAndroidTest" --console=plain
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
