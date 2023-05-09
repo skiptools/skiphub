@@ -190,9 +190,9 @@ jobs:
         run: |
           xcodebuild -showsdks
 
-          xcodebuild build -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+          xcodebuild build -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
 
           # note CONFIG Release/Debug needs to be capitalized for xcodebuild
-          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.2" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
 
 
