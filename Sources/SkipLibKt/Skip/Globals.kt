@@ -5,15 +5,12 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-import kotlin.reflect.*
-
 fun fatalError(message: String = "fatalError"): Nothing = error(message)
 fun assertionFailure(message: String = "assertionFailure"): Nothing = error(message)
 fun preconditionFailure(message: String = "preconditionFailure"): Nothing = error(message)
 fun precondition(condition: Boolean, message: String = "precondition"): Unit = require(condition, { message })
 
-
-fun type(of: Any): KClass<*> = of::class
+fun type(of: Any): kotlin.reflect.KClass<*> = of::class
 
 fun <T> swap(a: InOut<T>, b: InOut<T>) {
     val t = a.value

@@ -14,10 +14,12 @@ protocol SourceCodeLocation {
 }
 
 extension SourceCodeLocation {
-    /// Parses the `File.sourcemap` for this `File.kt` and tries to find the matching line in the decoded source map JSON file (emitted by the skip transpiler).
+    /// Parses the `.File.sourcemap` for this `File.kt` and tries to find the matching line in the decoded source map JSON file (emitted by the skip transpiler).
     func findSourceMapLine() throws -> Self? {
-        // turn SourceFile.kt into SourceFile.sourcemap
-        let path = fileURL.deletingPathExtension().appendingPathExtension("sourcemap")
+        // turn SourceFile.kt into .SourceFile.sourcemap
+        let sourceFileName = "." + fileURL.deletingPathExtension().lastPathComponent + ".sourcemap"
+        let path = fileURL.deletingLastPathComponent().appendingPathComponent(sourceFileName, isDirectory: false)
+
         guard FileManager.default.isReadableFile(atPath: path.path) else {
             return nil
         }
