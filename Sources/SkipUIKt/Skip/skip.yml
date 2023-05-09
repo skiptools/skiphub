@@ -9,7 +9,7 @@ build:
     - block: 'plugins'
       export: false
       contents:
-        - 'kotlin("android") version "1.8.20"'
+        - 'kotlin("android") version "1.8.21"'
         - 'id("com.android.library") version "8.0.1"'
 
     - block: 'android'
@@ -19,7 +19,7 @@ build:
             - 'compose = true'
         - block: 'composeOptions'
           contents:
-            - 'kotlinCompilerExtensionVersion = "1.4.6"'
+            - 'kotlinCompilerExtensionVersion = "1.4.7"'
 
     - block: 'dependencies'
       contents:

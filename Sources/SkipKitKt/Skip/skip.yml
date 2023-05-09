@@ -9,26 +9,26 @@ build:
     - block: 'plugins'
       export: false
       contents:
-        - 'kotlin("android") version "1.8.20"'
+        - 'kotlin("android") version "1.8.21"'
         - 'id("com.android.library") version "8.0.1"'
 
     - block: 'android'
       contents:
         - 'namespace = group as String'
-        - 'compileSdkVersion(33)'
+        - 'compileSdk = 33'
         - block: 'defaultConfig'
           contents:
             #- 'applicationId = "com.example.myapp"'
-            - 'targetSdkVersion(33)'
-            - 'minSdkVersion(28)'
+            - 'targetSdk = 33'
+            - 'minSdk = 28'
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
-            - 'sourceCompatibility = JavaVersion.VERSION_17'
-            - 'targetCompatibility = JavaVersion.VERSION_17'
+            - 'sourceCompatibility = JavaVersion.VERSION_11'
+            - 'targetCompatibility = JavaVersion.VERSION_11'
         - block: 'kotlinOptions'
           contents:
-            - 'jvmTarget = "17"'
+            - 'jvmTarget = "11"'
 
         - block: 'testOptions'
           contents:

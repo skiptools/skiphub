@@ -156,30 +156,27 @@ jobs:
         run: swift test --parallel -c debug
 
       - name: Release Tests (Serial)
+        if: false
         working-directory: skiphub
         run: swift test --jobs 1 -c release
 
       - name: Release Tests (Parallel)
+        if: false
         working-directory: skiphub
         run: swift test --parallel -c release
 
-      - name: Gradle Tests (Android)
+      - name: Gradle Build (Android)
         working-directory: skiphub
-        if: false
         run: |
           PLUGIN_OUTPUT=.build/plugins/outputs/skiphub
-          # get the most recent derived data folder
-          #PLUGIN_OUTPUT=`ls -1rtd ~/Library/Developer/Xcode/DerivedData/skiphub-*/SourcePackages/plugins/skiphub.output | tail -n 1`
-
-          cd ${PLUGIN_OUTPUT}/${{ matrix.target }}KtTests/skip-transpiler
+          cd ${PLUGIN_OUTPUT}/ExampleAppKtTests/skip-transpiler
 
           brew install tree
           tree -lh -I build .
 
-          gradle check -Pandroid.useAndroidX=true --console=plain --no-daemon
-
-          # TODO:
-          #gradle "connected${{ env.CONFIG }}AndroidTest" -Pandroid.useAndroidX=true -Dorg.gradle.jvmargs=-Xmx2g --rerun-tasks --console=plain --no-daemon
+          gradle check --console=plain
+          gradle assembleDebug --console=plain
+          #gradle "connected${{ env.CONFIG }}AndroidTest" --console=plain
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
