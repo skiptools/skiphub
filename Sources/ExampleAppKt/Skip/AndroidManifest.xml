@@ -4,7 +4,7 @@
         android:name=".ExampleApplication"
         android:allowBackup="true">
         <activity
-            android:name=".ExampleApp"
+            android:name=".ExampleActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

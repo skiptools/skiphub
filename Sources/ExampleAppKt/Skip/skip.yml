@@ -17,5 +17,6 @@ build:
             - 'versionCode = 1'
             - 'versionName = "1.0"'
         - block: 'packaging'
+          # merge rules for resources with the same name
           contents:
             - 'resources.pickFirsts.add("META-INF/LGPL2.1")'
