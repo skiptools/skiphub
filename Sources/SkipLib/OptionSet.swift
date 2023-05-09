@@ -11,17 +11,7 @@
 
 #if SKIP
 
-public protocol OptionSet: RawRepresentable {
-}
-
-extension OptionSet {
-    public func contains(_ member: Self) -> Bool {
-        fatalError()
-    }
-
-    public mutating func insert(_ member: Self) -> (inserted: Bool, memberAfterInsert: Self) {
-        fatalError()
-    }
+public protocol OptionSet: RawRepresentable, SetAlgebra where Element == Self {
 }
 
 #endif

@@ -11,7 +11,7 @@
 
 #if SKIP
 
-public struct Set<Element>: Collection {
+public struct Set<Element>: Collection, SetAlgebra {
     public init() {
         fatalError()
     }
@@ -20,7 +20,23 @@ public struct Set<Element>: Collection {
         fatalError()
     }
 
-    public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
+    @available(*, unavailable)
+    public init(minimumCapacity: Int) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> Set<Element> {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public var capacity: Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func reserveCapacity(_ minimumCapacity: Int) {
         fatalError()
     }
 }

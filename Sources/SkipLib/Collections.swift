@@ -214,8 +214,7 @@ extension Sequence {
     }
 }
 
-public protocol Collection<Element> : Sequence {
-    associatedtype Element
+public protocol Collection : Sequence {
     // SKIP NOWARN
     typealias Index = Int
 }

@@ -11,11 +11,10 @@
 
 #if SKIP
 
-// References to "String.Index" are convert to "StringIndex" which is an integer in Kotlin
-public typealias StringIndex = Int
-
 public struct String: RandomAccessCollection {
     public typealias Element = Character
+    // SKIP NOWARN
+    public typealias Index = Int
 
     public init() {
         fatalError()
