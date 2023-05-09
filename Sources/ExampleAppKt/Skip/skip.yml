@@ -7,6 +7,12 @@ build:
     - block: 'plugins'
       contents:
         - 'kotlin("android") version "1.8.20"'
-        - 'id("com.android.library") version "8.0.1"'
-        # TODO:
-        #- 'id("com.android.application") version "8.0.1"'
+        - 'id("com.android.application") version "8.0.1"'
+    - block: 'android'
+      contents:
+        - 'namespace = "example.app"'
+        - block: 'defaultConfig'
+          contents:
+            - 'applicationId = "example.app"'
+            - 'versionCode = 1'
+            - 'versionName = "1.0"'

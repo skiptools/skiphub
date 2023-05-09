@@ -139,9 +139,6 @@ public struct GradleDriver {
 
         args += ["-PbuildDir=\(buildDir)"]
 
-        // this can also be set in a top-level gradle.properties file, but we include it here for good measure
-        args += ["-Pandroid.useAndroidX=true"]
-
         // this allows multiple simultaneous gradle builds to take place
         // args += ["--parallel"]
 

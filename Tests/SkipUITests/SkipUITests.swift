@@ -158,7 +158,7 @@ import SkipFoundation
 // SKIP INSERT: import org.junit.runner.RunWith
 
 
-// SKIP INSERT: @RunWith(AndroidJUnit4::class)
+// SKIP INSERT: @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class SkipUITests: XCTestCase {
     // SKIP INSERT: @get:Rule val rule = createComposeRule()

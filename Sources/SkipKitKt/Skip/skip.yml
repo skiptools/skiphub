@@ -15,11 +15,12 @@ build:
     - block: 'android'
       contents:
         - 'namespace = group as String'
-        - 'compileSdk = 33'
+        - 'compileSdkVersion(33)'
         - block: 'defaultConfig'
           contents:
-            - 'targetSdk = 33'
-            - 'minSdk = 28'
+            #- 'applicationId = "com.example.myapp"'
+            - 'targetSdkVersion(33)'
+            - 'minSdkVersion(28)'
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
@@ -35,7 +36,7 @@ build:
 
     - block: 'dependencies'
       contents:
-        - 'testImplementation("org.robolectric:robolectric:4.10")'
+        - 'testImplementation("org.robolectric:robolectric:4.10.2")'
         - 'testImplementation("androidx.test:core:1.5.0")'
 
     - block: 'tasks.withType<Test>().configureEach'

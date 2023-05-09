@@ -9,6 +9,7 @@ import skip.foundation.*
 import skip.kit.*
 import skip.ui.*
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,9 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
-public val logger = Logger(subsystem = "activity", category = "ExampleApp")
+public val logger = Logger(subsystem = "example.app", category = "ExampleApp")
 
-class ExampleApp : ComponentActivity() {
+/// The base applicatoon
+class ExampleApplication : Application() {
+
+}
+
+/// The base activity
+class ExampleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
