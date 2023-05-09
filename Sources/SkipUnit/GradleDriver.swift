@@ -229,17 +229,15 @@ public struct GradleDriver {
         // gradle --version will output an unstructued mess like this:
         /*
          ------------------------------------------------------------
-         Gradle 8.0.2
+         Gradle 8.1.1
          ------------------------------------------------------------
-
-         Build time:   2023-03-03 16:41:37 UTC
-         Revision:     7d6581558e226a580d91d399f7dfb9e3095c2b1d
-
-         Kotlin:       1.8.20
-         Groovy:       3.0.13
+         Build time:   2023-04-21 12:31:26 UTC
+         Revision:     1cf537a851c635c364a4214885f8b9798051175b
+         Kotlin:       1.8.10
+         Groovy:       3.0.15
          Ant:          Apache Ant(TM) version 1.10.11 compiled on July 10 2021
-         JVM:          19.0.2 (Homebrew 19.0.2)
-         OS:           Mac OS X 13.2.1 aarch64
+         JVM:          17.0.7 (Eclipse Adoptium 17.0.7+7)
+         OS:           Mac OS X 13.3.1 x86_64
          */
 
         let lines = try await Process.streamLines(command: gradleArgs + ["--version"], onExit: Process.expectZeroExitCode).reduce([]) { $0 + [$1] }

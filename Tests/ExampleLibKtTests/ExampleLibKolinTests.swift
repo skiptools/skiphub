@@ -5,6 +5,11 @@
 // as published by the Free Software Foundation https://fsf.org
 import SkipUnit
 
-/// This test case will run the transpiled tests for the module, as implemented by `JUnitTestCase.testProjectGradle()`
-final class KotlinProjectTestCase: JUnitTestCase {
+/// This test case will run the transpiled tests for the Skip module.
+final class ExampleLibKtTests: JUnitTestCase {
+    /// This test case will run the transpiled tests defined in the Swift peer module.
+    /// New tests should be added there, not here.
+    public func testSkipModule() async throws {
+        try await runTranspiledGradleTests()
+    }
 }

@@ -19,14 +19,18 @@ open class JUnitTestCase: XCTestCase {
 #if canImport(_Concurrency)
 extension JUnitTestCase {
 
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    public func test() async throws {
+    /// Run the transpiled tests. When the `sourcePath` is referenced, output links will be created relative to the project root.
+    public func runTranspiledGradleTests(fromSourceFile sourcePath: StaticString? = #file) async throws {
         // only run in subclasses, not in the base test
         #if os(macOS) || os(Linux)
         if self.className == "SkipUnit.JUnitTestCase" {
             // TODO: add a general system gradle checkup test here
         } else {
-            try await runGradleTests()
+            if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+                try await runGradleTests(sourcePath: sourcePath)
+            } else {
+                fatalError("gradle tests require macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0")
+            }
         }
         #else
         print("skipping testProjectGradle() for non-macOS target")
@@ -35,7 +39,7 @@ extension JUnitTestCase {
 
     #if os(macOS) || os(Linux)
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func runGradleTests() async throws {
+    func runGradleTests(sourcePath: StaticString? = nil, linkFolderBase: String = "Packages/Skip") async throws {
         let selfType = type(of: self)
         let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
         //let moduleSuffix = "TestsKt"
@@ -48,7 +52,23 @@ extension JUnitTestCase {
         }
 
         let driver = try await GradleDriver()
-        let dir = try pluginOutputFolder(module: moduleName)
+        let linkFolder: URL? = sourcePath.flatMap { sourcePath in
+            let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
+            var packageRootURL = sourcePathURL.deletingLastPathComponent()
+            while (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) != true {
+                let parent = packageRootURL.deletingLastPathComponent()
+                if parent.path == packageRootURL.path {
+                    return nil // top of the fs and not found
+                }
+                packageRootURL = parent
+            }
+            if (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) == true {
+                return packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
+            } else {
+                return nil
+            }
+        }
+        let dir = try pluginOutputFolder(module: moduleName, linkingInto: linkFolder)
 
         // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
         let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
@@ -79,7 +99,12 @@ extension JUnitTestCase {
         }
     }
 
-    func pluginOutputFolder(module moduleName: String) throws -> URL {
+    /// Returns the URL to the folder that holds the top-level `settings.gradle.kts` file for the destination module.
+    /// - Parameters:
+    ///   - moduleName: the module name to seach for
+    ///   - linkFolder: when specified, the module's root folder will first be linked into the linkFolder, which enables the output of the project to be browsable from the containing project (e.g., Xcode)
+    /// - Returns: the folder that contains the buildable gradle project, either in the DerivedData/ folder, or re-linked through the specified linkFolder
+    func pluginOutputFolder(module moduleName: String, linkingInto linkFolder: URL?) throws -> URL {
         let env = ProcessInfo.processInfo.environment
 
         // if we are running tests from Xcode, this environment variable should be set; otherwise, assume the .build folder for an SPM build
@@ -111,9 +136,34 @@ extension JUnitTestCase {
                 if outputFolder.pathExtension != pathExtension {
                     continue // only check known path extensions (e.g., ".output" or "")
                 }
-                let pluginModuleOutputFolder = URL(fileURLWithPath: moduleName + "/skip-transpiler/", isDirectory: true, relativeTo: outputFolder)
+                let transpilerName = "skip-transpiler" // FIXME: avoid including the plugin name somehow
+                let moduleTranspilerFolder = moduleName + "/" + transpilerName + "/"
+                let pluginModuleOutputFolder = URL(fileURLWithPath: moduleTranspilerFolder, isDirectory: true, relativeTo: outputFolder)
+                //print("findModuleFolder: pluginModuleOutputFolder:", pluginModuleOutputFolder)
                 if (try? pluginModuleOutputFolder.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true {
-                    return pluginModuleOutputFolder
+                    // found the folder; now make a link from its parent folder to the project source…
+                    if let linkFolder = linkFolder {
+                        let localModuleLink = URL(fileURLWithPath: outputFolder.lastPathComponent, isDirectory: false, relativeTo: linkFolder)
+                        //print("findModuleFolder: localModuleLink:", localModuleLink.path)
+
+                        // make sure the output root folder exists
+                        try FileManager.default.createDirectory(at: linkFolder, withIntermediateDirectories: true)
+
+                        let linkFrom = localModuleLink.path, linkTo = outputFolder.path
+                        //print("findModuleFolder: createSymbolicLink:", linkFrom, linkTo)
+
+                        if (try? FileManager.default.destinationOfSymbolicLink(atPath: linkFrom)) != linkTo {
+                            try? FileManager.default.removeItem(atPath: linkFrom) // if it exists
+                            try FileManager.default.createSymbolicLink(atPath: linkFrom, withDestinationPath: linkTo)
+                        }
+
+                        let localTranspilerOut = URL(fileURLWithPath: outputFolder.lastPathComponent, isDirectory: true, relativeTo: localModuleLink)
+                        let linkedPluginModuleOutputFolder = URL(fileURLWithPath: moduleTranspilerFolder, isDirectory: true, relativeTo: localTranspilerOut)
+                        //print("findModuleFolder: linkedPluginModuleOutputFolder:", linkedPluginModuleOutputFolder.path)
+                        return linkedPluginModuleOutputFolder
+                    } else {
+                        return pluginModuleOutputFolder
+                    }
                 }
             }
             struct NoModuleFolder : LocalizedError {
@@ -400,6 +450,7 @@ extension JUnitTestCase {
         let passPercentage = Double(passTotal) / (testsTotal == 0 ? Double.nan : Double(testsTotal))
         print("JUNIT SUITES \(suiteTotal) TESTS \(testsTotal) PASSED \(passTotal) (\(round(passPercentage * 100))%) FAILED \(failTotal) SKIPPED \(skipTotal) TIME \(round(timeTotal * 100.0) / 100.0)")
 
+        // TODO: compare the output with the SPM test output "xunit" xml reports
     }
     #endif // os(macOS) || os(Linux)
 
