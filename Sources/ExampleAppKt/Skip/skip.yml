@@ -7,10 +7,6 @@ build:
     - block: 'plugins'
       contents:
         - 'kotlin("android") version "1.8.20"'
-        - 'id("com.android.application") version "8.0.1"'
-
-#    - block: 'dependencies'
-#      contents:
-#        - 'testImplementation("org.robolectric:robolectric:4.10")'
-#        - 'testImplementation("androidx.test:core:1.5.0")'
-
+        - 'id("com.android.library") version "8.0.1"'
+        # TODO:
+        #- 'id("com.android.application") version "8.0.1"'
