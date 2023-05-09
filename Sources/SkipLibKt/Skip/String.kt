@@ -5,6 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+typealias StringIndex = Int
 class Substring(val stringValue: String, val startIndex: Int) {
     override fun toString(): String = stringValue
 }

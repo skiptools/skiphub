@@ -120,7 +120,7 @@ final class StringTests: XCTestCase {
 
     func testSlice() {
         let str = "abcdef"
-        let bindex = str.firstIndex(of: "b")!
+        let bindex: String.Index = str.firstIndex(of: "b")!
         let char = str[bindex]
         XCTAssertTrue(char == "b")
 
