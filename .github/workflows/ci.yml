@@ -63,6 +63,7 @@ jobs:
           brew upgrade gradle
           gradle --version
 
+
       - name: Configure debug Flags
         # when in debug mode, we run against a local build of the toolchain
         if: env.CONFIG == 'debug'
