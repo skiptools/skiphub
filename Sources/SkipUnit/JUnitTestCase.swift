@@ -17,6 +17,7 @@ open class JUnitTestCase: XCTestCase {
 }
 
 #if canImport(_Concurrency)
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 extension JUnitTestCase {
 
     /// Run the transpiled tests. When the `sourcePath` is referenced, output links will be created relative to the project root.
@@ -26,11 +27,7 @@ extension JUnitTestCase {
         if self.className == "SkipUnit.JUnitTestCase" {
             // TODO: add a general system gradle checkup test here
         } else {
-            if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
-                try await runGradleTests(sourcePath: sourcePath)
-            } else {
-                fatalError("gradle tests require macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0")
-            }
+            try await runGradleTests(sourcePath: sourcePath)
         }
         #else
         print("skipping testProjectGradle() for non-macOS target")
