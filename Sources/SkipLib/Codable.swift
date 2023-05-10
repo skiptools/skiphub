@@ -16,6 +16,15 @@ public protocol Decodable {
     #endif
 }
 
+public protocol Identifiable {
+    /// A type representing the stable identity of the entity associated with
+    /// an instance.
+    associatedtype ID : Hashable
+
+    /// The stable identity of the entity associated with this instance.
+    var id: ID { get }
+}
+
 #if !SKIP // Kotlin has no composite protocols
 public typealias Codable = Decodable & Encodable
 #else

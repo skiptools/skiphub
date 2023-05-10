@@ -16,6 +16,7 @@ import XCTest
 public protocol XCGradleHarness {
 }
 
+#if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
 @available(macOS 13, macCatalyst 16, *)
 extension XCGradleHarness where Self : XCTestCase {
 
@@ -461,4 +462,5 @@ struct InvalidModuleNameError : LocalizedError {
 extension XCTSourceCodeLocation : SourceCodeLocation {
 
 }
+#endif // os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
 #endif // !SKIP

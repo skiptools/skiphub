@@ -106,7 +106,8 @@ public struct GradleDriver {
         for (key, value) in env {
             penv[key] = value
         }
-        return Process.streamLines(command: gradleArgs + args, environment: penv, workingDirectory: workingDirectory, onExit: onExit)
+        // note that we don't pass workingDirectory through because it is not supported on macCatalyst
+        return Process.streamLines(command: gradleArgs + args, environment: penv, onExit: onExit)
     }
 
     /// Invokes the tests for the given gradle project.
@@ -320,6 +321,7 @@ public struct GradleDriver {
 
         /// Loads the test suite information from the JUnit-compatible XML format.
         public init(contentsOf url: URL) throws {
+            #if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
             let results = try XMLDocument(contentsOf: url)
             //print("parsed XML results:", results)
 
@@ -383,6 +385,9 @@ public struct GradleDriver {
 
             let suite = TestSuite(name: testSuiteName, tests: testCount, skipped: skipCount, failures: failureCount, errors: errorCount, time: duration, testCases: testCases, systemOut: systemOut.isEmpty ? nil : systemOut, systemErr: systemErr.isEmpty ? nil : systemErr)
             self = suite
+            #else
+            fatalError("unexpected platform")
+            #endif
         }
     }
 
@@ -406,6 +411,7 @@ public struct GradleDriver {
             self.failures = failures
         }
 
+        #if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
         init(from element: XMLElement, in url: URL) throws {
             guard let testCaseName = element.attribute(forName: "name")?.stringValue else {
                 throw GradleDriverError.missingProperty(url: url, propertyName: "name")
@@ -448,6 +454,7 @@ public struct GradleDriver {
 
             self.failures = testFailures
         }
+        #endif
     }
 
     public struct TestFailure {
@@ -464,6 +471,7 @@ public struct GradleDriver {
             self.contents = contents
         }
 
+        #if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
         init(from element: XMLElement, in url: URL) throws {
             guard let message = element.attribute(forName: "message")?.stringValue else {
                 throw GradleDriverError.missingProperty(url: url, propertyName: "message")
@@ -479,6 +487,7 @@ public struct GradleDriver {
             self.type = type
             self.contents = contents
         }
+        #endif
     }
 
     private static func parseTestResults(in testFolder: URL) throws -> [TestSuite] {
