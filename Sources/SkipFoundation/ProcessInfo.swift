@@ -43,8 +43,13 @@ public class SkipProcessInfo {
         #if !SKIP
         return rawValue.processIdentifier
         #else
-        // return android.os.Process.myPid()
-        return java.lang.ProcessHandle.current().pid().toInt()
+        do {
+            return android.os.Process.myPid()
+        } catch {
+            // seems to happen in Robolectric tests
+            return -1
+        }
+        //return java.lang.ProcessHandle.current().pid().toInt()
         #endif
     }
 

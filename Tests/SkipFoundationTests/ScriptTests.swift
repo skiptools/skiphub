@@ -35,7 +35,8 @@ class ScriptTests : XCTestCase {
         
         XCTAssertEqual(3.3, num.toDouble())
         #if SKIP
-        XCTAssertEqual("class skip.foundation.SkipJSValue", "\(type(of: num))")
+        let className = "\(type(of: num))" // could be: "class skip.foundation.SkipJSValue (Kotlin reflection is not available)"
+        XCTAssertTrue(className.contains("skip.foundation.SkipJSValue"), "unexpected calss name: \(className)")
         #endif
         XCTAssertEqual("3.3", num.toString())
 

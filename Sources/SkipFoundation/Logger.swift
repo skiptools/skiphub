@@ -29,12 +29,7 @@ public typealias OSLogType = os.OSLogType
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 internal class SkipLogger {
     #if SKIP
-    let log: java.util.logging.Logger
-
-    //let log: android.util.Log
-
-    // TBD: we could use reflection to see if `android.util.Log` is available and use that instead, falling back to the `java.util.logging.Logger` implementation when not on Android
-    // private static let debugMethod: java.lang.reflect.Method? = try? Class.forName("android.util.Log").getMethod("d", String.self, String.self)
+    let logName: String
     #else
     let log: os.Logger
     #endif
@@ -49,8 +44,7 @@ internal class SkipLogger {
 
     public init(subsystem: String, category: String) {
         #if SKIP
-        // self.log = System.getLogger(subsystem + "." + category) // unavailable on Android
-        self.log = java.util.logging.Logger.getLogger(subsystem + "." + category)
+        self.logName = subsystem + "." + category
         #else
         self.log = os.Logger(subsystem: subsystem, category: category)
         #endif
@@ -58,7 +52,11 @@ internal class SkipLogger {
 
     public func log(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.INFO, message)
+        do {
+            android.util.Log.i(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.INFO, message)
+        }
         #else
         //log.log(message) // error in Swift: “Argument must be a string interpolation”
         print("LOG:", message)
@@ -67,7 +65,11 @@ internal class SkipLogger {
 
     public func trace(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.FINER, message)
+        do {
+            android.util.Log.v(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.FINER, message)
+        }
         #else
         //log.trace(message) // error in Swift: “Argument must be a string interpolation”
         print("TRACE:", message)
@@ -76,7 +78,11 @@ internal class SkipLogger {
 
     public func debug(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.FINE, message)
+        do {
+            android.util.Log.d(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.FINE, message)
+        }
         #else
         //log.debug(message) // error in Swift: “Argument must be a string interpolation”
         print("DEBUG:", message)
@@ -85,7 +91,11 @@ internal class SkipLogger {
 
     public func info(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.INFO, message)
+        do {
+            android.util.Log.i(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.INFO, message)
+        }
         #else
         //log.info(message) // error in Swift: “Argument must be a string interpolation”
         print("INFO:", message)
@@ -94,7 +104,11 @@ internal class SkipLogger {
 
     public func notice(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.CONFIG, message)
+        do {
+            android.util.Log.i(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.CONFIG, message)
+        }
         #else
         //log.notice(message) // error in Swift: “Argument must be a string interpolation”
         print("NOTICE:", message)
@@ -103,7 +117,11 @@ internal class SkipLogger {
 
     public func warning(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.WARNING, message)
+        do {
+            android.util.Log.w(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.WARNING, message)
+        }
         #else
         //log.warning(message) // error in Swift: “Argument must be a string interpolation”
         print("WARNING:", message)
@@ -112,7 +130,11 @@ internal class SkipLogger {
 
     public func error(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.SEVERE, message)
+        do {
+            android.util.Log.e(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.SEVERE, message)
+        }
         #else
         //log.error(message) // error in Swift: “Argument must be a string interpolation”
         print("ERROR:", message)
@@ -121,7 +143,11 @@ internal class SkipLogger {
 
     public func critical(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.SEVERE, message)
+        do {
+            android.util.Log.wtf(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.SEVERE, message)
+        }
         #else
         //log.critical(message) // error in Swift: “Argument must be a string interpolation”
         print("CRITICAL:", message)
@@ -130,7 +156,11 @@ internal class SkipLogger {
 
     public func fault(_ message: LogMessage) {
         #if SKIP
-        log.log(java.util.logging.Level.SEVERE, message)
+        do {
+            android.util.Log.wtf(logName, message)
+        } catch {
+            java.util.logging.Logger.getLogger(logName).log(java.util.logging.Level.SEVERE, message)
+        }
         #else
         //log.fault(message) // error in Swift: “Argument must be a string interpolation”
         print("FAULT:", message)

@@ -164,7 +164,16 @@ internal class PlatformJSONSerialization {
         } else if let obj = (value as? PlatformJSONObject) {
             return convertToAny(fromJSONObject: JSONObjectAny(obj))
         } else if let array = (value as? PlatformJSONArray) {
+            #if !SKIP
             return Array(array.map(convertToAny(fromJSONValue:)))
+            #else
+            var array = Array<Any?>()
+            for element in array.iterator() {
+                let value = convertToAny(fromJSONValue: element as Any)
+                array.append(value)
+            }
+            return array
+            #endif
         } else {
             return value
         }

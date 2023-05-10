@@ -12,8 +12,8 @@ final class ExampleAppKtTests: XCTestCase, XCGradleHarness {
     /// This test case will run the transpiled tests defined in the Swift peer module.
     /// New tests should be added there, not here.
     public func testSkipModule() async throws {
-        //try await gradle(actions: ["test", "assembleDebug"])
-        try await gradle(actions: ["test"])
+        // note that this test case also creates a debug build of the app as a side-effect
+        try await gradle(actions: ["test", "assembleDebug"])
     }
 }
 #endif

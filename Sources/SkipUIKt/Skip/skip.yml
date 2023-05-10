@@ -6,12 +6,6 @@
 # the blocks to add to the build.gradle.kts
 build:
   contents:
-    - block: 'plugins'
-      export: false
-      contents:
-        - 'kotlin("android") version "1.8.21"'
-        - 'id("com.android.library") version "8.1+"'
-
     - block: 'android'
       contents:
         - block: 'buildFeatures'

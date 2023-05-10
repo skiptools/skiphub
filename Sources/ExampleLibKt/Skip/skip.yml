@@ -3,9 +3,3 @@
 #skip:
 #  package: 'example.lib'
 
-build:
-  contents:
-    - block: 'plugins'
-      export: false
-      contents:
-        - '`kotlin-dsl`'
