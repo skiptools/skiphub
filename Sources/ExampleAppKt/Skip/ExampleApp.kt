@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 
 public val logger = Logger(subsystem = "example.app", category = "ExampleApp")
 
-/// The base applicatoon
+/// The base application
 class ExampleApplication : Application() {
 
 }
