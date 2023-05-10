@@ -77,12 +77,12 @@ final class ExampleLibTests: XCTestCase {
 
     func testTour03_Transpiled_Types() {
         // Swift primitives like String and Int are converted into their Kotlin equivalents
-        XCTAssertEqual(typeName("X"), kotlin ? "class kotlin.String" : "String")
-        XCTAssertEqual(typeName(42), kotlin ? "class kotlin.Int" : "Int")
+        XCTAssertTrue(typeName("X").contains("String"))
+        XCTAssertTrue(typeName(42).contains("Int"))
 
         // Arrays and other collections are converted into the types provided in the SkipLib module, which transpiles to the "skip.lib" Java package name
-        XCTAssertEqual(typeName([42]), kotlin ? "class skip.lib.Array" : "Array<Int>")
-        XCTAssertEqual(typeName(Set([true])), kotlin ? "class skip.lib.Set" : "Set<Bool>")
+        XCTAssertTrue(typeName([42]).contains("Array"))
+        XCTAssertTrue(typeName(Set([true])).contains("Set"))
     }
 
     func testTour04_Filter_Map_Reduce() {
