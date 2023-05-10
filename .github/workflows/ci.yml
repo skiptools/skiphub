@@ -171,7 +171,8 @@ jobs:
 
       - name: Gradle Build (Android)
         # folder links in Packages/Skip/ should have been created by tests
-        working-directory: skiphub/Packages/Skip/skiphub/ExampleAppKtTests/skip-transpiler
+        #working-directory: skiphub/Packages/Skip/skiphub/ExampleAppKtTests/skip-transpiler
+        working-directory: skiphub/.build/plugins/outputs/skiphub/ExampleAppKtTests/skip-transpiler
         run: |
           # Print an ASCII visualization of the folder
           tree -lh -I build .
