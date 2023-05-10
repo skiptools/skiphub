@@ -18,6 +18,7 @@ public protocol XCGradleHarness {
 
 
 #if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
+@available(macOS 10.15, macCatalyst 11, *)
 extension XCGradleHarness where Self : XCTestCase {
 
     /// Invokes the `gradle` process with the specified arguments.
