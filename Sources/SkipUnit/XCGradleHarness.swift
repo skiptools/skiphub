@@ -51,7 +51,9 @@ extension XCGradleHarness where Self : XCTestCase {
                     let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
                     var packageRootURL = sourcePathURL.deletingLastPathComponent()
 
-                    let isPackageRoot = { (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) != true }
+                    let isPackageRoot = {
+                        (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) == true
+                    }
 
                     while !isPackageRoot() {
                         let parent = packageRootURL.deletingLastPathComponent()
