@@ -124,7 +124,7 @@ public struct GradleDriver {
     ///   - rerunTasks: whether to pass the "--rerun-tasks" flag
     ///   - exitHandler: the exit handler, which may want to permit a process failure in order to have time to parse the tests
     /// - Returns: an array of parsed test suites containing information about the test run
-    public func launchGradleProcess(in workingDirectory: URL, buildFolder: String = ".build", module: String, actions: [String], arguments: [String], daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxTestMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
+    public func launchGradleProcess(in workingDirectory: URL, buildFolder: String = ".build", module: String, actions: [String], arguments: [String], daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
         // rather than the top-level "build" folder, we place the module in per-module .build/ sub-folder in order to enable concurrent testing as well as placing generated files in a typically-gitignored
         let buildDir = "\(buildFolder)/\(module)"
         let testResultPath = "\(buildDir)/test-results"
@@ -177,7 +177,7 @@ public struct GradleDriver {
             args += ["--no-daemon"]
         }
 
-        if let maxTestMemory = maxTestMemory {
+        if let maxMemory = maxMemory {
 
             // also need to add in JVM flags, lest we be countermanded with: “To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/8.0.2/userguide/gradle_daemon.html#sec:disabling_the_daemon.”
             // these seem to be quite specific to the gradle version being used, so disabling the daemon in future gradle versions might require tweaking these args (which can be seen by enabling the info flag):
@@ -191,7 +191,7 @@ public struct GradleDriver {
 
             // make a nice memory string if we are dividible by kb/mb/gb
             let memstr: String
-            let kb = Double(maxTestMemory) / 1024
+            let kb = Double(maxMemory) / 1024
             let mb = kb / 1024
             let gb = mb / 1024
             if round(gb) == gb {
@@ -201,7 +201,7 @@ public struct GradleDriver {
             } else if round(kb) == kb {
                 memstr = "\(Int64(kb))k"
             } else {
-                memstr = maxTestMemory.description // raw bytes description
+                memstr = maxMemory.description // raw bytes description
             }
 
             jvmargs += ["-Xmx\(memstr)"]

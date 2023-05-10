@@ -9,7 +9,9 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
-#if SKIP
+#if !SKIP
+@_exported import XCTest
+#else
 public func XCTAssert(_ a: Bool) {
 }
 public func XCTAssertTrue(_ a: Bool, _ msg: String = "") {

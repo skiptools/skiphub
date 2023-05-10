@@ -13,18 +13,12 @@ import XCTest
 @available(iOS, unavailable, message: "Gradle tests can only be run against macOS targets")
 @available(watchOS, unavailable, message: "Gradle tests can only be run against macOS targets")
 @available(tvOS, unavailable, message: "Gradle tests can only be run against macOS targets")
-open class XCGradleHarness: XCTestCase {
-    /// The default maximum memory used by this test; defaults to `ProcessInfo.processInfo.physicalMemory` but can be overridden for individual tests
-    ///
-    /// Returning `.none` from this will have the effect of reverting to gradle's default behavior, which is to fork a daemon JVM and start with the amount of memory configured for the project, such as in the `gradle.properties` file.
-    open var maxTestMemory: UInt64? {
-        ProcessInfo.processInfo.physicalMemory
-    }
+public protocol XCGradleHarness {
 }
 
 #if os(macOS) || os(Linux)
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-extension XCGradleHarness {
+extension XCGradleHarness where Self : XCTestCase {
 
     /// Invokes the `gradle` process with the specified arguments.
     ///
@@ -36,7 +30,7 @@ extension XCGradleHarness {
     ///   - moduleSuffix: the expected module name for automatic test determination
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
-    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "KtTests", linkFolderBase: String? = "Packages/Skip", fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "KtTests", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
         // only run in subclasses, not in the base test
         if self.className == "SkipUnit.XCGradleHarness" {
             // TODO: add a general system gradle checkup test here
@@ -44,9 +38,6 @@ extension XCGradleHarness {
             let selfType = type(of: self)
             let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
             if !moduleName.hasSuffix(moduleSuffix) {
-                struct InvalidModuleNameError : LocalizedError {
-                    var errorDescription: String?
-                }
                 throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
             }
 
@@ -78,7 +69,7 @@ extension XCGradleHarness {
             let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
 
             var testProcessResult: ProcessResult? = nil
-            let (output, parseResults) = try await driver.launchGradleProcess(in: dir, module: baseModuleName, actions: actions, arguments: arguments, maxTestMemory: maxTestMemory, exitHandler: { result in
+            let (output, parseResults) = try await driver.launchGradleProcess(in: dir, module: baseModuleName, actions: actions, arguments: arguments, maxMemory: maxMemory, exitHandler: { result in
                 // do not fail on non-zero exit code because we want to be able to parse the test results first
                 testProcessResult = result
             })
@@ -175,9 +166,6 @@ extension XCGradleHarness {
                         return pluginModuleOutputFolder
                     }
                 }
-            }
-            struct NoModuleFolder : LocalizedError {
-                var errorDescription: String?
             }
             throw NoModuleFolder(errorDescription: "Unable to find module folders in \(pluginOutputFolder.path)")
         }
@@ -463,6 +451,14 @@ extension XCGradleHarness {
         // TODO: compare the output with the SPM test output "xunit" xml reports
     }
 
+}
+
+struct NoModuleFolder : LocalizedError {
+    var errorDescription: String?
+}
+
+struct InvalidModuleNameError : LocalizedError {
+    var errorDescription: String?
 }
 
 extension XCTSourceCodeLocation : SourceCodeLocation {

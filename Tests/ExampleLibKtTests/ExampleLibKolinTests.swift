@@ -7,7 +7,7 @@ import SkipUnit
 
 #if os(macOS) // Skip transpiled tests can only be run against macOS
 /// This test case will run the transpiled tests for the Skip module.
-final class ExampleLibKtTests: XCGradleHarness {
+final class ExampleLibKtTests: XCTestCase, XCGradleHarness {
     /// This test case will run the transpiled tests defined in the Swift peer module.
     /// New tests should be added there, not here.
     public func testSkipModule() async throws {
