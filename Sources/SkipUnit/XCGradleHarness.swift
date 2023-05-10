@@ -30,6 +30,7 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - moduleSuffix: the expected module name for automatic test determination
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
+    @available(macOS 10.15, macCatalyst 11, *)
     public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "KtTests", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
         if #unavailable(macOS 13, macCatalyst 16) {
             fatalError("unsupported platform")
