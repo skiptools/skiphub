@@ -9,6 +9,7 @@
 // This file only exists to provide symbols for implemented API to the transpiler.
 //
 
+#if SKIP
 public func XCTAssert(_ a: Bool) {
 }
 public func XCTAssertTrue(_ a: Bool, _ msg: String = "") {
@@ -39,3 +40,4 @@ public func XCTAssertLessThan<T>(_ a: T, _ b: T, _ msg: String = "") {
 }
 public func XCTAssertLessThanOrEqual<T>(_ a: T, _ b: T, _ msg: String = "") {
 }
+#endif

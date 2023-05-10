@@ -6,12 +6,14 @@
 #if !SKIP
 import XCTest
 
-/// A base test case for a JUnit test suite which will run the skip-transpiled test cases
+/// A `XCTestCase` that invokes the `gradle` process.
+///
+/// When run as part of a test suite, JUnit XML test reports are parsed and converted to Xcode issues, along with any reverse-source mappings from transpiled Kotlin back into the original Swift.
 @available(macOS 10.15, *)
 @available(iOS, unavailable, message: "Gradle tests can only be run against macOS targets")
 @available(watchOS, unavailable, message: "Gradle tests can only be run against macOS targets")
 @available(tvOS, unavailable, message: "Gradle tests can only be run against macOS targets")
-open class JUnitTestCase: XCTestCase {
+open class XCGradleHarness: XCTestCase {
     /// The default maximum memory used by this test; defaults to `ProcessInfo.processInfo.physicalMemory` but can be overridden for individual tests
     ///
     /// Returning `.none` from this will have the effect of reverting to gradle's default behavior, which is to fork a daemon JVM and start with the amount of memory configured for the project, such as in the `gradle.properties` file.
@@ -22,90 +24,98 @@ open class JUnitTestCase: XCTestCase {
 
 #if os(macOS) || os(Linux)
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-extension JUnitTestCase {
+extension XCGradleHarness {
 
-    /// Run the transpiled tests. When the `sourcePath` is referenced, output links will be created relative to the project root.
-    public func runTranspiledGradleTests(fromSourceFile sourcePath: StaticString? = #file) async throws {
+    /// Invokes the `gradle` process with the specified arguments.
+    ///
+    /// This is typically used to invoke test cases, but any actions and arguments can be specified, which can be used to drive the Gradle project in custom ways from a Skip test case.
+    /// - Parameters:
+    ///   - actions: the actions to invoke, such as `test` or `assembleDebug`
+    ///   - arguments: and additional arguments
+    ///   - outputPrefix: the prefix for funneling Gradle output messages to the console, or `nil` to mute the console
+    ///   - moduleSuffix: the expected module name for automatic test determination
+    ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
+    ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
+    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "KtTests", linkFolderBase: String? = "Packages/Skip", fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
         // only run in subclasses, not in the base test
-        #if os(macOS) || os(Linux)
-        if self.className == "SkipUnit.JUnitTestCase" {
+        if self.className == "SkipUnit.XCGradleHarness" {
             // TODO: add a general system gradle checkup test here
         } else {
-            try await runGradleTests(sourcePath: sourcePath)
-        }
-        #else
-        print("skipping testProjectGradle() for non-macOS target")
-        #endif
-    }
-
-    #if os(macOS) || os(Linux)
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func runGradleTests(sourcePath: StaticString? = nil, linkFolderBase: String = "Packages/Skip") async throws {
-        let selfType = type(of: self)
-        let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
-        //let moduleSuffix = "TestsKt"
-        let moduleSuffix = "KtTests"
-        if !moduleName.hasSuffix(moduleSuffix) {
-            struct InvalidModuleNameError : LocalizedError {
-                var errorDescription: String?
-            }
-            throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
-        }
-
-        let driver = try await GradleDriver()
-        let linkFolder: URL? = sourcePath.flatMap { sourcePath in
-            let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
-            var packageRootURL = sourcePathURL.deletingLastPathComponent()
-            while (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) != true {
-                let parent = packageRootURL.deletingLastPathComponent()
-                if parent.path == packageRootURL.path {
-                    return nil // top of the fs and not found
+            let selfType = type(of: self)
+            let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
+            if !moduleName.hasSuffix(moduleSuffix) {
+                struct InvalidModuleNameError : LocalizedError {
+                    var errorDescription: String?
                 }
-                packageRootURL = parent
+                throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
             }
-            if (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) == true {
-                return packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
-            } else {
-                return nil
+
+            let driver = try await GradleDriver()
+
+            // walk up from the test case swift file until we find the folder that contains "Package.swift", which we treat as the package root
+            var linkFolder: URL? = nil
+            if let sourcePath = sourcePath, let linkFolderBase = linkFolderBase {
+                let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
+                var packageRootURL = sourcePathURL.deletingLastPathComponent()
+
+                let isPackageRoot = { (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) != true }
+
+                while !isPackageRoot() {
+                    let parent = packageRootURL.deletingLastPathComponent()
+                    if parent.path == packageRootURL.path {
+                        break // top of the fs and not found
+                    }
+                    packageRootURL = parent
+                }
+                if isPackageRoot() {
+                    linkFolder = packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
+                }
             }
-        }
-        let dir = try pluginOutputFolder(module: moduleName, linkingInto: linkFolder)
 
-        // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
-        let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
+            let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder)
 
-        var testProcessResult: ProcessResult? = nil
-        let (output, parseResults) = try await driver.runTests(in: dir, module: baseModuleName, maxTestMemory: maxTestMemory, exitHandler: { result in
-            // do not fail on non-zero exit code because we want to be able to parse the test results first
-            testProcessResult = result
-        })
+            // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
+            let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
 
-        for try await line in output {
-            print("GRADLE>", line)
-            checkOutputForIssue(line: line)
-        }
+            var testProcessResult: ProcessResult? = nil
+            let (output, parseResults) = try await driver.launchGradleProcess(in: dir, module: baseModuleName, actions: actions, arguments: arguments, maxTestMemory: maxTestMemory, exitHandler: { result in
+                // do not fail on non-zero exit code because we want to be able to parse the test results first
+                testProcessResult = result
+            })
 
-        let testSuites = try parseResults()
-        // the absense of any test data probably indicates some sort of mis-configuration or else a build failure
-        XCTAssertNotEqual(0, testSuites.count, "No tests were run")
-        reportTestResults(testSuites, dir)
+            for try await line in output {
+                if let outputPrefix = outputPrefix {
+                    print(outputPrefix, line)
+                }
+                checkOutputForIssue(line: line)
+            }
 
-        switch testProcessResult?.exitStatus {
-        case .terminated(let code):
-            // this is a general error that is reported whenever gradle fails, so that the overall test will fail even when we cannot parse any build errors or test failures
-            // there should be additional messages in the log to provide better indication of where the test failed
-            XCTAssertTrue(code == 0, "Gradle failed with exit code \(code)")
-        default:
-            XCTFail("Gradle process crashed: \(testProcessResult?.description ?? "")")
+            // if any of the actions are a test case, when try to parse the XML results
+            if actions.contains(where: { $0.hasPrefix("test") }) {
+                let testSuites = try parseResults()
+                // the absense of any test data probably indicates some sort of mis-configuration or else a build failure
+                XCTAssertNotEqual(0, testSuites.count, "No tests were run")
+                reportTestResults(testSuites, dir)
+            }
+
+            switch testProcessResult?.exitStatus {
+            case .terminated(let code):
+                // this is a general error that is reported whenever gradle fails, so that the overall test will fail even when we cannot parse any build errors or test failures
+                // there should be additional messages in the log to provide better indication of where the test failed
+                XCTAssertTrue(code == 0, "Gradle failed with exit code \(code)")
+            default:
+                XCTFail("Gradle process crashed: \(testProcessResult?.description ?? "")")
+            }
         }
     }
+
 
     /// Returns the URL to the folder that holds the top-level `settings.gradle.kts` file for the destination module.
     /// - Parameters:
-    ///   - moduleName: the module name to seach for
+    ///   - moduleTranspilerFolder: the output folder for the transpiler plug-in
     ///   - linkFolder: when specified, the module's root folder will first be linked into the linkFolder, which enables the output of the project to be browsable from the containing project (e.g., Xcode)
     /// - Returns: the folder that contains the buildable gradle project, either in the DerivedData/ folder, or re-linked through the specified linkFolder
-    func pluginOutputFolder(module moduleName: String, linkingInto linkFolder: URL?) throws -> URL {
+    func pluginOutputFolder(moduleTranspilerFolder: String, linkingInto linkFolder: URL?) throws -> URL {
         let env = ProcessInfo.processInfo.environment
 
         // if we are running tests from Xcode, this environment variable should be set; otherwise, assume the .build folder for an SPM build
@@ -137,8 +147,7 @@ extension JUnitTestCase {
                 if outputFolder.pathExtension != pathExtension {
                     continue // only check known path extensions (e.g., ".output" or "")
                 }
-                let transpilerName = "skip-transpiler" // FIXME: avoid including the plugin name somehow
-                let moduleTranspilerFolder = moduleName + "/" + transpilerName + "/"
+
                 let pluginModuleOutputFolder = URL(fileURLWithPath: moduleTranspilerFolder, isDirectory: true, relativeTo: outputFolder)
                 //print("findModuleFolder: pluginModuleOutputFolder:", pluginModuleOutputFolder)
                 if (try? pluginModuleOutputFolder.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true {
@@ -453,13 +462,12 @@ extension JUnitTestCase {
 
         // TODO: compare the output with the SPM test output "xunit" xml reports
     }
-    #endif // os(macOS) || os(Linux)
 
 }
-#endif // canImport(Concurrency)
 
 extension XCTSourceCodeLocation : SourceCodeLocation {
 
 }
 
-#endif
+#endif // os(macOS) || os(Linux)
+#endif // !SKIP

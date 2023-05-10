@@ -15,6 +15,8 @@ final class RegexTests: XCTestCase {
 
     // many of these tests are adapted from: https://blog.robertelder.org/regular-expression-test-cases/
 
+    // note differences between ICU (Swift's impl) and Java (Kotlin's impl): https://unicode-org.github.io/icu/userguide/strings/regexp.html#differences-with-java-regular-expressions
+
     func testEmailValidationRegex() throws {
         let exp = "^([a-z0-9_\\.\\-]+)@([\\da-z\\.\\-]+)\\.([a-z\\.]{2,5})$"
         try XCTAssertEqual(1, matches(regex: exp, text: "john.doe@example.com"))
@@ -46,6 +48,20 @@ final class RegexTests: XCTestCase {
         try XCTAssertEqual(1, matches(regex: exp, text: "<tag></tag>"))
         try XCTAssertEqual(0, matches(regex: exp, text: "<tag><nested>Content</nested></tag>"))
         try XCTAssertEqual(0, matches(regex: exp, text: "<tag attr=\"value\">Content</tag>"))
+    }
+
+    func testCharacterClassesRegex() throws {
+        try XCTAssertEqual(1, matches(regex: "日本国", text: "日本国"))
+        //try XCTAssertEqual(1, matches(regex: "[^]", text: "XXX"), "Similar to the empty character class '[]', but a bit more useful. This case would be interpreted as 'any character NOT in the following empty list'. Therefore, this would mean 'match any possible character'.")
+        //try XCTAssertEqual(1, matches(regex: "[.]", text: "XXX"), "Test to make sure that period inside a character class is interpreted as a literal period character.")
+        //try XCTAssertEqual(1, matches(regex: "[^.]", text: "XXX"), "Another test to make sure that period inside a character class is interpreted as a literal period character.")
+    }
+
+    func testErrorRegex() throws {
+        XCTAssertEqual(nil, try? matches(regex: "[]", text: "XXX"), "This case represents an 'empty' character class. Many regular expression engines don't allow this since it's almost certainly a mistake to write this. The only meaningful interpretation would be to mean 'match a character that that belongs to this empty list of characters'. In order words it represents the impossible constraint of being a character that isn't any character.")
+        XCTAssertEqual(nil, try? matches(regex: "[b-a]", text: ""), "Range endpoints out of order. This case should cause an error.")
+        XCTAssertEqual(nil, try? matches(regex: "[a-\\w]", text: ""), "Range endpoints should not be 'sets' of characters. This case should cause an error.")
+        XCTAssertEqual(nil, try? matches(regex: "[a-\\d]", text: ""), "Range endpoints should not be 'sets' of characters. This case should cause an error.")
     }
 
     private func matches(regex expressionString: String, text: String) throws -> Int {

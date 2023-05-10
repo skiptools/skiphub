@@ -41,6 +41,17 @@ final class GradleDriverTests: XCTestCase {
 
         XCTAssertTrue(fileNames.isSubset(of: [modname, "settings.gradle.kts", "gradlew", "gradlew.bat", "gradle", "gradle.properties"]), "unexpected files were created by gradle init: \(fileNames.sorted())")
 
+        // work around recent change that adds "languageVersion.set(JavaLanguageVersion.of(20))" to the build.gradle.kts
+        func fixupBuildGradle() throws {
+            let buildPath = tmp.appendingPathComponent(modname).appendingPathComponent("build.gradle.kts")
+            let buildGradleData = try Data(contentsOf: buildPath)
+            var buildGradleContents = String(data: buildGradleData, encoding: .utf8)
+            buildGradleContents = buildGradleContents?.replacingOccurrences(of: "languageVersion.set(JavaLanguageVersion.of(", with: "languageVersion.set(JavaLanguageVersion.of(17)) // Skip replaced: ((") // just comment it out if it exists
+            try buildGradleContents?.write(to: buildPath, atomically: true, encoding: .utf8)
+        }
+
+        try fixupBuildGradle()
+
         // the module name we created
         let lib = URL(fileURLWithPath: modname, isDirectory: true, relativeTo: tmp)
 
@@ -61,7 +72,7 @@ final class GradleDriverTests: XCTestCase {
                 try sabotageTest(failure: failure, error: error)
             }
 
-            let (output, parseResults) = try await driver.runTests(in: tmp, module: modname, check: false, failFast: failFast, offline: false, exitHandler: { result in
+            let (output, parseResults) = try await driver.launchGradleProcess(in: tmp, module: modname, actions: ["test"], arguments: [], failFast: failFast, offline: false, exitHandler: { result in
                 if !failure && !error {
                     guard case .terminated(0) = result.exitStatus else {
                         // we failed, but did not expect an error
