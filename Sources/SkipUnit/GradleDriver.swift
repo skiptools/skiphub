@@ -9,7 +9,6 @@ import Foundation
 /// The `GradleDriver` controls the execution of the `gradle` tool,
 /// which is expected to already be installed on the system in the
 /// user's `PATH` environment.
-@available(macOS 13, macCatalyst 16, *)
 public struct GradleDriver {
     /// The minimum version of Kotlin we can work with
     public static let minimumKotlinVersion = Version(1, 8, 0)
@@ -34,6 +33,7 @@ public struct GradleDriver {
     let gradleArgs: [String]
 
     /// Creates a new `GradleDriver`. Creation will check that the Gradle and Kotlin versions are within the expected limits.
+    @available(macOS 13, macCatalyst 16, *)
     public init() async throws {
         self.gradlePath = try Self.findGradle()
         self.gradleArgs = [
@@ -93,6 +93,7 @@ public struct GradleDriver {
     }
 
     /// Executes `gradle` with the current default arguments and the additional args and returns an async stream of the lines from the combined standard err and standard out.
+    @available(macOS 13, macCatalyst 16, *)
     public func execGradle(in workingDirectory: URL, args: [String], env: [String: String] = [:], onExit: @escaping (ProcessResult) throws -> ()) async throws -> Process.AsyncLineOutput {
         // the resulting command will be something like:
         // java -Xmx64m -Xms64m -Dorg.gradle.appname=gradle -classpath /opt/homebrew/Cellar/gradle/8.0.2/libexec/lib/gradle-launcher-8.0.2.jar org.gradle.launcher.GradleMain info
@@ -124,6 +125,7 @@ public struct GradleDriver {
     ///   - rerunTasks: whether to pass the "--rerun-tasks" flag
     ///   - exitHandler: the exit handler, which may want to permit a process failure in order to have time to parse the tests
     /// - Returns: an array of parsed test suites containing information about the test run
+    @available(macOS 13, macCatalyst 16, *)
     public func launchGradleProcess(in workingDirectory: URL, buildFolder: String = ".build", module: String, actions: [String], arguments: [String], daemon enableDaemon: Bool = true, info infoFlag: Bool = false, plain plainFlag: Bool = true, maxMemory: UInt64? = nil, failFast failFastFlag: Bool = false, noBuildCache noBuildCacheFlag: Bool = false, continue continueFlag: Bool = false, offline offlineFlag: Bool = false, rerunTasks rerunTasksFlag: Bool = true, exitHandler: @escaping (ProcessResult) throws -> ()) async throws -> (output: Process.AsyncLineOutput, result: () throws -> [TestSuite]) {
         // rather than the top-level "build" folder, we place the module in per-module .build/ sub-folder in order to enable concurrent testing as well as placing generated files in a typically-gitignored
         let buildDir = "\(buildFolder)/\(module)"
@@ -224,6 +226,7 @@ public struct GradleDriver {
     }
 
     /// Executes `skiptool info` and returns the info dictionary.
+    @available(macOS 13, macCatalyst 16, *)
     private static func execGradleInfo(gradleArgs: [String]) async throws -> [String: String] {
         // gradle --version will output an unstructued mess like this:
         /*

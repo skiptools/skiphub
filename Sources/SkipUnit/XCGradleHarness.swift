@@ -9,15 +9,15 @@ import XCTest
 /// A `XCTestCase` that invokes the `gradle` process.
 ///
 /// When run as part of a test suite, JUnit XML test reports are parsed and converted to Xcode issues, along with any reverse-source mappings from transpiled Kotlin back into the original Swift.
-@available(macOS 13, macCatalyst 16, *)
+@available(macOS 10.15, macCatalyst 11, *)
 @available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
 @available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
 @available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
 public protocol XCGradleHarness {
 }
 
+
 #if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
-@available(macOS 13, macCatalyst 16, *)
 extension XCGradleHarness where Self : XCTestCase {
 
     /// Invokes the `gradle` process with the specified arguments.
@@ -31,75 +31,77 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
     public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "KtTests", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
-        // only run in subclasses, not in the base test
-        if self.className == "SkipUnit.XCGradleHarness" {
-            // TODO: add a general system gradle checkup test here
+        if #unavailable(macOS 13, macCatalyst 16) {
+            fatalError("unsupported platform")
         } else {
-            let selfType = type(of: self)
-            let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
-            if !moduleName.hasSuffix(moduleSuffix) {
-                throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
-            }
+            // only run in subclasses, not in the base test
+            if self.className == "SkipUnit.XCGradleHarness" {
+                // TODO: add a general system gradle checkup test here
+            } else {
+                let selfType = type(of: self)
+                let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
+                if !moduleName.hasSuffix(moduleSuffix) {
+                    throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
+                }
+                let driver = try await GradleDriver()
 
-            let driver = try await GradleDriver()
+                // walk up from the test case swift file until we find the folder that contains "Package.swift", which we treat as the package root
+                var linkFolder: URL? = nil
+                if let sourcePath = sourcePath, let linkFolderBase = linkFolderBase {
+                    let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
+                    var packageRootURL = sourcePathURL.deletingLastPathComponent()
 
-            // walk up from the test case swift file until we find the folder that contains "Package.swift", which we treat as the package root
-            var linkFolder: URL? = nil
-            if let sourcePath = sourcePath, let linkFolderBase = linkFolderBase {
-                let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
-                var packageRootURL = sourcePathURL.deletingLastPathComponent()
+                    let isPackageRoot = { (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) != true }
 
-                let isPackageRoot = { (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) != true }
-
-                while !isPackageRoot() {
-                    let parent = packageRootURL.deletingLastPathComponent()
-                    if parent.path == packageRootURL.path {
-                        break // top of the fs and not found
+                    while !isPackageRoot() {
+                        let parent = packageRootURL.deletingLastPathComponent()
+                        if parent.path == packageRootURL.path {
+                            break // top of the fs and not found
+                        }
+                        packageRootURL = parent
                     }
-                    packageRootURL = parent
+                    if isPackageRoot() {
+                        linkFolder = packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
+                    }
                 }
-                if isPackageRoot() {
-                    linkFolder = packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
+
+                let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder)
+
+                // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
+                let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
+
+                var testProcessResult: ProcessResult? = nil
+                let (output, parseResults) = try await driver.launchGradleProcess(in: dir, module: baseModuleName, actions: actions, arguments: arguments, maxMemory: maxMemory, exitHandler: { result in
+                    // do not fail on non-zero exit code because we want to be able to parse the test results first
+                    testProcessResult = result
+                })
+
+                for try await line in output {
+                    if let outputPrefix = outputPrefix {
+                        print(outputPrefix, line)
+                    }
+                    checkOutputForIssue(line: line)
                 }
-            }
 
-            let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder)
-
-            // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
-            let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
-
-            var testProcessResult: ProcessResult? = nil
-            let (output, parseResults) = try await driver.launchGradleProcess(in: dir, module: baseModuleName, actions: actions, arguments: arguments, maxMemory: maxMemory, exitHandler: { result in
-                // do not fail on non-zero exit code because we want to be able to parse the test results first
-                testProcessResult = result
-            })
-
-            for try await line in output {
-                if let outputPrefix = outputPrefix {
-                    print(outputPrefix, line)
+                // if any of the actions are a test case, when try to parse the XML results
+                if actions.contains(where: { $0.hasPrefix("test") }) {
+                    let testSuites = try parseResults()
+                    // the absense of any test data probably indicates some sort of mis-configuration or else a build failure
+                    XCTAssertNotEqual(0, testSuites.count, "No tests were run")
+                    reportTestResults(testSuites, dir)
                 }
-                checkOutputForIssue(line: line)
-            }
 
-            // if any of the actions are a test case, when try to parse the XML results
-            if actions.contains(where: { $0.hasPrefix("test") }) {
-                let testSuites = try parseResults()
-                // the absense of any test data probably indicates some sort of mis-configuration or else a build failure
-                XCTAssertNotEqual(0, testSuites.count, "No tests were run")
-                reportTestResults(testSuites, dir)
-            }
-
-            switch testProcessResult?.exitStatus {
-            case .terminated(let code):
-                // this is a general error that is reported whenever gradle fails, so that the overall test will fail even when we cannot parse any build errors or test failures
-                // there should be additional messages in the log to provide better indication of where the test failed
-                XCTAssertTrue(code == 0, "Gradle failed with exit code \(code)")
-            default:
-                XCTFail("Gradle process crashed: \(testProcessResult?.description ?? "")")
+                switch testProcessResult?.exitStatus {
+                case .terminated(let code):
+                    // this is a general error that is reported whenever gradle fails, so that the overall test will fail even when we cannot parse any build errors or test failures
+                    // there should be additional messages in the log to provide better indication of where the test failed
+                    XCTAssertTrue(code == 0, "Gradle failed with exit code \(code)")
+                default:
+                    XCTFail("Gradle process crashed: \(testProcessResult?.description ?? "")")
+                }
             }
         }
     }
-
 
     /// Returns the URL to the folder that holds the top-level `settings.gradle.kts` file for the destination module.
     /// - Parameters:

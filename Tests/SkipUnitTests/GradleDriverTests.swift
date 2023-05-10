@@ -11,6 +11,7 @@ import XCTest
 final class GradleDriverTests: XCTestCase {
     /// Initialize a new Gradle project with the Kotlin DSL and run the test cases,
     /// parsing the output and checking for the errors and failures that are inserted into the test.
+    @available(macOS 13, *)
     func testGradleInitTest() async throws {
         let driver = try await GradleDriver()
 
