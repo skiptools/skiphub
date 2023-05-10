@@ -4,13 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-#if os(macOS) || os(Linux)
 import Foundation
 
 /// The `GradleDriver` controls the execution of the `gradle` tool,
 /// which is expected to already be installed on the system in the
 /// user's `PATH` environment.
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+@available(macOS 13, macCatalyst 16, *)
 public struct GradleDriver {
     /// The minimum version of Kotlin we can work with
     public static let minimumKotlinVersion = Version(1, 8, 0)
@@ -319,10 +318,7 @@ public struct GradleDriver {
             self.systemErr = systemErr
         }
 
-        #if os(macOS) || os(Linux)
         /// Loads the test suite information from the JUnit-compatible XML format.
-        @available(macOS 10.15, *)
-        @available(iOS, unavailable)
         public init(contentsOf url: URL) throws {
             let results = try XMLDocument(contentsOf: url)
             //print("parsed XML results:", results)
@@ -388,7 +384,6 @@ public struct GradleDriver {
             let suite = TestSuite(name: testSuiteName, tests: testCount, skipped: skipCount, failures: failureCount, errors: errorCount, time: duration, testCases: testCases, systemOut: systemOut.isEmpty ? nil : systemOut, systemErr: systemErr.isEmpty ? nil : systemErr)
             self = suite
         }
-        #endif
     }
 
     public struct TestCase {
@@ -411,9 +406,6 @@ public struct GradleDriver {
             self.failures = failures
         }
 
-        #if os(macOS) || os(Linux)
-        @available(macOS 10.15, *)
-        @available(iOS, unavailable)
         init(from element: XMLElement, in url: URL) throws {
             guard let testCaseName = element.attribute(forName: "name")?.stringValue else {
                 throw GradleDriverError.missingProperty(url: url, propertyName: "name")
@@ -456,7 +448,6 @@ public struct GradleDriver {
 
             self.failures = testFailures
         }
-        #endif
     }
 
     public struct TestFailure {
@@ -473,9 +464,6 @@ public struct GradleDriver {
             self.contents = contents
         }
 
-        #if os(macOS) || os(Linux)
-        @available(macOS 10.15, *)
-        @available(iOS, unavailable)
         init(from element: XMLElement, in url: URL) throws {
             guard let message = element.attribute(forName: "message")?.stringValue else {
                 throw GradleDriverError.missingProperty(url: url, propertyName: "message")
@@ -491,10 +479,8 @@ public struct GradleDriver {
             self.type = type
             self.contents = contents
         }
-        #endif
     }
 
-    #if os(macOS) || os(Linux)
     private static func parseTestResults(in testFolder: URL) throws -> [TestSuite] {
         let fm = FileManager.default
         if !fm.fileExists(atPath: testFolder.path) {
@@ -522,7 +508,6 @@ public struct GradleDriver {
 
         return try subdirs.compactMap(parseTestSuite)
     }
-    #endif
 }
 
 public enum GradleDriverError : Error, LocalizedError {
@@ -569,5 +554,4 @@ public enum GradleDriverError : Error, LocalizedError {
         }
     }
 }
-#endif // os(macOS) || os(Linux)
 #endif // !SKIP

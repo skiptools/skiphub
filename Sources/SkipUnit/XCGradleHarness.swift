@@ -9,15 +9,14 @@ import XCTest
 /// A `XCTestCase` that invokes the `gradle` process.
 ///
 /// When run as part of a test suite, JUnit XML test reports are parsed and converted to Xcode issues, along with any reverse-source mappings from transpiled Kotlin back into the original Swift.
-@available(macOS 10.15, *)
-@available(iOS, unavailable, message: "Gradle tests can only be run against macOS targets")
-@available(watchOS, unavailable, message: "Gradle tests can only be run against macOS targets")
-@available(tvOS, unavailable, message: "Gradle tests can only be run against macOS targets")
+@available(macOS 13, macCatalyst 16, *)
+@available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
 public protocol XCGradleHarness {
 }
 
-#if os(macOS) || os(Linux)
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+@available(macOS 13, macCatalyst 16, *)
 extension XCGradleHarness where Self : XCTestCase {
 
     /// Invokes the `gradle` process with the specified arguments.
@@ -183,7 +182,6 @@ extension XCGradleHarness where Self : XCTestCase {
     ///      at java.base/java.lang.reflect.Method.invoke(Method.java:578)
     ///      at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
     /// ```
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     private func extractSourceLocation(dir: URL, failure: GradleDriver.TestFailure) -> (kotlin: XCTSourceCodeLocation?, swift: XCTSourceCodeLocation?) {
         // turn: "at skip.lib.SkipLibTests.testSkipLib$SkipLib(SkipLibTests.kt:16)"
         // into: src/main/skip/lib/SkipLibTests.kt line: 16
@@ -322,7 +320,6 @@ extension XCGradleHarness where Self : XCTestCase {
         }
     }
 
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     private func reportTestResults(_ testSuites: [GradleDriver.TestSuite], _ dir: URL, showStreams: Bool = true) {
 
         // do one intial pass to show the stdout and stderror
@@ -464,6 +461,4 @@ struct InvalidModuleNameError : LocalizedError {
 extension XCTSourceCodeLocation : SourceCodeLocation {
 
 }
-
-#endif // os(macOS) || os(Linux)
 #endif // !SKIP
