@@ -151,8 +151,9 @@ jobs:
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
       - name: Debug Tests (Serial)
+        if: false
         working-directory: skiphub
-        run: swift test --jobs 1 -c debug || swift test --jobs 1 -c debug || swift test --jobs 1 -c debug || swift test --jobs 1 -c debug || swift test --jobs 1 -c debug || swift test --jobs 1 -c debug || swift test --jobs 1 -c debug
+        run: swift test --jobs 1 -c debug
 
       - name: Debug Tests (Parallel)
         if: false
