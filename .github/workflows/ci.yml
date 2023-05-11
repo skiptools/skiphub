@@ -182,7 +182,8 @@ jobs:
           gradle check --console=plain
 
           # Build the APK
-          gradle assembleRelease --console=plain
+          #gradle assembleRelease --console=plain
+          gradle assembleDebug --console=plain
 
           ls -lah `find . -name '*.apk'`
 
