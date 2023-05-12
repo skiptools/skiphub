@@ -22,6 +22,11 @@ extension String {
     public func replacingOccurrences(of search: String, with replacement: String) -> String {
         return replace(search, replacement)
     }
+
+    public func components(separatedBy separator: String) -> [String] {
+        // SKIP REPLACE: return Array(split(separator))
+        return []
+    }
 }
 
 public struct StringEncoding : RawRepresentable, Hashable, CustomStringConvertible {
