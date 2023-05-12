@@ -18,14 +18,10 @@ import SQLite3
 import CryptoKit
 #endif
 
-// SKIP INSERT: import android.database.sqlite.SQLiteDatabase
-// SKIP INSERT: import android.database.*
-// SKIP INSERT: import android.database.sqlite.*
-
 /// A connection to SQLite.
 public final class SQLDB {
     #if SKIP
-    public let db: SQLiteDatabase
+    public let db: android.database.sqlite.SQLiteDatabase
     #else
     public typealias Handle = OpaquePointer
     fileprivate var _handle: Handle?
@@ -43,32 +39,32 @@ public final class SQLDB {
     public init(_ filename: String = ":memory:", readonly: Bool = false) throws {
         #if SKIP
         // self.db = SQLiteDatabase.openDatabase(filename, nil, readonly ? SQLiteDatabase.OPEN_READONLY : (SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE))
-        self.db = SQLiteDatabase.openDatabase(filename, nil, SQLiteDatabase.CREATE_IF_NECESSARY)
+        self.db = android.database.sqlite.SQLiteDatabase.openDatabase(filename, nil, android.database.sqlite.SQLiteDatabase.CREATE_IF_NECESSARY)
         #else
         let flags = readonly ? SQLITE_OPEN_READONLY : (SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE)
         try check(resultOf: sqlite3_open_v2(filename, &_handle, flags | SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_URI, nil))
         #endif
     }
 
-    // FIXME: no deinit support in Kotlin (“Unknown declaration (failed to translate SwiftSyntax node).”)
-    #if SKIP
-
-    #else
     deinit {
         close()
     }
-    #endif
 
     /// Closes the connection to the database
     func close() {
         if !closed {
+            closed = true
             #if SKIP
             self.db.close()
             #else
             sqlite3_close(handle)
             #endif
-            closed = true
         }
+    }
+
+    /// Executes the given query with the specified parameters.
+    public func query(sql: String, params: [SQLValue] = []) throws -> Cursor {
+        try Cursor(self, sql, params: params)
     }
 
     /// Executes a single SQL statement.
@@ -86,9 +82,7 @@ public final class SQLDB {
         #endif
     }
 
-    #if SKIP
-
-    #else
+    #if !SKIP
     @discardableResult fileprivate func check(resultOf resultCode: Int32) throws -> Int32 {
         let successCodes: Set = [SQLITE_OK, SQLITE_ROW, SQLITE_DONE]
         if !successCodes.contains(resultCode) {
@@ -101,16 +95,7 @@ public final class SQLDB {
 
         return resultCode
     }
-    #endif
 
-    /// Executes the given query with the specified parameters.
-    public func query(sql: String, params: [SQLValue] = []) throws -> Cursor {
-        try Cursor(self, sql, params: params)
-    }
-
-    #if SKIP
-
-    #else
     /// Binds the given parameter at the given index.
     /// - Parameters:
     ///   - handle: the statement handle to bind to
@@ -402,12 +387,15 @@ public final class SQLDB {
             #endif
         }
 
-        public func getBlob(column: Int32) throws -> Data {
+        public func getBlob(column: Int32) throws -> Data? {
             if closed {
                 throw CursorClosedError()
             }
             #if SKIP
-            return Data(self.cursor.getBlob(column))
+            guard let blob = self.cursor.getBlob(column) else {
+                return nil
+            }
+            return Data(blob)
             #else
             if let pointer = sqlite3_column_blob(handle, Int32(column)) {
                 let length = Int(sqlite3_column_bytes(handle, Int32(column)))
@@ -415,7 +403,7 @@ public final class SQLDB {
                 return Data(bytes: pointer, count: length)
             } else {
                 // The return value from sqlite3_column_blob() for a zero-length BLOB is a NULL pointer.
-                return Data()
+                return nil
             }
             #endif
         }
@@ -576,9 +564,6 @@ public enum SQLValue {
 ///  - string
 ///  - BLOB
 ///  - NULL
-///  
-// FIXME: workaround “Enum class cannot inherit from classes” when it inserts Hashable extension
-// SKIP REPLACE: enum class ColumnType(val rawValue: Int) { nul(0), integer(1), float(2), text(3), blob(4); }
 public enum ColumnType : Int32 {
     /// `SQLITE_NULL`
     case nul = 0
