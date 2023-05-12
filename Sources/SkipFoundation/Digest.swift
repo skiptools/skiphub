@@ -3,21 +3,108 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if SKIP
+
+#if !SKIP
+import CryptoKit
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SymmetricKey = CryptoKit.SymmetricKey
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HMAC = CryptoKit.HMAC
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias Insecure = CryptoKit.Insecure
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HashFunction = CryptoKit.HashFunction
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias MD5 = CryptoKit.Insecure.MD5
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias MD5Digest = CryptoKit.Insecure.MD5Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA1 = CryptoKit.Insecure.SHA1
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA1Digest = CryptoKit.Insecure.SHA1Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA256 = CryptoKit.SHA256
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA256Digest = CryptoKit.SHA256Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA384 = CryptoKit.SHA384
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA384Digest = CryptoKit.SHA384Digest
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA512 = CryptoKit.SHA512
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias SHA512Digest = CryptoKit.SHA512Digest
+
+
+/// A sequence that both `Data` and `String.UTF8View` conform to.
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+extension Sequence where Element == UInt8 {
+    /// Returns this data as a base-64 encoded string
+    public func base64() -> String {
+        Data(self).base64EncodedString()
+    }
+
+    /// Returns the contents of the Data as a hex string
+    public func hex() -> String {
+        map { String(format: "%02x", $0) }.joined()
+    }
+
+    public func sha256() -> SHA256.Digest {
+        SHA256.hash(data: Data(self))
+    }
+
+    public func sha384() -> SHA384.Digest {
+        SHA384.hash(data: Data(self))
+    }
+
+    public func sha512() -> SHA512.Digest {
+        SHA512.hash(data: Data(self))
+    }
+}
+
+/// An alias for `HMAC<Insecure.MD5>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HMACMD5 = HMAC<Insecure.MD5>
+/// An alias for `HMAC<Insecure.SHA1>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HMACSHA1 = HMAC<Insecure.SHA1>
+/// An alias for `HMAC<SHA256>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HMACSHA256 = HMAC<SHA256>
+/// An alias for `HMAC<SHA384>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HMACSHA384 = HMAC<SHA384>
+/// An alias for `HMAC<SHA512>` since Kotlin does not support static access to generics
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+public typealias HMACSHA512 = HMAC<SHA512>
+
+#else
+
 public typealias MessageDigest = java.security.MessageDigest
 
+extension SkipData {
+    public init(_ checksum: Digest) {
+        self.init(checksum.bytes)
+    }
+}
+
+/// A holder for a digest
 public protocol Digest {
+    var bytes: PlatformData { get }
 }
 
 public protocol HashFunction {
-    //static var blockByteCount: Int { get }
-    associatedtype Digest // : Digest
-    //init()
-    //mutating func update(bufferPointer: UnsafeRawBufferPointer)
-    //func finalize() -> Self.Digest
+    func update(_ data: DataProtocol)
+    func finalize() -> Digest
 }
 
 public protocol NamedHashFunction : HashFunction {
+    associatedtype Digest // : Digest
     var digest: MessageDigest { get }
     var digestName: String { get } // Kotlin does not support static members in protocols
     //func createMessageDigest() throws -> MessageDigest
@@ -30,6 +117,14 @@ public struct SHA256 : NamedHashFunction {
 
     public static func hash(data: Data) -> SHA256Digest {
         return SHA256Digest(bytes: SHA256().digest.digest(data.rawValue))
+    }
+
+    public func update(_ data: DataProtocol) {
+        digest.update(data.rawValue)
+    }
+
+    public func finalize() -> SHA256Digest {
+        SHA256Digest(bytes: digest.digest())
     }
 }
 
@@ -49,6 +144,14 @@ public struct SHA384 : NamedHashFunction {
     public static func hash(data: Data) -> SHA384Digest {
         return SHA384Digest(bytes: SHA384().digest.digest(data.rawValue))
     }
+
+    public func update(_ data: DataProtocol) {
+        digest.update(data.rawValue)
+    }
+
+    public func finalize() -> SHA384Digest {
+        SHA384Digest(bytes: digest.digest())
+    }
 }
 
 public struct SHA384Digest : Digest {
@@ -66,6 +169,14 @@ public struct SHA512 : NamedHashFunction {
 
     public static func hash(data: Data) -> SHA512Digest {
         return SHA512Digest(bytes: SHA512().digest.digest(data.rawValue))
+    }
+
+    public func update(_ data: DataProtocol) {
+        digest.update(data.rawValue)
+    }
+
+    public func finalize() -> SHA512Digest {
+        SHA512Digest(bytes: digest.digest())
     }
 }
 
@@ -86,6 +197,14 @@ public struct Insecure {
         public static func hash(data: Data) -> MD5Digest {
             return MD5Digest(bytes: MD5().digest.digest(data.rawValue))
         }
+
+        public func update(_ data: DataProtocol) {
+            digest.update(data.rawValue)
+        }
+
+        public func finalize() -> MD5Digest {
+            MD5Digest(bytes: digest.digest())
+        }
     }
 
     public struct MD5Digest : Digest {
@@ -103,6 +222,14 @@ public struct Insecure {
 
         public static func hash(data: Data) -> SHA1Digest {
             return SHA1Digest(bytes: SHA1().digest.digest(data.rawValue))
+        }
+
+        public func update(_ data: DataProtocol) {
+            digest.update(data.rawValue)
+        }
+
+        public func finalize() -> SHA1Digest {
+            SHA1Digest(bytes: digest.digest())
         }
     }
 
@@ -189,84 +316,5 @@ open class DigestFunction {
         return signature
     }
 }
-
-
-#else
-
-import CryptoKit
-
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SymmetricKey = CryptoKit.SymmetricKey
-
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias HMAC = CryptoKit.HMAC
-
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias Insecure = CryptoKit.Insecure
-
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias MD5 = CryptoKit.Insecure.MD5
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias MD5Digest = CryptoKit.Insecure.MD5Digest
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA1 = CryptoKit.Insecure.SHA1
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA1Digest = CryptoKit.Insecure.SHA1Digest
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA256 = CryptoKit.SHA256
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA256Digest = CryptoKit.SHA256Digest
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA384 = CryptoKit.SHA384
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA384Digest = CryptoKit.SHA384Digest
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA512 = CryptoKit.SHA512
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias SHA512Digest = CryptoKit.SHA512Digest
-
-
-/// A sequence that both `Data` and `String.UTF8View` conform to.
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-extension Sequence where Element == UInt8 {
-    /// Returns this data as a base-64 encoded string
-    public func base64() -> String {
-        Data(self).base64EncodedString()
-    }
-
-    /// Returns the contents of the Data as a hex string
-    public func hex() -> String {
-        map { String(format: "%02x", $0) }.joined()
-    }
-
-    public func sha256() -> SHA256.Digest {
-        SHA256.hash(data: Data(self))
-    }
-
-    public func sha384() -> SHA384.Digest {
-        SHA384.hash(data: Data(self))
-    }
-
-    public func sha512() -> SHA512.Digest {
-        SHA512.hash(data: Data(self))
-    }
-}
-
-/// An alias for `HMAC<Insecure.MD5>` since Kotlin does not support static access to generics
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias HMACMD5 = HMAC<Insecure.MD5>
-/// An alias for `HMAC<Insecure.SHA1>` since Kotlin does not support static access to generics
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias HMACSHA1 = HMAC<Insecure.SHA1>
-/// An alias for `HMAC<SHA256>` since Kotlin does not support static access to generics
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias HMACSHA256 = HMAC<SHA256>
-/// An alias for `HMAC<SHA384>` since Kotlin does not support static access to generics
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias HMACSHA384 = HMAC<SHA384>
-/// An alias for `HMAC<SHA512>` since Kotlin does not support static access to generics
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public typealias HMACSHA512 = HMAC<SHA512>
-
 
 #endif

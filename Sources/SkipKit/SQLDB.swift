@@ -14,6 +14,10 @@ import SQLite3
 #endif
 #endif
 
+#if !SKIP
+import CryptoKit
+#endif
+
 // SKIP INSERT: import android.database.sqlite.SQLiteDatabase
 // SKIP INSERT: import android.database.*
 // SKIP INSERT: import android.database.sqlite.*
@@ -68,14 +72,14 @@ public final class SQLDB {
     }
 
     /// Executes a single SQL statement.
-    public func execute(sql: String, params: [SQLValue] = []) throws {
+    public func execute(sql: any StringProtocol, params: [SQLValue] = []) throws {
         #if SKIP
         let bindArgs = params.map { $0.toBindArg() }
-        db.execSQL(sql, bindArgs.toList().toTypedArray())
+        db.execSQL(sql.toString(), bindArgs.toList().toTypedArray())
         #else
         if params.isEmpty {
             // no-param single-shot exec convenience
-            try check(resultOf: sqlite3_exec(handle, sql, nil, nil, nil))
+            try check(resultOf: sqlite3_exec(handle, sql.description, nil, nil, nil))
         } else {
             _ = try Cursor(self, sql, params: params).nextRow(close: true)
         }
@@ -146,21 +150,21 @@ public final class SQLDB {
         /// Whether the cursor is closed or not
         public private(set) var closed = false
 
-        fileprivate init(_ connection: SQLDB, _ SQL: String, params: [SQLValue]) throws {
+        fileprivate init(_ connection: SQLDB, _ SQL: any StringProtocol, params: [SQLValue]) throws {
             self.connection = connection
 
             #if SKIP
             let bindArgs: [String?] = params.map { $0.toBindString() }
-            self.cursor = connection.db.rawQuery(SQL, bindArgs.toList().toTypedArray())
+            self.cursor = connection.db.rawQuery(SQL.toString(), bindArgs.toList().toTypedArray())
             #else
-            try connection.check(resultOf: sqlite3_prepare_v2(connection.handle, SQL, -1, &handle, nil))
+            try connection.check(resultOf: sqlite3_prepare_v2(connection.handle, SQL.description, -1, &handle, nil))
             for (index, param) in params.enumerated() {
                 try connection.bind(handle: self.handle, parameter: param, index: .init(index + 1))
             }
             #endif
         }
 
-        var columnCount: Int32 {
+        public var columnCount: Int32 {
             if closed { return 0 }
             #if SKIP
             return self.cursor.getColumnCount()
@@ -171,7 +175,7 @@ public final class SQLDB {
 
 
         /// Moves to the next row in the result set, returning `false` if there are no more rows to traverse.
-        func next() throws -> Bool {
+        public func next() throws -> Bool {
             if closed {
                 throw CursorClosedError()
             }
@@ -180,6 +184,37 @@ public final class SQLDB {
             #else
             return try connection.check(resultOf: sqlite3_step(handle)) == SQLITE_ROW
             #endif
+        }
+
+        /// Generates a SHA-256 hash by iterating over the remaining rows and updating a hash of each string value of the columns in order.
+        ///
+        /// The exact algorithm is to iterate through the remaining rows in the Cursor, then output a series of tab-delimited pair of count\tvalue for each column.
+        public func resultHash(algorithm: any HashFunction = SHA256()) throws -> Data {
+            var hash = algorithm
+            let columns = columnCount
+
+            let tab = "\t".data(using: String.Encoding.utf8)!
+            let nl = "\n".data(using: String.Encoding.utf8)!
+
+            while try next() {
+                for i in 0..<columns {
+                    let columnData = try getString(column: i)?.data(using: String.Encoding.utf8) ?? Data()
+
+                    // we always prefix the column's hash in order to ensure that overlapping values (e.g., COL1="ABC"+COL2="DEF" == COL1="A"+COL2="BCDEF")
+                    let valueLength = "\(columnData.count)".data(using: String.Encoding.utf8) ?? Data()
+                    hash.update(data: valueLength)
+                    hash.update(data: tab) // length-value separated by tabs
+                    hash.update(data: columnData) // then add the data itself
+
+                    if i == columns - 1 {
+                        hash.update(data: nl) // lines end in a newline
+                    } else {
+                        hash.update(data: tab) // length-value separated by tabs
+                    }
+                }
+            }
+            try close()
+            return Data(hash.finalize())
         }
 
         /// Returns the name of the column at the given zero-based index.
@@ -228,7 +263,10 @@ public final class SQLDB {
             case .nul:
                 return .nul
             case .text:
-                return .text(try getString(column: column))
+                guard let str = try getString(column: column) else {
+                    return .nul
+                }
+                return .text(str)
             case .integer:
                 return .integer(try getInt64(column: column))
             case .float:
@@ -349,14 +387,17 @@ public final class SQLDB {
             #endif
         }
 
-        public func getString(column: Int32) throws -> String {
+        public func getString(column: Int32) throws -> String? {
             if closed {
                 throw CursorClosedError()
             }
             #if SKIP
             return self.cursor.getString(column)
             #else
-            return String(cString: UnsafePointer(sqlite3_column_text(handle, Int32(column))))
+            guard let text = sqlite3_column_text(handle, Int32(column)) else {
+                return nil
+            }
+            return String(cString: UnsafePointer(text))
             #endif
         }
 
