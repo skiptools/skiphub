@@ -189,6 +189,7 @@ public final class SQLDB {
         /// Generates a SHA-256 hash by iterating over the remaining rows and updating a hash of each string value of the columns in order.
         ///
         /// The exact algorithm is to iterate through the remaining rows in the Cursor, then output a series of tab-delimited pair of count\tvalue for each column.
+        @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
         public func resultHash(algorithm: any HashFunction = SHA256()) throws -> Data {
             var hash = algorithm
             let columns = columnCount
