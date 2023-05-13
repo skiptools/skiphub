@@ -56,11 +56,11 @@ public struct String: RandomAccessCollection {
         fatalError()
     }
 
-    public func dropFirst(_ k: Int) -> String {
+    public func dropFirst(_ k: Int = 1) -> String {
         fatalError()
     }
 
-    public func dropLast(_ k: Int) -> String {
+    public func dropLast(_ k: Int = 1) -> String {
         fatalError()
     }
 
@@ -93,11 +93,11 @@ public struct Substring: RandomAccessCollection {
         fatalError()
     }
 
-    public func dropFirst(_ k: Int) -> String {
+    public func dropFirst(_ k: Int = 1) -> String {
         fatalError()
     }
 
-    public func dropLast(_ k: Int) -> String {
+    public func dropLast(_ k: Int = 1) -> String {
         fatalError()
     }
 

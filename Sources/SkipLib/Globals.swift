@@ -44,11 +44,11 @@ public func swap<T>(_ a: inout T, _ b: inout T) {
     fatalError()
 }
 
-public func min<T>(_ x: T, _ y: T) -> T where T : Comparable {
+public func min<T>(_ x: T, _ y: T) -> T {
     fatalError()
 }
 
-public func max<T>(_ x: T, _ y: T) -> T where T : Comparable {
+public func max<T>(_ x: T, _ y: T) -> T {
     fatalError()
 }
 
