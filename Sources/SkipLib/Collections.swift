@@ -661,12 +661,10 @@ public func sequence<T, State>(state: State, next: @escaping (inout State) -> T?
     fatalError()
 }
 
-@available(*, unavailable)
 public func stride<T>(from start: T, to end: T, by stride: T) -> any Sequence<T> {
     fatalError()
 }
 
-@available(*, unavailable)
 public func stride<T>(from start: T, through end: T, by stride: T) -> any Sequence<T> {
     fatalError()
 }

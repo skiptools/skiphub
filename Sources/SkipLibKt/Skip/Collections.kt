@@ -282,6 +282,96 @@ interface IteratorProtocol<Element> {
     fun next(): Element?
 }
 
+fun stride(from: Int, to: Int, by: Int): Sequence<Int> {
+    return stride(from, to, false, by)
+}
+
+fun stride(from: Int, through: Int, by: Int, unusedp: Nothing? = null): Sequence<Int> {
+    return stride(from, through, true, by)
+}
+
+private fun stride(from: Int, to: Int, inclusive: Boolean, by: Int): Sequence<Int> {
+    var next = from
+    val strideHasNext: () -> Boolean = {
+        if (by >= 0) {
+            if (to <= from) { false } else if (inclusive) { next <= to } else  { next < to }
+        } else {
+            if (to >= from) { false } else if (inclusive) { next >= to } else { next > to }
+        }
+    }
+    val strideNext: () -> Int = {
+        val ret = next
+        next += by
+        ret
+    }
+    return strideSequence(strideHasNext, strideNext)
+}
+
+private fun <T> strideSequence(strideHasNext: () -> Boolean, strideNext: () -> T): Sequence<T> {
+    val iterable = object: Iterable<T> {
+        override fun iterator(): Iterator<T> {
+            return object: Iterator<T> {
+                override fun hasNext(): Boolean = strideHasNext()
+                override fun next(): T = strideNext()
+            }
+        }
+    }
+    return object: Sequence<T> {
+        override val iterableStorage: Iterable<T>
+            get() = iterable
+    }
+}
+
+fun stride(from: Long, to: Long, by: Long): Sequence<Long> {
+    return stride(from, to, false, by)
+}
+
+fun stride(from: Long, through: Long, by: Long, unusedp: Nothing? = null): Sequence<Long> {
+    return stride(from, through, true, by)
+}
+
+private fun stride(from: Long, to: Long, inclusive: Boolean, by: Long): Sequence<Long> {
+    var next = from
+    val strideHasNext: () -> Boolean = {
+        if (by >= 0) {
+            if (to <= from) { false } else if (inclusive) { next <= to } else  { next < to }
+        } else {
+            if (to >= from) { false } else if (inclusive) { next >= to } else { next > to }
+        }
+    }
+    val strideNext: () -> Long = {
+        val ret = next
+        next += by
+        ret
+    }
+    return strideSequence(strideHasNext, strideNext)
+}
+
+fun stride(from: Double, to: Double, by: Double): Sequence<Double> {
+    return stride(from, to, false, by)
+}
+
+fun stride(from: Double, through: Double, by: Double, unusedp: Nothing? = null): Sequence<Double> {
+    return stride(from, through, true, by)
+}
+
+private fun stride(from: Double, to: Double, inclusive: Boolean, by: Double): Sequence<Double> {
+    var next = from
+    val strideHasNext: () -> Boolean = {
+        if (by >= 0) {
+            if (to <= from) { false } else if (inclusive) { next <= to } else  { next < to }
+        } else {
+            if (to >= from) { false } else if (inclusive) { next >= to } else { next > to }
+        }
+    }
+    val strideNext: () -> Double = {
+        val ret = next
+        next += by
+        ret
+    }
+    return strideSequence(strideHasNext, strideNext)
+}
+
 //~~~
 
 // Forward Swift's `lazy` property Kotlin's `asSequence()` function
