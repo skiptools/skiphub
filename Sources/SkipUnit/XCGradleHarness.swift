@@ -33,7 +33,7 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
     @available(macOS 10.15, macCatalyst 11, *)
-    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
         let isTestAction = actions.contains(where: { $0.hasPrefix("test") })
         let testModuleSuffix = moduleSuffix + "Tests"
         let moduleSuffix = isTestAction ? testModuleSuffix : moduleSuffix
@@ -46,7 +46,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 // TODO: add a general system gradle checkup test here
             } else {
                 let selfType = type(of: self)
-                let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
+                let moduleName = moduleName ?? String(reflecting: selfType).components(separatedBy: ".").first ?? ""
                 if isTestAction && !moduleName.hasSuffix(moduleSuffix) {
                     throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
                 }
@@ -55,21 +55,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 // walk up from the test case swift file until we find the folder that contains "Package.swift", which we treat as the package root
                 var linkFolder: URL? = nil
                 if let sourcePath = sourcePath, let linkFolderBase = linkFolderBase {
-                    let sourcePathURL = URL(fileURLWithPath: sourcePath.description, isDirectory: false)
-                    var packageRootURL = sourcePathURL.deletingLastPathComponent()
-
-                    let isPackageRoot = {
-                        (try? packageRootURL.appendingPathComponent("Package.swift", isDirectory: false).checkResourceIsReachable()) == true
-                    }
-
-                    while !isPackageRoot() {
-                        let parent = packageRootURL.deletingLastPathComponent()
-                        if parent.path == packageRootURL.path {
-                            break // top of the fs and not found
-                        }
-                        packageRootURL = parent
-                    }
-                    if isPackageRoot() {
+                    if let packageRootURL = packageBaseFolder(forSourceFile: sourcePath) {
                         linkFolder = packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
                     }
                 }
