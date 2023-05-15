@@ -86,12 +86,12 @@ extension Process {
 
 extension URL {
     /// The system temporary folder
-    static let tmpdir: URL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+    public static let tmpdir: URL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
 }
 
 extension FileManager {
     /// Creates a temporary folder with the given base name
-    func createTmpDir(in tmpDir: URL = .tmpdir, folder: String = UUID().uuidString, name: String) throws -> URL {
+    public func createTmpDir(in tmpDir: URL = .tmpdir, folder: String = UUID().uuidString, name: String) throws -> URL {
         let url = URL(fileURLWithPath: name, isDirectory: true, relativeTo: URL(fileURLWithPath: folder, isDirectory: true, relativeTo: tmpDir))
         try createDirectory(at: url, withIntermediateDirectories: true)
         return url

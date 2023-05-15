@@ -46,9 +46,9 @@ final class GradleDriverTests: XCTestCase {
         func fixupBuildGradle() throws {
             let buildPath = tmp.appendingPathComponent(modname).appendingPathComponent("build.gradle.kts")
             let buildGradleData = try Data(contentsOf: buildPath)
-            var buildGradleContents = String(data: buildGradleData, encoding: .utf8)
+            var buildGradleContents = String(data: buildGradleData, encoding: String.Encoding.utf8)
             buildGradleContents = buildGradleContents?.replacingOccurrences(of: "languageVersion.set(JavaLanguageVersion.of(", with: "languageVersion.set(JavaLanguageVersion.of(17)) // Skip replaced: ((") // just comment it out if it exists
-            try buildGradleContents?.write(to: buildPath, atomically: true, encoding: .utf8)
+            try buildGradleContents?.write(to: buildPath, atomically: true, encoding: String.Encoding.utf8)
         }
 
         try fixupBuildGradle()
@@ -149,7 +149,7 @@ final class GradleDriverTests: XCTestCase {
                 }
             }
 
-            try testCaseContents.write(to: testCaseURL, atomically: true, encoding: .utf8)
+            try testCaseContents.write(to: testCaseURL, atomically: true, encoding: String.Encoding.utf8)
         }
     }
 }
