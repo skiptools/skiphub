@@ -32,7 +32,11 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
     @available(macOS 10.15, macCatalyst 11, *)
-    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "KtTests", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+        let isTestAction = actions.contains(where: { $0.hasPrefix("test") })
+        let testModuleSuffix = moduleSuffix + "Tests"
+        let moduleSuffix = isTestAction ? testModuleSuffix : moduleSuffix
+
         if #unavailable(macOS 13, macCatalyst 16) {
             fatalError("unsupported platform")
         } else {
@@ -42,7 +46,7 @@ extension XCGradleHarness where Self : XCTestCase {
             } else {
                 let selfType = type(of: self)
                 let moduleName = String(reflecting: selfType).components(separatedBy: ".").first ?? ""
-                if !moduleName.hasSuffix(moduleSuffix) {
+                if isTestAction && !moduleName.hasSuffix(moduleSuffix) {
                     throw InvalidModuleNameError(errorDescription: "The module name '\(moduleName)' is invalid for running gradle tests; it must end with '\(moduleSuffix)'")
                 }
                 let driver = try await GradleDriver()
@@ -72,7 +76,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder)
 
                 // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
-                let baseModuleName = moduleName.dropLast(moduleSuffix.count).description
+                let baseModuleName = moduleName.dropLast(testModuleSuffix.count).description
 
                 var testProcessResult: ProcessResult? = nil
                 let (output, parseResults) = try await driver.launchGradleProcess(in: dir, module: baseModuleName, actions: actions, arguments: arguments, maxMemory: maxMemory, exitHandler: { result in
@@ -88,7 +92,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 }
 
                 // if any of the actions are a test case, when try to parse the XML results
-                if actions.contains(where: { $0.hasPrefix("test") }) {
+                if isTestAction {
                     let testSuites = try parseResults()
                     // the absense of any test data probably indicates some sort of mis-configuration or else a build failure
                     XCTAssertNotEqual(0, testSuites.count, "No tests were run")
