@@ -17,6 +17,10 @@ public protocol GradleHarness {
     func scanGradleOutput(line: String)
 }
 
+@available(macOS 10.15, macCatalyst 11, *)
+@available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
 extension GradleHarness {
     /// Returns the URL to the folder that holds the top-level `settings.gradle.kts` file for the destination module.
     /// - Parameters:
