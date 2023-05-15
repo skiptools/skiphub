@@ -4,6 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
+#if canImport(SkipDrive)
+
 import XCTest
 @_exported import SkipDrive
 
@@ -17,7 +19,6 @@ import XCTest
 public protocol XCGradleHarness : GradleHarness {
 }
 
-#if os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
 @available(macOS 10.15, macCatalyst 11, *)
 extension XCGradleHarness where Self : XCTestCase {
 
@@ -404,5 +405,5 @@ struct GradleBuildError : LocalizedError {
 extension XCTSourceCodeLocation : SourceCodeLocation {
 
 }
-#endif // os(macOS) || os(Linux) || targetEnvironment(macCatalyst)
+#endif // canImport(SkipDrive)
 #endif // !SKIP
