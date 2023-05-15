@@ -103,7 +103,7 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         return result
     }
 
-    override operator fun get(position: Int): Element {
+    operator fun get(position: Int): Element {
         return collectionStorage.elementAt(position).sref({
             set(position, it)
         })

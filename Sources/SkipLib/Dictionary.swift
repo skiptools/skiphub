@@ -24,7 +24,6 @@ public struct Dictionary<Key, Value>: Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public init(uniqueKeysWithValues keysAndValues: any Sequence<(Key, Value)>) {
         fatalError()
     }
@@ -39,7 +38,6 @@ public struct Dictionary<Key, Value>: Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func filter(_ isIncluded: ((Key, Value)) throws -> Bool) rethrows -> Dictionary<Key, Value> {
         fatalError()
     }
@@ -104,7 +102,6 @@ public struct Dictionary<Key, Value>: Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public var values: any Collection<Value> {
         fatalError()
     }

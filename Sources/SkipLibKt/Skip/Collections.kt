@@ -172,10 +172,6 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     val endIndex: Int
         get() = storageEndIndex ?: count
 
-    operator fun get(position: Int): Element {
-        return collectionStorage.elementAt(position).sref()
-    }
-
     val isEmpty: Boolean
         get() = storageStartIndex >= effectiveStorageEndIndex
     val count: Int
@@ -206,6 +202,13 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
             override val storageEndIndex = upperBound
         }
     }
+}
+
+// Implement subscript as an extension function so that Dictionary can implement it for keyed access instead.
+// WARNING: This means that you cannot access positional entries in a Dictionary<Int, *> because we'll return
+// the value for the Int key instead
+operator fun <Element> Collection<Element>.get(position: Int): Element {
+    return collectionStorage.elementAt(position).sref()
 }
 
 interface BidirectionalCollection<Element>: Collection<Element> {

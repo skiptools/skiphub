@@ -17,12 +17,21 @@ fun <Element> setOf(vararg elements: Element): Set<Element> {
 class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, MutableStruct {
     private var isStorageShared = false
     private var _collectionStorage: LinkedHashSet<Element>
+    private val mutableStorage: LinkedHashSet<Element>
+        get() {
+            if (isStorageShared) {
+                _collectionStorage = LinkedHashSet(_collectionStorage)
+                isStorageShared = false
+            }
+            return _collectionStorage
+        }
 
     override val collectionStorage: kotlin.collections.Collection<Element>
         get() = _collectionStorage
     override fun willSliceStorage() {
         isStorageShared = true // Shared with slice
     }
+
 
     constructor(minimumCapacity: Int = 0) {
         _collectionStorage = LinkedHashSet()
@@ -83,21 +92,21 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     fun formUnion(other: Sequence<Element>) {
         willmutate()
-        other.iterableStorage.forEach { _collectionStorage.add(it.sref()) }
+        other.iterableStorage.forEach { mutableStorage.add(it.sref()) }
         didmutate()
     }
 
     fun formIntersection(other: Sequence<Element>) {
         willmutate()
-        other.iterableStorage.forEach { _collectionStorage.remove(it) }
+        other.iterableStorage.forEach { mutableStorage.remove(it) }
         didmutate()
     }
 
     fun formSymmetricDifference(other: Sequence<Element>) {
         willmutate()
         for (element in other.iterableStorage) {
-            if (!_collectionStorage.remove(element)) {
-                _collectionStorage.add(element.sref())
+            if (!mutableStorage.remove(element)) {
+                mutableStorage.add(element.sref())
             }
         }
         didmutate()
@@ -137,7 +146,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     fun subtract(other: Sequence<Element>) {
         willmutate()
-        _collectionStorage.removeAll(other.iterableStorage)
+        mutableStorage.removeAll(other.iterableStorage)
         didmutate()
     }
 
@@ -162,7 +171,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
             return Tuple2(false, _collectionStorage.elementAt(indexOf))
         }
         willmutate()
-        _collectionStorage.add(element.sref())
+        mutableStorage.add(element.sref())
         didmutate()
         return Tuple2(true, element)
     }
@@ -175,7 +184,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
             ret = null
         } else {
             ret = _collectionStorage.elementAt(index)
-            _collectionStorage.remove(element)
+            mutableStorage.remove(element)
         }
         didmutate()
         return ret
@@ -189,9 +198,9 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
             ret = null
         } else {
             ret = _collectionStorage.elementAt(index)
-            _collectionStorage.remove(with)
+            mutableStorage.remove(with)
         }
-        _collectionStorage.add(with.sref())
+        mutableStorage.add(with.sref())
         didmutate()
         return ret
     }
