@@ -76,6 +76,24 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
         _collectionStorage = EntryCollection(this)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    constructor(map: Map<K, V>, nocopy: Boolean = false, shared: Boolean = false) {
+        if (nocopy && map is LinkedHashMap<*, *>) {
+            storage = map as LinkedHashMap<K, V>
+            isStorageShared = shared
+        } else {
+            storage = LinkedHashMap()
+            for (entry in map) {
+                if (nocopy) {
+                    storage[entry.key] = entry.value
+                } else {
+                    storage[entry.key.sref()] = entry.value.sref()
+                }
+            }
+        }
+        _collectionStorage = EntryCollection(this)
+    }
+
     fun filter(isIncluded: (Tuple2<K, V>) -> Boolean): Dictionary<K, V> {
         return Dictionary(_collectionStorage.filter(isIncluded), nocopy = true)
     }
