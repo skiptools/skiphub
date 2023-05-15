@@ -34,7 +34,7 @@ let package = Package(
     ],
     targets: [
         // The launcher executable for the transpiled Android APK
-        .executableTarget(name: "SkipDroid", dependencies: [.target(name: "SkipDrive", condition: .when(platforms: [.android, .macOS]))]),
+        .executableTarget(name: "SkipDroid", dependencies: [.target(name: "SkipDrive", condition: .when(platforms: [.android, .linux, .windows, .macOS, .macCatalyst]))]),
 
         // The Gradle driver for building and testing skip-transpiled projects
         .target(name: "SkipDrive", dependencies: []),

@@ -35,7 +35,12 @@ public class SkipProcessInfo {
         #if !SKIP
         return rawValue.environment
         #else
-        return Dictionary(System.getenv())
+        //return Dictionary(System.getenv())
+        var env: [String: String] = [:]
+        for (key, value) in System.getenv() {
+            env[key] = value
+        }
+        return env
         #endif
     }
 
