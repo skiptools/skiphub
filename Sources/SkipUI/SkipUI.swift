@@ -60,6 +60,15 @@ public typealias TabView = SwiftUI.TabView
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias TextField = SwiftUI.TextField
 
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+public typealias List = SwiftUI.List
+
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+public typealias Section = SwiftUI.Section
+
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+public typealias ForEach = SwiftUI.ForEach
+
 
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 public typealias Published = SwiftUI.Published

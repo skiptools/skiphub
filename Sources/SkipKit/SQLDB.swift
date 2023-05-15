@@ -175,14 +175,16 @@ public final class SQLDB {
         ///
         /// The exact algorithm is to iterate through the remaining rows in the Cursor, then output a series of tab-delimited pair of count\tvalue for each column.
         @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-        public func resultHash(algorithm: any HashFunction = SHA256()) throws -> Data {
+        public func digest(rows: Int? = nil, algorithm: any HashFunction = SHA256()) throws -> (rows: Int, digest: Data) {
             var hash = algorithm
             let columns = columnCount
 
             let tab = "\t".data(using: String.Encoding.utf8)!
             let nl = "\n".data(using: String.Encoding.utf8)!
 
-            while try next() {
+            var rowCount = 0
+            while try next(), rowCount < (rows ?? Int.max) {
+                rowCount += 1
                 for i in 0..<columns {
                     let columnData = try getString(column: i)?.data(using: String.Encoding.utf8) ?? Data()
 
@@ -200,7 +202,7 @@ public final class SQLDB {
                 }
             }
             try close()
-            return Data(hash.finalize())
+            return (rowCount, Data(hash.finalize()))
         }
 
         /// Returns the name of the column at the given zero-based index.
@@ -461,7 +463,7 @@ public enum SQLValue {
     case float(_ double: Double)
     case blob(_ data: Data)
 
-    var columnType: ColumnType {
+    public var columnType: ColumnType {
         switch self {
         case SQLValue.nul:
             return ColumnType.nul
@@ -492,7 +494,7 @@ public enum SQLValue {
     }
 
     /// Convert this SQLValue into a JSON for serialization
-    func toJSON() -> JSON {
+    public func toJSON() -> JSON {
         switch self {
         case SQLValue.nul:
             return JSON.null
@@ -507,7 +509,7 @@ public enum SQLValue {
         }
     }
 
-    func toBindString() -> String? {
+    public func toBindString() -> String? {
         switch self {
         case SQLValue.nul:
             return nil
@@ -523,7 +525,7 @@ public enum SQLValue {
     }
 
     /// If this is a `text` value, then return the underlying string
-    var textValue: String? {
+    public var textValue: String? {
         switch self {
         case let SQLValue.text(str): return str
         default: return nil
@@ -531,7 +533,7 @@ public enum SQLValue {
     }
 
     /// If this is a `integer` value, then return the underlying integer
-    var integerValue: Int64? {
+    public var integerValue: Int64? {
         switch self {
         case let SQLValue.integer(num): return num
         default: return nil
@@ -539,7 +541,7 @@ public enum SQLValue {
     }
 
     /// If this is a `float` value, then return the underlying double
-    var floatValue: Double? {
+    public var floatValue: Double? {
         switch self {
         case let SQLValue.float(dbl): return dbl
         default: return nil
@@ -547,7 +549,7 @@ public enum SQLValue {
     }
 
     /// If this is a `blob` value, then return the underlying data
-    var blobValue: Data? {
+    public var blobValue: Data? {
         switch self {
         case SQLValue.blob(let dat): return dat
         default: return nil

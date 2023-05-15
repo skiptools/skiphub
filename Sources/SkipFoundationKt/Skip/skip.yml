@@ -7,6 +7,5 @@
 build:
   contents:
     - block: 'dependencies'
-      export: false
       contents:
         - 'implementation("net.java.dev.jna:jna:5.13.0")'

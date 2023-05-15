@@ -60,7 +60,7 @@ internal class SkipJSContext {
         return true
     }
 
-    func evaluateScript(_ script: String) -> SkipJSValue? {
+    public func evaluateScript(_ script: String) -> SkipJSValue? {
         let scriptValue = JavaScriptCore.JSStringCreateWithUTF8CString(script)
         defer { JavaScriptCore.JSStringRelease(scriptValue) }
 
