@@ -24,8 +24,17 @@ final class SkipKitTests: XCTestCase {
         XCTAssertEqual("SkipKit", SkipKitPublicModuleName())
         //XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
 
+        
         #if SKIP
         XCTAssertEqual("stdout", System.getProperty("robolectric.logging"), "Robolectric build.gradle.kts should have enabled logging")
+
+        XCTAssertEqual(9, android.os.Build.VERSION_CODES.GINGERBREAD)
+        // JavaScript needs KITKAT or higher
+        XCTAssertEqual(19, android.os.Build.VERSION_CODES.KITKAT)
+
+        XCTAssertEqual(28, android.os.Build.VERSION_CODES.P)
+        XCTAssertEqual(33, android.os.Build.VERSION_CODES.TIRAMISU)
+        XCTAssertEqual(33, android.os.Build.VERSION.SDK_INT)
         #endif
     }
 

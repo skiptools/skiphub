@@ -31,16 +31,27 @@ public class SkipProcessInfo {
         #endif
     }
 
+    #if SKIP
+    /// The system properties in a JVM consists of both the environment variables as well as the
+    private let systemProperties: Dictionary<String, String> = Self.buildSystemProperties()
+
+    private static func buildSystemProperties() -> Dictionary<String, String> {
+        var dict: [String: String] = [:]
+        for (key, value) in System.getenv() {
+            dict[key] = value
+        }
+        for (key, value) in System.getProperties() {
+            dict[key.toString()] = value.toString()
+        }
+        return dict
+    }
+    #endif
+
     open var environment: [String : String] {
         #if !SKIP
         return rawValue.environment
         #else
-        //return Dictionary(System.getenv())
-        var env: [String: String] = [:]
-        for (key, value) in System.getenv() {
-            env[key] = value
-        }
-        return env
+        return systemProperties
         #endif
     }
 

@@ -18,15 +18,6 @@ class JavaScriptTests : XCTestCase {
         let webView = WebView()
         #if SKIP
 
-        XCTAssertEqual(9, android.os.Build.VERSION_CODES.GINGERBREAD)
-        // JavaScript needs KITKAT or higher
-        XCTAssertEqual(19, android.os.Build.VERSION_CODES.KITKAT)
-
-        XCTAssertEqual(28, android.os.Build.VERSION_CODES.P)
-        XCTAssertEqual(33, android.os.Build.VERSION_CODES.TIRAMISU)
-        XCTAssertEqual(33, android.os.Build.VERSION.SDK_INT)
-
-
         XCTAssertEqual(0, webView.webView.getContentHeight())
         XCTAssertEqual(nil, webView.webView.getTitle())
         XCTAssertEqual(nil, webView.webView.getUrl())

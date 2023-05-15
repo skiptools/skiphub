@@ -15,6 +15,9 @@ final class SkipFoundationTests: XCTestCase {
         XCTAssertEqual("SkipFoundation", SkipFoundationInternalModuleName())
         XCTAssertEqual("SkipFoundation", SkipFoundationPublicModuleName())
 
+        // there are only a few system properties on the Android emulator: java.io.tmpdir, user.home, and http.agent "Dalvik/2.1.0 (Linux; U; Android 13; sdk_gphone64_arm64 Build/ TE1A.220922.021)"
+        let isJVM = ProcessInfo.processInfo.environment["java.io.tmpdir"] != nil
+
         #if SKIP
         XCTAssertEqual("Kotlin", foundationHelperDemo())
         #else
