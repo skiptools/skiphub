@@ -103,9 +103,11 @@ extension XCGradleHarness where Self : XCTestCase {
                 case .terminated(let code):
                     // this is a general error that is reported whenever gradle fails, so that the overall test will fail even when we cannot parse any build errors or test failures
                     // there should be additional messages in the log to provide better indication of where the test failed
-                    XCTAssertTrue(code == 0, "Gradle failed with exit code \(code)")
+                    if code != 0 {
+                        throw GradleBuildError(errorDescription: "Gradle failed with exit code \(code)")
+                    }
                 default:
-                    XCTFail("Gradle process crashed: \(testProcessResult?.description ?? "")")
+                    throw GradleBuildError(errorDescription: "Gradle failed with result: \(testProcessResult?.description ?? "")")
                 }
             }
         }
@@ -392,6 +394,10 @@ extension XCGradleHarness where Self : XCTestCase {
 }
 
 struct InvalidModuleNameError : LocalizedError {
+    var errorDescription: String?
+}
+
+struct GradleBuildError : LocalizedError {
     var errorDescription: String?
 }
 
