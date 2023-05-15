@@ -119,6 +119,10 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         return other.collectionStorage == collectionStorage
     }
 
+    override fun hashCode(): Int {
+        return collectionStorage.hashCode()
+    }
+
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
     override fun scopy(): MutableStruct = Array(this, nocopy = true, shared = true)

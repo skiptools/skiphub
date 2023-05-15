@@ -58,23 +58,17 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
     override val isEmpty: Boolean
         get() = count == 0
 
-    // MARK: - SetAlgebra
-
-    override fun contains(element: Element): Boolean {
-        return _collectionStorage.contains(element)
-    }
-
-    override fun union(other: Set<Element>): Set<Element> {
-        val union = _collectionStorage.union(other.collectionStorage)
+    fun union(other: Sequence<Element>): Set<Element> {
+        val union = _collectionStorage.union(other.iterableStorage)
         return Set(union, nocopy = true)
     }
 
-    override fun intersection(other: Set<Element>): Set<Element> {
+    fun intersection(other: Sequence<Element>): Set<Element> {
         val intersection = _collectionStorage.intersect(other.iterableStorage)
         return Set(intersection, nocopy = true)
     }
 
-    override fun symmetricDifference(other: Set<Element>): Set<Element> {
+    fun symmetricDifference(other: Sequence<Element>): Set<Element> {
         val ret = Set(other)
         for (element in _collectionStorage) {
             if (ret.remove(element) == null) {
@@ -83,6 +77,81 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
         }
         return ret
     }
+
+    fun formUnion(other: Sequence<Element>) {
+        willmutate()
+        other.iterableStorage.forEach { _collectionStorage.add(it.sref()) }
+        didmutate()
+    }
+
+    fun formIntersection(other: Sequence<Element>) {
+        willmutate()
+        other.iterableStorage.forEach { _collectionStorage.remove(it) }
+        didmutate()
+    }
+
+    fun formSymmetricDifference(other: Sequence<Element>) {
+        willmutate()
+        for (element in other.iterableStorage) {
+            if (!_collectionStorage.remove(element)) {
+                _collectionStorage.add(element.sref())
+            }
+        }
+        didmutate()
+    }
+
+    fun subtracting(other: Sequence<Element>): Set<Element> {
+        val subtraction = _collectionStorage.subtract(other.iterableStorage)
+        return Set(subtraction, nocopy = true)
+    }
+
+    fun isSubset(of: Sequence<Element>): Boolean {
+        for (element in _collectionStorage) {
+            if (!of.contains(element)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun isDisjoint(with: Sequence<Element>): Boolean {
+        for (element in with.iterableStorage) {
+            if (contains(element)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun isSuperset(of: Sequence<Element>): Boolean {
+        for (element in of.iterableStorage) {
+            if (!_collectionStorage.contains(element)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun subtract(other: Sequence<Element>) {
+        willmutate()
+        _collectionStorage.removeAll(other.iterableStorage)
+        didmutate()
+    }
+
+    fun isStrictSubset(of: Sequence<Element>): Boolean {
+        return count < of.iterableStorage.count() && isSubset(of)
+    }
+
+    fun isStrictSuperset(of: Sequence<Element>): Boolean {
+        return count > of.iterableStorage.count() && isSuperset(of)
+    }
+
+    // MARK: - SetAlgebra
+
+    override fun contains(element: Element): Boolean = _collectionStorage.contains(element)
+    override fun union(other: Set<Element>): Set<Element> = union(other as Sequence<Element>)
+    override fun intersection(other: Set<Element>): Set<Element> = intersection(other as Sequence<Element>)
+    override fun symmetricDifference(other: Set<Element>): Set<Element> = symmetricDifference(other as Sequence<Element>)
 
     override fun insert(element: Element): Tuple2<Boolean, Element> {
         val indexOf = _collectionStorage.indexOf(element)
@@ -124,63 +193,16 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
         return ret
     }
 
-    override fun formUnion(other: Set<Element>) {
-        willmutate()
-        other.collectionStorage.forEach { _collectionStorage.add(it.sref()) }
-        didmutate()
-    }
-
-    override fun formIntersection(other: Set<Element>) {
-        willmutate()
-        other.collectionStorage.forEach { _collectionStorage.remove(it) }
-        didmutate()
-    }
-
-    override fun formSymmetricDifference(other: Set<Element>) {
-        willmutate()
-        for (element in other.collectionStorage) {
-            if (!_collectionStorage.remove(element)) {
-                _collectionStorage.add(element.sref())
-            }
-        }
-        didmutate()
-    }
-
-    override fun subtracting(other: Set<Element>): Set<Element> {
-        val subtraction = _collectionStorage.subtract(other.collectionStorage)
-        return Set(subtraction, nocopy = true)
-    }
-
-    override fun isSubset(of: Set<Element>): Boolean {
-        return of.collectionStorage.containsAll(_collectionStorage)
-    }
-
-    override fun isDisjoint(with: Set<Element>): Boolean {
-        for (element in with.collectionStorage) {
-            if (contains(element)) {
-                return false
-            }
-        }
-        return true
-    }
-
-    override fun isSuperset(of: Set<Element>): Boolean {
-        return _collectionStorage.containsAll(of.collectionStorage)
-    }
-
-    override fun subtract(other: Set<Element>) {
-        willmutate()
-        _collectionStorage.removeAll(other.collectionStorage)
-        didmutate()
-    }
-
-    override fun isStrictSubset(of: Set<Element>): Boolean {
-        return count < of.count && isSubset(of)
-    }
-
-    override fun isStrictSuperset(of: Set<Element>): Boolean {
-        return count > of.count && isSuperset(of)
-    }
+    override fun formUnion(other: Set<Element>) = formUnion(other as Sequence<Element>)
+    override fun formIntersection(other: Set<Element>) = formIntersection(other as Sequence<Element>)
+    override fun formSymmetricDifference(other: Set<Element>) = formSymmetricDifference(other as Sequence<Element>)
+    override fun subtracting(other: Set<Element>): Set<Element> = subtracting(other as Sequence<Element>)
+    override fun isSubset(of: Set<Element>): Boolean = isSubset(of as Sequence<Element>)
+    override fun isDisjoint(with: Set<Element>): Boolean = isDisjoint(with as Sequence<Element>)
+    override fun isSuperset(of: Set<Element>): Boolean = isSuperset(of as Sequence<Element>)
+    override fun subtract(other: Set<Element>) = subtract(other as Sequence<Element>)
+    override fun isStrictSubset(of: Set<Element>): Boolean = isStrictSubset(of as Sequence<Element>)
+    override fun isStrictSuperset(of: Set<Element>): Boolean = isStrictSuperset(of as Sequence<Element>)
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -189,7 +211,11 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
         if (other as? Set<*> == null) {
             return false
         }
-        return other.collectionStorage == collectionStorage
+        return other.collectionStorage == _collectionStorage
+    }
+
+    override fun hashCode(): Int {
+        return _collectionStorage.hashCode()
     }
 
     // MutableStruct
