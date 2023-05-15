@@ -5,6 +5,9 @@ let package = Package(
     name: "Skip Package Hub",
     defaultLocalization: "en",
     products: [
+        .executable(name: "skipdroid", targets: ["SkipDroid"]),
+        .library(name: "SkipDrive", targets: ["SkipDrive"]),
+
         .library(name: "SkipUnit", targets: ["SkipUnit"]),
         .library(name: "SkipUnitKt", targets: ["SkipUnitKt"]),
 
@@ -27,11 +30,17 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.4.32"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.4.33"),
     ],
     targets: [
+        // The launcher executable for the transpiled Android APK
+        .executableTarget(name: "SkipDroid", dependencies: [.target(name: "SkipDrive", condition: .when(platforms: [.android, .macOS]))]),
+
+        // The Gradle driver for building and testing skip-transpiled projects
+        .target(name: "SkipDrive", dependencies: []),
+
         // Unit testing support: XCTest to JUnit conversion, Gradle test launch and results handling
-        .target(name: "SkipUnit", dependencies: []),
+        .target(name: "SkipUnit", dependencies: [.target(name: "SkipDrive", condition: .when(platforms: [.android, .macOS]))]),
         .target(name: "SkipUnitKt", dependencies: ["SkipUnit", "SkipLibKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
         .testTarget(name: "SkipUnitKtTests", dependencies: ["SkipUnitKt", "SkipUnit"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),

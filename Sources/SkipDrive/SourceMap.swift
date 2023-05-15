@@ -7,13 +7,13 @@
 import Foundation
 
 /// An abstraction of a source code location
-protocol SourceCodeLocation {
+public protocol SourceCodeLocation {
     init(fileURL: URL, lineNumber: Int)
     var fileURL: URL { get }
     var lineNumber: Int { get }
 }
 
-extension SourceCodeLocation {
+public extension SourceCodeLocation {
     /// Parses the `.File.sourcemap` for this `File.kt` and tries to find the matching line in the decoded source map JSON file (emitted by the skip transpiler).
     func findSourceMapLine() throws -> Self? {
         // turn SourceFile.kt into .SourceFile.sourcemap
@@ -48,44 +48,44 @@ extension SourceCodeLocation {
 }
 
 /// A decoded source map. This is the decodable counterpart to `SkipSyntax.OutputMap`
-struct SourceMap : Decodable {
-    let entries: [Entry]
+public struct SourceMap : Decodable {
+    public let entries: [Entry]
 
-    struct Entry : Decodable {
-        let sourceFile: Source.FilePath
-        let sourceRange: Source.Range?
-        let range: Source.Range
+    public struct Entry : Decodable {
+        public let sourceFile: Source.FilePath
+        public let sourceRange: Source.Range?
+        public let range: Source.Range
     }
 
-    struct Source {
-        struct SourceLine : Decodable {
-            let offset: Int
-            let line: String
+    public struct Source {
+        public struct SourceLine : Decodable {
+            public let offset: Int
+            public let line: String
         }
 
         /// A Swift source file.
-        struct FilePath: Hashable, Decodable {
-            let path: String
+        public struct FilePath: Hashable, Decodable {
+            public let path: String
         }
 
         /// A line and column-based range in the source, appropriate for Xcode reporting.
-        struct Range: Equatable, Decodable {
-            let start: Position
-            let end: Position
+        public struct Range: Equatable, Decodable {
+            public let start: Position
+            public let end: Position
         }
 
         /// A line and column-based position in the source, appropriate for Xcode reporting.
         /// Line and column numbers start with 1 rather than 0.
-        struct Position: Equatable, Comparable, Decodable {
-            let line: Int
-            let column: Int
+        public struct Position: Equatable, Comparable, Decodable {
+            public let line: Int
+            public let column: Int
 
-            init(line: Int, column: Int) {
+            public init(line: Int, column: Int) {
                 self.line = line
                 self.column = column
             }
 
-            static func < (lhs: Position, rhs: Position) -> Bool {
+            public static func < (lhs: Position, rhs: Position) -> Bool {
                 return lhs.line < rhs.line || (lhs.line == rhs.line && lhs.column < rhs.column)
             }
         }
