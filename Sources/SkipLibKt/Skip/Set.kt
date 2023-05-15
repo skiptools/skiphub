@@ -20,6 +20,9 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     override val collectionStorage: kotlin.collections.Collection<Element>
         get() = _collectionStorage
+    override fun willSliceStorage() {
+        isStorageShared = true // Shared with slice
+    }
 
     constructor(minimumCapacity: Int = 0) {
         _collectionStorage = LinkedHashSet()

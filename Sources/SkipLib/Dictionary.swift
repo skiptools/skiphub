@@ -20,7 +20,6 @@ public struct Dictionary<Key, Value>: Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public init(minimumCapacity: Int) {
         fatalError()
     }

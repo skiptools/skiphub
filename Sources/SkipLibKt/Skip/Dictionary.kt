@@ -14,31 +14,46 @@ fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     return dictionary
 }
 
-class Dictionary<K, V>: MutableStruct, Iterable<Tuple2<K, V>>, Hashable {
-    private var storage: DictionaryStorage<K, V>
+class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     private var isStorageShared = false
+    private var storage: LinkedHashMap<K, V>
 
-    constructor() {
-        storage = DictionaryStorage()
+    override val collectionStorage: DictionaryCollection<K, V>
+
+    override fun willSliceStorage() {
+        isStorageShared = true // Shared with slice
+    }
+    override fun willMutateStorage() = willmutate()
+    override fun didMutateStorage() = didmutate()
+
+    constructor(minimumCapacity: Int = 0) {
+        storage = LinkedHashMap()
     }
 
-    constructor(map: Map<K, V>) {
-        storage = DictionaryStorage()
-        for (entry in map) {
-            this[entry.key] = entry.value
+    constructor(uniqueKeysWithValues: Sequence<Tuple2<K, V>>, nocopy: Boolean = false) {
+        if (nocopy && uniqueKeysWithValues is DictionaryCollection<K, V>) {
+            // Share storage with the given dictionary, marking it as shared in both
+            storage = uniqueKeysWithValues.dictionary.storage
+            uniqueKeysWithValues.isStorageShared = true
+            isStorageShared = true
+        } else {
+            storage = LinkedHashMap()
+            for entry in uniqueKeysWithValues {
+                storage[entry.element0] = entry.element1
+            }
         }
     }
 
-    constructor(vararg entries: Tuple2<K, V>) {
-        storage = DictionaryStorage()
-        for (entry in entries) {
-            this[entry.element0] = entry.element1
+    constructor(entries: Iterable<Tuple2<K, V>>, nocopy: Boolean = false, shared: Boolean = false) {
+        if (nocopy && entries is LinkedHashMap<K, V>) {
+            storage = entries
+            isStorageShared = shared
+        } else {
+            storage = LinkedHashMap()
+            for entry in entries {
+                storage[entry.element0] = entry.element1
+            }
         }
-    }
-
-    private constructor(storage: DictionaryStorage<K, V>) {
-        this.storage = storage
-        isStorageShared = true
     }
 
     override fun iterator(): Iterator<Tuple2<K, V>> {
@@ -116,9 +131,3 @@ class Dictionary<K, V>: MutableStruct, Iterable<Tuple2<K, V>>, Hashable {
         }
     }
 }
-
-// Tuple2 extension functions to mimic a dictionary entry tuple
-val <K, V> Tuple2<K, V>.key: K
-    get() = element0
-val <K, V> Tuple2<K, V>.value: V
-    get() = element1
