@@ -20,17 +20,14 @@ extension SetAlgebra {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func union(_ other: Self) -> Self {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func intersection(_ other: Self) -> Self {
         fatalError()
     }
 
-    @available(*, unavailable)
     func symmetricDifference(_ other: Self) -> Self {
         fatalError()
     }
@@ -39,58 +36,55 @@ extension SetAlgebra {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func remove(_ member: Element) -> Element? {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func update(with newMember: Element) -> Element? {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func formUnion(_ other: Self) {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func formIntersection(_ other: Self) {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func formSymmetricDifference(_ other: Self) {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func subtracting(_ other: Self) -> Self {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func isSubset(of other: Self) -> Bool {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func isDisjoint(with other: Self) -> Bool {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func isSuperset(of other: Self) -> Bool {
         fatalError()
     }
 
-    @available(*, unavailable)
     public var isEmpty: Bool {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func subtract(_ other: Self) {
+        fatalError()
+    }
+
+    public func isStrictSubset(of other: Self) -> Bool {
+        fatalError()
+    }
+
+    public func isStrictSuperset(of other: Self) -> Bool {
         fatalError()
     }
 }

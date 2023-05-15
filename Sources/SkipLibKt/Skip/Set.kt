@@ -14,14 +14,14 @@ fun <Element> setOf(vararg elements: Element): Set<Element> {
     return Set(storage, nocopy = true)
 }
 
-class Set<Element>: Collection<Element>, MutableStruct {
+class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, MutableStruct {
     private var isStorageShared = false
     private var _collectionStorage: LinkedHashSet<Element>
 
     override val collectionStorage: kotlin.collections.Collection<Element>
         get() = _collectionStorage
 
-    constructor() {
+    constructor(minimumCapacity: Int = 0) {
         _collectionStorage = LinkedHashSet()
     }
 
@@ -51,15 +51,40 @@ class Set<Element>: Collection<Element>, MutableStruct {
         }
     }
 
-    constructor(vararg elements: Element) {
-        val storage = LinkedHashSet<Element>()
-        for (element in elements) {
-            storage.add(element.sref())
-        }
-        _collectionStorage = storage
+    fun filter(isIncluded: (Element) -> Boolean): Set<Element> {
+        return Set(_collectionStorage.filter(isIncluded), nocopy = true)
     }
 
-    fun insert(element: Element): Tuple2<Boolean, Element> {
+    override val isEmpty: Boolean
+        get() = count == 0
+
+    // MARK: - SetAlgebra
+
+    override fun contains(element: Element): Boolean {
+        return _collectionStorage.contains(element)
+    }
+
+    override fun union(other: Set<Element>): Set<Element> {
+        val union = _collectionStorage.union(other.collectionStorage)
+        return Set(union, nocopy = true)
+    }
+
+    override fun intersection(other: Set<Element>): Set<Element> {
+        val intersection = _collectionStorage.intersect(other.iterableStorage)
+        return Set(intersection, nocopy = true)
+    }
+
+    override fun symmetricDifference(other: Set<Element>): Set<Element> {
+        val ret = Set(other)
+        for (element in _collectionStorage) {
+            if (ret.remove(element) == null) {
+                ret.insert(element)
+            }
+        }
+        return ret
+    }
+
+    override fun insert(element: Element): Tuple2<Boolean, Element> {
         val indexOf = _collectionStorage.indexOf(element)
         if (indexOf != -1) {
             return Tuple2(false, _collectionStorage.elementAt(indexOf))
@@ -70,47 +95,68 @@ class Set<Element>: Collection<Element>, MutableStruct {
         return Tuple2(true, element)
     }
 
-    fun remove(element: Element): Boolean {
+    override fun remove(element: Element): Element? {
         willmutate()
-        val removed = _collectionStorage.remove(element)
+        val index = _collectionStorage.indexOf(element)
+        val ret: Element?
+        if (index == -1) {
+            ret = null
+        } else {
+            ret = _collectionStorage.elementAt(index)
+            _collectionStorage.remove(element)
+        }
         didmutate()
-        return removed
+        return ret
     }
 
-    fun union(other: Sequence<Element>): Set<Element> {
-        val union = _collectionStorage.union(other.iterableStorage)
-        return Set(union, nocopy = true)
+    override fun update(with: Element): Element? {
+        willmutate()
+        val index = _collectionStorage.indexOf(with)
+        val ret: Element?
+        if (index == -1) {
+            ret = null
+        } else {
+            ret = _collectionStorage.elementAt(index)
+            _collectionStorage.remove(with)
+        }
+        _collectionStorage.add(with.sref())
+        didmutate()
+        return ret
     }
 
-    fun intersection(other: Sequence<Element>): Set<Element> {
-        val intersection = _collectionStorage.intersect(other.iterableStorage)
-        return Set(intersection, nocopy = true)
+    override fun formUnion(other: Set<Element>) {
+        willmutate()
+        other.collectionStorage.forEach { _collectionStorage.add(it.sref()) }
+        didmutate()
     }
 
-    fun isSubset(of: Sequence<Element>): Boolean {
-        val otherSet = of as? Set<Element> ?: Set(of, nocopy = true)
-        return otherSet.isSuperset(this)
+    override fun formIntersection(other: Set<Element>) {
+        willmutate()
+        other.collectionStorage.forEach { _collectionStorage.remove(it) }
+        didmutate()
     }
 
-    fun isStrictSubset(of: Sequence<Element>): Boolean {
-        return of.iterableStorage.count() > count && isSubset(of)
-    }
-
-    fun isSuperset(of: Sequence<Element>): Boolean {
-        for (element in of.iterableStorage) {
-            if (!contains(element)) {
-                return false
+    override fun formSymmetricDifference(other: Set<Element>) {
+        willmutate()
+        for (element in other.collectionStorage) {
+            if (!_collectionStorage.remove(element)) {
+                _collectionStorage.add(element.sref())
             }
         }
-        return true
+        didmutate()
     }
 
-    fun isStrictSuperset(of: Sequence<Element>): Boolean {
-        return of.iterableStorage.count() < count && isSuperset(of)
+    override fun subtracting(other: Set<Element>): Set<Element> {
+        val subtraction = _collectionStorage.subtract(other.collectionStorage)
+        return Set(subtraction, nocopy = true)
     }
 
-    fun isDisjoint(with: Sequence<Element>): Boolean {
-        for (element in with.iterableStorage) {
+    override fun isSubset(of: Set<Element>): Boolean {
+        return of.collectionStorage.containsAll(_collectionStorage)
+    }
+
+    override fun isDisjoint(with: Set<Element>): Boolean {
+        for (element in with.collectionStorage) {
             if (contains(element)) {
                 return false
             }
@@ -118,14 +164,22 @@ class Set<Element>: Collection<Element>, MutableStruct {
         return true
     }
 
-    fun symmetricDifference(other: Sequence<Element>): Set<Element> {
-        val otherSet = other as? Set<Element> ?: Set(other)
-        for (element in _collectionStorage) {
-            if (otherSet.remove(element) == false) {
-                otherSet.insert(element)
-            }
-        }
-        return otherSet
+    override fun isSuperset(of: Set<Element>): Boolean {
+        return _collectionStorage.containsAll(of.collectionStorage)
+    }
+
+    override fun subtract(other: Set<Element>) {
+        willmutate()
+        _collectionStorage.removeAll(other.collectionStorage)
+        didmutate()
+    }
+
+    override fun isStrictSubset(of: Set<Element>): Boolean {
+        return count < of.count && isSubset(of)
+    }
+
+    override fun isStrictSuperset(of: Set<Element>): Boolean {
+        return count > of.count && isSuperset(of)
     }
 
     override fun equals(other: Any?): Boolean {

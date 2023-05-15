@@ -95,14 +95,6 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         }
     }
 
-    constructor(vararg elements: Element) {
-        val storage = ArrayList<Element>()
-        for (element in elements) {
-            storage.add(element.sref())
-        }
-        _mutableListStorage = storage
-    }
-
     operator fun plus(array: Array<Element>): Array<Element> {
         if (array.isEmpty) return this
         if (isEmpty) return array

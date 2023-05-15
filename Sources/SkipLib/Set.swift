@@ -25,7 +25,6 @@ public struct Set<Element>: Collection, SetAlgebra {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> Set<Element> {
         fatalError()
     }

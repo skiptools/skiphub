@@ -86,10 +86,6 @@ interface Sequence<Element>: IterableStorage<Element> {
         return Array(iterableStorage.map(transform), nocopy = true)
     }
 
-    fun filter(isIncluded: (Element) -> Boolean): Array<Element> {
-        return Array(iterableStorage.filter(isIncluded), nocopy = true)
-    }
-
     fun forEach(body: (Element) -> Unit) {
         iterableStorage.forEach(body)
     }
@@ -163,6 +159,11 @@ interface Sequence<Element>: IterableStorage<Element> {
     fun contains(element: Element): Boolean {
         return iterableStorage.contains(element)
     }
+}
+
+// Implement filter as an extension function so that concrete collection types can specialize its return type
+fun <Element> Sequence<Element>.filter(isIncluded: (Element) -> Boolean): Array<Element> {
+    return Array(iterableStorage.filter(isIncluded), nocopy = true)
 }
 
 interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
