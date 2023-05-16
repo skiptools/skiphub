@@ -46,10 +46,18 @@ build:
           contents:
             - 'unitTests.isIncludeAndroidResources = true'
 
+        - block: 'sourceSets'
+          contents:
+            - block: 'named("androidTest")'
+              contents:
+                - 'java.srcDirs("src/test/kotlin")'
+                #- 'res.srcDirs("src/test/resources")'
+
     - block: 'dependencies'
       contents:
         - 'testImplementation("org.robolectric:robolectric:4.10.2")'
         - 'testImplementation("androidx.test:core:1.5.0")'
+        - 'testImplementation("androidx.test.ext:junit:1.1.2")'
 
     - block: 'tasks.withType<Test>().configureEach'
       contents:

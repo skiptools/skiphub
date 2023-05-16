@@ -9,6 +9,8 @@
 import Foundation
 import XCTest
 
+// SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class ExampleLibTests: XCTestCase {
     func testExampleLib() throws {
         XCTAssertEqual("ExampleLib", ExampleLibInternalModuleName())

@@ -9,7 +9,7 @@
 import XCTest
 import SkipFoundation
 
-// SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
+// SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class SQLDBTests: XCTestCase {
     func testCheckSQLVersion() throws {

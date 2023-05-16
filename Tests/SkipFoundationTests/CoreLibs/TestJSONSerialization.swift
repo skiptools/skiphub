@@ -28,7 +28,7 @@ typealias WritingOptions = JSONSerialization.WritingOptions
 // See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 
-// SKIP INSERT: @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
+// SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 class TestJSONSerialization : XCTestCase {
     

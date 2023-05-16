@@ -12,6 +12,7 @@ import SkipFoundation
 import SkipUI
 
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 final class ExampleAppTests: XCTestCase {
     func testExampleApp() throws {
         #if SKIP

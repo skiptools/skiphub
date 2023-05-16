@@ -101,12 +101,6 @@ jobs:
       - name: SkipLib Kotlin Tests
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibKtTests
-      - name: SkipLib Android Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          working-directory: skiphub
-          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
         working-directory: skiphub
@@ -162,6 +156,13 @@ jobs:
         if: false
         working-directory: skiphub
         run: swift test --parallel -c release
+
+      - name: Android Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          working-directory: skiphub
+          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter '*KtTests'
 
       - name: Gradle Build (Android)
         # folder links in Packages/Skip/ should have been created by tests

@@ -39,7 +39,8 @@ extension XCGradleHarness where Self : XCTestCase {
         let isTestAction = actions.contains(where: { $0.hasPrefix("test") })
 
         // override test targets so we can specify "SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest" and have the tests run against the Android emulator (e.g., using reactivecircus/android-emulator-runner@v2 with CI)
-        if let testOverride = ProcessInfo.processInfo.environment["SKIP_GRADLE_TEST_TARGET"] {
+        let override = ProcessInfo.processInfo.environment["SKIP_GRADLE_TEST_TARGET"]
+        if let testOverride = override {
             actions = actions.map {
                 $0 == "test" ? testOverride : $0
             }
