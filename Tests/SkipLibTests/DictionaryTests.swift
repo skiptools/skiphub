@@ -81,6 +81,36 @@ final class DictionaryTests: XCTestCase {
         XCTAssertEqual(dict2.count, 2)
         XCTAssertEqual(dict3.count, 3)
     }
+
+    func testIterate() {
+        let dict = ["a": 1, "b": 2, "c": 3]
+        var keys: [String] = []
+        var values: [Int] = []
+        for (key, value) in dict {
+            keys.append(key)
+            values.append(value)
+        }
+        XCTAssertEqual(keys.sorted(), ["a", "b", "c"])
+        XCTAssertEqual(values.sorted(), [1, 2, 3])
+
+        keys.removeAll()
+        values.removeAll()
+        for entry in dict {
+            keys.append(entry.key)
+            values.append(entry.value)
+        }
+        XCTAssertEqual(keys.sorted(), ["a", "b", "c"])
+        XCTAssertEqual(values.sorted(), [1, 2, 3])
+    }
+
+    func testPopFirst() {
+        var dict = ["a": 1]
+        let popped = dict.popFirst()
+        XCTAssertEqual(popped?.key, "a")
+        XCTAssertEqual(popped?.value, 1)
+        XCTAssertTrue(dict.isEmpty)
+        XCTAssertNil(dict.popFirst())
+    }
 }
 
 private class DictionaryHolder {

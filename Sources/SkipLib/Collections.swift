@@ -541,8 +541,7 @@ extension RangeReplaceableCollection {
         fatalError()
     }
 
-    @available(*, unavailable)
-    public mutating func removeAll(keepingCapacity keepCapacity: Bool) {
+    public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
         fatalError()
     }
 

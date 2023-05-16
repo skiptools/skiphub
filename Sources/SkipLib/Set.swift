@@ -38,6 +38,10 @@ public struct Set<Element>: Collection, SetAlgebra {
     public mutating func reserveCapacity(_ minimumCapacity: Int) {
         fatalError()
     }
+
+    public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
+        fatalError()
+    }
 }
 
 #endif

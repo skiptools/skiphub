@@ -98,9 +98,10 @@ final class SetTests: XCTestCase {
 
     func testPopFirst() {
         var strings: Set<String> = ["A", "Z"]
-        XCTAssertEqual("A", strings.popFirst())
-        XCTAssertEqual(Set(["Z"]), strings)
-        XCTAssertEqual("Z", strings.popFirst())
+        var popped: Set<String> = []
+        popped.insert(strings.popFirst()!)
+        popped.insert(strings.popFirst()!)
+        XCTAssertEqual(Set(["A", "Z"]), popped)
         XCTAssertTrue(strings.isEmpty)
         XCTAssertNil(strings.popFirst())
     }

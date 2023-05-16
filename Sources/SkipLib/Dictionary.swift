@@ -115,6 +115,10 @@ public struct Dictionary<Key, Value>: Collection {
     public mutating func reserveCapacity(_ minimumCapacity: Int) {
         fatalError()
     }
+
+    public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
+        fatalError()
+    }
 }
 
 #endif

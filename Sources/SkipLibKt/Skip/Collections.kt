@@ -223,6 +223,13 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
             override val storageEndIndex = upperBound
         }
     }
+
+    // From the RangeReplaceableCollection protocol, but we share the implementation across all our Colleciton types
+    fun removeAll(keepingCapacity: Boolean = false) {
+        willMutateStorage()
+        mutableCollectionStorage.clear()
+        didMutateStorage()
+    }
 }
 
 // Implement subscript as an extension function so that Dictionary can implement it for keyed access instead.
@@ -232,7 +239,7 @@ operator fun <Element> Collection<Element>.get(position: Int): Element {
     return collectionStorage.elementAt(position).sref()
 }
 
-interface BidirectionalCollection<Element>: Collection<Element> {
+interface BidirectionalCollection<Element>: Collection<Element>, MutableListStorage<Element> {
     fun last(where: (Element) -> Boolean): Element? {
         // If we're not a slice we can use the collection directly, otherwise use our sliced iterator
         if (storageStartIndex == 0 && storageEndIndex == null) {
@@ -244,6 +251,21 @@ interface BidirectionalCollection<Element>: Collection<Element> {
 
     val last: Element?
         get() = if (isEmpty) null else elementAt(effectiveStorageEndIndex - 1).sref()
+
+    fun popLast(): Element? {
+        willMutateStorage()
+        val lastElement = mutableListStorage.removeLast().sref()
+        didMutateStorage()
+        return lastElement
+    }
+
+    fun removeLast(k: Int = 1) {
+        if (k > 0) {
+            willMutateStorage()
+            mutableListStorage.subList(mutableListStorage.size - k, mutableListStorage.size).clear()
+            didMutateStorage()
+        }
+    }
 }
 
 interface RandomAccessCollection<Element>: BidirectionalCollection<Element> {
@@ -266,21 +288,6 @@ interface RangeReplaceableCollection<Element>: Collection<Element>, MutableListS
         willMutateStorage()
         mutableListStorage.add(at, newElement.sref())
         didMutateStorage()
-    }
-
-    fun popLast(): Element? {
-        willMutateStorage()
-        val lastElement = mutableListStorage.removeLast().sref()
-        didMutateStorage()
-        return lastElement
-    }
-
-    fun removeLast(k: Int = 1) {
-        if (k > 0) {
-            willMutateStorage()
-            mutableListStorage.subList(mutableListStorage.size - k, mutableListStorage.size).clear()
-            didMutateStorage()
-        }
     }
 }
 

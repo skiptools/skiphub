@@ -170,6 +170,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
         }
 
         override fun contains(element: Tuple2<K, V>): Boolean = dictionary.storage[element._e0] == element._e1
+        override fun clear() = dictionary.storage.clear()
     }
 
     private class KeyCollection<K, V>(val dictionary: Dictionary<K, V>): AbstractCollection<K>() {
