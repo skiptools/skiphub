@@ -48,10 +48,16 @@ build:
 
         - block: 'sourceSets'
           contents:
-            - block: 'named("androidTest")'
+            - 'getByName("main").java.srcDirs("src/main/kotlin")'
+            - 'getByName("test").java.srcDirs("src/test/kotlin")'
+            - 'getByName("androidTest").java.srcDirs("src/test/kotlin")'
+
+        - block: 'buildTypes'
+          contents:
+            - block: 'getByName("release")'
               contents:
-                - 'java.srcDirs("src/test/kotlin")'
-                #- 'res.srcDirs("src/test/resources")'
+                - 'isMinifyEnabled = true'
+                - 'proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")'
 
     - block: 'dependencies'
       contents:
