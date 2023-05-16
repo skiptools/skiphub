@@ -245,7 +245,7 @@ typealias JSValue = JavaScriptCore.JSValue
 // SKIP INSERT: fun <T : Any> javaClass(kotlinClass: kotlin.reflect.KClass<T>): Class<T> { return kotlinClass.java }
 
 /// Global pointer to the JSC library, equivalent to the Swift `JavaScriptCore` framework
-let JavaScriptCore: JavaScriptCoreLibrary = com.sun.jna.Native.load("JavaScriptCore", javaClass(JavaScriptCoreLibrary.self))
+let JavaScriptCore: JavaScriptCoreLibrary = com.sun.jna.Native.load("jsc", javaClass(JavaScriptCoreLibrary.self))
 
 typealias Pointer = com.sun.jna.Pointer
 

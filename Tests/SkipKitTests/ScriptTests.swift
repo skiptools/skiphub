@@ -4,7 +4,7 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-@testable import SkipFoundation
+@testable import SkipKit
 #endif
 import Foundation
 import OSLog
@@ -36,7 +36,7 @@ class ScriptTests : XCTestCase {
         XCTAssertEqual(3.3, num.toDouble())
         #if SKIP
         let className = "\(type(of: num))" // could be: "class skip.foundation.SkipJSValue (Kotlin reflection is not available)"
-        XCTAssertTrue(className.contains("skip.foundation.SkipJSValue"), "unexpected calss name: \(className)")
+        XCTAssertTrue(className.contains("skip.kit.SkipJSValue"), "unexpected calss name: \(className)")
         #endif
         XCTAssertEqual("3.3", num.toString())
 

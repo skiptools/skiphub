@@ -114,9 +114,8 @@ extension GradleHarness {
         }
     }
 
-
     /// Uses the system `adb` process to install and launch the given APK, following the
-    public func launchAndroidApp(appid: String, log: [String] = [], apk: String, relativeTo sourcePath: StaticString = #file) async throws {
+    public func launchAPK(appid: String, log: [String] = [], apk: String, relativeTo sourcePath: StaticString = #file) async throws {
         let env: [String: String] = [:]
 
         let apkPath = URL(fileURLWithPath: apk, isDirectory: false, relativeTo: packageBaseFolder(forSourceFile: sourcePath))
@@ -173,6 +172,7 @@ extension GradleHarness {
             let logcat = [
                 "adb",
                 "logcat",
+                "-T", "100", // start with only the 100 most recent entries
                 // "-v", "time",
                 // "-d", // dump then exit
             ]

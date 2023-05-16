@@ -4,3 +4,11 @@
 #  package: 'skip.kit'
 
 # the blocks to add to the build.gradle.kts
+build:
+  contents:
+    - block: 'dependencies'
+      contents:
+        # Java Native Access for C/C++ support, both for Android and Robolectic testing
+        - 'testImplementation("net.java.dev.jna:jna:5.13.0")'
+        - 'implementation("net.java.dev.jna:jna:5.13.0@aar")'
+        - 'implementation("org.webkit:android-jsc:r174650@aar")'

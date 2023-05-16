@@ -4,8 +4,8 @@
 #  package: 'skip.foundation'
 
 # the blocks to add to the build.gradle.kts
-build:
-  contents:
-    - block: 'dependencies'
-      contents:
-        - 'implementation("net.java.dev.jna:jna:5.13.0")'
+#build:
+#  contents:
+#    - block: 'dependencies'
+#      contents:
+#        - 'implementation("…")
