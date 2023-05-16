@@ -51,7 +51,7 @@ public final class SQLDB {
     }
 
     /// Closes the connection to the database
-    func close() {
+    public func close() {
         if !closed {
             closed = true
             #if SKIP
@@ -581,7 +581,7 @@ public enum ColumnType : Int32 {
 
 extension ColumnType {
     /// Returns true if this column is expected to hold a numeric type.
-    var isNumeric: Bool {
+    public var isNumeric: Bool {
         switch self {
         case .integer: return true
         case .float: return true
