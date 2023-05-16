@@ -244,8 +244,8 @@ typealias JSValue = JavaScriptCore.JSValue
 // workaround for Skip converting "JavaScriptCode.self.javaClass" to "(JavaScriptCoreLibrary::class.companionObjectInstance as JavaScriptCoreLibrary.Companion).java)"
 // SKIP INSERT: fun <T : Any> javaClass(kotlinClass: kotlin.reflect.KClass<T>): Class<T> { return kotlinClass.java }
 
-/// Global pointer to the JSC library, equivalent to the Swift `JavaScriptCore` framework
-let JavaScriptCore: JavaScriptCoreLibrary = com.sun.jna.Native.load("jsc", javaClass(JavaScriptCoreLibrary.self))
+/// Global pointer to the JSC library, equivalent to the Swift `JavaScriptCore` framework (`libjsc.so` on Android?)
+let JavaScriptCore: JavaScriptCoreLibrary = com.sun.jna.Native.load("JavaScriptCore", javaClass(JavaScriptCoreLibrary.self))
 
 typealias Pointer = com.sun.jna.Pointer
 
