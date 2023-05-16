@@ -53,22 +53,18 @@ public struct Dictionary<Key, Value>: Collection {
     }
 
     // SKIP NOWARN
-    @available(*, unavailable)
     public subscript(key: Key, default defaultValue: /* @autoclosure () -> Value */ Value) -> Value {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> Dictionary<Key, T> {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func compactMapValues<T>(_ transform: (Value) throws -> T?) rethrows -> Dictionary<Key, T> {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func updateValue(_ value: Value, forKey key: Key) -> Value? {
         fatalError()
     }
@@ -93,7 +89,6 @@ public struct Dictionary<Key, Value>: Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func removeValue(forKey key: Key) -> Value? {
         fatalError()
     }

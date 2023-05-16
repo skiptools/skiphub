@@ -96,6 +96,10 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
         })
     }
 
+    operator fun get(key: K, default: () -> V): V {
+        return get(key) ?: default().sref()
+    }
+
     operator fun set(key: K, value: V?) {
         willmutate()
         if (value == null) {
@@ -104,6 +108,36 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
             mutableStorage[key.sref()] = value.sref()
         }
         didmutate()
+    }
+
+    fun <T> mapValues(transform: (V) -> T): Dictionary<K, T> {
+        val map = storage.mapValues { transform(it.value) }
+        return Dictionary(map, nocopy = true)
+    }
+
+    fun <T> compactMapValues(transform: (V) -> T?): Dictionary<K, T> {
+        val map = LinkedHashMap<K, T>()
+        for (entry in storage) {
+            val value = transform(entry.value)
+            if (value != null) {
+                map.put(entry.key, value)
+            }
+        }
+        return Dictionary(map, nocopy = true)
+    }
+
+    fun updateValue(value: V, forKey: K): V? {
+        willmutate()
+        val ret = mutableStorage.put(forKey, value)
+        didmutate()
+        return ret
+    }
+
+    fun removeValue(forKey: K): V? {
+        willmutate()
+        val ret = mutableStorage.remove(forKey)
+        didmutate()
+        return ret
     }
 
     val keys: Collection<K>
