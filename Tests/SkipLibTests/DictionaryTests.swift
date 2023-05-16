@@ -109,6 +109,18 @@ final class DictionaryTests: XCTestCase {
         XCTAssertEqual(values.sorted(), [1, 2, 3])
     }
 
+    func testKeysValues() {
+        let dict = ["a": 1, "b": 2, "c": 3]
+        XCTAssertTrue(dict.keys.contains("b"))
+        XCTAssertFalse(dict.keys.contains("d"))
+        XCTAssertTrue(dict.values.contains(1))
+        XCTAssertFalse(dict.values.contains(4))
+        let keys = Array(dict.keys).sorted()
+        let values = Array(dict.values).sorted()
+        XCTAssertEqual(keys, ["a", "b", "c"])
+        XCTAssertEqual(values, [1, 2, 3])
+    }
+
     func testPopFirst() {
         var dict = ["a": 1]
         let popped = dict.popFirst()
