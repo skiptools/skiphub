@@ -34,7 +34,17 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
     @available(macOS 10.15, macCatalyst 11, *)
     public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+
+        var actions = actions
         let isTestAction = actions.contains(where: { $0.hasPrefix("test") })
+
+        // override test targets so we can specify "SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest" and have the tests run against the Android emulator (e.g., using reactivecircus/android-emulator-runner@v2 with CI)
+        if let testOverride = ProcessInfo.processInfo.environment["SKIP_GRADLE_TEST_TARGET"] {
+            actions = actions.map {
+                $0 == "test" ? testOverride : $0
+            }
+        }
+
         let testModuleSuffix = moduleSuffix + "Tests"
         let moduleSuffix = isTestAction ? testModuleSuffix : moduleSuffix
 

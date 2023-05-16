@@ -11,7 +11,6 @@ on:
 env:
   #DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
   DEVELOPER_DIR: /Applications/Xcode_14.3.app/Contents/Developer
-  #SKIP_FASTPASS: YES
 
 jobs:
   ci:
@@ -97,56 +96,50 @@ jobs:
           swift build --jobs 1
 
       - name: SkipLib Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibTests
       - name: SkipLib Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipLibKtTests
+      - name: SkipLib Android Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          working-directory: skiphub
+          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationTests
       - name: SkipFoundation Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
 
       - name: SkipKit Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitTests
       - name: SkipKit Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipKitKtTests
 
       - name: SkipUI Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUITests
       - name: SkipUI Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter SkipUIKtTests
 
       - name: ExampleLib Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibTests
       - name: ExampleLib Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleLibKtTests
 
       - name: ExampleApp Swift Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppTests
       - name: ExampleApp Kotlin Tests
-        if: env.SKIP_FASTPASS != 'YES'
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
@@ -182,14 +175,12 @@ jobs:
           gradle check --console=plain
 
           # Build the APK
-          #gradle assembleRelease --console=plain
           gradle assembleDebug --console=plain
+          gradle assembleRelease --console=plain || echo "gradle assembleRelease failed"
 
           ls -lah `find . -name '*.apk'`
 
-          #gradle assembleDebug --console=plain
-
-          #gradle "connectedDebugAndroidTest" --console=plain || echo FAILED: connectedDebugAndroidTest
+          gradle "connectedDebugAndroidTest" --console=plain || echo FAILED: connectedDebugAndroidTest
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
