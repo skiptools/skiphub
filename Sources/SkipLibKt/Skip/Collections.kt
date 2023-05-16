@@ -201,7 +201,7 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     }
 
     val first: Element?
-        get() = if (isEmpty) null else get(storageStartIndex)
+        get() = if (isEmpty) null else collectionStorage.elementAt(storageStartIndex).sref()
 
     fun firstIndex(of: Element): Int? {
         val index = indexOf(of)
