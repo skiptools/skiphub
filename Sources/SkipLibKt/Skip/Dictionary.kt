@@ -5,6 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+import java.lang.UnsupportedOperationException
+
 // We convert dictionary literals [...] into dictionaryOf(...)
 fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     val dictionary = Dictionary<K, V>()
@@ -17,7 +19,6 @@ fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
 class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     private var isStorageShared = false
     private var storage: LinkedHashMap<K, V>
-    private val _collectionStorage: EntryCollection<K, V>
     private val mutableStorage: LinkedHashMap<K, V>
         get() {
             if (isStorageShared) {
@@ -26,12 +27,21 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
             }
             return storage
         }
+    private val _collectionStorage: EntryCollection<K, V>
 
     override val collectionStorage: kotlin.collections.Collection<Tuple2<K, V>>
         get() = _collectionStorage
+    override val mutableCollectionStorage: kotlin.collections.MutableCollection<Tuple2<K, V>>
+        get() {
+            mutableStorage // Accessing will copy storage if needed
+            return _collectionStorage
+        }
+
     override fun willSliceStorage() {
         isStorageShared = true // Shared with slice
     }
+    override fun willMutateStorage() = willmutate()
+    override fun didMutateStorage() = didmutate()
 
     constructor(minimumCapacity: Int = 0) {
         storage = LinkedHashMap()
@@ -48,24 +58,6 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
         } else {
             storage = LinkedHashMap()
             for (entry in uniqueKeysWithValues.iterableStorage) {
-                if (nocopy) {
-                    storage[entry._e0] = entry._e1
-                } else {
-                    storage[entry.element0] = entry.element1
-                }
-            }
-        }
-        _collectionStorage = EntryCollection(this)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    constructor(entries: Iterable<Tuple2<K, V>>, nocopy: Boolean = false, shared: Boolean = false) {
-        if (nocopy && entries is LinkedHashMap<*, *>) {
-            storage = entries as LinkedHashMap<K, V>
-            isStorageShared = shared
-        } else {
-            storage = LinkedHashMap()
-            for (entry in entries) {
                 if (nocopy) {
                     storage[entry._e0] = entry._e1
                 } else {
@@ -95,7 +87,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     }
 
     fun filter(isIncluded: (Tuple2<K, V>) -> Boolean): Dictionary<K, V> {
-        return Dictionary(_collectionStorage.filter(isIncluded), nocopy = true)
+        return Dictionary(storage.filter { isIncluded(Tuple2(it.key, it.value)) }, nocopy = true)
     }
 
     operator fun get(key: K): V? {
@@ -118,12 +110,16 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
         get() {
             return object: Collection<K> {
                 override val collectionStorage = KeyCollection(this@Dictionary)
+                override val mutableCollectionStorage: kotlin.collections.MutableCollection<K>
+                    get() = throw UnsupportedOperationException()
             }
         }
     val values: Collection<V>
         get() {
             return object: Collection<V> {
                 override val collectionStorage = ValueCollection(this@Dictionary)
+                override val mutableCollectionStorage: kotlin.collections.MutableCollection<V>
+                    get() = throw UnsupportedOperationException()
             }
         }
 
@@ -147,38 +143,38 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     override var smutatingcount = 0
     override fun scopy(): MutableStruct = Dictionary(this, nocopy = true)
 
-    private class EntryCollection<K, V>(val dictionary: Dictionary<K, V>): kotlin.collections.Collection<Tuple2<K, V>> {
+    private class EntryCollection<K, V>(val dictionary: Dictionary<K, V>): AbstractMutableCollection<Tuple2<K, V>>() {
         override val size: Int
             get() = dictionary.storage.size
 
-        override fun isEmpty(): Boolean = dictionary.storage.isEmpty()
+        override fun add(element: Tuple2<K, V>): Boolean {
+            dictionary.storage[element.key] = element.value
+            return true
+        }
 
-        override fun iterator(): Iterator<Tuple2<K, V>> {
+        override fun iterator(): MutableIterator<Tuple2<K, V>> {
             val storageIterator = dictionary.storage.iterator()
-            return object: Iterator<Tuple2<K, V>> {
+            return object: MutableIterator<Tuple2<K, V>> {
+                private lateinit var lastEntry: MutableMap.MutableEntry<K, V>
                 override fun hasNext(): Boolean {
                     return storageIterator.hasNext()
                 }
                 override fun next(): Tuple2<K, V> {
-                    val entry = storageIterator.next()
-                    return Tuple2(entry.key, entry.value)
+                    lastEntry = storageIterator.next()
+                    return Tuple2(lastEntry.key, lastEntry.value)
+                }
+                override fun remove() {
+                    dictionary.storage.remove(lastEntry.key)
                 }
             }
-        }
-
-        override fun containsAll(elements: kotlin.collections.Collection<Tuple2<K, V>>): Boolean {
-            elements.forEach { if (!contains(it)) return false }
-            return true
         }
 
         override fun contains(element: Tuple2<K, V>): Boolean = dictionary.storage[element._e0] == element._e1
     }
 
-    private class KeyCollection<K, V>(val dictionary: Dictionary<K, V>): kotlin.collections.Collection<K> {
+    private class KeyCollection<K, V>(val dictionary: Dictionary<K, V>): AbstractCollection<K>() {
         override val size: Int
             get() = dictionary.storage.size
-
-        override fun isEmpty(): Boolean = dictionary.storage.isEmpty()
 
         override fun iterator(): Iterator<K> {
             val storageIterator = dictionary.storage.iterator()
@@ -193,19 +189,12 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
             }
         }
 
-        override fun containsAll(elements: kotlin.collections.Collection<K>): Boolean {
-            elements.forEach { if (!contains(it)) return false }
-            return true
-        }
-
         override fun contains(element: K): Boolean = dictionary.storage.containsKey(element)
     }
 
-    private class ValueCollection<K, V>(val dictionary: Dictionary<K, V>): kotlin.collections.Collection<V> {
+    private class ValueCollection<K, V>(val dictionary: Dictionary<K, V>): AbstractCollection<V>() {
         override val size: Int
             get() = dictionary.storage.size
-
-        override fun isEmpty(): Boolean = dictionary.storage.isEmpty()
 
         override fun iterator(): Iterator<V> {
             val storageIterator = dictionary.storage.iterator()
@@ -218,11 +207,6 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
                     return entry.value
                 }
             }
-        }
-
-        override fun containsAll(elements: kotlin.collections.Collection<V>): Boolean {
-            elements.forEach { if (!contains(it)) return false }
-            return true
         }
 
         override fun contains(element: V): Boolean = dictionary.storage.containsValue(element)

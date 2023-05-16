@@ -291,7 +291,6 @@ extension Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func popFirst() -> Element? {
         fatalError()
     }
@@ -315,7 +314,6 @@ extension Collection {
         fatalError()
     }
 
-    @available(*, unavailable)
     public mutating func removeFirst() -> Element {
         fatalError()
     }

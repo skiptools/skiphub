@@ -5,6 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+import java.lang.UnsupportedOperationException
+
 // WARNING: Replicate all implemented immutable Sequence, Collections API in String.kt
 
 // Note: We use a Storage model wrapping internal Kotlin collections to be able to control when we sref() efficiently
@@ -28,6 +30,8 @@ interface IterableStorage<Element>: Iterable<Element> {
 interface CollectionStorage<Element>: IterableStorage<Element> {
     // Kotlin collection, not sref'd
     val collectionStorage: kotlin.collections.Collection<Element>
+        get() = mutableCollectionStorage
+    val mutableCollectionStorage: kotlin.collections.MutableCollection<Element>
 
     // Indexing to support slices
     val storageStartIndex: Int
@@ -37,6 +41,8 @@ interface CollectionStorage<Element>: IterableStorage<Element> {
     val effectiveStorageEndIndex: Int
         get() = storageEndIndex ?: collectionStorage.size
     fun willSliceStorage() = Unit
+    fun willMutateStorage() = Unit
+    fun didMutateStorage() = Unit
 
     override val iterableStorage: Iterable<Element>
         get() {
@@ -56,15 +62,12 @@ interface CollectionStorage<Element>: IterableStorage<Element> {
         }
 }
 
-// Extended mutable support on which we can implement Swift.MutableCollection
+// Extended mutable support on which we can implement Swift.MutableCollection, RangeReplacableCollection, etc
 interface MutableListStorage<Element>: CollectionStorage<Element> {
     val mutableListStorage: MutableList<Element>
 
-    override val collectionStorage: kotlin.collections.Collection<Element>
+    override val mutableCollectionStorage: kotlin.collections.MutableCollection<Element>
         get() = mutableListStorage
-
-    fun willMutateStorage() = Unit
-    fun didMutateStorage() = Unit
 }
 
 interface Sequence<Element>: IterableStorage<Element> {
@@ -181,6 +184,22 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     fun distance(from: Int, to: Int): Int  = to - from
     fun index(after: Int): Int = after + 1
 
+    fun popFirst(): Element? {
+        if (isEmpty) {
+            return null
+        }
+        return removeFirst()
+    }
+
+    fun removeFirst(): Element {
+        willMutateStorage()
+        val iterator = mutableCollectionStorage.iterator()
+        val ret = iterator.next()
+        iterator.remove()
+        didMutateStorage()
+        return ret
+    }
+
     val first: Element?
         get() = if (isEmpty) null else get(storageStartIndex)
 
@@ -198,6 +217,8 @@ interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
         val collection = this
         return object: Collection<Element> {
             override val collectionStorage = collection.collectionStorage
+            override val mutableCollectionStorage: kotlin.collections.MutableCollection<Element>
+                get() = throw UnsupportedOperationException() // We don't support mutating slices
             override val storageStartIndex = lowerBound
             override val storageEndIndex = upperBound
         }
@@ -273,7 +294,7 @@ interface MutableCollection<Element>: Collection<Element>, MutableListStorage<El
     operator fun set(bounds: IntRange, elements: Collection<Element>) {
         // We translate open ranges to use Int.min and Int.max in Kotlin
         val lowerBound = if (bounds.start == Int.min) 0 else bounds.start
-        val upperBound = if (bounds.endInclusive == Int.max) mutableListStorage.size else bounds.endInclusive + 1
+        val upperBound = if (bounds.endInclusive == Int.max) collectionStorage.size else bounds.endInclusive + 1
 
         willMutateStorage()
         mutableListStorage.subList(lowerBound, upperBound).clear()

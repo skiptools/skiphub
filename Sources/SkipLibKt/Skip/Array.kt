@@ -21,11 +21,10 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
 
     override val collectionStorage: kotlin.collections.Collection<Element>
         get() = _mutableListStorage ?: _collectionStorage!!
-
     override val mutableListStorage: MutableList<Element>
         get() {
             if (!isStorageShared) {
-                var storage = _mutableListStorage
+                val storage = _mutableListStorage
                 if (storage != null) {
                     return storage
                 }

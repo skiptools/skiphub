@@ -96,6 +96,15 @@ final class SetTests: XCTestCase {
         XCTAssertTrue(set1.isDisjoint(with: set2))
     }
 
+    func testPopFirst() {
+        var strings: Set<String> = ["A", "Z"]
+        XCTAssertEqual("A", strings.popFirst())
+        XCTAssertEqual(Set(["Z"]), strings)
+        XCTAssertEqual("Z", strings.popFirst())
+        XCTAssertTrue(strings.isEmpty)
+        XCTAssertNil(strings.popFirst())
+    }
+
     func testCustomHashable() {
         let item = SetItem(name: "ABC", number: 12)
         var item2 = SetItem(name: "ABC", number: 12)

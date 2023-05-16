@@ -16,73 +16,77 @@ fun <Element> setOf(vararg elements: Element): Set<Element> {
 
 class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, MutableStruct {
     private var isStorageShared = false
-    private var _collectionStorage: LinkedHashSet<Element>
+    private var storage: LinkedHashSet<Element>
     private val mutableStorage: LinkedHashSet<Element>
         get() {
             if (isStorageShared) {
-                _collectionStorage = LinkedHashSet(_collectionStorage)
+                storage = LinkedHashSet(storage)
                 isStorageShared = false
             }
-            return _collectionStorage
+            return storage
         }
 
     override val collectionStorage: kotlin.collections.Collection<Element>
-        get() = _collectionStorage
+        get() = storage
+    override val mutableCollectionStorage: kotlin.collections.MutableCollection<Element>
+        get() = mutableStorage
+
     override fun willSliceStorage() {
         isStorageShared = true // Shared with slice
     }
-
+    override fun willMutateStorage() = willmutate()
+    override fun didMutateStorage() = didmutate()
 
     constructor(minimumCapacity: Int = 0) {
-        _collectionStorage = LinkedHashSet()
+        storage = LinkedHashSet()
     }
 
     constructor(collection: Sequence<Element>, nocopy: Boolean = false) {
         if (nocopy && collection is Set<Element>) {
             // Share storage with the given set, marking it as shared in both
-            _collectionStorage = collection._collectionStorage
+            storage = collection.storage
             collection.isStorageShared = true
             isStorageShared = true
         } else {
-            _collectionStorage = LinkedHashSet()
-            _collectionStorage.addAll(collection)
+            storage = LinkedHashSet()
+            storage.addAll(collection)
         }
     }
 
     constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
         if (nocopy && collection is LinkedHashSet<Element>) {
-            _collectionStorage = collection
+            storage = collection
             isStorageShared = shared
         } else {
-            _collectionStorage = LinkedHashSet()
+            storage = LinkedHashSet()
             if (nocopy) {
-                _collectionStorage.addAll(collection)
+                storage.addAll(collection)
             } else {
-                collection.forEach { _collectionStorage.add(it.sref()) }
+                collection.forEach { storage.add(it.sref()) }
             }
         }
     }
 
     fun filter(isIncluded: (Element) -> Boolean): Set<Element> {
-        return Set(_collectionStorage.filter(isIncluded), nocopy = true)
+        return Set(storage.filter(isIncluded), nocopy = true)
     }
 
     override val isEmpty: Boolean
         get() = count == 0
 
     fun union(other: Sequence<Element>): Set<Element> {
-        val union = _collectionStorage.union(other.iterableStorage)
+        val union = storage.union(other.iterableStorage)
         return Set(union, nocopy = true)
     }
 
     fun intersection(other: Sequence<Element>): Set<Element> {
-        val intersection = _collectionStorage.intersect(other.iterableStorage)
+        val intersection = storage.intersect(other.iterableStorage)
         return Set(intersection, nocopy = true)
     }
 
     fun symmetricDifference(other: Sequence<Element>): Set<Element> {
         val ret = Set(other)
-        for (element in _collectionStorage) {
+        for (element in storage) {
             if (ret.remove(element) == null) {
                 ret.insert(element)
             }
@@ -113,12 +117,12 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
     }
 
     fun subtracting(other: Sequence<Element>): Set<Element> {
-        val subtraction = _collectionStorage.subtract(other.iterableStorage)
+        val subtraction = storage.subtract(other.iterableStorage)
         return Set(subtraction, nocopy = true)
     }
 
     fun isSubset(of: Sequence<Element>): Boolean {
-        for (element in _collectionStorage) {
+        for (element in storage) {
             if (!of.contains(element)) {
                 return false
             }
@@ -137,7 +141,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     fun isSuperset(of: Sequence<Element>): Boolean {
         for (element in of.iterableStorage) {
-            if (!_collectionStorage.contains(element)) {
+            if (!storage.contains(element)) {
                 return false
             }
         }
@@ -160,15 +164,15 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     // MARK: - SetAlgebra
 
-    override fun contains(element: Element): Boolean = _collectionStorage.contains(element)
+    override fun contains(element: Element): Boolean = storage.contains(element)
     override fun union(other: Set<Element>): Set<Element> = union(other as Sequence<Element>)
     override fun intersection(other: Set<Element>): Set<Element> = intersection(other as Sequence<Element>)
     override fun symmetricDifference(other: Set<Element>): Set<Element> = symmetricDifference(other as Sequence<Element>)
 
     override fun insert(element: Element): Tuple2<Boolean, Element> {
-        val indexOf = _collectionStorage.indexOf(element)
+        val indexOf = storage.indexOf(element)
         if (indexOf != -1) {
-            return Tuple2(false, _collectionStorage.elementAt(indexOf))
+            return Tuple2(false, storage.elementAt(indexOf))
         }
         willmutate()
         mutableStorage.add(element.sref())
@@ -178,12 +182,12 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     override fun remove(element: Element): Element? {
         willmutate()
-        val index = _collectionStorage.indexOf(element)
+        val index = storage.indexOf(element)
         val ret: Element?
         if (index == -1) {
             ret = null
         } else {
-            ret = _collectionStorage.elementAt(index)
+            ret = storage.elementAt(index)
             mutableStorage.remove(element)
         }
         didmutate()
@@ -192,12 +196,12 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     override fun update(with: Element): Element? {
         willmutate()
-        val index = _collectionStorage.indexOf(with)
+        val index = storage.indexOf(with)
         val ret: Element?
         if (index == -1) {
             ret = null
         } else {
-            ret = _collectionStorage.elementAt(index)
+            ret = storage.elementAt(index)
             mutableStorage.remove(with)
         }
         mutableStorage.add(with.sref())
@@ -223,11 +227,11 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
         if (other as? Set<*> == null) {
             return false
         }
-        return other.collectionStorage == _collectionStorage
+        return other.storage == storage
     }
 
     override fun hashCode(): Int {
-        return _collectionStorage.hashCode()
+        return storage.hashCode()
     }
 
     // MutableStruct

@@ -280,6 +280,14 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(false, strings.contains(where: { $0 == "Q" }))
     }
 
+    func testRemoveFirst() {
+        var strings = ["A", "Z"]
+        XCTAssertEqual("A", strings.removeFirst())
+        XCTAssertEqual(["Z"], strings)
+        XCTAssertEqual("Z", strings.removeFirst())
+        XCTAssertTrue(strings.isEmpty)
+    }
+
     func testFilterMapReduce() {
         let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         let result = numbers.filter { $0 % 2 == 0 }
