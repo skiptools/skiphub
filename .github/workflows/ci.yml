@@ -178,16 +178,27 @@ jobs:
         with:
           api-level: 29
           working-directory: skiphub
-          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter '*KtTests'
+          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter '.*KtTests'
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
         run: |
           xcodebuild -showsdks
 
-          xcodebuild build -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS BUILD FAILED"
 
-          # note CONFIG Release/Debug needs to be capitalized for xcodebuild
-          xcodebuild test -skipPackagePluginValidation -configuration "Release" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo "IOS TESTS FAILED"
 
 

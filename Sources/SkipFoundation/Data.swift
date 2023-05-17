@@ -94,13 +94,6 @@ extension SkipData {
     public var count: Int { return rawValue.size }
 }
 
-public extension String {
-    public static func `init`(contentsOfURL url: SkipURL) throws -> String {
-        return url.rawValue.readText()
-    }
-
-}
-
 public extension StringProtocol {
     public func lowercased() -> String { description.lowercased() }
     public func uppercased() -> String { description.uppercased() }
