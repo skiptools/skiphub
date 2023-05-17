@@ -185,5 +185,5 @@ jobs:
         working-directory: skiphub
         run: |
           xcodebuild -showsdks
-          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echp IOS BUILD FAILED
-          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echp IOS TESTS FAILED
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo IOS BUILD FAILED
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo IOS TESTS FAILED
