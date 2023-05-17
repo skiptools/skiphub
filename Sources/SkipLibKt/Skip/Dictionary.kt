@@ -16,6 +16,8 @@ fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     return dictionary
 }
 
+typealias DictionaryIndex = Int
+
 class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     private var isStorageShared = false
     private var storage: LinkedHashMap<K, V>

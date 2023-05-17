@@ -29,6 +29,12 @@ final class ArrayTests: XCTestCase {
         XCTAssertEqual(multipleElementArray[1], 2)
     }
 
+    func testArrayIndex() {
+        let a = [1, 2, 3]
+        let index: Array.Index? = a.firstIndex(of: 2)
+        XCTAssertEqual(index, 1)
+    }
+
     func testOptionalElements() {
         var optionalArray: [Int?] = [1, nil, 2]
         XCTAssertEqual(optionalArray.count, 3)

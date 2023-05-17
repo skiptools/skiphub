@@ -11,115 +11,182 @@
 
 #if SKIP
 
-@frozen public struct Task<Success, Failure> : Sendable where Success : Sendable, Failure : Error {
-    public var value: Success { get async throws }
+public struct Task<Success, Failure> where Failure: Error {
+    @available(*, unavailable)
+    public var value: Success {
+        get async throws {
+            fatalError()
+        }
+    }
 
-    /// The result or error from a throwing task, after it completes.
-    ///
-    /// If the task hasn't completed,
-    /// accessing this property waits for it to complete
-    /// and its priority increases to that of the current task.
-    /// Note that this might not be as effective as
-    /// creating the task with the correct priority,
-    /// depending on the executor's scheduling details.
-    ///
-    /// - Returns: If the task succeeded,
-    ///   `.success` with the task's result as the associated value;
-    ///   otherwise, `.failure` with the error as the associated value.
-    public var result: Result<Success, Failure> { get async }
+    @available(*, unavailable)
+    public var result: Result<Success, Failure> {
+        get async {
+            fatalError()
+        }
+    }
 
-    /// Indicates that the task should stop running.
-    ///
-    /// Task cancellation is cooperative:
-    /// a task that supports cancellation
-    /// checks whether it has been canceled at various points during its work.
-    ///
-    /// Calling this method on a task that doesn't support cancellation
-    /// has no effect.
-    /// Likewise, if the task has already run
-    /// past the last point where it would stop early,
-    /// calling this method has no effect.
-    ///
-    /// - SeeAlso: `Task.checkCancellation()`
-    public func cancel()
+    @available(*, unavailable)
+    public func cancel() {
+        fatalError()
+    }
 
-    /// The current task's priority.
-    ///
-    /// If you access this property outside of any task,
-    /// this queries the system to determine the
-    /// priority at which the current function is running.
-    /// If the system can't provide a priority,
-    /// this property's value is `Priority.default`.
-    public static var currentPriority: TaskPriority { get }
+    @available(*, unavailable)
+    public static var currentPriority: TaskPriority {
+        fatalError()
+    }
 
-    /// The current task's base priority.
-    ///
-    /// If you access this property outside of any task, this returns nil
-    @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-    public static var basePriority: TaskPriority? { get }
+    @available(*, unavailable)
+    public static var basePriority: TaskPriority? {
+        fatalError()
+    }
 
-    @discardableResult
-    public init(priority: TaskPriority? = nil, operation: @escaping @Sendable () async throws -> Success)
+    @available(*, unavailable)
+    public init(priority: TaskPriority? = nil, operation: @escaping () async throws -> Success) {
+        fatalError()
+    }
 
-    @discardableResult
-    public static func detached(priority: TaskPriority? = nil, operation: @escaping @Sendable () async -> Success) -> Task<Success, Failure>
-    @discardableResult
-    public static func detached(priority: TaskPriority? = nil, operation: @escaping @Sendable () async throws -> Success) -> Task<Success, Failure>
+    @available(*, unavailable)
+    public static func detached(priority: TaskPriority? = nil, operation: @escaping () async -> Success) -> Task<Success, Failure> {
+        fatalError()
+    }
 
-    /// Suspends the current task and allows other tasks to execute.
-    ///
-    /// A task can voluntarily suspend itself
-    /// in the middle of a long-running operation
-    /// that doesn't contain any suspension points,
-    /// to let other tasks run for a while
-    /// before execution returns to this task.
-    ///
-    /// If this task is the highest-priority task in the system,
-    /// the executor immediately resumes execution of the same task.
-    /// As such,
-    /// this method isn't necessarily a way to avoid resource starvation.
-    public static func yield() async
+    @available(*, unavailable)
+    public static func yield() async {
+        fatalError()
+    }
 
-    /// A Boolean value that indicates whether the task should stop executing.
-    ///
-    /// After the value of this property becomes `true`, it remains `true` indefinitely.
-    /// There is no way to uncancel a task.
-    ///
-    /// - SeeAlso: `checkCancellation()`
-    public var isCancelled: Bool { get }
+    @available(*, unavailable)
+    public var isCancelled: Bool {
+        fatalError()
+    }
 
-    /// A Boolean value that indicates whether the task should stop executing.
-    ///
-    /// After the value of this property becomes `true`, it remains `true` indefinitely.
-    /// There is no way to uncancel a task.
-    ///
-    /// - SeeAlso: `checkCancellation()`
-    public static var isCancelled: Bool { get }
+    @available(*, unavailable)
+    public static var isCancelled: Bool {
+        fatalError()
+    }
 
-    /// Suspends the current task for at least the given duration
-    /// in nanoseconds.
-    ///
-    /// If the task is canceled before the time ends,
-    /// this function throws `CancellationError`.
-    ///
-    /// This function doesn't block the underlying thread.
-    public static func sleep(nanoseconds duration: UInt64) async throws
+    @available(*, unavailable)
+    public static func checkCancellation() throws {
+        fatalError()
+    }
 
-    @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-    public static func sleep<C>(until deadline: C.Instant, tolerance: C.Instant.Duration? = nil, clock: C) async throws where C : Clock
+    @available(*, unavailable)
+    public static func sleep(nanoseconds duration: UInt64) async throws {
+        fatalError()
+    }
 
-    /// Suspends the current task for the given duration on a continuous clock.
-    ///
-    /// If the task is cancelled before the time ends, this function throws
-    /// `CancellationError`.
-    ///
-    /// This function doesn't block the underlying thread.
-    ///
-    ///       try await Task.sleep(for: .seconds(3))
-    ///
-    /// - Parameter duration: The duration to wait.
-    @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-    public static func sleep(for duration: Duration) async throws
+    // public static func sleep<C>(until deadline: C.Instant, tolerance: C.Instant.Duration? = nil, clock: C) async throws where C : Clock
+    @available(*, unavailable)
+    public static func sleep(until deadline: Any, tolerance: Any? = nil, clock: Any) async throws {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public static func sleep(for duration: /* Duration */ Double) async throws {
+        fatalError()
+    }
+}
+
+@available(*, unavailable)
+public struct TaskGroup<ChildTaskResult> {
+}
+
+@available(*, unavailable)
+public struct TaskPriority : RawRepresentable {
+    public var rawValue: /* UInt8 */ Int {
+        fatalError()
+    }
+
+    public init(rawValue: /* UInt8 */ Int) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public static var high: TaskPriority {
+        fatalError()
+    }
+    @available(*, unavailable)
+    public static var medium: TaskPriority {
+        fatalError()
+    }
+    @available(*, unavailable)
+    public static var low: TaskPriority {
+        fatalError()
+    }
+    @available(*, unavailable)
+    public static var userInitiated: TaskPriority {
+        fatalError()
+    }
+    @available(*, unavailable)
+    public static var utility: TaskPriority {
+        fatalError()
+    }
+    @available(*, unavailable)
+    public static var background: TaskPriority {
+        fatalError()
+    }
+}
+
+@available(*, unavailable)
+public struct ThrowingTaskGroup<ChildTaskResult, Failure> where Failure : Error {
+}
+
+
+@available(*, unavailable)
+public struct UnownedJob {
+}
+
+@available(*, unavailable)
+public struct UnownedSerialExecutor {
+}
+
+@available(*, unavailable)
+public struct UnsafeContinuation<T, E> where E : Error {
+}
+
+@available(*, unavailable)
+public struct UnsafeCurrentTask {
+}
+
+@available(*, unavailable)
+public func withCheckedContinuation<T>(function: String = "", _ body: (CheckedContinuation<T, Never>) -> Void) async -> T {
+    fatalError()
+}
+
+@available(*, unavailable)
+@inlinable public func withCheckedThrowingContinuation<T>(function: String = "", _ body: (CheckedContinuation<T, Error>) -> Void) async throws -> T {
+    fatalError()
+}
+
+@available(*, unavailable)
+public func withTaskCancellationHandler<T>(operation: () async throws -> T, onCancel handler: () -> Void) async rethrows -> T {
+    fatalError()
+}
+
+@available(*, unavailable)
+public func withTaskGroup<ChildTaskResult, GroupResult>(of childTaskResultType: ChildTaskResult.Type, returning returnType: GroupResult.Type = GroupResult.self, body: (inout TaskGroup<ChildTaskResult>) async -> GroupResult) async -> GroupResult {
+    fatalError()
+}
+
+@available(*, unavailable)
+@inlinable public func withThrowingTaskGroup<ChildTaskResult, GroupResult>(of childTaskResultType: ChildTaskResult.Type, returning returnType: GroupResult.Type = GroupResult.self, body: (inout ThrowingTaskGroup<ChildTaskResult, Error>) async throws -> GroupResult) async rethrows -> GroupResult {
+    fatalError()
+}
+
+@available(*, unavailable)
+public func withUnsafeContinuation<T>(_ fn: (UnsafeContinuation<T, Never>) -> Void) async -> T {
+    fatalError()
+}
+
+@available(*, unavailable)
+public func withUnsafeCurrentTask<T>(body: (UnsafeCurrentTask?) throws -> T) rethrows -> T {
+    fatalError()
+}
+
+@available(*, unavailable)
+public func withUnsafeThrowingContinuation<T>(_ fn: (UnsafeContinuation<T, Error>) -> Void) async throws -> T {
+    fatalError()
 }
 
 #endif

@@ -14,6 +14,8 @@ fun <Element> setOf(vararg elements: Element): Set<Element> {
     return Set(storage, nocopy = true)
 }
 
+typealias SetIndex = Int
+
 class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, MutableStruct {
     private var isStorageShared = false
     private var storage: LinkedHashSet<Element>

@@ -14,6 +14,8 @@ fun <Element> arrayOf(vararg elements: Element): Array<Element> {
     return Array(storage, nocopy = true)
 }
 
+typealias ArrayIndex = Int
+
 class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollection<Element>, MutableCollection<Element>, MutableStruct {
     private var isStorageShared = false
     private var _mutableListStorage: MutableList<Element>? = null

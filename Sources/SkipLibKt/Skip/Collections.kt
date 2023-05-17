@@ -5,8 +5,6 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-import java.lang.UnsupportedOperationException
-
 // WARNING: Replicate all implemented immutable Sequence, Collections API in String.kt
 
 // Note: We use a Storage model wrapping internal Kotlin collections to be able to control when we sref() efficiently
@@ -168,6 +166,8 @@ interface Sequence<Element>: IterableStorage<Element> {
 fun <Element> Sequence<Element>.filter(isIncluded: (Element) -> Boolean): Array<Element> {
     return Array(iterableStorage.filter(isIncluded), nocopy = true)
 }
+
+typealias CollectionIndex = Int
 
 interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     val startIndex: Int
