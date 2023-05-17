@@ -137,6 +137,19 @@ jobs:
         working-directory: skiphub
         run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
+      - name: Checkout skipapp
+        uses: actions/checkout@v3
+        with:
+          path: skipapp.swiftpm
+          repository: skiptools/skipapp.swiftpm
+      - name: skipapp tests
+        working-directory: skipapp.swiftpm
+        run: |
+          swift build --jobs 1
+          swift test --jobs 1
+          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/release/AppDemo-release-unsigned.apk
+          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
+
       - name: Debug Tests (Serial)
         if: false
         working-directory: skiphub
