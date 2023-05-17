@@ -12,15 +12,26 @@ public typealias ProcessInfo = SkipProcessInfo
 
 public class SkipProcessInfo {
     #if SKIP
-    public static let processInfo = SkipProcessInfo()
+    /// The global `processInfo` must be set manually at app launch with `skip.foundation.ProcessInfo.launch(context)`
+    /// Otherwise error: `skip.lib.ErrorException: kotlin.UninitializedPropertyAccessException: lateinit property processInfo has not been initialized`
+    public static var processInfo: SkipProcessInfo!
+    let rawValue: android.content.Context
+
+    init(rawValue: android.content.Context) {
+        self.rawValue = rawValue
+    }
+
+    /// Called when an app is launched to store the global context from the `android.app.Application` subclass.
+    public static func launch(context: android.content.Context) {
+        SkipProcessInfo.processInfo = SkipProcessInfo(rawValue: context)
+    }
     #else
     public static var processInfo = SkipProcessInfo(rawValue: Foundation.ProcessInfo.processInfo)
+    let rawValue: Foundation.ProcessInfo
 
     init(rawValue: Foundation.ProcessInfo) {
         self.rawValue = rawValue
     }
-
-    let rawValue: Foundation.ProcessInfo
     #endif
 
     open var globallyUniqueString: String {
@@ -81,6 +92,7 @@ public class SkipProcessInfo {
         #if !SKIP
         return rawValue.hostName
         #else
+        // Android 30+: NetworkOnMainThreadException
         return java.net.InetAddress.getLocalHost().hostName
         #endif
     }
@@ -93,11 +105,19 @@ public class SkipProcessInfo {
         #endif
     }
 
+    open var processorCount: Int {
+        #if !SKIP
+        return rawValue.processorCount
+        #else
+        return Runtime.getRuntime().availableProcessors()
+        #endif
+    }
+
     open var operatingSystemVersionString: String {
         #if !SKIP
         return rawValue.operatingSystemVersionString
         #else
-        fatalError("TODO: ProcessInfo")
+        return android.os.Build.VERSION.RELEASE
         #endif
     }
 }

@@ -56,8 +56,8 @@ extension GradleHarness {
         /// The only known way to figure out the package name asociated with the test's module is to brute-force search through the plugin output folders.
         func findModuleFolder(in pluginOutputFolder: URL, extension pathExtension: String) throws -> URL {
             for outputFolder in try FileManager.default.contentsOfDirectory(at: pluginOutputFolder, includingPropertiesForKeys: [.isDirectoryKey]) {
-                if outputFolder.pathExtension != pathExtension {
-                    continue // only check known path extensions (e.g., ".output" or "")
+                if !pathExtension.isEmpty && !outputFolder.lastPathComponent.hasSuffix("." + pathExtension) {
+                    continue // only check known path extensions (e.g., ".output")
                 }
 
                 let pluginModuleOutputFolder = URL(fileURLWithPath: moduleTranspilerFolder, isDirectory: true, relativeTo: outputFolder)
@@ -115,7 +115,7 @@ extension GradleHarness {
     }
 
     /// Uses the system `adb` process to install and launch the given APK, following the
-    public func launchAPK(appid: String, log: [String] = [], apk: String, relativeTo sourcePath: StaticString = #file) async throws {
+    public func launchAPK(device: String?, appid: String, log: [String] = [], apk: String, relativeTo sourcePath: StaticString = #file) async throws {
         let env: [String: String] = [:]
 
         let apkPath = URL(fileURLWithPath: apk, isDirectory: false, relativeTo: packageBaseFolder(forSourceFile: sourcePath))
@@ -141,10 +141,7 @@ extension GradleHarness {
             print("ADB DEVICE>", outputLine)
         }
 
-        // select device with: SKIP_TEST_DEVICE=emulator-5554
-        // this avoids the error: adb: more than one device/emulator
-        let adbDevice = ProcessInfo.processInfo.environment["SKIP_TEST_DEVICE"]
-        let adb = ["adb"] + (adbDevice.flatMap { ["-s", $0] } ?? [])
+        let adb = ["adb"] + (device.flatMap { ["-s", $0] } ?? [])
 
         // adb install -r Packages/Skip/skipapp.swiftpm.output/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
         let adbInstall = adb + [
