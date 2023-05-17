@@ -43,7 +43,7 @@ public final class WebView {
 
     public init() {
         #if SKIP
-        self.webView = android.webkit.WebView(androidContext())
+        self.webView = android.webkit.WebView(ProcessInfo.processInfo.androidContext)
         self.webView.settings.javaScriptEnabled = true
         #else
         self.webView = WKWebView()

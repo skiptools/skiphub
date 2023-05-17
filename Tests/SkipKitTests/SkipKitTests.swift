@@ -40,7 +40,7 @@ final class SkipKitTests: XCTestCase {
 
     #if SKIP
     // get an Android context from the current test environment
-    let context: android.content.Context = androidContext()
+    let context: android.content.Context = ProcessInfo.processInfo.androidContext
 
     func testUserDefaults() throws {
         let prefs: android.content.SharedPreferences = context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)

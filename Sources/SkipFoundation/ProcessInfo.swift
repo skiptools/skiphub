@@ -14,17 +14,32 @@ public class SkipProcessInfo {
     #if SKIP
     /// The global `processInfo` must be set manually at app launch with `skip.foundation.ProcessInfo.launch(context)`
     /// Otherwise error: `skip.lib.ErrorException: kotlin.UninitializedPropertyAccessException: lateinit property processInfo has not been initialized`
-    public static var processInfo: SkipProcessInfo!
-    let rawValue: android.content.Context
+    public static var processInfo: SkipProcessInfo = SkipProcessInfo()
 
-    init(rawValue: android.content.Context) {
-        self.rawValue = rawValue
+    init() {
+    }
+
+    /// The Android context for the process, which should have been set on app launch, and will fall back on using an Android test context.
+    public var androidContext: android.content.Context! {
+        launchContext ?? testContext
     }
 
     /// Called when an app is launched to store the global context from the `android.app.Application` subclass.
     public static func launch(context: android.content.Context) {
-        SkipProcessInfo.processInfo = SkipProcessInfo(rawValue: context)
+        SkipProcessInfo.processInfo.launchContext = context
     }
+
+    private var testContext: android.content.Context {
+        // fallback to assuming we are running in a test environment
+        // we don't have a compile dependency on android test, so we need to load using reflection
+        // androidx.test.core.app.ApplicationProvider.getApplicationContext()
+        return Class.forName("androidx.test.core.app.ApplicationProvider")
+            .getDeclaredMethod("getApplicationContext")
+            .invoke(nil) as android.content.Context
+    }
+
+    private var launchContext: android.content.Context?
+
     #else
     public static var processInfo = SkipProcessInfo(rawValue: Foundation.ProcessInfo.processInfo)
     let rawValue: Foundation.ProcessInfo

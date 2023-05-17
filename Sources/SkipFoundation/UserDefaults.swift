@@ -29,7 +29,7 @@ public struct SkipUserDefaults : RawRepresentable, Hashable {
 extension SkipUserDefaults {
     public static var standard: SkipUserDefaults {
         // FIXME: uses androidx.test and
-        SkipUserDefaults(androidContext().getSharedPreferences("defaults", android.content.Context.MODE_PRIVATE))
+        SkipUserDefaults(ProcessInfo.processInfo.androidContext.getSharedPreferences("defaults", android.content.Context.MODE_PRIVATE))
     }
 
     public func `set`(_ value: Int, forKey keyName: String) {
