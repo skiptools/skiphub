@@ -157,13 +157,6 @@ jobs:
         working-directory: skiphub
         run: swift test --parallel -c release
 
-      - name: Android Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          working-directory: skiphub
-          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter '*KtTests'
-
       - name: Gradle Build (Android)
         # folder links in Packages/Skip/ should have been created by tests
         #working-directory: skiphub/Packages/Skip/skiphub/ExampleAppKtTests/skip-transpiler
@@ -178,10 +171,14 @@ jobs:
           # Build the APK
           gradle assembleDebug --console=plain
           gradle assembleRelease --console=plain || echo "gradle assembleRelease failed"
-
           ls -lah `find . -name '*.apk'`
 
-          gradle "connectedDebugAndroidTest" --console=plain || echo FAILED: connectedDebugAndroidTest
+      - name: Android Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          working-directory: skiphub
+          script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter '*KtTests'
 
       - name: Swift Tests (iOS)
         working-directory: skiphub

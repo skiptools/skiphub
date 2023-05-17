@@ -124,13 +124,37 @@ extension GradleHarness {
             throw ADBError(errorDescription: "APK did not exist at \(apkPath.path)")
         }
 
-        // adb install -r Packages/Skip/skipapp.swiftpm.output/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
-        let adbInstall = [
+        // List of devices attached:
+        // adb-R9TT50AJWEX-F9Ujyu._adb-tls-connect._tcp.    device
+        // emulator-5554    device
+        let adbDevices = [
             "adb",
+            "devices",
+        ]
+
+        for try await outputLine in Process.streamLines(command: adbDevices, environment: env, onExit: { result in
+            guard case .terminated(0) = result.exitStatus else {
+                // we failed, but did not expect an error
+                throw ADBError(errorDescription: "error listing devices: \(result)")
+            }
+        }) {
+            print("ADB DEVICE>", outputLine)
+        }
+
+        // select device with: SKIP_TEST_DEVICE=emulator-5554
+        // this avoids the error: adb: more than one device/emulator
+        let adbDevice = ProcessInfo.processInfo.environment["SKIP_TEST_DEVICE"]
+        let adb = ["adb"] + (adbDevice.flatMap { ["-s", $0] } ?? [])
+
+        // adb install -r Packages/Skip/skipapp.swiftpm.output/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
+        let adbInstall = adb + [
             "install",
-            "-r",
+            "-r", // replace existing application
+            "-t", // allow test packages
             apkPath.path,
         ]
+
+        print("running:", adbInstall.joined(separator: " "))
 
         for try await outputLine in Process.streamLines(command: adbInstall, environment: env, onExit: { result in
             guard case .terminated(0) = result.exitStatus else {
@@ -142,8 +166,7 @@ extension GradleHarness {
         }
 
         // adb shell am start -n app.demo/.MainActivity
-        let adbStart = [
-            "adb",
+        let adbStart = adb + [
             "shell",
             "am",
             "start-activity",
@@ -169,8 +192,7 @@ extension GradleHarness {
 
         if !log.isEmpty {
             // adb shell am start -n app.demo/.MainActivity
-            let logcat = [
-                "adb",
+            let logcat = adb + [
                 "logcat",
                 "-T", "100", // start with only the 100 most recent entries
                 // "-v", "time",
