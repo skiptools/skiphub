@@ -12,6 +12,7 @@
 #if SKIP
 
 public struct Task<Success, Failure> where Failure: Error {
+    // SKIP NOWARN
     @available(*, unavailable)
     public var value: Success {
         get async throws {
@@ -19,6 +20,7 @@ public struct Task<Success, Failure> where Failure: Error {
         }
     }
 
+    // SKIP NOWARN
     @available(*, unavailable)
     public var result: Result<Success, Failure> {
         get async {
@@ -41,12 +43,11 @@ public struct Task<Success, Failure> where Failure: Error {
         fatalError()
     }
 
-    @available(*, unavailable)
     public init(priority: TaskPriority? = nil, operation: @escaping () async throws -> Success) {
         fatalError()
     }
 
-    @available(*, unavailable)
+    // SKIP NOWARN
     public static func detached(priority: TaskPriority? = nil, operation: @escaping () async -> Success) -> Task<Success, Failure> {
         fatalError()
     }
@@ -92,7 +93,6 @@ public struct Task<Success, Failure> where Failure: Error {
 public struct TaskGroup<ChildTaskResult> {
 }
 
-@available(*, unavailable)
 public struct TaskPriority : RawRepresentable {
     public var rawValue: /* UInt8 */ Int {
         fatalError()
@@ -102,27 +102,21 @@ public struct TaskPriority : RawRepresentable {
         fatalError()
     }
 
-    @available(*, unavailable)
     public static var high: TaskPriority {
         fatalError()
     }
-    @available(*, unavailable)
     public static var medium: TaskPriority {
         fatalError()
     }
-    @available(*, unavailable)
     public static var low: TaskPriority {
         fatalError()
     }
-    @available(*, unavailable)
     public static var userInitiated: TaskPriority {
         fatalError()
     }
-    @available(*, unavailable)
     public static var utility: TaskPriority {
         fatalError()
     }
-    @available(*, unavailable)
     public static var background: TaskPriority {
         fatalError()
     }
