@@ -14,7 +14,7 @@ final class ConcurrencyTests: XCTestCase {
         Dispatchers.setMain(dispatcher)
         try {
             runTest {
-                GlobalScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     _testSimpleValue()
                 }
             }
