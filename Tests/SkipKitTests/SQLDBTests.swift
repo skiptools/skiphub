@@ -334,7 +334,7 @@ final class SQLDBTests: XCTestCase {
             }
 
             #if !SKIP
-            func checkHashChanges(_ updateSQL: String) throws -> Bool {
+            func checkHashChanges(minor permitSchemaChanges: Bool = false, _ updateSQL: String) throws -> Bool {
                 let schema1 = try schemaSQL()
                 let tables = schema1.compactMap({ $0.table })
                 var hashes: [String: (rows: Int, digest: Data)] = [:]
@@ -344,15 +344,19 @@ final class SQLDBTests: XCTestCase {
                 }
 
                 try conn.execute(sql: updateSQL)
-                // check to see if the schema has changed as a result of the upate SQL
-                let schema2 = try schemaSQL()
 
-                if schema1.map({ $0.sql }) != schema2.map({ $0.sql }) {
-                    return true
+                // if we forbid schema changes, verify that the SQL did not result in any alternations to the database
+                if permitSchemaChanges == false {
+                    // check to see if the schema has changed as a result of the upate SQL
+                    let schema2 = try schemaSQL()
+
+                    if schema1.map({ $0.sql }) != schema2.map({ $0.sql }) {
+                        return true
+                    }
                 }
 
                 // check the tables for hash differences
-                // TODO: permit schema additions by selecting only from the previous tables
+                // TODO: permit schema additions by selecting only from the previously-seen tables
                 for tableName in tables {
                     guard let (expectedRows, expectedDigest) = hashes[tableName] else {
                         continue // should be impossible
@@ -364,7 +368,7 @@ final class SQLDBTests: XCTestCase {
                         return true
                     }
                     if digest != expectedDigest {
-//                        return true
+                        return true
                     }
                 }
 
@@ -373,10 +377,22 @@ final class SQLDBTests: XCTestCase {
 
             try conn.execute(sql: "CREATE TABLE BAR(NUM INT, STR TEXT)")
 
-            try XCTAssertFalse(checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (1, 'ABC')"))
-            try XCTAssertFalse(checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')"))
-            try XCTAssertTrue(checkHashChanges("UPDATE BAR SET NUM = 0"))
-            try XCTAssertTrue(checkHashChanges("CREATE TABLE BAZ (ID INT)"))
+            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (1, 'ABC')"), "insert should not change hash")
+            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')"), "insert should not change hash")
+            try XCTAssertEqual(true, checkHashChanges("UPDATE BAR SET NUM = 0"), "alterations should change hash")
+            try XCTAssertEqual(true, checkHashChanges("CREATE TABLE BAZ (ID INT)"), "schema additions should change hash")
+            try XCTAssertEqual(true, checkHashChanges("ALTER TABLE BAZ ADD COLUMN DATA BLOB"), "column additions should change hash")
+            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAZ (ID, DATA) VALUES (10, x'010101')"), "insert should not change hash")
+            try XCTAssertEqual(true, checkHashChanges(minor: true, "ALTER TABLE BAZ ADD COLUMN DBL REAL"), "alterations should not change hash for minor updates")
+            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAZ (ID, DATA, DBL) VALUES (10, x'ABABAB', 1.2345)"), "insert should not change hash")
+            try XCTAssertEqual(false, checkHashChanges("UPDATE BAZ SET DATA = DATA"), "update with no alterations should not change hash")
+            try XCTAssertEqual(true, checkHashChanges("UPDATE BAZ SET DATA = DATA + DATA"), "alterations to data columns should change hash")
+            try XCTAssertEqual(true, checkHashChanges("UPDATE BAZ SET DBL = DBL + DBL"), "alterations to real columns should change hash")
+            try XCTAssertEqual(true, checkHashChanges("UPDATE BAZ SET DATA = ID + ID"), "alterations to int columns should change hash")
+
+            XCTAssertEqual("919ac94d768dcf5cfca2d41d65ba34ff7a19a32ede533c6292238250ef65305c", try conn.query(sql: "SELECT * FROM FOO").digest().1.hex())
+            XCTAssertEqual("d1cd55abe7cee824a640bd6a292d3f6bd3c6778f1579b7a59d9077a66888fabe", try conn.query(sql: "SELECT * FROM BAZ").digest().1.hex())
+
             #endif
 
         }
