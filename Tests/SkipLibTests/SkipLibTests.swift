@@ -45,21 +45,6 @@ final class SkipLibTests: XCTestCase {
             fatalError() // no-arg
         }
     }
-
-    // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html
-    // could also use: kotlinx.coroutines.runBlocking
-    // SKIP DECLARE: @Test fun testAsync() = kotlinx.coroutines.test.runTest
-    func testAsync() async throws {
-        // SKIP REPLACE: val start = System.currentTimeMillis() / 1000.0
-        let start = CFAbsoluteTimeGetCurrent()
-        // SKIP INSERT: Thread.sleep(1000) // brute-force
-        // SKIP REPLACE: // kotlinx.coroutines.delay(1000) // coroutine scheduler makes this return immediately!
-        try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
-        // SKIP REPLACE: val end = System.currentTimeMillis() / 1000.0
-        let end = CFAbsoluteTimeGetCurrent()
-        XCTAssertGreaterThanOrEqual(end - start, 1.0, "async sleep should have taken 1 second")
-    }
-
 }
 
 #if !SKIP

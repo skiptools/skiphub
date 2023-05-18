@@ -124,7 +124,7 @@ fun String.contains(where: (Char) -> Boolean): Boolean {
 }
 fun Substring.contains(where: (Char) -> Boolean): Boolean = stringValue.contains(where)
 
-// Warning: Although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
+// WARNING: Although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
 // into our Kotlin call sites to differentiate between calls to the two reduce() functions. Do not change
 fun <R> String.reduce(initialResult: R, nextPartialResult: (R, Char) -> R): R {
     return fold(initialResult, nextPartialResult)

@@ -125,7 +125,7 @@ interface Sequence<Element>: IterableStorage<Element> {
         return false
     }
 
-    // Warning: Although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
+    // WARNING: Although 'initialResult' is not a labeled parameter in Swift, the transpiler inserts it
     // into our Kotlin call sites to differentiate between calls to the two reduce() functions. Do not change
     fun <R> reduce(initialResult: R, nextPartialResult: (R, Element) -> R): R {
         return iterableStorage.fold(initialResult, nextPartialResult)

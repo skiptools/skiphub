@@ -9,13 +9,23 @@ import XCTest
 
 //~~~
 final class ConcurrencyTests: XCTestCase {
-    // SKIP DECLARE: @Test fun testSimpleValue() = runTest
-    func testSimpleValue() async throws {
-#if SKIP
-        print("CALLING TASK: \(Thread.currentThread().hashCode())")
-        let dispatcher = UnconfinedTestDispatcher()
+    /* SKIP INSERT:
+     @Test fun testSimpleValue() {
+        val dispatcher = StandardTestDispatcher()
         Dispatchers.setMain(dispatcher)
-#endif
+        try {
+            runTest {
+                GlobalScope.launch(Dispatchers.Main) {
+                    _testSimpleValue()
+                }
+            }
+        } finally {
+            Dispatchers.resetMain()
+        }
+     }
+     */
+    // SKIP DECLARE: suspend fun _testSimpleValue()
+    func testSimpleValue() async throws {
         let task1 = Task {
             return await asyncInt()
         }
@@ -25,21 +35,15 @@ final class ConcurrencyTests: XCTestCase {
         }
         let value1 = await task1.value
         let value2 = await task2.value
-#if SKIP
-        print("GOT VALUE: \(Thread.currentThread().hashCode())")
-        Dispatchers.resetMain()
-#endif
         XCTAssertEqual(value1, 100)
         XCTAssertEqual(value2, 200)
     }
 
     func asyncInt() async -> Int {
-        // SKIP INSERT: print("ASYNCINT: ${Thread.currentThread().hashCode()}")
         return 100
     }
 
     func asyncInt2() async -> Int {
-        // SKIP INSERT: print("ASYNCINT 2: ${Thread.currentThread().hashCode()}")
         return 200
     }
 }

@@ -11,26 +11,20 @@ import kotlinx.coroutines.*
 class Task<T> {
     private var deferred: Deferred<T>
 
+    // WARNING: We currently run any non-detached Task on the main thread rather than the current thread.
+    // Kotlin does not have a built-in Dispatcher with stay-on-current-thread behavior
     constructor(priority: TaskPriority? = null, operation: suspend () -> T): this(priority, Dispatchers.Main, operation) {
     }
 
     constructor(priority: TaskPriority? = null, context: CoroutineContext, operation: suspend () -> T) {
-        print("IN CONSTRUCTOR: ${Thread.currentThread().hashCode()}")
+        // TODO: Priority
         @OptIn(DelicateCoroutinesApi::class)
         deferred = GlobalScope.async(context) {
-            print("IN ASYNC: ${Thread.currentThread().hashCode()}")
             operation()
         }
-        print("DONE CONSTRUCTOR ${Thread.currentThread().hashCode()}")
     }
 
-    //~~~
-    suspend fun value(): T {
-        print("IN VALUE(): ${Thread.currentThread().hashCode()}")
-        val value = deferred.await()
-        print("AFTER AWAIT ${Thread.currentThread().hashCode()}")
-        return value
-    }
+    suspend fun value(): T = deferred.await()
 
     companion object {
         fun <T> detached(priority: TaskPriority? = null,
