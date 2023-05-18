@@ -5,13 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
-import android.provider.Settings.Global
+import kotlin.coroutines.*
 import kotlinx.coroutines.*
-import java.lang.IllegalStateException
-import java.util.concurrent.ThreadPoolExecutor
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.coroutineContext
 
 class Task<T> {
     private var deferred: Deferred<T>
