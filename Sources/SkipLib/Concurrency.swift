@@ -12,8 +12,8 @@
 #if SKIP
 
 public struct Task<Success, Failure> where Failure: Error {
+    // Note: This is special cased in the transpiler to suspend function value()
     // SKIP NOWARN
-    @available(*, unavailable)
     public var value: Success {
         get async throws {
             fatalError()

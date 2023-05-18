@@ -5,21 +5,42 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+import android.provider.Settings.Global
 import kotlinx.coroutines.*
+import java.lang.IllegalStateException
+import java.util.concurrent.ThreadPoolExecutor
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.coroutineContext
 
-class Task<Success, Failure> where Failure: Error {
-//    private val job: Job
+class Task<T> {
+    private var deferred: Deferred<T>
 
-    constructor(priority: TaskPriority? = null, operation: () -> Success) {
-//        @OptIn(DelicateCoroutinesApi::class)
-//        job = GlobalScope.launch(operation)
+    constructor(priority: TaskPriority? = null, operation: suspend () -> T): this(priority, Dispatchers.Main, operation) {
+    }
+
+    constructor(priority: TaskPriority? = null, context: CoroutineContext, operation: suspend () -> T) {
+        print("IN CONSTRUCTOR: ${Thread.currentThread().hashCode()}")
+        @OptIn(DelicateCoroutinesApi::class)
+        deferred = GlobalScope.async(context) {
+            print("IN ASYNC: ${Thread.currentThread().hashCode()}")
+            operation()
+        }
+        print("DONE CONSTRUCTOR ${Thread.currentThread().hashCode()}")
+    }
+
+    //~~~
+    suspend fun value(): T {
+        print("IN VALUE(): ${Thread.currentThread().hashCode()}")
+        val value = deferred.await()
+        print("AFTER AWAIT ${Thread.currentThread().hashCode()}")
+        return value
     }
 
     companion object {
-        fun <Success, Failure> detached(priority: TaskPriority? = null,
-            operation: () -> Success): Task<Success, Failure> where Failure: Error {
-            //~~~
-            return Task(priority, operation)
+        fun <T> detached(priority: TaskPriority? = null,
+            operation: suspend () -> T): Task<T> {
+            return Task(priority, Dispatchers.Default, operation)
         }
     }
 }
@@ -32,11 +53,11 @@ class TaskPriority(override val rawValue: Int): RawRepresentable<Int> {
     override fun hashCode(): Int = rawValue.hashCode()
 
     companion object {
-        val high: TaskPriority = TaskPriority(25)
-        val medium: TaskPriority = TaskPriority(21)
-        val low: TaskPriority = TaskPriority(17)
-        val userInitiated: TaskPriority = high
-        val utility: TaskPriority = low
-        val background: TaskPriority = TaskPriority(9)
+        val high = TaskPriority(25)
+        val medium = TaskPriority(21)
+        val low = TaskPriority(17)
+        val userInitiated = high
+        val utility = low
+        val background = TaskPriority(9)
     }
 }
