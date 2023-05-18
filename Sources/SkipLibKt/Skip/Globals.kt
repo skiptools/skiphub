@@ -10,6 +10,8 @@ fun assertionFailure(message: String = "assertionFailure"): Nothing = error(mess
 fun preconditionFailure(message: String = "preconditionFailure"): Nothing = error(message)
 fun precondition(condition: Boolean, message: String = "precondition"): Unit = require(condition, { message })
 
+typealias Never = Nothing
+
 fun type(of: Any): kotlin.reflect.KClass<*> = of::class
 
 fun <T> swap(a: InOut<T>, b: InOut<T>) {
@@ -37,28 +39,12 @@ fun round(x: Float): Float {
 class NullReturnException: Exception() {
 }
 
-fun print(arg1: Any?, arg2: Any? = null, arg3: Any? = null, arg4: Any? = null, arg5: Any? = null, arg6: Any? = null, arg7: Any? = null, arg8: Any? = null, arg9: Any? = null, separator: String = " ", terminator: String = "\n") {
-	arg1?.let { a -> kotlin.io.print(a) }
-	arg2?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg3?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg4?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg5?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg6?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg7?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg8?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg9?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
+fun print(vararg args: Any?, separator: String = " ", terminator: String = "\n") {
+	args.forEachIndexed { index, arg ->
+		if (index > 0) kotlin.io.print(separator)
+		kotlin.io.print(arg)
+	}
 	kotlin.io.print(terminator)
 }
 
-fun debugPrint(arg1: Any?, arg2: Any? = null, arg3: Any? = null, arg4: Any? = null, arg5: Any? = null, arg6: Any? = null, arg7: Any? = null, arg8: Any? = null, arg9: Any? = null, separator: String = " ", terminator: String = "\n") {
-	arg1?.let { a -> kotlin.io.print(a) }
-	arg2?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg3?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg4?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg5?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg6?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg7?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg8?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	arg9?.let { a -> kotlin.io.print(separator); kotlin.io.print(a) }
-	kotlin.io.print(terminator)
-}
+fun debugPrint(vararg args: Any?, separator: String = " ", terminator: String = "\n") = print(args, separator, terminator)
