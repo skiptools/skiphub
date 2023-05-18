@@ -158,7 +158,6 @@ public final class SQLDB {
             #endif
         }
 
-
         /// Moves to the next row in the result set, returning `false` if there are no more rows to traverse.
         public func next() throws -> Bool {
             if closed {
@@ -169,6 +168,11 @@ public final class SQLDB {
             #else
             return try connection.check(resultOf: sqlite3_step(handle)) == SQLITE_ROW
             #endif
+        }
+
+        /// Returns the current row as a dictionary.
+        public func dictionary() throws -> Dictionary<String, SQLValue> {
+            try Dictionary(uniqueKeysWithValues: zip(getColumnNames(), getRow()))
         }
 
         /// Generates a SHA-256 hash by iterating over the remaining rows and updating a hash of each string value of the columns in order.
@@ -262,6 +266,13 @@ public final class SQLDB {
             case .blob:
                 return .nul // .blob(data: getBlob(column: column)) // TODO: SKIP
             }
+        }
+
+        /// Returns the column names as an array
+        public func getColumnNames() throws -> [String] {
+            return try Array((0..<columnCount).map { column in
+                try getColumnName(column: column)
+            })
         }
 
         /// Returns the values of the current row as an array

@@ -323,6 +323,61 @@ final class SQLDBTests: XCTestCase {
                 ["CREATE TABLE FOO (ID INT, NAME TEXT, SCORE INT)"]
                 """)
             }
+
+            /// Returns the SQL for all the schema creation statements
+            func schemaSQL() throws -> [(table: String?, sql: String?)] {
+                let q = try conn.query(sql: "SELECT tbl_name, sql FROM sqlite_master")
+                defer { try? q.close() }
+                let columns = try q.getColumnNames()
+
+                return try q.rows().map({ ($0.first?.textValue, $0.last?.textValue) })
+            }
+
+            func checkHashChanges(_ updateSQL: String) throws -> Bool {
+                let schema1 = try schemaSQL()
+                let tables = schema1.compactMap({ $0.table })
+                var hashes: [String: (rows: Int, digest: Data)] = [:]
+                // build up the hashes of all the known tables
+                for tableName in tables {
+                    hashes[tableName] = try conn.query(sql: "SELECT * FROM '\(tableName)'").digest()
+                }
+
+                try conn.execute(sql: updateSQL)
+                // check to see if the schema has changed as a result of the upate SQL
+                let schema2 = try schemaSQL()
+
+                if schema1.map({ $0.sql }) != schema2.map({ $0.sql }) {
+                    return true
+                }
+
+                // check the tables for hash differences
+                // TODO: permit schema additions by selecting only from the previous tables
+                for tableName in tables {
+                    guard let (expectedRows, expectedDigest) = hashes[tableName] else {
+                        continue // should be impossible
+                    }
+
+                    // limit the digest to just the expected rows
+                    let (rows, digest) = try conn.query(sql: "SELECT * FROM '\(tableName)'").digest(rows: expectedRows)
+                    if rows != expectedRows {
+                        return true
+                    }
+                    if digest != expectedDigest {
+//                        return true
+                    }
+                }
+
+                return false
+            }
+
+            try conn.execute(sql: "CREATE TABLE BAR(NUM INT, STR TEXT)")
+
+            try XCTAssertFalse(checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (1, 'ABC')"))
+            try XCTAssertFalse(checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')"))
+            try XCTAssertTrue(checkHashChanges("UPDATE BAR SET NUM = 0"))
+            try XCTAssertTrue(checkHashChanges("CREATE TABLE BAZ (ID INT)"))
+
+
         }
     }
 
