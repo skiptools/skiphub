@@ -333,6 +333,7 @@ final class SQLDBTests: XCTestCase {
                 return try q.rows().map({ ($0.first?.textValue, $0.last?.textValue) })
             }
 
+            #if !SKIP
             func checkHashChanges(_ updateSQL: String) throws -> Bool {
                 let schema1 = try schemaSQL()
                 let tables = schema1.compactMap({ $0.table })
@@ -376,7 +377,7 @@ final class SQLDBTests: XCTestCase {
             try XCTAssertFalse(checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')"))
             try XCTAssertTrue(checkHashChanges("UPDATE BAR SET NUM = 0"))
             try XCTAssertTrue(checkHashChanges("CREATE TABLE BAZ (ID INT)"))
-
+            #endif
 
         }
     }

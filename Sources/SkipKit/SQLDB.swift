@@ -170,10 +170,12 @@ public final class SQLDB {
             #endif
         }
 
+        #if !SKIP // TODO: zip
         /// Returns the current row as a dictionary.
         public func dictionary() throws -> Dictionary<String, SQLValue> {
             try Dictionary(uniqueKeysWithValues: zip(getColumnNames(), getRow()))
         }
+        #endif
 
         /// Generates a SHA-256 hash by iterating over the remaining rows and updating a hash of each string value of the columns in order.
         ///
