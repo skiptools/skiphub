@@ -20,6 +20,8 @@ import CryptoKit
 
 /// A connection to SQLite.
 public final class SQLDB {
+    private static let logger = Logger(subsystem: "skip.kit", category: "SQL")
+
     #if SKIP
     public let db: android.database.sqlite.SQLiteDatabase
     #else
@@ -69,6 +71,7 @@ public final class SQLDB {
 
     /// Executes a single SQL statement.
     public func execute(sql: any StringProtocol, params: [SQLValue] = []) throws {
+        Self.logger.debug("execute: \(sql.description)")
         #if SKIP
         let bindArgs = params.map { $0.toBindArg() }
         db.execSQL(sql.toString(), bindArgs.toList().toTypedArray())
@@ -135,8 +138,12 @@ public final class SQLDB {
         /// Whether the cursor is closed or not
         public private(set) var closed = false
 
+        /// Whether the cursor has started to be traversed
+        private var opened = false
+
         fileprivate init(_ connection: SQLDB, _ SQL: any StringProtocol, params: [SQLValue]) throws {
             self.connection = connection
+            SQLDB.logger.debug("query: \(SQL.description)")
 
             #if SKIP
             let bindArgs: [String?] = params.map { $0.toBindString() }
@@ -164,10 +171,12 @@ public final class SQLDB {
                 throw CursorClosedError()
             }
             #if SKIP
-            return self.cursor.moveToNext()
+            let success = self.cursor.moveToNext()
             #else
-            return try connection.check(resultOf: sqlite3_step(handle)) == SQLITE_ROW
+            let success = try connection.check(resultOf: sqlite3_step(handle)) == SQLITE_ROW
             #endif
+            opened = opened || success
+            return success
         }
 
         #if !SKIP // TODO: zip
@@ -184,7 +193,6 @@ public final class SQLDB {
         public func digest(rows: Int? = nil, algorithm: any HashFunction = SHA256()) throws -> (rows: Int, digest: Data) {
             var hash = algorithm
             let columns = columnCount
-
             let tab = "\t".data(using: String.Encoding.utf8)!
             let nl = "\n".data(using: String.Encoding.utf8)!
 
@@ -192,13 +200,14 @@ public final class SQLDB {
             while try next(), rowCount < (rows ?? Int.max) {
                 rowCount += 1
                 for i in 0..<columns {
-                    let columnData = try getString(column: i)?.data(using: String.Encoding.utf8) ?? Data()
+                    let columnData = try getValue(column: i).toData()
 
                     // we always prefix the column's hash in order to ensure that overlapping values (e.g., COL1="ABC"+COL2="DEF" == COL1="A"+COL2="BCDEF")
-                    let valueLength = "\(columnData.count)".data(using: String.Encoding.utf8) ?? Data()
+                    // NULLs are specified as -1 to distinguish from empty data
+                    let valueLength = "\(columnData?.count ?? -1)".data(using: String.Encoding.utf8) ?? Data()
                     hash.update(data: valueLength)
                     hash.update(data: tab) // length-value separated by tabs
-                    hash.update(data: columnData) // then add the data itself
+                    hash.update(data: columnData ?? Data()) // then add the data itself
 
                     if i == columns - 1 {
                         hash.update(data: nl) // lines end in a newline
@@ -256,17 +265,20 @@ public final class SQLDB {
             switch try getColumnType(column: column) {
             case .nul:
                 return .nul
+            case .integer:
+                return .integer(try getInt64(column: column))
+            case .float:
+                return .float(try getDouble(column: column))
             case .text:
                 guard let str = try getString(column: column) else {
                     return .nul
                 }
                 return .text(str)
-            case .integer:
-                return .integer(try getInt64(column: column))
-            case .float:
-                return .float(try getDouble(column: column))
             case .blob:
-                return .nul // .blob(data: getBlob(column: column)) // TODO: SKIP
+                guard let blob = try getBlob(column: column) else {
+                    return .nul
+                }
+                return .blob(blob)
             }
         }
 
@@ -360,6 +372,7 @@ public final class SQLDB {
                 if let row = try nextRow() {
                     values.append(row)
                 } else {
+                    try close()
                     break
                 }
             }
@@ -453,7 +466,6 @@ public final class SQLDB {
         }
         #endif
     }
-
 }
 
 struct CursorClosedError : Error {
@@ -503,6 +515,22 @@ public enum SQLValue {
             return dbl
         case let SQLValue.blob(bytes):
             return bytes
+        }
+    }
+
+    /// Convert this column to Data, either the underlying blob or the .utf8-encoded string form of the string or number.
+    func toData() -> Data? {
+        switch self {
+        case .nul:
+            return nil
+        case .blob(let data):
+            return data
+        case .float(let number):
+            return number.description.data(using: String.Encoding.utf8)
+        case .integer(let int):
+            return int.description.data(using: String.Encoding.utf8)
+        case .text(let str):
+            return str.data(using: String.Encoding.utf8)
         }
     }
 

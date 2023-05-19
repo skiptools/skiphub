@@ -48,6 +48,14 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
         self.rawValue = PlatformData(count: 0)
         #endif
     }
+
+    static func ==(lhs: SkipData, rhs: SkipData) -> Bool {
+        #if SKIP
+        return lhs.rawValue.contentEquals(rhs.rawValue)
+        #else
+        return lhs.rawValue == rhs.rawValue
+        #endif
+    }
 }
 
 public extension Data {

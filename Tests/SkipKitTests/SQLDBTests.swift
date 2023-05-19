@@ -133,15 +133,16 @@ final class SQLDBTests: XCTestCase {
         // index entry: -- ref#start-end semver iso8601 checksum
         // sectionhead: -- semver iso8601 prevchecksum
         let ledger = """
-        -- semantic ledger 1.0.0 sha256 https://www.example.com/ledger.sql
+        -- semantic ledger 1.0.0 1024 sha256 36ab5512815d8c8cc799f62cc8cce43fca1d7d8fc3dfc24e4ce5635c728080c4 https://www.example.com/ledger.sql
+        -- 3.0.0 2023-11-11T12:00:00Z https://www.example.com/ledgerv3.sql
         -- 2.0.2 2023-10-10T12:00:00Z #08D3-091B 70026e8c24cc9731110cc3a18edffe2cfbf3fa2542a54dcbf598578478b12159
-        -- 1.0.4 2023-09-09T12:00:00Z #1040-1050
-        -- 2.0.1 2023-08-08T12:00:00Z #FF10-FF10
-        -- 2.0.0 2023-07-07T12:00:00Z #0000-0010
-        -- 1.0.3 2023-06-06T12:00:00Z #1030-1040
-        -- 1.1.1 2023-05-05T12:00:00Z #1110-1120
-        -- 1.0.2 2023-04-04T12:00:00Z #1A20-1A30
-        -- 1.1.0 2023-03-03T12:00:00Z #1100-1110
+        -- 1.0.4 2023-09-09T12:00:00Z #1040-1050 36ab5512815d8c8cc799f62cc8cce43fca1d7d8fc3dfc24e4ce5635c728080c4
+        -- 2.0.1 2023-08-08T12:00:00Z #FF10-FF10 b6dee10b0424ecedb0d7d144ddb650e86256a9fead94f1719f4f6445dbdd6c78
+        -- 2.0.0 2023-07-07T12:00:00Z #0000-0010 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        -- 1.0.3 2023-06-06T12:00:00Z #1030-1040 8dc662d02128554cddd7b301739be87826cee62840e7658ec7228518afc8e8da
+        -- 1.1.1 2023-05-05T12:00:00Z #1110-1120 ded8a202b0bab7326386959d93b1827bca001d9b008d100fbf34572d17bfe14c
+        -- 1.0.2 2023-04-04T12:00:00Z #1A20-1A30 1465c9217724f4544792fc609f31aa3cd4a50cf91fefc02831dd0f86397f10f7
+        -- 1.1.0 2023-03-03T12:00:00Z #1100-1110 88adaac88d0472ba94b4b7a11390f1b38526110c82ba6232ced7cec343bb0159
         -- 1.0.1 2023-02-02T12:00:00Z #1010-1020 XXXX+0235dcaf204f405dd91eaeb9b081795d0f468a283f430bbe568948d2c2e
         -- 1.0.0 2023-01-01T12:00:00Z #01F6-022B 5a77e0235dcaf204f405dd91eaeb9b081795d0f468a283f430bbe568948d2c2e
 
@@ -189,17 +190,17 @@ final class SQLDBTests: XCTestCase {
         let ledgerLines = ledger.components(separatedBy: "\n")
 
 
-        let v100 = 13...14 // 2023-01-01T12:00:00Z
-        let v101 = 15...16 // 2023-02-02T12:00:00Z
-        let v102 = 17...18 // 2023-04-04T12:00:00Z
-        let v103 = 19...20 // 2023-06-06T12:00:00Z
-        let v104 = 21...24 // 2023-09-09T12:00:00Z
-        let v110 = 25...28 // 2023-03-03T12:00:00Z
-        let v111 = 29...33 // 2023-05-05T12:00:00Z
-        let v200 = 34...40 // 2023-07-07T12:00:00Z
-        let v200a = 41...47 // savepoint block of v200
-        let v201 = 48...49 // 2023-08-08T12:00:00Z
-        let v202 = 50...51 // 2023-10-10T12:00:00Z
+        let v100 = 14...15 // 2023-01-01T12:00:00Z
+        let v101 = 16...17 // 2023-02-02T12:00:00Z
+        let v102 = 18...19 // 2023-04-04T12:00:00Z
+        let v103 = 20...21 // 2023-06-06T12:00:00Z
+        let v104 = 22...25 // 2023-09-09T12:00:00Z
+        let v110 = 26...29 // 2023-03-03T12:00:00Z
+        let v111 = 30...34 // 2023-05-05T12:00:00Z
+        let v200 = 35...41 // 2023-07-07T12:00:00Z
+        let v200a = 42...48 // savepoint block of v200
+        let v201 = 49...50 // 2023-08-08T12:00:00Z
+        let v202 = 51...52 // 2023-10-10T12:00:00Z
 
         let sequentialOrder = [
             v100, // 2023-01-01T12:00:00Z
@@ -310,9 +311,9 @@ final class SQLDBTests: XCTestCase {
                     XCTAssertEqual("6fd76e609ce51e276d0a95d66a6066943dba82c66d98bdc9421db89ed8d4b258", try conn.query(sql: q).digest(rows: 2).1.hex())
                     XCTAssertEqual("ec87e1176496724ff728b4ff13802bc887e22dff41ab495942a323077a7a4a0f", try conn.query(sql: q).digest(rows: 3).1.hex())
                     XCTAssertEqual("a59b116211491b48f0d4f8f639ac22b793e2daefb54c81112bb745c9bcb0ffcd", try conn.query(sql: q).digest(rows: 4).1.hex())
-                    XCTAssertEqual("079f78cadc9d49a0ad1a6c12cb1783c894aabd100299f44393e926fe38dea215", try conn.query(sql: q).digest(rows: 5).1.hex())
-                    XCTAssertEqual("919ac94d768dcf5cfca2d41d65ba34ff7a19a32ede533c6292238250ef65305c", try conn.query(sql: q).digest(rows: 6).1.hex())
-                    XCTAssertEqual("919ac94d768dcf5cfca2d41d65ba34ff7a19a32ede533c6292238250ef65305c", try conn.query(sql: q).digest().1.hex())
+                    XCTAssertEqual("5cf50e249c2d4ca3f53f34937b00a98a83bad808a4fa76b27a9f85a3cd044496", try conn.query(sql: q).digest(rows: 5).1.hex())
+                    XCTAssertEqual("666cbb931dc99d8bfc4885b22727d2676921873a72a66d9f7935c44b65e36e78", try conn.query(sql: q).digest(rows: 6).1.hex())
+                    XCTAssertEqual("666cbb931dc99d8bfc4885b22727d2676921873a72a66d9f7935c44b65e36e78", try conn.query(sql: q).digest().1.hex())
                 }
             }
 
@@ -325,77 +326,156 @@ final class SQLDBTests: XCTestCase {
             }
 
             /// Returns the SQL for all the schema creation statements
-            func schemaSQL() throws -> [(table: String?, sql: String?)] {
+            func schemaSQL() throws -> [(tableName: String, createSQL: String, selectSQL: String)] {
+                // note: "sqlite_schema" does not exist on Android
                 let q = try conn.query(sql: "SELECT tbl_name, sql FROM sqlite_master")
                 defer { try? q.close() }
-                let columns = try q.getColumnNames()
+                let results: [(tableName: String, createSQL: String, selectSQL: String)?] = try q.rows().map({ row in
+                    guard let tableName = row.first?.textValue else {
+                        return nil
+                    }
+                    // known system tables to avoid
+                    if tableName == "android_metadata" {
+                        return nil
+                    }
+                    guard let tableSQL = row.last?.textValue else {
+                        return nil
+                    }
 
-                return try q.rows().map({ ($0.first?.textValue, $0.last?.textValue) })
+                    let c = try conn.query(sql: "PRAGMA table_info('\(tableName)');")
+                    defer { try? c.close() }
+
+                    var select = "SELECT "
+                    for (index, row) in try c.rows().enumerated() {
+                        if index > 0 { select += ", " }
+                        // cid|name|type|notnull|dflt_value|pk
+                        if row.count < 3 { continue }
+                        guard let name = row[1].textValue else { continue }
+                        select += "\"\(name)\""
+                    }
+                    select += " FROM \"\(tableName)\""
+                    return (tableName: tableName, createSQL: tableSQL, selectSQL: select)
+                })
+
+                return results.compactMap({ $0 })
             }
 
-            #if !SKIP
-            func checkHashChanges(minor permitSchemaChanges: Bool = false, _ updateSQL: String) throws -> Bool {
+            func verify(minor permitSchemaChanges: Bool = false, rollback: Bool? = nil, sql updateSQL: String) throws -> Bool {
+                let rollback = rollback ?? !permitSchemaChanges
                 let schema1 = try schemaSQL()
-                let tables = schema1.compactMap({ $0.table })
-                var hashes: [String: (rows: Int, digest: Data)] = [:]
-                // build up the hashes of all the known tables
-                for tableName in tables {
-                    hashes[tableName] = try conn.query(sql: "SELECT * FROM '\(tableName)'").digest()
+                let tables = schema1.compactMap({ $0.createSQL })
+                var tableHashes: [(select: String, (rows: Int, digest: Data))] = []
+                // build up the hashes of all the pre-existing tables
+                for schema in schema1 {
+                    #if !SKIP
+                    try Task.checkCancellation()
+                    #endif
+                    let digest = try conn.query(sql: schema.selectSQL).digest()
+                    tableHashes.append((schema.selectSQL, digest))
                 }
 
-                try conn.execute(sql: updateSQL)
+                #if !SKIP
+                try Task.checkCancellation()
+                #endif
+                try conn.execute(sql: "BEGIN")
+                do {
+                    try conn.execute(sql: updateSQL)
+                } catch {
+                    // rollback on error; otherwise, defer commit
+                    try conn.execute(sql: "ROLLBACK")
+                    throw error
+                }
 
-                // if we forbid schema changes, verify that the SQL did not result in any alternations to the database
+                let completeTransaction = rollback ? "ROLLBACK" : "COMMIT"
+
+                // if we forbid schema changes, verify that the SQL did not result in any alterations to the database
                 if permitSchemaChanges == false {
                     // check to see if the schema has changed as a result of the upate SQL
                     let schema2 = try schemaSQL()
 
-                    if schema1.map({ $0.sql }) != schema2.map({ $0.sql }) {
-                        return true
+                    #if !SKIP
+                    try Task.checkCancellation()
+                    #endif
+                    if schema1.map({ $0.createSQL }) != schema2.map({ $0.createSQL }) {
+                        try conn.execute(sql: completeTransaction)
+                        return false
                     }
                 }
 
                 // check the tables for hash differences
-                // TODO: permit schema additions by selecting only from the previously-seen tables
-                for tableName in tables {
-                    guard let (expectedRows, expectedDigest) = hashes[tableName] else {
-                        continue // should be impossible
-                    }
+                for (tableSelect, expected) in tableHashes {
+                    let (expectedRows, expectedDigest) = expected
+                    #if !SKIP
+                    try Task.checkCancellation()
+                    #endif
 
-                    // limit the digest to just the expected rows
-                    let (rows, digest) = try conn.query(sql: "SELECT * FROM '\(tableName)'").digest(rows: expectedRows)
+                    // re-execute the table selection, which limits the columns to the original rows (and thereby tolrates column additions)
+                    let (rows, digest) = try conn.query(sql: tableSelect).digest(rows: expectedRows)
                     if rows != expectedRows {
-                        return true
+                        try conn.execute(sql: completeTransaction)
+                        return false // throw DisallowedRowDeletionError()
                     }
                     if digest != expectedDigest {
-                        return true
+                        print("#### HASH: \(digest.hex()) != \(expectedDigest.hex())")
+                        try conn.execute(sql: completeTransaction)
+                        return false // throw DisallowedRowUpdateError()
                     }
                 }
 
-                return false
+                // no changes: we can commit the operation
+                try conn.execute(sql: "COMMIT")
+                return true
             }
 
-            try conn.execute(sql: "CREATE TABLE BAR(NUM INT, STR TEXT)")
+            do {
+                try conn.execute(sql: "BEGIN")
+                try conn.execute(sql: "CREATE TABLE BAR(NUM INT, STR TEXT)")
 
-            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (1, 'ABC')"), "insert should not change hash")
-            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')"), "insert should not change hash")
-            try XCTAssertEqual(true, checkHashChanges("UPDATE BAR SET NUM = 0"), "alterations should change hash")
-            try XCTAssertEqual(true, checkHashChanges("CREATE TABLE BAZ (ID INT)"), "schema additions should change hash")
-            try XCTAssertEqual(true, checkHashChanges("ALTER TABLE BAZ ADD COLUMN DATA BLOB"), "column additions should change hash")
-            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAZ (ID, DATA) VALUES (10, x'010101')"), "insert should not change hash")
-            try XCTAssertEqual(true, checkHashChanges(minor: true, "ALTER TABLE BAZ ADD COLUMN DBL REAL"), "alterations should not change hash for minor updates")
-            try XCTAssertEqual(false, checkHashChanges("INSERT INTO BAZ (ID, DATA, DBL) VALUES (10, x'ABABAB', 1.2345)"), "insert should not change hash")
-            try XCTAssertEqual(false, checkHashChanges("UPDATE BAZ SET DATA = DATA"), "update with no alterations should not change hash")
-            try XCTAssertEqual(true, checkHashChanges("UPDATE BAZ SET DATA = DATA + DATA"), "alterations to data columns should change hash")
-            try XCTAssertEqual(true, checkHashChanges("UPDATE BAZ SET DBL = DBL + DBL"), "alterations to real columns should change hash")
-            try XCTAssertEqual(true, checkHashChanges("UPDATE BAZ SET DATA = ID + ID"), "alterations to int columns should change hash")
+                XCTAssertEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", try conn.query(sql: "SELECT NUM,STR FROM BAR").digest().1.hex())
+                try conn.execute(sql: "INSERT INTO BAR (NUM, STR) VALUES (1, 'ABC')")
+                XCTAssertEqual("de28386bb84d67cc9416eb5410e5942a6a6045af5520c3e54f77ea9be64613e1", try conn.query(sql: "SELECT NUM,STR FROM BAR").digest().1.hex())
+                try conn.execute(sql: "INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')")
+                XCTAssertEqual("c2a0f7f8ea74a68b1dda49a4934572a4582872c2c8d343ca34541d761c0418b1", try conn.query(sql: "SELECT NUM,STR FROM BAR").digest().1.hex())
+                try conn.execute(sql: "UPDATE BAR SET NUM = 0")
+                XCTAssertEqual("951495cc2d873ea389e6c9e429d5a20045e04e5b251907947aab82f28d21bec3", try conn.query(sql: "SELECT NUM,STR FROM BAR").digest().1.hex())
 
-            XCTAssertEqual("919ac94d768dcf5cfca2d41d65ba34ff7a19a32ede533c6292238250ef65305c", try conn.query(sql: "SELECT * FROM FOO").digest().1.hex())
-            XCTAssertEqual("d1cd55abe7cee824a640bd6a292d3f6bd3c6778f1579b7a59d9077a66888fabe", try conn.query(sql: "SELECT * FROM BAZ").digest().1.hex())
+                try conn.execute(sql: "ROLLBACK")
+            }
 
-            #endif
+            for rollback in [true, false] {
+                try? conn.execute(sql: "DROP TABLE BAR")
+                try? conn.execute(sql: "DROP TABLE BAZ")
 
+                try conn.execute(sql: "CREATE TABLE BAR(NUM INT, STR TEXT)")
+
+                try XCTAssertEqual(true, verify(rollback: rollback, sql: "INSERT INTO BAR (NUM, STR) VALUES (1, 'ABC')"), "insert should not change hash")
+                try XCTAssertEqual(true, verify(rollback: rollback, sql: "INSERT INTO BAR (NUM, STR) VALUES (2, 'DEF')"), "insert should not change hash")
+                try XCTAssertEqual(false, verify(rollback: rollback, sql: "UPDATE BAR SET NUM = NUM + NUM / NUM"), "alterations should change hash")
+                try XCTAssertEqual(false, verify(rollback: rollback, sql: "UPDATE BAR SET NUM = 0 WHERE NUM != 0 OR NUM IS NULL"), "updates should change hash")
+                try XCTAssertEqual(!rollback, verify(rollback: rollback, sql: "UPDATE BAR SET NUM = 0"), "update with no changes should not change hash")
+                if rollback {
+                    try XCTAssertEqual(false, verify(rollback: rollback, sql: "UPDATE BAR SET NUM = NULL"), "div/0 should be NULL and thus unchanged")
+                }
+                try XCTAssertEqual(true, verify(minor: true, sql: "CREATE TABLE BAZ (ID INT)"), "schema additions should change hash")
+                try XCTAssertEqual(true, verify(minor: true, sql: "ALTER TABLE BAZ ADD COLUMN DATA BLOB"), "column additions should change hash")
+                try XCTAssertEqual(true, verify(rollback: rollback, sql: "INSERT INTO BAZ (ID, DATA) VALUES (10, x'010101')"), "insert should not change hash")
+                try XCTAssertEqual(true, verify(minor: true, sql: "ALTER TABLE BAZ ADD COLUMN DBL REAL"), "alterations should not change hash for minor updates")
+                try XCTAssertEqual(true, verify(rollback: rollback, sql: "INSERT INTO BAZ (ID, DATA, DBL) VALUES (10, x'0000', 1.2345)"), "insert should not change hash")
+                try XCTAssertEqual(true, verify(rollback: rollback, sql: "UPDATE BAZ SET DATA = DATA"), "update with no alterations should not change hash")
+                try XCTAssertEqual(false, verify(rollback: rollback, sql: "UPDATE BAZ SET DATA = DATA + DATA"), "alterations to data columns should change hash")
+                try XCTAssertEqual(false, verify(rollback: rollback, sql: "UPDATE BAZ SET DBL = DBL + DBL"), "alterations to real columns should change hash")
+                try XCTAssertEqual(false, verify(rollback: rollback, sql: "UPDATE BAZ SET ID = ID + ID"), "alterations to int columns should change hash")
+
+                if rollback {
+                    XCTAssertEqual("666cbb931dc99d8bfc4885b22727d2676921873a72a66d9f7935c44b65e36e78", try conn.query(sql: "SELECT * FROM FOO").digest().1.hex())
+                    XCTAssertEqual("c2a0f7f8ea74a68b1dda49a4934572a4582872c2c8d343ca34541d761c0418b1", try conn.query(sql: "SELECT * FROM BAR").digest().1.hex())
+                    XCTAssertEqual("8c88c27ecbd7b401a32026e13cc01052a6945512b76f62e86a25e983095bc99d", try conn.query(sql: "SELECT * FROM BAZ").digest().1.hex())
+                } else {
+                    XCTAssertEqual("666cbb931dc99d8bfc4885b22727d2676921873a72a66d9f7935c44b65e36e78", try conn.query(sql: "SELECT * FROM FOO").digest().1.hex())
+                    XCTAssertEqual("951495cc2d873ea389e6c9e429d5a20045e04e5b251907947aab82f28d21bec3", try conn.query(sql: "SELECT * FROM BAR").digest().1.hex())
+                    XCTAssertEqual("65dc5323321069b21129e8ee7a272ef671e8c126b84b9ab5eb408ca240d3f5b0", try conn.query(sql: "SELECT * FROM BAZ").digest().1.hex())
+                }
+            }
         }
     }
-
 }
