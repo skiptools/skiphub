@@ -18,8 +18,8 @@ import XCTest
 //#endif
 
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-class ScriptTests : XCTestCase {
-    fileprivate let logger: Logger = Logger(subsystem: "test", category: "ScriptTests")
+class JSContextTests : XCTestCase {
+    fileprivate let logger: Logger = Logger(subsystem: "test", category: "JSContextTests")
 
     fileprivate final class JSEvalException : Error {
         var exception: JSValue?

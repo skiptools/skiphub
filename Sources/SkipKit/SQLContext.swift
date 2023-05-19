@@ -18,8 +18,9 @@ import SQLite3
 import CryptoKit
 #endif
 
-/// A connection to SQLite.
-public final class SQLDB {
+/// A context for evaluating SQL Statements against a SQLite database.
+@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
+public final class SQLContext {
     private static let logger = Logger(subsystem: "skip.kit", category: "SQL")
 
     #if SKIP
@@ -34,8 +35,8 @@ public final class SQLDB {
     public private(set) var closed = false
 
     /// Creates a connection from the given URL
-    public static func open(url: URL, readonly: Bool = false) throws -> SQLDB {
-        try SQLDB(url.path, readonly: readonly)
+    public static func open(url: URL, readonly: Bool = false) throws -> SQLContext {
+        try SQLContext(url.path, readonly: readonly)
     }
 
     public init(_ filename: String = ":memory:", readonly: Bool = false) throws {
@@ -124,9 +125,9 @@ public final class SQLDB {
     }
     #endif
 
-    /// A cursor to the open result set returned by `SQLDB.query`.
+    /// A cursor to the open result set returned by `SQLContext.query`.
     public final class Cursor {
-        fileprivate let connection: SQLDB
+        fileprivate let connection: SQLContext
 
         #if SKIP
         fileprivate var cursor: android.database.Cursor
@@ -141,9 +142,9 @@ public final class SQLDB {
         /// Whether the cursor has started to be traversed
         private var opened = false
 
-        fileprivate init(_ connection: SQLDB, _ SQL: any StringProtocol, params: [SQLValue]) throws {
+        fileprivate init(_ connection: SQLContext, _ SQL: any StringProtocol, params: [SQLValue]) throws {
             self.connection = connection
-            SQLDB.logger.debug("query: \(SQL.description)")
+            SQLContext.logger.debug("query: \(SQL.description)")
 
             #if SKIP
             let bindArgs: [String?] = params.map { $0.toBindString() }
@@ -189,7 +190,6 @@ public final class SQLDB {
         /// Generates a SHA-256 hash by iterating over the remaining rows and updating a hash of each string value of the columns in order.
         ///
         /// The exact algorithm is to iterate through the remaining rows in the Cursor, then output a series of tab-delimited pair of count\tvalue for each column.
-        @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
         public func digest(rows: Int? = nil, algorithm: any HashFunction = SHA256()) throws -> (rows: Int, digest: Data) {
             var hash = algorithm
             let columns = columnCount

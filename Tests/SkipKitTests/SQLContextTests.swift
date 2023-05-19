@@ -11,9 +11,9 @@ import SkipFoundation
 
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
-final class SQLDBTests: XCTestCase {
+final class SQLContextTests: XCTestCase {
     func testCheckSQLVersion() throws {
-        let version = try SQLDB().query(sql: "SELECT sqlite_version()").nextRow(close: true)
+        let version = try SQLContext().query(sql: "SELECT sqlite_version()").nextRow(close: true)
         #if SKIP
         XCTAssertEqual("3.32.2", version?.first?.textValue) // 3.31.1 on Android 11 (API level 30)
         #else
@@ -28,7 +28,7 @@ final class SQLDBTests: XCTestCase {
         let dbname = "/tmp/demosql_\(rnd).db"
 
         print("connecting to: " + dbname)
-        let conn = try SQLDB(dbname)
+        let conn = try SQLContext(dbname)
 
         let version = try conn.query(sql: "select sqlite_version()").nextRow(close: true)?.first?.textValue
         print("SQLite version: " + (version ?? "")) // Kotlin: 3.28.0 Swift: 3.39.5
@@ -114,7 +114,7 @@ final class SQLDBTests: XCTestCase {
 
     func testConnection() throws {
         let url: URL = URL.init(fileURLWithPath: "/tmp/testConnection.db", isDirectory: false)
-        let conn: SQLDB = try SQLDB.open(url: url)
+        let conn: SQLContext = try SQLContext.open(url: url)
         //XCTAssertEqual(1.0, try conn.query(sql: "SELECT 1.0").singleValue()?.floatValue)
         //XCTAssertEqual(3.5, try conn.query(sql: "SELECT 1.0 + 2.5").singleValue()?.floatValue)
         conn.close()
@@ -259,7 +259,7 @@ final class SQLDBTests: XCTestCase {
             temporalOrder,
             optimalOrder,
         ] {
-            let conn: SQLDB = try SQLDB()
+            let conn: SQLContext = try SQLContext()
             defer { conn.close() }
             try conn.execute(sql: "BEGIN TRANSACTION")
 
@@ -416,7 +416,6 @@ final class SQLDBTests: XCTestCase {
                         return false // throw DisallowedRowDeletionError()
                     }
                     if digest != expectedDigest {
-                        print("#### HASH: \(digest.hex()) != \(expectedDigest.hex())")
                         try conn.execute(sql: completeTransaction)
                         return false // throw DisallowedRowUpdateError()
                     }
