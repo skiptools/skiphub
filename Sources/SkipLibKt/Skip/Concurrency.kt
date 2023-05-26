@@ -50,3 +50,8 @@ class TaskPriority(override val rawValue: Int): RawRepresentable<Int> {
         val background = TaskPriority(9)
     }
 }
+
+suspend fun <T, R> T.mainactor(perform: suspend (T) -> R): R {
+    //~~~ MainActor.run equivalent
+    return perform(this)
+}
