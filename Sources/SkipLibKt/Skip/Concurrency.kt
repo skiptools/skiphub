@@ -31,6 +31,13 @@ class Task<T> {
             operation: suspend () -> T): Task<T> {
             return Task(priority, Dispatchers.Default, operation)
         }
+
+        //~~~
+        suspend fun <T> run(operation: suspend () -> T): T {
+            return withContext(Dispatchers.Default) {
+                operation()
+            }
+        }
     }
 }
 

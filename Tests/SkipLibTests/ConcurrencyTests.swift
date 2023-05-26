@@ -28,15 +28,10 @@ final class ConcurrencyTests: XCTestCase {
         let task1 = Task {
             return await asyncInt()
         }
-        // SKIP REPLACE: val task2 = Task.detached l@{ return@l asyncInt2() }
         let task2 = Task.detached {
-            // code transpiled as: val task2 = Task.detached l@{ return@l this.asyncInt2() }
-            // error: “Not enough information to infer type variable T”
-            // "self"/"this" mismatch
             return await self.asyncInt2()
         }
         let value1 = await task1.value
-        // SKIP REPLACE: val value2 = task2.value()
         let value2 = await task2.value
         XCTAssertEqual(value1, 100)
         XCTAssertEqual(value2, 200)
