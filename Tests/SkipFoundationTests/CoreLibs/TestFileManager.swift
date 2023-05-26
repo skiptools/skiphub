@@ -1023,9 +1023,6 @@ class TestFileManager : XCTestCase {
     }
     
     func test_resolvingSymlinksInPath() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         try withTemporaryDirectory { (temporaryDirectoryURL, _) in
             // Initialization
             var baseURL = temporaryDirectoryURL
@@ -1038,17 +1035,18 @@ class TestFileManager : XCTestCase {
             baseURL.resolveSymlinksInPath()
             baseURL.standardize()
 
-            let link1URL = baseURL.appendingPathComponent("link1")
-            let link2URL = baseURL.appendingPathComponent("link2")
-            let link3URL = baseURL.appendingPathComponent("link3")
-            let testFileURL = baseURL.appendingPathComponent("test").standardized.absoluteURL
+            let link1URL: URL = baseURL.appendingPathComponent("link1")
+            let link2URL: URL = baseURL.appendingPathComponent("link2")
+            let link3URL: URL = baseURL.appendingPathComponent("link3")
+            let testFileURL: URL = baseURL.appendingPathComponent("test").standardized.absoluteURL
 
             try FileManager.default.removeItem(at: baseURL)
 
             // A) Check non-symbolic linking resolution
             try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: true)
+            #if !SKIP
             try testData.write(to: testFileURL)
-            let resolvedURL_A = testFileURL.resolvingSymlinksInPath().standardized.absoluteURL
+            let resolvedURL_A: URL = testFileURL.resolvingSymlinksInPath().standardized.absoluteURL
             XCTAssertEqual(resolvedURL_A.path, testFileURL.path)
             try FileManager.default.removeItem(at: baseURL)
 
@@ -1056,7 +1054,7 @@ class TestFileManager : XCTestCase {
             try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: true)
             try testData.write(to: testFileURL)
             try FileManager.default.createSymbolicLink(at: link1URL, withDestinationURL: testFileURL)
-            let resolvedURL_B = link1URL.resolvingSymlinksInPath().standardized.absoluteURL
+            let resolvedURL_B: URL = link1URL.resolvingSymlinksInPath().standardized.absoluteURL
             XCTAssertEqual(resolvedURL_B.path, testFileURL.path)
             try FileManager.default.removeItem(at: baseURL)
 
@@ -1068,15 +1066,17 @@ class TestFileManager : XCTestCase {
             try testData.write(to: testFileURL)
             try FileManager.default.createSymbolicLink(at: link2URL, withDestinationURL: testFileURL)
             try FileManager.default.createSymbolicLink(at: link1URL, withDestinationURL: link2URL)
-            let resolvedURL_C = link1URL.resolvingSymlinksInPath().standardized.absoluteURL
+            let resolvedURL_C: URL = link1URL.resolvingSymlinksInPath().standardized.absoluteURL
             XCTAssertEqual(resolvedURL_C.path, testFileURL.path)
 
             // C-2) And that FileManager.destinationOfSymbolicLink(atPath:) does not recursively resolves them
             let destinationOfSymbolicLink1 = try FileManager.default.destinationOfSymbolicLink(atPath: link1URL.path)
-            let destinationOfSymbolicLink1URL = URL(fileURLWithPath: destinationOfSymbolicLink1).standardized.absoluteURL
+            let destinationOfSymbolicLink1URL: URL = URL(fileURLWithPath: destinationOfSymbolicLink1).standardized.absoluteURL
             XCTAssertEqual(destinationOfSymbolicLink1URL.path, link2URL.path)
             try FileManager.default.removeItem(at: baseURL)
+            #endif
 
+            #if !SKIP
             #if !os(Windows)
             // D) Check infinite recursion loops are stopped and the function returns the intial symlink
             //
@@ -1088,8 +1088,8 @@ class TestFileManager : XCTestCase {
             let resolvedURL_D = link1URL.resolvingSymlinksInPath()
             XCTAssertEqual(resolvedURL_D.lastPathComponent, link1URL.lastPathComponent)
             #endif
+            #endif
         }
-        #endif // !SKIP
     }
 
     func test_homedirectoryForUser() {

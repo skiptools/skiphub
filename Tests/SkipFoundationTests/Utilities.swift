@@ -745,3 +745,16 @@ public func withTemporaryDirectory<R>(functionName: String = #function, block: (
 
 #endif
 
+#if SKIP
+// withTemporaryDirectory variant without #function support; the directory will not be deterministic
+public func withTemporaryDirectory<R>(block: (URL, String) throws -> R) throws -> R {
+    let tmpDir = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(NSUUID().uuidString)
+    let fm = FileManager.default
+    try? fm.removeItem(at: tmpDir)
+    try fm.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+    defer { try? fm.removeItem(at: tmpDir) }
+
+    return try block(tmpDir, tmpDir.path)
+}
+#endif
+

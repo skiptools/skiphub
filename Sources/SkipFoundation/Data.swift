@@ -37,6 +37,14 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
         self.rawValue = skipData.rawValue
     }
 
+    #if SKIP
+    public init(_ bytes: [Int]) {
+        self.rawValue = PlatformData(size: bytes.count, init: {
+            bytes[$0].toByte()
+        })
+    }
+    #endif
+
     var description: String {
         return rawValue.description
     }

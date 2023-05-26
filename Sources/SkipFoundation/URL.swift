@@ -171,7 +171,7 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// A version of the URL with any instances of “..” or “.” removed from its path.
     public var standardized: SkipURL {
         #if SKIP
-        fatalError("TODO: implement standardized")
+        return SkipURL(toPath().normalize().toUri().toURL())
         #else
         return Self(foundationURL.standardized as PlatformURL)
         #endif
@@ -254,10 +254,18 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
         #endif
     }
 
+    public mutating func standardize() {
+        #if SKIP
+        self = standardized
+        #else
+        rawValue.standardize()
+        #endif
+    }
+
     /// The absolute URL.
     public var absoluteURL: SkipURL {
         #if SKIP
-        fatalError("TODO: implement absoluteURL")
+        return self
         #else
         return Self(foundationURL.absoluteURL as PlatformURL)
         #endif
@@ -332,6 +340,9 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Resolves any symlinks in the path of a file URL.
     public func resolvingSymlinksInPath() -> SkipURL {
         #if SKIP
+        if isFileURL == false {
+            return self
+        }
         let originalPath = toPath()
         if !java.nio.file.Files.isSymbolicLink(originalPath) {
             return self // not a link
@@ -341,6 +352,14 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
         }
         #else
         return Self(foundationURL.resolvingSymlinksInPath() as PlatformURL)
+        #endif
+    }
+
+    public mutating func resolveSymlinksInPath() {
+        #if SKIP
+        self = resolvingSymlinksInPath()
+        #else
+        rawValue.resolveSymlinksInPath()
         #endif
     }
 
