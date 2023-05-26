@@ -32,6 +32,25 @@ public typealias NSString = String
 public typealias NSURL = SkipURL
 public typealias NSUUID = SkipUUID
 
+public struct ObjCBool : RawRepresentable {
+    public var rawValue: Bool
+
+    init(rawValue: Bool) {
+        self.rawValue = rawValue
+    }
+
+    init(_ rawValue: Bool) {
+        self.rawValue = rawValue
+    }
+
+    init(booleanLiteral: Bool) {
+        self.rawValue = booleanLiteral
+    }
+
+    public var boolValue: Bool {
+        return rawValue
+    }
+}
 
 // MARK: Foundation Stubs
 

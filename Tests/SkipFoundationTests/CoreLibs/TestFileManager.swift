@@ -30,9 +30,6 @@ class TestFileManager : XCTestCase {
 #endif
 
     func test_NSTemporaryDirectory() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         #if os(Windows)
         let validPathSeps: [Character] = ["\\", "/"]
         #else
@@ -41,13 +38,9 @@ class TestFileManager : XCTestCase {
         
         let tempDir = NSTemporaryDirectory()
         XCTAssertTrue(validPathSeps.contains(where: { tempDir.hasSuffix(String($0)) }), "Temporary directory path must end with path separator")
-        #endif // !SKIP
     }
 
     func test_createDirectory() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
         
@@ -62,7 +55,7 @@ class TestFileManager : XCTestCase {
         // Ensure attempting to create the directory again fails gracefully.
         XCTAssertNil(try? fm.createDirectory(atPath: path, withIntermediateDirectories:false, attributes:nil))
 
-        var isDir: ObjCBool = false
+        var isDir: ObjCBool = ObjCBool(false)
         let exists = fm.fileExists(atPath: path, isDirectory: &isDir)
         XCTAssertTrue(exists)
         XCTAssertTrue(isDir.boolValue)
@@ -72,8 +65,6 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up file")
         }
-        
-        #endif // !SKIP
     }
     
     func test_createFile() {

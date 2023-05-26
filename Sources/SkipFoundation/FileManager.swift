@@ -42,8 +42,10 @@ extension SkipFileManager {
         try rawValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
         // TODO: attributes
-        if (java.io.File(url.path).mkdir() != true) {
-            throw UnableToCreateDirectory(path: url.path)
+        if withIntermediateDirectories == true {
+            java.nio.file.Files.createDirectories(url.toPath())
+        } else {
+            java.nio.file.Files.createDirectory(url.toPath())
         }
         #endif
     }
@@ -52,7 +54,12 @@ extension SkipFileManager {
         #if !SKIP
         return try rawValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
-        fatalError("SkipFileManager.createDirectory unavailable")
+        // TODO: attributes
+        if withIntermediateDirectories == true {
+            java.nio.file.Files.createDirectories(java.nio.file.Paths.get(path))
+        } else {
+            java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path))
+        }
         #endif
     }
 
@@ -112,6 +119,20 @@ extension SkipFileManager {
         return rawValue.fileExists(atPath: path)
         #else
         return java.nio.file.Files.exists(java.nio.file.Paths.get(path))
+        #endif
+    }
+
+    public func fileExists(atPath path: String, isDirectory: inout ObjCBool) -> Bool {
+        #if !SKIP
+        return rawValue.fileExists(atPath: path, isDirectory: &isDirectory)
+        #else
+        let p = java.nio.file.Paths.get(path)
+        if java.nio.file.Files.exists(p) {
+            isDirectory = ObjCBool(java.nio.file.Files.isDirectory(p))
+            return true
+        } else {
+            return false
+        }
         #endif
     }
 
