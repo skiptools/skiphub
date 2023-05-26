@@ -116,6 +116,19 @@ extension SkipFileManager {
         }
         #endif
     }
+
+    public func contentsOfDirectory(at url: SkipURL, includingPropertiesForKeys: [URLResourceKey]?) throws -> [SkipURL] {
+        #if !SKIP
+        return try rawValue.contentsOfDirectory(at: url.rawValue, includingPropertiesForKeys: includingPropertiesForKeys)
+            .map({ SkipURL($0) })
+        #else
+        // https://developer.android.com/reference/kotlin/java/nio/file/Files
+        let files = java.nio.file.Files.list(java.nio.file.Paths.get(url.rawValue.toURI())).collect(java.util.stream.Collectors.toList())
+
+        let contents = files.map { SkipURL($0.toUri().toURL()) }
+        return Array(contents)
+        #endif
+    }
 }
 
 #if SKIP

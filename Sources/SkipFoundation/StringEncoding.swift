@@ -15,17 +15,20 @@ extension String {
         return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_8))
     }
 
-    //public var utf16: Data {
-    //    return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_16))
-    //}
+    public var utf16: Data {
+        return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_16))
+    }
 
     public func replacingOccurrences(of search: String, with replacement: String) -> String {
         return replace(search, replacement)
     }
 
+    public func split(separator: StringProtocol) -> [String] {
+        return Array(split(separator.description, ignoreCase: false))
+    }
+
     public func components(separatedBy separator: String) -> [String] {
-        // SKIP REPLACE: return Array(split(separator))
-        return []
+        return Array(split(separator, ignoreCase: false))
     }
 }
 

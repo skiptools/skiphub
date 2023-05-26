@@ -1,0 +1,4 @@
+// Localized Korean (한국어) strings
+
+/* Greeting Message */
+"Hello" = "안녕하세요";

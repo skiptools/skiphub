@@ -1,0 +1,7 @@
+// Localized French (français) strings
+
+/* Greeting Message */
+"Hello" = "Bonjour";
+
+/* Personalized Greeting Message */
+"Hi %@" = "Bonjour %@";

@@ -73,7 +73,11 @@ fileprivate extension String {
         #if !SKIP
         try write(to: url.foundationURL, atomically: atomically, encoding: encoding)
         #else
-        url.toFile().writeText(self, encoding.rawValue)
+        if atomically {
+            java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, java.nio.file.StandardOpenOption.WRITE, java.nio.file.StandardOpenOption.DSYNC)
+        } else {
+            java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, java.nio.file.StandardOpenOption.WRITE)
+        }
         #endif
     }
 }
@@ -83,7 +87,7 @@ fileprivate extension Data {
         #if !SKIP
         try write(to: url.foundationURL)
         #else
-        url.toFile().writeBytes(rawValue)
+        java.nio.file.Files.write(url.toPath(), rawValue, java.nio.file.StandardOpenOption.WRITE)
         #endif
     }
 }

@@ -191,7 +191,7 @@ extension GradleHarness {
             // adb shell am start -n app.demo/.MainActivity
             let logcat = adb + [
                 "logcat",
-                "-T", "100", // start with only the 100 most recent entries
+                "-T", "1000", // start with only the 1000 most recent entries
                 // "-v", "time",
                 // "-d", // dump then exit
             ]

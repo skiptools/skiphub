@@ -6,32 +6,56 @@
 #if !SKIP
 import struct Foundation.LocalizedStringResource
 @available(macOS 13, iOS 16, tvOS 16, watchOS 8, *)
-typealias LocalizedStringResource = Foundation.LocalizedStringResource
+public typealias LocalizedStringResource = Foundation.LocalizedStringResource
 #else
-typealias LocalizedStringResource = SkipLocalizedStringResource
+public typealias LocalizedStringResource = SkipLocalizedStringResource
 #endif
 
 
-final class SkipLocalizedStringResource {
+// override the Kotlin type to be public while keeping the Swift version internal:
+// SKIP DECLARE: class SkipLocalizedStringResource
+@available(macOS 13, iOS 16, tvOS 16, watchOS 8, *)
+internal final class SkipLocalizedStringResource {
     public let key: String
     public let defaultValue: String? // TODO: String.LocalizationValue
     public let table: String?
     public var locale: SkipLocale?
-    public var bundle: SkipBundle? // TODO: LocalizedStringResource.BundleDescription
+    public var bundle: BundleDescription?
+    public var comment: String?
 
-    // SKIP REPLACE: constructor(key: String, defaultValue: String? = null, table: String? = null, locale: SkipLocale? = null, bundle: SkipBundle? = null) { this.key = key; this.defaultValue = defaultValue; this.table = table; this.locale = locale; this.bundle = bundle; }
-    init(key: String, defaultValue: String, table: String?, locale: SkipLocale, bundle: SkipBundle) {
+    public init(_ key: String, defaultValue: String? = nil, table: String? = nil, locale: SkipLocale? = nil, bundle: BundleDescription? = nil, comment: String? = nil) {
         self.key = key
         self.defaultValue = defaultValue
         self.table = table
         self.locale = locale
         self.bundle = bundle
+        self.comment = comment
     }
 
+    public enum BundleDescription: CustomStringConvertible {
+        case main
+        case forClass(AnyClass)
+        case atURL(URL)
 
+        public var description: String {
+            switch self {
+            case .main: return "bundle: main"
+            case .forClass(let c): return "bundle: \(c)"
+            case .atURL(let url): return "bundle: \(url)"
+            }
+        }
+    }
 }
 
 #if SKIP
+
+public extension LocalizedStringResource {
+    public typealias BundleDescription = SkipLocalizedStringResource.LocalizedStringResource
+}
+
+public func String(localized: LocalizedStringResource) -> String {
+    fatalError("TODO: String(localized:)")
+}
 
 // SKXX INSERT: public operator fun SkipLocalizedStringResource.Companion.invoke(contentsOf: URL): SkipLocalizedStringResource { return SkipLocalizedStringResource(TODO) }
 

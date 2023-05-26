@@ -23,17 +23,18 @@ public func SkipFoundationPublicModuleName() -> String {
 // These are the types names that are sufficient for the core foundation
 // tests to compile and will eventually be implemented in SkipFoundation
 
+//internal class FoundationModuleClass {
+//}
+
 #if SKIP
 
+public typealias AnyClass = java.lang.Class<Any>
 public typealias NSString = String
 public typealias NSURL = SkipURL
 public typealias NSUUID = SkipUUID
 
 
 // MARK: Foundation Stubs
-
-public protocol AnyClass {
-}
 
 internal protocol SocketPort {
 }

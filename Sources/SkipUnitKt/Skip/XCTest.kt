@@ -51,8 +51,8 @@ interface XCTestCase {
 
     fun XCTAssertNil(a: Any?): Unit = org.junit.Assert.assertNull(a)
     fun XCTAssertNil(a: Any?, msg: String): Unit = org.junit.Assert.assertNull(msg, a)
-    fun XCTAssertNotNil(a: Any?): Unit = org.junit.Assert.assertNotNull(a)
-    fun XCTAssertNotNil(a: Any?, msg: String): Unit = org.junit.Assert.assertNotNull(msg, a)
+	fun <T> XCTAssertNotNil(a: T?): T { org.junit.Assert.assertNotNull(a); return a!! }
+	fun <T> XCTAssertNotNil(a: T?, msg: String): T { org.junit.Assert.assertNotNull(msg, a); return a!! }
 
     fun XCTAssertIdentical(a: Any?, b: Any?): Unit = org.junit.Assert.assertSame(b, a)
     fun XCTAssertIdentical(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertSame(msg, b, a)

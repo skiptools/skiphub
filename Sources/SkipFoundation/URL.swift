@@ -15,6 +15,7 @@ public typealias URL = Foundation.URL
 internal typealias PlatformURL = Foundation.URL
 #endif
 
+
 // override the Kotlin type to be public while keeping the Swift version internal:
 // SKIP DECLARE: class SkipURL: RawRepresentable<PlatformURL>, MutableStruct
 internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
@@ -71,6 +72,13 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     public var description: String {
         return rawValue.description
     }
+
+    #if SKIP
+    /// Converts this URL to a java.nio.file.Path
+    public func toPath() -> java.nio.file.Path {
+        return java.nio.file.Paths.get(rawValue.toURI())
+    }
+    #endif
 
     #if !SKIP
     /// The base URL. It is provided as a member in SKIP but a calculated property in Swift
@@ -181,7 +189,7 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// The last path component of the URL, or an empty string if the path is an empty string.
     public var lastPathComponent: String {
         #if SKIP
-        return rawValue.path.split("/").last()
+        return pathComponents.last()
         #else
         return foundationURL.lastPathComponent
         #endif
@@ -190,7 +198,12 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// The path extension of the URL, or an empty string if the path is an empty string.
     public var pathExtension: String {
         #if SKIP
-        return lastPathComponent?.split(".")?.last() ?? ""
+        let parts = Array((lastPathComponent ?? "").split("."))
+        if parts.count >= 2 {
+            return parts.last!
+        } else {
+            return ""
+        }
         #else
         return foundationURL.pathExtension
         #endif
@@ -205,17 +218,10 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
         #endif
     }
 
-    #if SKIP
-    // Convert this URL into a java.ui.File
-    public func toFile() -> java.io.File {
-        java.io.File(rawValue.toURI())
-    }
-    #endif
-
     /// The path components of the URL, or an empty array if the path is an empty string.
     public var pathComponents: [String] {
         #if SKIP
-        fatalError("TODO: implement pathComponents")
+        return Array(rawValue.path.split("/")).filter({ !$0.isEmpty })
         #else
         return foundationURL.pathComponents
         #endif
@@ -260,7 +266,10 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Returns a URL by appending the specified path component to self.
     public func appendingPathComponent(_ pathComponent: String) -> SkipURL {
         #if SKIP
-        fatalError("TODO: implement appendingPathComponent")
+        var url = self.rawValue.toExternalForm()
+        if !url.hasSuffix("/") { url = url + "/" }
+        url = url + pathComponent
+        return SkipURL(rawValue: PlatformURL(url))
         #else
         return Self(foundationURL.appendingPathComponent(pathComponent) as PlatformURL)
         #endif
@@ -269,7 +278,10 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Returns a URL by appending the specified path component to self.
     public func appendingPathComponent(_ pathComponent: String, isDirectory: Bool) -> SkipURL {
         #if SKIP
-        fatalError("TODO: implement appendingPathComponent")
+        var url = self.rawValue.toExternalForm()
+        if !url.hasSuffix("/") { url = url + "/" }
+        url = url + pathComponent
+        return SkipURL(rawValue: PlatformURL(url), isDirectory: isDirectory)
         #else
         return Self(foundationURL.appendingPathComponent(pathComponent, isDirectory: isDirectory) as PlatformURL)
         #endif
@@ -278,7 +290,14 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Returns a URL constructed by removing the last path component of self.
     public func deletingLastPathComponent() -> SkipURL {
         #if SKIP
-        fatalError("TODO: implement deletingLastPathComponent")
+        var url = self.rawValue.toExternalForm()
+        while url.hasSuffix("/") && !url.isEmpty {
+            url = url.dropLast(1)
+        }
+        while !url.hasSuffix("/") && !url.isEmpty {
+            url = url.dropLast(1)
+        }
+        return SkipURL(rawValue: PlatformURL(url))
         #else
         return Self(foundationURL.deletingLastPathComponent() as PlatformURL)
         #endif
@@ -296,7 +315,15 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Returns a URL constructed by removing any path extension.
     public func deletingPathExtension() -> SkipURL {
         #if SKIP
-        fatalError("TODO: implement deletingPathExtension")
+        let ext = pathExtension
+        var url = self.rawValue.toExternalForm()
+        while url.hasSuffix("/") {
+            url = url.dropLast(1)
+        }
+        if url.hasSuffix("." + ext) {
+            url = url.dropLast(ext.count + 1)
+        }
+        return SkipURL(rawValue: PlatformURL(url))
         #else
         return Self(foundationURL.deletingPathExtension() as PlatformURL)
         #endif
@@ -305,7 +332,7 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Resolves any symlinks in the path of a file URL.
     public func resolvingSymlinksInPath() -> SkipURL {
         #if SKIP
-        let originalPath = java.nio.file.Paths.get(path)
+        let originalPath = toPath()
         if !java.nio.file.Files.isSymbolicLink(originalPath) {
             return self // not a link
         } else {
@@ -320,7 +347,9 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Returns whether the URL’s resource exists and is reachable.
     public func checkResourceIsReachable() throws -> Bool {
         #if SKIP
-        fatalError("TODO: implement checkResourceIsReachable")
+        // check whether the resource can be reached by opening and closing a connection
+        rawValue.openConnection().getInputStream().close()
+        return true
         #else
         return try self.foundationURL.checkResourceIsReachable()
         #endif
@@ -372,6 +401,18 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
 // MARK: Optional Constructors
 
 #if SKIP
+
+public struct URLResourceKey : Hashable, Equatable, RawRepresentable {
+    public let rawValue: String
+
+    public init(_ rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
 
 // The optional constructors must be implemented as global functions as Kotlin has no support for failable initializers
 

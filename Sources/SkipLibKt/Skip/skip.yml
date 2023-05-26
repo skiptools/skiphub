@@ -65,6 +65,12 @@ build:
         - 'testImplementation("androidx.test:core:1.5.0")'
         - 'testImplementation("androidx.test.ext:junit:1.1.2")'
 
+    - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>()'
+      contents:
+        - block: 'kotlinOptions'
+          contents:
+            - 'suppressWarnings = true'
+
     - block: 'tasks.withType<Test>().configureEach'
       contents:
         - 'systemProperties.put("robolectric.logging", "stdout")'

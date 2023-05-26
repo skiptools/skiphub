@@ -26,20 +26,24 @@ internal struct SkipLocale : RawRepresentable, Hashable {
     }
 
     public init(identifier: String) {
-        #if !SKIP
-        self.rawValue = PlatformLocale(identifier: identifier)
+        #if SKIP
+        //self.rawValue = PlatformLocale(identifier)
+        //self.rawValue = PlatformLocale.forLanguageTag(identifier)
+        let parts = Array(identifier.split("_"))
+        if parts.count >= 2 {
+            // turn fr_FR into the language/country form
+            self.rawValue = PlatformLocale(parts.first, parts.last)
+        } else {
+            // language only
+            self.rawValue = PlatformLocale(identifier)
+        }
         #else
-        self.rawValue = PlatformLocale(identifier)
+        self.rawValue = PlatformLocale(identifier: identifier)
         #endif
     }
 }
 
-#if !SKIP
-
-extension SkipLocale {
-}
-
-#else
+#if SKIP
 
 extension SkipLocale {
     public var identifier: String {
@@ -50,6 +54,15 @@ extension SkipLocale {
     public var languageCode: String? {
         return rawValue.getLanguage()
     }
+
+    public func localizedString(forLanguageCode languageCode: String) -> String? {
+        return PlatformLocale(languageCode).getDisplayLanguage(rawValue)
+    }
+
+    public var currencySymbol: String? {
+        java.text.NumberFormat.getCurrencyInstance(rawValue).currency?.symbol
+    }
+
 }
 
 #endif

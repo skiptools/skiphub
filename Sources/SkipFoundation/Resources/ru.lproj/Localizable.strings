@@ -1,0 +1,4 @@
+// Localized Russian (русский) strings
+
+/* Greeting Message */
+"Hello" = "Привет";

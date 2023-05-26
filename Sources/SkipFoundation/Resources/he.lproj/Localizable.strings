@@ -1,0 +1,4 @@
+// Localized Hebrew (עברית) strings
+
+/* Greeting Message */
+"Hello" = "שלום";
