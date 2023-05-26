@@ -8,6 +8,7 @@ import XCTest
 // SKIP INSERT: import kotlinx.coroutines.test.*
 
 final class ConcurrencyTests: XCTestCase {
+    #if !SKIP
     /* SKIP INSERT:
      @Test fun testSimpleValue() {
         val dispatcher = StandardTestDispatcher()
@@ -28,12 +29,10 @@ final class ConcurrencyTests: XCTestCase {
         let task1 = Task {
             return await asyncInt()
         }
-        // error: “Unresolved reference: asyncInt2”
-        //let task2 = Task.detached {
-        //    return await self.asyncInt2()
-        //}
-        let task2 = Task {
-            return await asyncInt2()
+        let task2 = Task.detached {
+            // code transpiled as: val task2 = Task.detached l@{ return@l this.asyncInt2() }
+            // error: “Not enough information to infer type variable T”
+            return await self.asyncInt2()
         }
         let value1 = await task1.value
         let value2 = await task2.value
@@ -43,6 +42,7 @@ final class ConcurrencyTests: XCTestCase {
         let value3 = await asyncInt()
         XCTAssertEqual(value3, 100)
     }
+    #endif
 
     func asyncInt() async -> Int {
         return 100
