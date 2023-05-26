@@ -23,8 +23,8 @@ import CoreFoundation
 
 internal func testBundle() -> Bundle {
     #if SKIP
-    throw XCTSkip("TODO")
-    #else
+    return Bundle(for: TestBundle.self as AnyClass) // Bundle.module doesn't seem to work from top-level functions, maybe due to Kotlin loading the wron
+    #endif
     #if DARWIN_COMPATIBILITY_TESTS
     for bundle in Bundle.allBundles {
         if let bundleId = bundle.bundleIdentifier, bundleId == "org.swift.DarwinCompatibilityTests", bundle.resourcePath != nil {
@@ -35,7 +35,6 @@ internal func testBundle() -> Bundle {
     #else
     return Bundle.module
     #endif
-    #endif // !SKIP
 }
 
 
@@ -416,27 +415,25 @@ class TestBundle : XCTestCase {
     }
     
     func test_resources() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let bundle = testBundle()
         
         // bad resources
         XCTAssertNil(bundle.url(forResource: nil, withExtension: nil, subdirectory: nil))
         XCTAssertNil(bundle.url(forResource: "", withExtension: "", subdirectory: nil))
         XCTAssertNil(bundle.url(forResource: "no_such_file", withExtension: nil, subdirectory: nil))
-        
+
         // test file
         let testPlist = try XCTUnwrap(bundle.url(forResource: "Test", withExtension: "plist"))
         XCTAssertNotNil(testPlist)
         XCTAssertEqual("Test.plist", testPlist.lastPathComponent)
+        // SKIP NOTE: bundle paths not necessarily files on disk, but in the case of these test cases they are
         XCTAssert(FileManager.default.fileExists(atPath: testPlist.path))
-        
+        XCTAssertEqual(true, try? testPlist.checkResourceIsReachable())
+
         // aliases, paths
         XCTAssertEqual(testPlist.path, bundle.url(forResource: "Test", withExtension: "plist", subdirectory: nil)?.path)
         XCTAssertEqual(testPlist.path, bundle.path(forResource: "Test", ofType: "plist"))
         XCTAssertEqual(testPlist.path, bundle.path(forResource: "Test", ofType: "plist", inDirectory: nil))
-        #endif // !SKIP
     }
     
     func test_infoPlist() {

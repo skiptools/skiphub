@@ -72,11 +72,10 @@ final class LocaleTests: XCTestCase {
         let foundationBundle = _SkipFoundationBundle // Bundle(for: SkipFoundationModule.self)
 
         let localeIdentifiers = foundationBundle.localizations.sorted()
-        print("localeIdentifiers:", localeIdentifiers)
-        
-        #if false // TODO: restore
-        XCTAssertEqual(["ar", "ca", "cs", "da", "de", "el", "en", "en_AU", "en_GB", "es", "es_419", "fa", "fi", "fr", "fr_CA", "he", "hi", "hr", "hu", "id", "it", "ja", "ko", "ms", "nl", "no", "pl", "pt", "pt_PT", "ro", "ru", "sk", "sv", "th", "tr", "uk", "vi", "zh-Hans", "zh-Hant"], localeIdentifiers)
 
+        #if !SKIP
+        // TODO: the test resources list is overriding the foundation resources
+        XCTAssertEqual(["ar", "ca", "cs", "da", "de", "el", "en", "en_AU", "en_GB", "es", "es_419", "fa", "fi", "fr", "fr_CA", "he", "hi", "hr", "hu", "id", "it", "ja", "ko", "ms", "nl", "no", "pl", "pt", "pt_PT", "ro", "ru", "sk", "sv", "th", "tr", "uk", "vi", "zh-Hans", "zh-Hant"], localeIdentifiers)
         for (lang, hello) in [
             ("ar", "مرحبًا"),
             ("ca", "Hola"),

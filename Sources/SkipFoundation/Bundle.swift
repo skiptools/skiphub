@@ -10,7 +10,6 @@ public typealias PlatformBundle = Foundation.Bundle
 #else
 public typealias Bundle = SkipBundle
 public typealias PlatformBundle = AnyClass
-
 #endif
 
 // TODO: each platform should have a local Bundle.module extension created … once we can create static extensions
@@ -63,18 +62,49 @@ extension SkipBundle {
     /// FIXME: this is terribly expensive, since it generates a stack trace and dyamically loads the class;
     /// once static extensions are supported, this can be rectified with locally-generated modules.
     public static var module: SkipBundle {
-        let callingClassName = Thread.currentThread().stackTrace[2].className
+        var callingClassName = Thread.currentThread().stackTrace[2].className
+        // work-around the issue where Kotlin's top-level functions are compiled as being part of a synthesized FileNameKt file
+        if callingClassName.hasSuffix("Kt") {
+            callingClassName = callingClassName.dropLast(2)
+        }
         let callingClass = Class.forName(callingClassName)
-        return SkipBundle(callingClass as Class<Any>)
+        return SkipBundle(callingClass.kotlin as AnyClass)
+    }
+
+    /// Creates a relative path to the given bundle URL
+    private func relativeBundleURL(path: String) -> SkipURL? {
+        let loc: SkipLocalizedStringResource.BundleDescription = location
+        switch loc {
+        case .main:
+            fatalError("main bundle not supported with Skip")
+        case .atURL(let url):
+            return url.appendingPathComponent(path)
+        case .forClass(let cls):
+            do {
+                let resURL = cls.java.getResource("Resources/" + path)
+                return SkipURL(resURL)
+            } catch {
+                // getResource throws when it cannot find the resource
+                return nil
+            }
+        }
     }
 
     public var bundleURL: SkipURL {
         let loc: SkipLocalizedStringResource.BundleDescription = location
         switch loc {
-        case .main: fatalError("main bundle not supported with Skip")
-        case .atURL(let url): return url
-        case .forClass(let cls): return SkipURL(cls.getResource("Resources/SkipFoundation.plist")).deletingLastPathComponent()
+        case .main:
+            fatalError("main bundle not supported with Skip")
+        case .atURL(let url):
+            return url
+        case .forClass(let cls):
+            return relativeBundleURL("resources.lst")!
+                .deletingLastPathComponent()
         }
+    }
+
+    public var bundlePath: String {
+        bundleURL.path
     }
 
     /// Loads the resources index stored in the `resources.lst` file at the root of the resources folder.
@@ -99,11 +129,20 @@ extension SkipBundle {
         }
     }
 
-    public func url(forResource: String, withExtension: String? = nil, subdirectory: String? = nil, localization: String? = nil) -> SkipURL? {
+    public func path(forResource: String? = nil, ofType: String? = nil, inDirectory: String? = nil, forLocalization: String? = nil) -> String? {
+        url(forResource: forResource, withExtension: ofType, subdirectory: inDirectory, localization: forLocalization)?.path
+    }
+
+    public func url(forResource: String? = nil, withExtension: String? = nil, subdirectory: String? = nil, localization: String? = nil) -> SkipURL? {
         // similar behavior to: https://github.com/apple/swift-corelibs-foundation/blob/69ab3975ea636d1322ad19bbcea38ce78b65b26a/CoreFoundation/PlugIn.subproj/CFBundle_Resources.c#L1114
-        var res = forResource
-        if let withExtension = withExtension {
+        var res = forResource ?? ""
+        if let withExtension = withExtension, !withExtension.isEmpty {
+            // TODO: is `forResource` is nil, we are expected to find the first file in the bundle whose extension matches
             res += "." + withExtension
+        } else {
+            if res.isEmpty {
+                return nil
+            }
         }
         if let localization = localization {
             //let lprojExtension = "lproj" // _CFBundleLprojExtension
@@ -114,17 +153,11 @@ extension SkipBundle {
             res = subdirectory + "/" + res
         }
 
-        let url = (resourceURL ?? bundleURL).appendingPathComponent(res)
-        if (try? url.checkResourceIsReachable()) == true {
-            return url
-        } else {
-            // `url` returns nil when the resource is not reachable
-            return nil
-        }
+        return relativeBundleURL(path: res)
     }
 
     public func localizedString(forKey key: String, value: String?, table tableName: String?) -> String {
-        let table = tableName ?? "Localizable.strings"
+        let table = tableName ?? "Localizable"
 
         return key // TODO: load localization
     }
@@ -133,5 +166,5 @@ extension SkipBundle {
 
 #endif
 
-// SKIP REPLACE: internal val _SkipFoundationBundle = Bundle(for_ = SkipBundle::class.java as AnyClass)
+// SKIP REPLACE: internal val _SkipFoundationBundle = Bundle(for_ = SkipBundle::class as AnyClass)
 let _SkipFoundationBundle = Bundle.module

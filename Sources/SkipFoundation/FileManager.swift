@@ -107,6 +107,54 @@ extension SkipFileManager {
         #endif
     }
 
+    public func fileExists(atPath path: String) -> Bool {
+        #if !SKIP
+        return rawValue.fileExists(atPath: path)
+        #else
+        return java.nio.file.Files.exists(java.nio.file.Paths.get(path))
+        #endif
+    }
+
+    public func isReadableFile(atPath path: String) -> Bool {
+        #if !SKIP
+        return rawValue.isReadableFile(atPath: path)
+        #else
+        return java.nio.file.Files.isReadable(java.nio.file.Paths.get(path))
+        #endif
+    }
+
+    public func isExecutableFile(atPath path: String) -> Bool {
+        #if !SKIP
+        return rawValue.isExecutableFile(atPath: path)
+        #else
+        return java.nio.file.Files.isExecutable(java.nio.file.Paths.get(path))
+        #endif
+    }
+
+    public func isDeletableFile(atPath path: String) -> Bool {
+        #if !SKIP
+        return rawValue.isDeletableFile(atPath: path)
+        #else
+        if !isWritableFile(atPath: path) {
+            return false
+        }
+        let permissions = java.nio.file.Files.getPosixFilePermissions(java.nio.file.Paths.get(path))
+        let ownerWritable = java.nio.file.attribute.PosixFilePermissions.fromString("rw-------")
+        if !permissions.containsAll(ownerWritable) {
+            return false
+        }
+        return true
+        #endif
+    }
+
+    public func isWritableFile(atPath path: String) -> Bool {
+        #if !SKIP
+        return rawValue.isWritableFile(atPath: path)
+        #else
+        return java.nio.file.Files.isWritable(java.nio.file.Paths.get(path))
+        #endif
+    }
+
     public func removeItem(at url: SkipURL) throws {
         #if !SKIP
         try rawValue.removeItem(at: url.foundationURL)
@@ -123,7 +171,7 @@ extension SkipFileManager {
             .map({ SkipURL($0) })
         #else
         // https://developer.android.com/reference/kotlin/java/nio/file/Files
-        let files = java.nio.file.Files.list(java.nio.file.Paths.get(url.rawValue.toURI())).collect(java.util.stream.Collectors.toList())
+        let files = java.nio.file.Files.list(url.toPath()).collect(java.util.stream.Collectors.toList())
 
         let contents = files.map { SkipURL($0.toUri().toURL()) }
         return Array(contents)

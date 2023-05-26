@@ -27,8 +27,7 @@ public func SkipFoundationPublicModuleName() -> String {
 //}
 
 #if SKIP
-
-public typealias AnyClass = java.lang.Class<Any>
+public typealias AnyClass = kotlin.reflect.KClass<Any>
 public typealias NSString = String
 public typealias NSURL = SkipURL
 public typealias NSUUID = SkipUUID
