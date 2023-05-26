@@ -68,9 +68,6 @@ class TestFileManager : XCTestCase {
     }
     
     func test_createFile() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testfile\(NSUUID().uuidString)"
         
@@ -78,7 +75,7 @@ class TestFileManager : XCTestCase {
         
         XCTAssertTrue(fm.createFile(atPath: path, contents: Data(), attributes: nil))
         
-        var isDir: ObjCBool = false
+        var isDir: ObjCBool = ObjCBool(false)
         let exists = fm.fileExists(atPath: path, isDirectory: &isDir)
         XCTAssertTrue(exists)
         XCTAssertFalse(isDir.boolValue)
@@ -89,6 +86,9 @@ class TestFileManager : XCTestCase {
             XCTFail("Failed to clean up file")
         }
 
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 #if os(Windows)
         let permissions = NSNumber(value: Int16(0o700))
 #else
@@ -106,7 +106,7 @@ class TestFileManager : XCTestCase {
             guard let attributeValue = attribute.value as? NSNumber else {
                 return false
             }
-            return (attribute.key == .posixPermissions)
+            return (attribute.key == FileAttributeKey.posixPermissions)
                 && (attributeValue == permissions)
         }))
 
@@ -115,12 +115,12 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up file")
         }
-        #endif // !SKIP
+        #endif
     }
 
     func test_creatingDirectoryWithShortIntermediatePath() {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("changeCurrentDirectoryPath unavailable in SKIP")
         #else
         let fileManager = FileManager.default
         let cwd = fileManager.currentDirectoryPath
@@ -135,13 +135,10 @@ class TestFileManager : XCTestCase {
             XCTFail("Failed to create and clean up directory")
         }
         fileManager.changeCurrentDirectoryPath(cwd)
-        #endif // !SKIP
+        #endif
     }
 
     func test_moveFile() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testfile\(NSUUID().uuidString)"
         let path2 = NSTemporaryDirectory() + "testfile2\(NSUUID().uuidString)"
@@ -161,7 +158,6 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to move file: \(error)")
         }
-        #endif // !SKIP
     }
 
     func test_fileSystemRepresentation() {
@@ -236,9 +232,6 @@ class TestFileManager : XCTestCase {
     }
 
     func test_isReadableFile() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_isReadableFile\(NSUUID().uuidString)"
         defer {
@@ -250,7 +243,11 @@ class TestFileManager : XCTestCase {
             XCTAssertTrue(fm.createFile(atPath: path, contents: Data()))
 
             // test unReadable if file has no permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: path)
+            #if SKIP // octal number literals not yet supported
+            try fm.setAttributes([FileAttributeKey.posixPermissions : 0], ofItemAtPath: path)
+            #else
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: path)
+            #endif
 #if os(Windows)
             // Files are always readable on Windows
             XCTAssertTrue(fm.isReadableFile(atPath: path))
@@ -259,12 +256,15 @@ class TestFileManager : XCTestCase {
 #endif
 
             // test readable if file has read permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0400))], ofItemAtPath: path)
+            #if SKIP // octal number literals not yet supported
+            try fm.setAttributes([FileAttributeKey.posixPermissions : 256], ofItemAtPath: path)
+            #else
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0400))], ofItemAtPath: path)
+            #endif
             XCTAssertTrue(fm.isReadableFile(atPath: path))
         } catch let e {
             XCTFail("\(e)")
         }
-        #endif // !SKIP
     }
 
     func test_isWritableFile() {

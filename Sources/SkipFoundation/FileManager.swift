@@ -54,11 +54,13 @@ extension SkipFileManager {
         #if !SKIP
         return try rawValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
-        // TODO: attributes
         if withIntermediateDirectories == true {
             java.nio.file.Files.createDirectories(java.nio.file.Paths.get(path))
         } else {
             java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path))
+        }
+        if let attributes = attributes {
+            setAttributes(attributes, ofItemAtPath: path)
         }
         #endif
     }
@@ -71,19 +73,79 @@ extension SkipFileManager {
         #endif
     }
 
-    public func createFile(atPath: String, contents: Data? = nil, attributes: [FileAttributeKey : Any]? = nil) -> Bool {
+    public func setAttributes(_ attributes: [FileAttributeKey : Any], ofItemAtPath path: String) throws {
         #if !SKIP
-        return rawValue.createFile(atPath: atPath, contents: contents, attributes: attributes)
+        try rawValue.setAttributes(attributes, ofItemAtPath: path)
         #else
-        // TODO: attributes
+        for (key, value) in attributes {
+            switch key {
+            case FileAttributeKey.posixPermissions:
+                let number = (value as Number).toInt()
+                var permissions = Set<java.nio.file.attribute.PosixFilePermission>()
+                if ((number & 256) != 0) { // 0o400
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.OWNER_READ)
+                }
+                if ((number & 128) != 0) { // 0o200
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.OWNER_WRITE)
+                }
+                if ((number & 64) != 0) { // 0o100
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
+                }
+                if ((number & 32) != 0) { // 0o40
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.GROUP_READ)
+                }
+                if ((number & 16) != 0) { // 0o20
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.GROUP_WRITE)
+                }
+                if ((number & 8) != 0) { // 0o10
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE)
+                }
+                if ((number & 4) != 0) { // 0o4
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.OTHERS_READ)
+                }
+                if ((number & 2) != 0) { // 0o2
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.OTHERS_WRITE)
+                }
+                if ((number & 1) != 0) { // 0o1
+                    permissions.insert(java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE)
+                }
+                java.nio.file.Files.setPosixFilePermissions(java.nio.file.Paths.get(path), permissions.toSet())
+            default:
+                fatalError("TODO: unsupported file attribute: \(key)")
+            }
+        }
+        #endif
+    }
+
+    public func createFile(atPath path: String, contents: Data? = nil, attributes: [FileAttributeKey : Any]? = nil) -> Bool {
+        #if !SKIP
+        return rawValue.createFile(atPath: path, contents: contents, attributes: attributes)
+        #else
         do {
-            let data: Data = contents ?? Data(rawValue: PlatformData(size: 0))
-            let bytes = data.rawValue
-            java.io.File(atPath).writeBytes(bytes)
+            java.nio.file.Files.write(java.nio.file.Paths.get(path), (contents ?? Data(rawValue: PlatformData(size: 0))).rawValue)
+            if let attributes = attributes {
+                setAttributes(attributes, ofItemAtPath: path)
+            }
             return true
         } catch {
             return false
         }
+        #endif
+    }
+
+    public func moveItem(atPath path: String, toPath: String) throws {
+        #if !SKIP
+        try rawValue.moveItem(atPath: path, toPath: toPath)
+        #else
+        java.nio.file.Files.move(java.nio.file.Paths.get(path), java.nio.file.Paths.get(toPath))
+        #endif
+    }
+
+    public func moveItem(at path: SkipURL, to: SkipURL) throws {
+        #if !SKIP
+        try rawValue.moveItem(at: path.rawValue, to: to.rawValue)
+        #else
+        java.nio.file.Files.move(path.toPath(), to.toPath())
         #endif
     }
 
@@ -180,9 +242,7 @@ extension SkipFileManager {
         #if !SKIP
         try rawValue.removeItem(at: url.foundationURL)
         #else
-        if (java.io.File(url.path).delete() != true) {
-            throw UnableToDeleteFileError(path: url.path)
-        }
+        java.nio.file.Files.delete(url.toPath())
         #endif
     }
 
@@ -218,6 +278,33 @@ public func NSUserName() -> String {
 
 public struct FileAttributeKey : RawRepresentable, Hashable {
     public let rawValue: String
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public static let appendOnly: FileAttributeKey = FileAttributeKey(rawValue: "NSFileAppendOnly")
+    public static let creationDate: FileAttributeKey = FileAttributeKey(rawValue: "NSFileCreationDate")
+    public static let deviceIdentifier: FileAttributeKey = FileAttributeKey(rawValue: "NSFileDeviceIdentifier")
+    public static let extensionHidden: FileAttributeKey = FileAttributeKey(rawValue: "NSFileExtensionHidden")
+    public static let groupOwnerAccountID: FileAttributeKey = FileAttributeKey(rawValue: "NSFileGroupOwnerAccountID")
+    public static let groupOwnerAccountName: FileAttributeKey = FileAttributeKey(rawValue: "NSFileGroupOwnerAccountName")
+    public static let hfsCreatorCode: FileAttributeKey = FileAttributeKey(rawValue: "NSFileHFSCreatorCode")
+    public static let hfsTypeCode: FileAttributeKey = FileAttributeKey(rawValue: "NSFileHFSTypeCode")
+    public static let immutable: FileAttributeKey = FileAttributeKey(rawValue: "NSFileImmutable")
+    public static let modificationDate: FileAttributeKey = FileAttributeKey(rawValue: "NSFileModificationDate")
+    public static let ownerAccountID: FileAttributeKey = FileAttributeKey(rawValue: "NSFileOwnerAccountID")
+    public static let ownerAccountName: FileAttributeKey = FileAttributeKey(rawValue: "NSFileOwnerAccountName")
+    public static let posixPermissions: FileAttributeKey = FileAttributeKey(rawValue: "NSFilePosixPermissions")
+    public static let protectionKey: FileAttributeKey = FileAttributeKey(rawValue: "NSFileProtectionKey")
+    public static let referenceCount: FileAttributeKey = FileAttributeKey(rawValue: "NSFileReferenceCount")
+    public static let systemFileNumber: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemFileNumber")
+    public static let systemFreeNodes: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemFreeNodes")
+    public static let systemFreeSize: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemFreeSize")
+    public static let systemNodes: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemNodes")
+    public static let systemNumber: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemNumber")
+    public static let systemSize: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemSize")
+    public static let type: FileAttributeKey = FileAttributeKey(rawValue: "NSFileType")
+    public static let busy: FileAttributeKey = FileAttributeKey(rawValue: "NSFileBusy")
 }
 
 struct UnableToDeleteFileError : java.io.IOException {
