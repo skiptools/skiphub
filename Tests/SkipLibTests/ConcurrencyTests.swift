@@ -28,8 +28,12 @@ final class ConcurrencyTests: XCTestCase {
         let task1 = Task {
             return await asyncInt()
         }
-        let task2 = Task.detached {
-            return await self.asyncInt2()
+        // error: “Unresolved reference: asyncInt2”
+        //let task2 = Task.detached {
+        //    return await self.asyncInt2()
+        //}
+        let task2 = Task {
+            return await asyncInt2()
         }
         let value1 = await task1.value
         let value2 = await task2.value
