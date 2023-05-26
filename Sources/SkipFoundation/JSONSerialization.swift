@@ -23,17 +23,6 @@ typealias PlatformNumeric = Swift.Numeric
 
 #if SKIP
 public typealias JSONSerialization = PlatformJSONSerialization
-typealias NSNumber = java.lang.Number
-
-struct NSNull {
-}
-
-fileprivate extension java.lang.Number {
-    var doubleValue: Double { doubleValue() }
-    var intValue: Int { intValue() }
-    var longValue: Int64 { longValue() }
-}
-
 #endif
 
 

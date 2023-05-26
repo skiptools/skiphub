@@ -29,11 +29,23 @@ internal class SkipFileManager {
 }
 
 extension SkipFileManager {
+    public var temporaryDirectory: SkipURL {
+        SkipURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+    }
+    
     public func createSymbolicLink(at url: SkipURL, withDestinationURL destinationURL: SkipURL) throws {
         #if !SKIP
-        return try rawValue.createSymbolicLink(at: url.foundationURL, withDestinationURL: destinationURL.foundationURL)
+        try rawValue.createSymbolicLink(at: url.foundationURL, withDestinationURL: destinationURL.foundationURL)
         #else
-        fatalError("SkipFileManager.createSymbolicLink unavailable")
+        java.nio.file.Files.createSymbolicLink(_path(url), _path(destinationURL))
+        #endif
+    }
+
+    public func createSymbolicLink(atPath path: String, withDestinationPath destinationPath: String) throws {
+        #if !SKIP
+        try rawValue.createSymbolicLink(atPath: path, withDestinationPath: destinationPath)
+        #else
+        java.nio.file.Files.createSymbolicLink(_path(path), _path(destinationPath))
         #endif
     }
 
@@ -41,11 +53,14 @@ extension SkipFileManager {
         #if !SKIP
         try rawValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
-        // TODO: attributes
+        let p = _path(url)
         if withIntermediateDirectories == true {
-            java.nio.file.Files.createDirectories(url.toPath())
+            java.nio.file.Files.createDirectories(p)
         } else {
-            java.nio.file.Files.createDirectory(url.toPath())
+            java.nio.file.Files.createDirectory(p)
+        }
+        if let attributes = attributes {
+            try setAttributes(attributes, ofItemAtPath: p.toString())
         }
         #endif
     }
@@ -55,9 +70,9 @@ extension SkipFileManager {
         return try rawValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
         if withIntermediateDirectories == true {
-            java.nio.file.Files.createDirectories(java.nio.file.Paths.get(path))
+            java.nio.file.Files.createDirectories(_path(path))
         } else {
-            java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path))
+            java.nio.file.Files.createDirectory(_path(path))
         }
         if let attributes = attributes {
             setAttributes(attributes, ofItemAtPath: path)
@@ -65,11 +80,98 @@ extension SkipFileManager {
         #endif
     }
 
+    public func destinationOfSymbolicLink(atPath path: String) throws -> String {
+        #if !SKIP
+        return try rawValue.destinationOfSymbolicLink(atPath: path)
+        #else
+        return java.nio.file.Files.readSymbolicLink(_path(path)).toString()
+        #endif
+    }
+
     public func attributesOfItem(atPath path: String) throws -> [FileAttributeKey: Any] {
         #if !SKIP
         return try rawValue.attributesOfItem(atPath: path)
         #else
-        fatalError("SkipFileManager.attributesOfItem unavailable")
+        // As a convenience, NSDictionary provides a set of methods (declared as a category on NSDictionary) for quickly and efficiently obtaining attribute information from the returned dictionary: fileGroupOwnerAccountName(), fileModificationDate(), fileOwnerAccountName(), filePosixPermissions(), fileSize(), fileSystemFileNumber(), fileSystemNumber(), and fileType().
+
+        let p = _path(path)
+
+        var attrs: [FileAttributeKey: Any] = [FileAttributeKey: Any]()
+        let battrs = java.nio.file.Files.readAttributes(p, java.nio.file.attribute.BasicFileAttributes.self.java)
+
+        let size = battrs.size()
+        attrs[FileAttributeKey.size] = size
+        let creationTime = battrs.creationTime()
+        attrs[FileAttributeKey.creationDate] = SkipDate(PlatformDate(creationTime.toMillis()))
+        let lastModifiedTime = battrs.lastModifiedTime()
+        attrs[FileAttributeKey.modificationDate] = SkipDate(PlatformDate(creationTime.toMillis()))
+        //let lastAccessTime = battrs.lastAccessTime()
+
+        let isDirectory = battrs.isDirectory()
+        let isRegularFile = battrs.isRegularFile()
+        let isSymbolicLink = battrs.isSymbolicLink()
+        if isDirectory {
+            attrs[FileAttributeKey.type] = FileAttributeType.typeDirectory
+        } else if isSymbolicLink {
+            attrs[FileAttributeKey.type] = FileAttributeType.typeSymbolicLink
+        } else if isRegularFile {
+            attrs[FileAttributeKey.type] = FileAttributeType.typeRegular
+        } else {
+            // TODO: typeCharacterSpecial and typeBlockSpecial and typeSocket
+            attrs[FileAttributeKey.type] = FileAttributeType.typeUnknown
+        }
+
+        let fileKey = battrs.fileKey()
+        //let referenceCount = fileKey.referenceCount()
+        // attrs[FileAttributeKey.referenceCount] = 1 // TODO: is there a way to find this in Java?
+
+        let isOther = battrs.isOther()
+
+        if java.nio.file.Files.getFileAttributeView(p, java.nio.file.attribute.PosixFileAttributeView.self.java) != nil {
+            let pattrs = java.nio.file.Files.readAttributes(p, java.nio.file.attribute.PosixFileAttributes.self.java)
+            let owner = pattrs.owner()
+            let ownerName = owner.getName()
+            attrs[FileAttributeKey.ownerAccountName] = ownerName
+            //attrs[FileAttributeKey.ownerAccountID] = owner.uid
+
+            let group = pattrs.owner()
+            let groupName = group.getName()
+            attrs[FileAttributeKey.groupOwnerAccountName] = groupName
+            //attrs[FileAttributeKey.groupOwnerAccountID] = group.gid
+
+            let permissions = pattrs.permissions()
+            var perm = 0
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.OWNER_READ) {
+                perm = perm | 256
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.OWNER_WRITE) {
+                perm = perm | 128
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE) {
+                perm = perm | 64
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.GROUP_READ) {
+                perm = perm | 32
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.GROUP_WRITE) {
+                perm = perm | 16
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE) {
+                perm = perm | 8
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.OTHERS_READ) {
+                perm = perm | 4
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.OTHERS_WRITE) {
+                perm = perm | 2
+            }
+            if permissions.contains(java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE) {
+                perm = perm | 1
+            }
+            attrs[FileAttributeKey.posixPermissions] = perm
+        }
+
+        return attrs
         #endif
     }
 
@@ -109,7 +211,7 @@ extension SkipFileManager {
                 if ((number & 1) != 0) { // 0o1
                     permissions.insert(java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE)
                 }
-                java.nio.file.Files.setPosixFilePermissions(java.nio.file.Paths.get(path), permissions.toSet())
+                java.nio.file.Files.setPosixFilePermissions(_path(path), permissions.toSet())
             default:
                 fatalError("TODO: unsupported file attribute: \(key)")
             }
@@ -122,7 +224,7 @@ extension SkipFileManager {
         return rawValue.createFile(atPath: path, contents: contents, attributes: attributes)
         #else
         do {
-            java.nio.file.Files.write(java.nio.file.Paths.get(path), (contents ?? Data(rawValue: PlatformData(size: 0))).rawValue)
+            java.nio.file.Files.write(_path(path), (contents ?? Data(rawValue: PlatformData(size: 0))).rawValue)
             if let attributes = attributes {
                 setAttributes(attributes, ofItemAtPath: path)
             }
@@ -133,11 +235,27 @@ extension SkipFileManager {
         #endif
     }
 
+    public func copyItem(atPath path: String, toPath: String) throws {
+        #if !SKIP
+        try rawValue.copyItem(atPath: path, toPath: toPath)
+        #else
+        try copy(from: _path(path), to: _path(toPath), recursive: true)
+        #endif
+    }
+
+    public func copyItem(at url: SkipURL, to: SkipURL) throws {
+        #if !SKIP
+        try rawValue.copyItem(at: url.rawValue, to: to.rawValue)
+        #else
+        try copy(from: _path(url), to: _path(to), recursive: true)
+        #endif
+    }
+
     public func moveItem(atPath path: String, toPath: String) throws {
         #if !SKIP
         try rawValue.moveItem(atPath: path, toPath: toPath)
         #else
-        java.nio.file.Files.move(java.nio.file.Paths.get(path), java.nio.file.Paths.get(toPath))
+        java.nio.file.Files.move(_path(path), _path(toPath))
         #endif
     }
 
@@ -166,13 +284,101 @@ extension SkipFileManager {
         #endif
     }
 
+    #if SKIP
+
+    private func delete(path: java.nio.file.Path, recursive: Bool) throws {
+        if !recursive {
+            java.nio.file.Files.delete(path)
+        } else {
+            // doesn't necessarily traverse in depth-first order, and so cannot be used for recursive delete
+            //for file in java.nio.file.Files.walk(path) {
+            //    java.nio.file.Files.delete(file)
+            //}
+
+            /* SKIP REPLACE:
+            java.nio.file.Files.walkFileTree(path, object : java.nio.file.SimpleFileVisitor<java.nio.file.Path>() {
+                override fun visitFile(file: java.nio.file.Path, attrs: java.nio.file.attribute.BasicFileAttributes): java.nio.file.FileVisitResult {
+                    java.nio.file.Files.delete(file)
+                    return java.nio.file.FileVisitResult.CONTINUE
+                }
+
+                override fun postVisitDirectory(dir: java.nio.file.Path, exc: java.io.IOException?): java.nio.file.FileVisitResult {
+                    java.nio.file.Files.delete(dir)
+                    return java.nio.file.FileVisitResult.CONTINUE
+                }
+             })
+             */
+            fatalError("recursive delete implemented with java.nio.file.Files.walkFileTree")
+        }
+    }
+
+    private func copy(from src: java.nio.file.Path, to dest: java.nio.file.Path, recursive: Bool) throws {
+        if !recursive {
+            java.nio.file.Files.copy(src, dest)
+        } else {
+            /* SKIP REPLACE:
+            java.nio.file.Files.walkFileTree(src, object : java.nio.file.SimpleFileVisitor<java.nio.file.Path>() {
+                override fun visitFile(file: java.nio.file.Path, attrs: java.nio.file.attribute.BasicFileAttributes): java.nio.file.FileVisitResult {
+                    java.nio.file.Files.copy(from, dest.resolve(src.relativize(file)), java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.COPY_ATTRIBUTES, java.nio.file.LinkOption.NOFOLLOW_LINKS)
+                    return java.nio.file.FileVisitResult.CONTINUE
+                }
+
+                override fun preVisitDirectory(dir: java.nio.file.Path, attrs: java.nio.file.attribute.BasicFileAttributes): java.nio.file.FileVisitResult {
+                    java.nio.file.Files.createDirectories(dest.resolve(src.relativize(dir)))
+                    return java.nio.file.FileVisitResult.CONTINUE
+                }
+             })
+             */
+            fatalError("recursive copy implemented with java.nio.file.Files.walkFileTree")
+        }
+    }
+
+    private func _path(_ url: SkipURL) -> java.nio.file.Path {
+        url.toPath()
+    }
+
+    private func _path(_ path: String) -> java.nio.file.Path {
+        java.nio.file.Paths.get(path)
+    }
+    #endif
+
+    public func subpathsOfDirectory(atPath path: String) throws -> [String] {
+        #if !SKIP
+        return try rawValue.subpathsOfDirectory(atPath: path)
+        #else
+        var subpaths: [String] = []
+        let p = _path(path)
+        for file in java.nio.file.Files.walk(p) {
+            if file != p { // exclude root file
+                let relpath = p.relativize(file.normalize())
+                subpaths.append(relpath.toString())
+            }
+        }
+        return subpaths
+        #endif
+    }
+
+    public func subpaths(atPath path: String) -> [String]? {
+        #if !SKIP
+        return rawValue.subpaths(atPath: path)
+        #else
+        return try? subpathsOfDirectory(atPath: path)
+        #endif
+    }
+
     public func removeItem(atPath path: String) throws {
         #if !SKIP
         try rawValue.removeItem(atPath: path)
         #else
-        if (java.io.File(path).delete() != true) {
-            throw UnableToDeleteFileError(path: path)
-        }
+        try delete(path: _path(path), recursive: true)
+        #endif
+    }
+
+    public func removeItem(at url: SkipURL) throws {
+        #if !SKIP
+        try rawValue.removeItem(at: url.foundationURL)
+        #else
+        try delete(path: _path(url), recursive: true)
         #endif
     }
 
@@ -188,9 +394,12 @@ extension SkipFileManager {
         #if !SKIP
         return rawValue.fileExists(atPath: path, isDirectory: &isDirectory)
         #else
-        let p = java.nio.file.Paths.get(path)
-        if java.nio.file.Files.exists(p) {
-            isDirectory = ObjCBool(java.nio.file.Files.isDirectory(p))
+        let p = _path(path)
+        if java.nio.file.Files.isDirectory(p) {
+            isDirectory = ObjCBool(true)
+            return true
+        } else if java.nio.file.Files.exists(p) {
+            isDirectory = ObjCBool(false)
             return true
         } else {
             return false
@@ -202,7 +411,7 @@ extension SkipFileManager {
         #if !SKIP
         return rawValue.isReadableFile(atPath: path)
         #else
-        return java.nio.file.Files.isReadable(java.nio.file.Paths.get(path))
+        return java.nio.file.Files.isReadable(_path(path))
         #endif
     }
 
@@ -210,7 +419,7 @@ extension SkipFileManager {
         #if !SKIP
         return rawValue.isExecutableFile(atPath: path)
         #else
-        return java.nio.file.Files.isExecutable(java.nio.file.Paths.get(path))
+        return java.nio.file.Files.isExecutable(_path(path))
         #endif
     }
 
@@ -218,12 +427,12 @@ extension SkipFileManager {
         #if !SKIP
         return rawValue.isDeletableFile(atPath: path)
         #else
-        if !isWritableFile(atPath: path) {
+        let p = _path(path)
+        if !java.nio.file.Files.isWritable(p) {
             return false
         }
-        let permissions = java.nio.file.Files.getPosixFilePermissions(java.nio.file.Paths.get(path))
-        let ownerWritable = java.nio.file.attribute.PosixFilePermissions.fromString("rw-------")
-        if !permissions.containsAll(ownerWritable) {
+        // also check whether the parent path is writable
+        if !java.nio.file.Files.isWritable(p.getParent()) {
             return false
         }
         return true
@@ -234,15 +443,7 @@ extension SkipFileManager {
         #if !SKIP
         return rawValue.isWritableFile(atPath: path)
         #else
-        return java.nio.file.Files.isWritable(java.nio.file.Paths.get(path))
-        #endif
-    }
-
-    public func removeItem(at url: SkipURL) throws {
-        #if !SKIP
-        try rawValue.removeItem(at: url.foundationURL)
-        #else
-        java.nio.file.Files.delete(url.toPath())
+        return java.nio.file.Files.isWritable(_path(path))
         #endif
     }
 
@@ -252,9 +453,19 @@ extension SkipFileManager {
             .map({ SkipURL($0) })
         #else
         // https://developer.android.com/reference/kotlin/java/nio/file/Files
-        let files = java.nio.file.Files.list(url.toPath()).collect(java.util.stream.Collectors.toList())
+        let shallowFiles = java.nio.file.Files.list(_path(url)).collect(java.util.stream.Collectors.toList())
+        let contents = shallowFiles.map { SkipURL($0.toUri().toURL()) }
+        return Array(contents)
+        #endif
+    }
 
-        let contents = files.map { SkipURL($0.toUri().toURL()) }
+    public func contentsOfDirectory(atPath path: String) throws -> [String] {
+        #if !SKIP
+        return try rawValue.contentsOfDirectory(atPath: path)
+        #else
+        // https://developer.android.com/reference/kotlin/java/nio/file/Files
+        let files = java.nio.file.Files.list(_path(path)).collect(java.util.stream.Collectors.toList())
+        let contents = files.map { $0.toFile().getName() }
         return Array(contents)
         #endif
     }
@@ -274,6 +485,28 @@ public func NSHomeDirectory() -> String {
 /// The current user name.
 public func NSUserName() -> String {
     return java.lang.System.getProperty("user.name")
+}
+
+public struct FileProtectionType : RawRepresentable, Hashable {
+    public let rawValue: String
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
+
+public struct FileAttributeType : RawRepresentable, Hashable {
+    public let rawValue: String
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public static let typeDirectory: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeDirectory")
+    public static let typeRegular: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeRegular")
+    public static let typeSymbolicLink: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeSymbolicLink")
+    public static let typeSocket: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeSocket")
+    public static let typeCharacterSpecial: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeCharacterSpecial")
+    public static let typeBlockSpecial: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeBlockSpecial")
+    public static let typeUnknown: FileAttributeType = FileAttributeType(rawValue: "NSFileTypeUnknown")
 }
 
 public struct FileAttributeKey : RawRepresentable, Hashable {
@@ -304,6 +537,7 @@ public struct FileAttributeKey : RawRepresentable, Hashable {
     public static let systemNumber: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemNumber")
     public static let systemSize: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSystemSize")
     public static let type: FileAttributeKey = FileAttributeKey(rawValue: "NSFileType")
+    public static let size: FileAttributeKey = FileAttributeKey(rawValue: "NSFileSize")
     public static let busy: FileAttributeKey = FileAttributeKey(rawValue: "NSFileBusy")
 }
 

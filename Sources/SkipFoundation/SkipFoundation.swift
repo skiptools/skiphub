@@ -31,6 +31,32 @@ public typealias AnyClass = kotlin.reflect.KClass<Any>
 public typealias NSString = String
 public typealias NSURL = SkipURL
 public typealias NSUUID = SkipUUID
+public typealias NSNumber = java.lang.Number
+
+public struct NSNull {
+    public static let null = NSNull()
+    public init() {
+    }
+}
+
+public extension java.lang.Number {
+    var doubleValue: Double { doubleValue() }
+    var intValue: Int { intValue() }
+    var longValue: Int64 { longValue() }
+    var int64Value: Int64 { longValue() }
+}
+
+/// Initializing an NSNumber with a numeric value just returns the instance itself
+public func NSNumber(value: Int8) -> NSNumber { value as NSNumber }
+public func NSNumber(value: Int16) -> NSNumber { value as NSNumber }
+public func NSNumber(value: Int32) -> NSNumber { value as NSNumber }
+public func NSNumber(value: Int64) -> NSNumber { value as NSNumber }
+public func NSNumber(value: UInt8) -> NSNumber { value as NSNumber }
+public func NSNumber(value: UInt16) -> NSNumber { value as NSNumber }
+public func NSNumber(value: UInt32) -> NSNumber { value as NSNumber }
+public func NSNumber(value: UInt64) -> NSNumber { value as NSNumber }
+public func NSNumber(value: Float) -> NSNumber { value as NSNumber }
+public func NSNumber(value: Double) -> NSNumber { value as NSNumber }
 
 public struct ObjCBool : RawRepresentable {
     public var rawValue: Bool

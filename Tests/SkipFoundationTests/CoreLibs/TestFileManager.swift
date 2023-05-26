@@ -83,7 +83,7 @@ class TestFileManager : XCTestCase {
         do {
             try fm.removeItem(atPath: path)
         } catch {
-            XCTFail("Failed to clean up file")
+            XCTFail("Failed to clean up file: \(error)")
         }
 
         #if SKIP
@@ -177,9 +177,6 @@ class TestFileManager : XCTestCase {
     }
 
     func test_fileExists() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let tmpDir = fm.temporaryDirectory.appendingPathComponent("testFileExistsDir")
         let testFile = tmpDir.appendingPathComponent("testFile")
@@ -201,26 +198,26 @@ class TestFileManager : XCTestCase {
 #endif
             try fm.createSymbolicLink(atPath: dirSymLink.path, withDestinationPath: "..")
 
-            var isDirFlag: ObjCBool = false
+            var isDirFlag: ObjCBool = ObjCBool(false)
             XCTAssertTrue(fm.fileExists(atPath: tmpDir.path))
             XCTAssertTrue(fm.fileExists(atPath: tmpDir.path, isDirectory: &isDirFlag))
             XCTAssertTrue(isDirFlag.boolValue)
 
-            isDirFlag = true
+            isDirFlag = ObjCBool(true)
             XCTAssertTrue(fm.fileExists(atPath: testFile.path))
             XCTAssertTrue(fm.fileExists(atPath: testFile.path, isDirectory: &isDirFlag))
             XCTAssertFalse(isDirFlag.boolValue)
 
-            isDirFlag = true
+            isDirFlag = ObjCBool(true)
             XCTAssertTrue(fm.fileExists(atPath: goodSymLink.path))
             XCTAssertTrue(fm.fileExists(atPath: goodSymLink.path, isDirectory: &isDirFlag))
             XCTAssertFalse(isDirFlag.boolValue)
 
-            isDirFlag = true
+            isDirFlag = ObjCBool(true)
             XCTAssertFalse(fm.fileExists(atPath: badSymLink.path))
             XCTAssertFalse(fm.fileExists(atPath: badSymLink.path, isDirectory: &isDirFlag))
 
-            isDirFlag = false
+            isDirFlag = ObjCBool(true)
             XCTAssertTrue(fm.fileExists(atPath: dirSymLink.path))
             XCTAssertTrue(fm.fileExists(atPath: dirSymLink.path, isDirectory: &isDirFlag))
             XCTAssertTrue(isDirFlag.boolValue)
@@ -228,7 +225,6 @@ class TestFileManager : XCTestCase {
             XCTFail(String(describing: error))
         }
         try? fm.removeItem(atPath: tmpDir.path)
-        #endif // !SKIP
     }
 
     func test_isReadableFile() {
@@ -243,11 +239,7 @@ class TestFileManager : XCTestCase {
             XCTAssertTrue(fm.createFile(atPath: path, contents: Data()))
 
             // test unReadable if file has no permissions
-            #if SKIP // octal number literals not yet supported
-            try fm.setAttributes([FileAttributeKey.posixPermissions : 0], ofItemAtPath: path)
-            #else
             try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: path)
-            #endif
 #if os(Windows)
             // Files are always readable on Windows
             XCTAssertTrue(fm.isReadableFile(atPath: path))
@@ -256,11 +248,7 @@ class TestFileManager : XCTestCase {
 #endif
 
             // test readable if file has read permissions
-            #if SKIP // octal number literals not yet supported
-            try fm.setAttributes([FileAttributeKey.posixPermissions : 256], ofItemAtPath: path)
-            #else
             try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0400))], ofItemAtPath: path)
-            #endif
             XCTAssertTrue(fm.isReadableFile(atPath: path))
         } catch let e {
             XCTFail("\(e)")
@@ -268,9 +256,6 @@ class TestFileManager : XCTestCase {
     }
 
     func test_isWritableFile() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_isWritableFile\(NSUUID().uuidString)"
         defer {
@@ -282,22 +267,18 @@ class TestFileManager : XCTestCase {
             XCTAssertTrue(fm.createFile(atPath: path, contents: Data()))
 
             // test unWritable if file has no permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: path)
             XCTAssertFalse(fm.isWritableFile(atPath: path))
 
             // test writable if file has write permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0200))], ofItemAtPath: path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0200))], ofItemAtPath: path)
             XCTAssertTrue(fm.isWritableFile(atPath: path))
         } catch let e {
             XCTFail("\(e)")
         }
-        #endif // !SKIP
     }
 
     func test_isExecutableFile() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_isExecutableFile\(NSUUID().uuidString)"
         let exePath = path + ".exe"
@@ -311,7 +292,7 @@ class TestFileManager : XCTestCase {
             XCTAssertTrue(fm.createFile(atPath: path, contents: Data()))
 
             // test unExecutable if file has no permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : 0], ofItemAtPath: path)
             XCTAssertFalse(fm.isExecutableFile(atPath: path))
 
 #if os(Windows)
@@ -320,7 +301,7 @@ class TestFileManager : XCTestCase {
             XCTAssertFalse(fm.isExecutableFile(atPath: exePath))
 #else
             // test executable if file has execute permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0100))], ofItemAtPath: path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : 64], ofItemAtPath: path)
             XCTAssertTrue(fm.isExecutableFile(atPath: path))
 #endif
 
@@ -330,13 +311,9 @@ class TestFileManager : XCTestCase {
         } catch let e {
             XCTFail("\(e)")
         }
-        #endif // !SKIP
     }
 
     func test_isDeletableFile() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
 
         do {
@@ -351,24 +328,20 @@ class TestFileManager : XCTestCase {
             XCTAssertTrue(fm.createFile(atPath: file_path, contents: Data()))
 
             // test undeletable if parent directory has no permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: dir_path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0000))], ofItemAtPath: dir_path)
             XCTAssertFalse(fm.isDeletableFile(atPath: file_path))
 
             // test deletable if parent directory has all necessary permissions
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0755))], ofItemAtPath: dir_path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0755))], ofItemAtPath: dir_path)
             XCTAssertTrue(fm.isDeletableFile(atPath: file_path))
         }
         catch { XCTFail("\(error)") }
 
         // test against known undeletable file
         XCTAssertFalse(fm.isDeletableFile(atPath: "/dev/null"))
-        #endif // !SKIP
     }
 
     func test_fileAttributes() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "test_fileAttributes\(NSUUID().uuidString)"
 
@@ -377,54 +350,58 @@ class TestFileManager : XCTestCase {
         XCTAssertTrue(fm.createFile(atPath: path, contents: Data(), attributes: nil))
         
         do {
-            let attrs = try fm.attributesOfItem(atPath: path)
+            let attrs: [FileAttributeKey : Any] = try fm.attributesOfItem(atPath: path)
             
             XCTAssertTrue(attrs.count > 0)
             
-            let fileSize = attrs[.size] as? NSNumber
+            let fileSize = attrs[FileAttributeKey.size] as? NSNumber
             XCTAssertEqual(fileSize!.int64Value, 0)
             
-            let fileModificationDate = attrs[.modificationDate] as? Date
+            let fileModificationDate = attrs[FileAttributeKey.modificationDate] as? Date
             XCTAssertGreaterThan(Date().timeIntervalSince1970, fileModificationDate!.timeIntervalSince1970)
             
-            let filePosixPermissions = attrs[.posixPermissions] as? NSNumber
+            let filePosixPermissions = attrs[FileAttributeKey.posixPermissions] as? NSNumber
             XCTAssertNotEqual(filePosixPermissions!.int64Value, 0)
             
-            let fileReferenceCount = attrs[.referenceCount] as? NSNumber
+            #if !SKIP
+            let fileReferenceCount = attrs[FileAttributeKey.referenceCount] as? NSNumber
             XCTAssertEqual(fileReferenceCount!.int64Value, 1)
-            
-            let fileSystemNumber = attrs[.systemNumber] as? NSNumber
+
+            let fileSystemNumber = attrs[FileAttributeKey.systemNumber] as? NSNumber
             XCTAssertNotEqual(fileSystemNumber!.int64Value, 0)
             
 #if !os(Windows)
-            let fileSystemFileNumber = attrs[.systemFileNumber] as? NSNumber
+            let fileSystemFileNumber = attrs[FileAttributeKey.systemFileNumber] as? NSNumber
             XCTAssertNotEqual(fileSystemFileNumber!.int64Value, 0)
 #endif
-            
-            let fileType = attrs[.type] as? FileAttributeType
-            XCTAssertEqual(fileType!, .typeRegular)
-            
-            let fileOwnerAccountID = attrs[.ownerAccountID] as? NSNumber
+            #endif
+
+            let fileType = attrs[FileAttributeKey.type] as? FileAttributeType
+            XCTAssertEqual(fileType!, FileAttributeType.typeRegular)
+
+            #if !SKIP
+            let fileOwnerAccountID = attrs[FileAttributeKey.ownerAccountID] as? NSNumber
             XCTAssertNotNil(fileOwnerAccountID)
             
-            let fileGroupOwnerAccountID = attrs[.groupOwnerAccountID] as? NSNumber
+            let fileGroupOwnerAccountID = attrs[FileAttributeKey.groupOwnerAccountID] as? NSNumber
             XCTAssertNotNil(fileGroupOwnerAccountID)
-
+            #endif
+        
             // .creationDate is not not available on all systems but if it is supported check the value is reasonable
-            if let creationDate = attrs[.creationDate] as? Date {
+            if let creationDate = (attrs[FileAttributeKey.creationDate] as? Date) {
                 XCTAssertGreaterThan(Date().timeIntervalSince1970, creationDate.timeIntervalSince1970)
             }
 
-            if let fileOwnerAccountName = attrs[.ownerAccountName] {
+            if let fileOwnerAccountName = (attrs[FileAttributeKey.ownerAccountName]) {
                 XCTAssertNotNil(fileOwnerAccountName as? String)
-                if let fileOwnerAccountNameStr = fileOwnerAccountName as? String {
+                if let fileOwnerAccountNameStr = (fileOwnerAccountName as? String) {
                     XCTAssertFalse(fileOwnerAccountNameStr.isEmpty)
                 }
             }
             
-            if let fileGroupOwnerAccountName = attrs[.groupOwnerAccountName] {
+            if let fileGroupOwnerAccountName = attrs[FileAttributeKey.groupOwnerAccountName] {
                 XCTAssertNotNil(fileGroupOwnerAccountName as? String)
-                if let fileGroupOwnerAccountNameStr = fileGroupOwnerAccountName as? String {
+                if let fileGroupOwnerAccountNameStr = (fileGroupOwnerAccountName as? String) {
                     XCTAssertFalse(fileGroupOwnerAccountNameStr.isEmpty)
                 }
             }
@@ -438,7 +415,6 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up files")
         }
-        #endif // !SKIP
     }
     
     func test_fileSystemAttributes() {
@@ -453,23 +429,23 @@ class TestFileManager : XCTestCase {
             
             XCTAssertTrue(attrs.count > 0)
             
-            let systemNumber = attrs[.systemNumber] as? NSNumber
+            let systemNumber = attrs[FileAttributeKey.systemNumber] as? NSNumber
             XCTAssertNotNil(systemNumber)
             
-            let systemFreeSize = attrs[.systemFreeSize] as? NSNumber
+            let systemFreeSize = attrs[FileAttributeKey.systemFreeSize] as? NSNumber
             XCTAssertNotNil(systemFreeSize)
             XCTAssertNotEqual(systemFreeSize!.uint64Value, 0)
             
-            let systemSize = attrs[.systemSize] as? NSNumber
+            let systemSize = attrs[FileAttributeKey.systemSize] as? NSNumber
             XCTAssertNotNil(systemSize)
             XCTAssertGreaterThan(systemSize!.uint64Value, systemFreeSize!.uint64Value)
 
             if shouldAttemptWindowsXFailTests("FileAttributes[.systemFreeNodes], FileAttributes[.systemNodes] not implemented") {
-              let systemFreeNodes = attrs[.systemFreeNodes] as? NSNumber
+                let systemFreeNodes = attrs[FileAttributeKey.systemFreeNodes] as? NSNumber
               XCTAssertNotNil(systemFreeNodes)
               XCTAssertNotEqual(systemFreeNodes!.uint64Value, 0)
 
-              let systemNodes = attrs[.systemNodes] as? NSNumber
+                let systemNodes = attrs[FileAttributeKey.systemNodes] as? NSNumber
               XCTAssertNotNil(systemNodes)
               XCTAssertGreaterThan(systemNodes!.uint64Value, systemFreeNodes!.uint64Value)
             }
@@ -492,8 +468,8 @@ class TestFileManager : XCTestCase {
         let modificationDate = NSDate(timeIntervalSince1970: 1234567890.5) // 2009-02-13T23:31:30.500Z
 
         do {
-            try fm.setAttributes([.posixPermissions : NSNumber(value: Int16(0o0600))], ofItemAtPath: path)
-            try fm.setAttributes([.modificationDate: modificationDate], ofItemAtPath: path)
+            try fm.setAttributes([FileAttributeKey.posixPermissions : NSNumber(value: Int16(0o0600))], ofItemAtPath: path)
+            try fm.setAttributes([FileAttributeKey.modificationDate: modificationDate], ofItemAtPath: path)
         }
         catch { XCTFail("\(error)") }
         
@@ -501,9 +477,9 @@ class TestFileManager : XCTestCase {
         do {
             let attributes = try fm.attributesOfItem(atPath: path)
 #if os(Windows)
-            XCTAssert((attributes[.posixPermissions] as? NSNumber)?.int16Value == 0o0700)
+            XCTAssert((attributes[FileAttributeKey.posixPermissions] as? NSNumber)?.int16Value == 0o0700)
 #else
-            XCTAssert((attributes[.posixPermissions] as? NSNumber)?.int16Value == 0o0600)
+            XCTAssert((attributes[FileAttributeKey.posixPermissions] as? NSNumber)?.int16Value == 0o0600)
 #endif
             XCTAssertEqual((attributes[.modificationDate] as? NSDate)?.timeIntervalSince1970 ?? .nan, modificationDate.timeIntervalSince1970, accuracy: 1.0)
         }
@@ -519,7 +495,7 @@ class TestFileManager : XCTestCase {
         let noSuchFile = NSTemporaryDirectory() + "fileThatDoesntExist"
         try? fm.removeItem(atPath: noSuchFile)
         do {
-            try fm.setAttributes([.posixPermissions: 0], ofItemAtPath: noSuchFile)
+            try fm.setAttributes([FileAttributeKey.posixPermissions: 0], ofItemAtPath: noSuchFile)
             XCTFail("Setting permissions of non-existent file should throw")
         } catch {
         }
@@ -768,9 +744,6 @@ class TestFileManager : XCTestCase {
     }
     
     func test_contentsOfDirectoryAtPath() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let testDirName = "testdir\(NSUUID().uuidString)"
         let path = NSTemporaryDirectory() + "\(testDirName)"
@@ -810,15 +783,11 @@ class TestFileManager : XCTestCase {
         do {
             try fm.removeItem(atPath: path)
         } catch {
-            XCTFail("Failed to clean up files")
+            XCTFail("Failed to clean up files: \(error)")
         }
-        #endif // !SKIP
     }
     
     func test_subpathsOfDirectoryAtPath() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let path = NSTemporaryDirectory() + "testdir"
         let path2 = NSTemporaryDirectory() + "testdir/sub"
@@ -836,12 +805,11 @@ class TestFileManager : XCTestCase {
             try fm.createDirectory(atPath: path2, withIntermediateDirectories: false, attributes: nil)
             let _ = fm.createFile(atPath: itemPath3, contents: Data(), attributes: nil)
         } catch {
-            XCTFail()
+            XCTFail("error: \(error)")
         }
         
         do {
             let entries = try fm.subpathsOfDirectory(atPath: path)
-            
             XCTAssertEqual(4, entries.count)
             XCTAssertTrue(entries.contains("item"))
             XCTAssertTrue(entries.contains("item2"))
@@ -850,7 +818,7 @@ class TestFileManager : XCTestCase {
             XCTAssertEqual(fm.subpaths(atPath: path), entries)
         }
         catch {
-            XCTFail()
+            XCTFail("error: \(error)")
         }
         
         do {
@@ -869,23 +837,15 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Failed to clean up files")
         }
-        #endif // !SKIP
     }
 
     private func directoryExists(atPath path: String) -> Bool {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        var isDir: ObjCBool = false
+        var isDir: ObjCBool = ObjCBool(false)
         let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
         return exists && isDir.boolValue
-        #endif // !SKIP
     }
 
     func test_copyItemAtPathToPath() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let srcPath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
         let destPath = NSTemporaryDirectory() + "testdir\(NSUUID().uuidString)"
@@ -959,6 +919,9 @@ class TestFileManager : XCTestCase {
 #if os(Windows)
             fm.createFile(atPath: srcPath.appendingPathComponent("linkdest"), contents: Data(), attributes: nil)
 #endif
+            #if SKIP // like Windows, Java wants the destination to exist before it will allow the creation of the symlink
+            fm.createFile(atPath: srcPath.appendingPathComponent("linkdest"), contents: Data(), attributes: nil)
+            #endif
             try fm.createSymbolicLink(atPath: srcLink, withDestinationPath: "linkdest")
             try fm.copyItem(atPath: srcLink, toPath: destLink)
             XCTAssertEqual(try fm.destinationOfSymbolicLink(atPath: destLink), "linkdest")
@@ -972,7 +935,6 @@ class TestFileManager : XCTestCase {
         } catch {
             // ignore
         }
-        #endif // !SKIP
     }
 
     func test_linkItemAtPathToPath() {
@@ -994,9 +956,9 @@ class TestFileManager : XCTestCase {
                 let fname = "\(path)/\(item)"
                 do {
                     let attrs = try fm.attributesOfItem(atPath: fname)
-                    let inode = (attrs[.systemFileNumber] as? NSNumber)?.uint64Value
-                    let linkCount = (attrs[.referenceCount] as? NSNumber)?.uint64Value
-                    let ftype = attrs[.type] as? FileAttributeType
+                    let inode = (attrs[FileAttributeKey.systemFileNumber] as? NSNumber)?.uint64Value
+                    let linkCount = (attrs[FileAttributeKey.referenceCount] as? NSNumber)?.uint64Value
+                    let ftype = attrs[FileAttributeKey.type] as? FileAttributeType
 
                     if inode == nil || linkCount == nil || ftype == nil {
                         XCTFail("Unable to get attributes of \(fname)")
@@ -1244,7 +1206,7 @@ class TestFileManager : XCTestCase {
             try fm.createSymbolicLink(atPath: testDir1.appendingPathComponent("bar2").path, withDestinationPath: "foo1")
             let unreadable = testDir1.appendingPathComponent("unreadable_file").path
             try "unreadable".write(toFile: unreadable, atomically: false, encoding: .ascii)
-            try fm.setAttributes([.posixPermissions: NSNumber(value: 0)], ofItemAtPath: unreadable)
+            try fm.setAttributes([FileAttributeKey.posixPermissions: NSNumber(value: 0)], ofItemAtPath: unreadable)
             try Data().write(to: testDir1.appendingPathComponent("empty_file"))
             try fm.createSymbolicLink(atPath: symlink, withDestinationPath: testFile1URL.path)
 
@@ -1323,7 +1285,7 @@ class TestFileManager : XCTestCase {
                 let srcPath = testDir1.appendingPathComponent(entry).path
                 let dstPath = testDir2.appendingPathComponent(entry).path
                 if let attrs = try? fm.attributesOfItem(atPath: srcPath),
-                    let fileType = attrs[.type] as? FileAttributeType, fileType == .typeDirectory {
+                   let fileType = attrs[FileAttributeKey.type] as? FileAttributeType, fileType == .typeDirectory {
                     try fm.createDirectory(atPath: dstPath, withIntermediateDirectories: false, attributes: nil)
                 } else {
                     try fm.copyItem(atPath: srcPath, toPath: dstPath)
@@ -1406,8 +1368,8 @@ class TestFileManager : XCTestCase {
             try fm.copyItem(at: srcFile, to: destFile)
             let copy = try String(contentsOf: destFile)
             XCTAssertEqual(source, copy)
-            if let srcPerms = (try fm.attributesOfItem(atPath: srcFile.path)[.posixPermissions] as? NSNumber)?.intValue,
-                let destPerms = (try fm.attributesOfItem(atPath: destFile.path)[.posixPermissions] as? NSNumber)?.intValue {
+            if let srcPerms = (try fm.attributesOfItem(atPath: srcFile.path)[FileAttributeKey.posixPermissions] as? NSNumber)?.intValue,
+                let destPerms = (try fm.attributesOfItem(atPath: destFile.path)[FileAttributeKey.posixPermissions] as? NSNumber)?.intValue {
                 XCTAssertEqual(srcPerms, destPerms)
             } else {
                 XCTFail("Cant get file permissions")
@@ -1416,19 +1378,19 @@ class TestFileManager : XCTestCase {
 
         try testCopy()
 
-        try fm.setAttributes([ .posixPermissions: 0o417], ofItemAtPath: srcFile.path)
+        try fm.setAttributes([ FileAttributeKey.posixPermissions: 0o417], ofItemAtPath: srcFile.path)
         try testCopy()
 
-        try fm.setAttributes([ .posixPermissions: 0o400], ofItemAtPath: srcFile.path)
+        try fm.setAttributes([ FileAttributeKey.posixPermissions: 0o400], ofItemAtPath: srcFile.path)
         try testCopy()
 
-        try fm.setAttributes([ .posixPermissions: 0o700], ofItemAtPath: srcFile.path)
+        try fm.setAttributes([ FileAttributeKey.posixPermissions: 0o700], ofItemAtPath: srcFile.path)
         try testCopy()
 
-        try fm.setAttributes([ .posixPermissions: 0o707], ofItemAtPath: srcFile.path)
+        try fm.setAttributes([ FileAttributeKey.posixPermissions: 0o707], ofItemAtPath: srcFile.path)
         try testCopy()
 
-        try fm.setAttributes([ .posixPermissions: 0o411], ofItemAtPath: srcFile.path)
+        try fm.setAttributes([ FileAttributeKey.posixPermissions: 0o411], ofItemAtPath: srcFile.path)
         try testCopy()
         #endif // !SKIP
     }
@@ -1996,11 +1958,11 @@ VIDEOS=StopgapVideos
 
                 let finalAttributes = try fm.attributesOfItem(atPath: newA.path)
                 XCTAssertEqual(initialAttributes[.creationDate] as? AnyHashable, finalAttributes[.creationDate] as? AnyHashable)
-//                XCTAssertEqual(initialAttributes[.posixPermissions] as? AnyHashable, finalAttributes[.posixPermissions] as? AnyHashable)
+//                XCTAssertEqual(initialAttributes[.posixPermissions] as? AnyHashable, finalAttributes[FileAttributeKey.posixPermissions] as? AnyHashable)
 
                 if bIsDirectory {
                     // Ensure we have execute permission, which can happen if .…newMetadataOnly isn't used, and we replace a file with a directory. (That's why we check attributes first.)
-                    try? fm.setAttributes([.posixPermissions: 0o777], ofItemAtPath: newA.path)
+                    try? fm.setAttributes([FileAttributeKey.posixPermissions: 0o777], ofItemAtPath: newA.path)
                     XCTAssertNil(try? fm.attributesOfItem(atPath: newA.appendingPathComponent(initialFileName).path))
                     XCTAssertNotNil(try? fm.attributesOfItem(atPath: newA.appendingPathComponent(finalFileName).path))
                 } else {
