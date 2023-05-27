@@ -28,6 +28,16 @@ internal class SkipFileManager {
 #endif
 }
 
+#if SKIP // conversion from URLs and Strings to a java.nio.file.Path
+private func _path(_ url: SkipURL) -> java.nio.file.Path {
+    url.toPath()
+}
+
+private func _path(_ path: String) -> java.nio.file.Path {
+    java.nio.file.Paths.get(path)
+}
+#endif
+
 public extension String {
     func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
         #if SKIP
@@ -36,13 +46,29 @@ public extension String {
         opts.append(java.nio.file.StandardOpenOption.WRITE)
         if atomically {
             opts.append(java.nio.file.StandardOpenOption.DSYNC)
+            opts.append(java.nio.file.StandardOpenOption.SYNC)
         }
-        java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
+        java.nio.file.Files.write(_path(url), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
         #else
         try write(to: url.rawValue, atomically: atomically, encoding: encoding)
         #endif
     }
 }
+
+#if SKIP
+public extension String {
+    func write(toFile path: String, atomically useAuxiliaryFile: Bool, encoding enc: String.Encoding) throws {
+        var opts: [java.nio.file.StandardOpenOption] = []
+        opts.append(java.nio.file.StandardOpenOption.CREATE)
+        opts.append(java.nio.file.StandardOpenOption.WRITE)
+        if useAuxiliaryFile {
+            opts.append(java.nio.file.StandardOpenOption.DSYNC)
+            opts.append(java.nio.file.StandardOpenOption.SYNC)
+        }
+        java.nio.file.Files.write(_path(path), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
+    }
+}
+#endif
 
 extension SkipData {
     public func write(to url: SkipURL, options: DataWritingOptions = []) throws {
@@ -252,7 +278,8 @@ extension SkipFileManager {
                 }
 
             default:
-                fatalError("cannot set file attribute: \(key)")
+                // unhandled keys are expected to be ignored by test_setFileAttributes
+                continue
             }
         }
         #endif
@@ -305,6 +332,17 @@ extension SkipFileManager {
         java.nio.file.Files.move(path.toPath(), to.toPath())
         #endif
     }
+
+    @available(*, unavailable, message: "contentsEqual is unimplemented in Skip")
+    public func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
+        #if !SKIP
+        return rawValue.contentsEqual(atPath: path1, andPath: path2)
+        #else
+        // TODO: recursively compare folders and files, taking into account special files; see https://github.com/apple/swift-corelibs-foundation/blob/818de4858f3c3f72f75d25fbe94d2388ca653f18/Sources/Foundation/FileManager%2BPOSIX.swift#L997
+        fatalError("contentsEqual is unimplemented in Skip")
+        #endif
+    }
+
 
     @available(*, unavailable, message: "changeCurrentDirectoryPath is unavailable in Skip: the current directory cannot be changed in the JVM")
     public func changeCurrentDirectoryPath(_ path: String) -> Bool {
@@ -370,14 +408,6 @@ extension SkipFileManager {
              */
             fatalError("recursive copy implemented with java.nio.file.Files.walkFileTree")
         }
-    }
-
-    private func _path(_ url: SkipURL) -> java.nio.file.Path {
-        url.toPath()
-    }
-
-    private func _path(_ path: String) -> java.nio.file.Path {
-        java.nio.file.Paths.get(path)
     }
     #endif
 

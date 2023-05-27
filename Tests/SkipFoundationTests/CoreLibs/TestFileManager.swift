@@ -1314,9 +1314,6 @@ class TestFileManager : XCTestCase {
     }
 
     func test_setInvalidFileAttributes() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let path = "\(NSTemporaryDirectory())test_setInvalidFileAttributes\(NSUUID().uuidString)"
         let FM = FileManager.default
 
@@ -1325,20 +1322,16 @@ class TestFileManager : XCTestCase {
 
         do {
             try FM.setAttributes([
-                .size: NSNumber(value: Int16(16)),
-                .systemNumber: NSNumber(value: Int16(32)),
-                .systemFileNumber: NSNumber(value: Int16(48)),
+                FileAttributeKey.size: NSNumber(value: Int16(16)),
+                FileAttributeKey.systemNumber: NSNumber(value: Int16(32)),
+                FileAttributeKey.systemFileNumber: NSNumber(value: Int16(48)),
             ], ofItemAtPath: path)
         } catch {
             XCTFail("\(error)")
         }
-        #endif // !SKIP
     }
 
     func test_copyItemsPermissions() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let fm = FileManager.default
         let tmpDir = fm.temporaryDirectory.appendingPathComponent("test_copyItemsPermissions")
         try fm.createDirectory(at: tmpDir, withIntermediateDirectories: true)
@@ -1349,7 +1342,7 @@ class TestFileManager : XCTestCase {
 
         let source = "This is the source file"
         try? fm.removeItem(at: srcFile)
-        try source.write(toFile: srcFile.path, atomically: false, encoding: .utf8)
+        try source.write(toFile: srcFile.path, atomically: false, encoding: String.Encoding.utf8)
 
         func testCopy() throws {
             try? fm.removeItem(at: destFile)
@@ -1380,7 +1373,6 @@ class TestFileManager : XCTestCase {
 
         try fm.setAttributes([ FileAttributeKey.posixPermissions: 0o411], ofItemAtPath: srcFile.path)
         try testCopy()
-        #endif // !SKIP
     }
     
 #if XXX && !DEPLOYMENT_RUNTIME_OBJC && !os(Android) // XDG tests require swift-corelibs-foundation
@@ -2105,25 +2097,16 @@ VIDEOS=StopgapVideos
     
     // -----
 
-    #if !SKIP
     var writableTestDirectoryURL: URL!
-    #endif
     
     override func setUp() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         super.setUp()
         
         let pid = ProcessInfo.processInfo.processIdentifier
         writableTestDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("org.swift.TestFoundation.TestFileManager.\(pid)")
-        #endif // !SKIP
     }
     
     override func tearDown() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         if let directoryURL = writableTestDirectoryURL,
            (try? FileManager.default.attributesOfItem(atPath: directoryURL.path)) != nil {
             do {
@@ -2134,7 +2117,6 @@ VIDEOS=StopgapVideos
         }
         
         super.tearDown()
-        #endif // !SKIP
     }
     
     #if !SKIP

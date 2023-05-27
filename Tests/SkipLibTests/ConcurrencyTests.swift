@@ -25,9 +25,6 @@ final class ConcurrencyTests: XCTestCase {
      */
     // SKIP DECLARE: suspend fun _testSimpleValue()
     func testSimpleValue() async throws {
-        // error during preflight:
-        // “Skip is unable to match this API call to determine the correct actor on which to run it. Consider adding additional type information”
-
         //let task1 = Task {
         //    return await asyncInt()
         //}

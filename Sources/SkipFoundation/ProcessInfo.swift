@@ -89,9 +89,11 @@ public class SkipProcessInfo {
             return android.os.Process.myPid()
         } catch {
             // seems to happen in Robolectric tests
+            // return java.lang.ProcessHandle.current().pid().toInt() // JDK9+, so doesn't compile
+            // JMX name is "pid@hostname" (e.g., "57924@zap.local")
+            // return java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@").first?.toLong() ?? -1
             return -1
         }
-        //return java.lang.ProcessHandle.current().pid().toInt()
         #endif
     }
 
