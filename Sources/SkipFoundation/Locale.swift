@@ -41,28 +41,46 @@ internal struct SkipLocale : RawRepresentable, Hashable {
         self.rawValue = PlatformLocale(identifier: identifier)
         #endif
     }
-}
 
-#if SKIP
+    public static var current: SkipLocale {
+        #if !SKIP
+        return SkipLocale(PlatformLocale.current)
+        #else
+        return SkipLocale(PlatformLocale.getDefault())
+        #endif
+    }
 
-extension SkipLocale {
     public var identifier: String {
+        #if !SKIP
+        return rawValue.identifier
+        #else
         //return rawValue.toLanguageTag()
         return rawValue.toString()
+        #endif
     }
 
     public var languageCode: String? {
+        #if !SKIP
+        return rawValue.languageCode
+        #else
         return rawValue.getLanguage()
+        #endif
     }
 
     public func localizedString(forLanguageCode languageCode: String) -> String? {
+        #if !SKIP
+        return rawValue.localizedString(forLanguageCode: languageCode)
+        #else
         return PlatformLocale(languageCode).getDisplayLanguage(rawValue)
+        #endif
     }
 
     public var currencySymbol: String? {
+        #if !SKIP
+        return rawValue.currencySymbol
+        #else
         java.text.NumberFormat.getCurrencyInstance(rawValue).currency?.symbol
+        #endif
     }
 
 }
-
-#endif

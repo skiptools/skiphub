@@ -8,11 +8,14 @@
 public typealias Calendar = SkipCalendar
 /// The wrapped type for Kotlin's Calendar equivalent
 public typealias PlatformCalendar = java.util.Calendar
+public typealias SkipCalendarIdentifier = SkipCalendar.Identifier
+// SKIP INSERT: typealias Calendar.Identifier = SkipCalendarIdentifier
 #else
 /// `SkipFoundation.Calendar` is an alias to `Foundation.Calendar`
 public typealias Calendar = Foundation.Calendar
 /// The wrapped type for Swift Calendar is only included in Swift debug builds
 internal typealias PlatformCalendar = Foundation.Calendar
+internal typealias SkipCalendarIdentifier = PlatformCalendar.Identifier
 #endif
 
 // override the Kotlin type to be public while keeping the Swift version internal:
@@ -20,12 +23,68 @@ internal typealias PlatformCalendar = Foundation.Calendar
 internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertible {
     public var rawValue: PlatformCalendar
 
+    public static var current: SkipCalendar {
+        #if !SKIP
+        return SkipCalendar(rawValue: PlatformCalendar.current)
+        #else
+        return SkipCalendar(rawValue: PlatformCalendar.getInstance())
+        #endif
+    }
+
     public init(rawValue: PlatformCalendar) {
         self.rawValue = rawValue
     }
 
     public init(_ rawValue: PlatformCalendar) {
         self.rawValue = rawValue
+    }
+
+    public init(identifier: SkipCalendarIdentifier) {
+        #if !SKIP
+        self.rawValue = PlatformCalendar(identifier: identifier)
+        #else
+        switch identifier {
+        case .gregorian:
+            self.rawValue = java.util.GregorianCalendar()
+        default:
+            // TODO: how to support the other calendars?
+            fatalError("Skip: unsupported calendar identifier \(identifier)")
+        }
+        #endif
+    }
+
+    public func date(from components: SkipDateComponents) -> SkipDate? {
+        #if !SKIP
+        return rawValue.date(from: components.components).flatMap(SkipDate.init(rawValue:))
+        #else
+        fatalError("TODO: date(from:SkipDateComponents)")
+        #endif
+    }
+
+    public func dateComponents(in zone: SkipTimeZone, from date: SkipDate) -> SkipDateComponents {
+        #if !SKIP
+        return SkipDateComponents(components: rawValue.dateComponents(in: zone.rawValue, from: date.rawValue))
+        #else
+        fatalError("TODO: SkipCalendar.dateComponents")
+        #endif
+    }
+
+    public var timeZone: SkipTimeZone {
+        get {
+            #if !SKIP
+            return SkipTimeZone(rawValue.timeZone)
+            #else
+            return SkipTimeZone(rawValue.getTimeZone())
+            #endif
+        }
+
+        set {
+            #if !SKIP
+            rawValue.timeZone = newValue.rawValue
+            #else
+            rawValue.setTimeZone(newValue.rawValue)
+            #endif
+        }
     }
 
     var description: String {

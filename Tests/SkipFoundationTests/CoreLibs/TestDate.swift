@@ -6,6 +6,11 @@
 import Foundation
 import XCTest
 
+#if !SKIP
+// needed for SkipCalendarIdentifier shim
+@testable import SkipFoundation
+#endif
+
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -58,81 +63,53 @@ class TestDate : XCTestCase {
     #endif // SKIP
     
     func test_BasicConstruction() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let d = Date()
-        XCTAssert(d.timeIntervalSince1970 != 0)
-        XCTAssert(d.timeIntervalSinceReferenceDate != 0)
-        #endif // !SKIP
+        let d: Date = Date()
+        XCTAssert(d.timeIntervalSince1970 != 0.0)
+        XCTAssert(d.timeIntervalSinceReferenceDate != 0.0)
     }
 
     func test_descriptionWithLocale() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let d = NSDate(timeIntervalSince1970: 0)
+        let d = NSDate(timeIntervalSince1970: 0.0)
         XCTAssertEqual(d.description(with: nil), "1970-01-01 00:00:00 +0000")
         XCTAssertFalse(d.description(with: Locale(identifier: "ja_JP")).isEmpty)
-        #endif // !SKIP
     }
     
     func test_InitTimeIntervalSince1970() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let ti: TimeInterval = 1
+        let ti: TimeInterval = 1.0
         let d = Date(timeIntervalSince1970: ti)
         XCTAssert(d.timeIntervalSince1970 == ti)
-        #endif // !SKIP
     }
     
     func test_InitTimeIntervalSinceSinceDate() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let ti: TimeInterval = 1
+        let ti: TimeInterval = 1.0
         let d1 = Date()
         let d2 = Date(timeInterval: ti, since: d1)
         XCTAssertNotNil(d2.timeIntervalSince1970 == d1.timeIntervalSince1970 + ti)
-        #endif // !SKIP
     }
     
     func test_TimeIntervalSinceSinceDate() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let ti: TimeInterval = 1
+        let ti: TimeInterval = 1.0
         let d1 = Date()
         let d2 = Date(timeInterval: ti, since: d1)
         XCTAssertEqual(d2.timeIntervalSince(d1), ti)
-        #endif // !SKIP
     }
     
     func test_DistantFuture() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let d = Date.distantFuture
         let now = Date()
         XCTAssertGreaterThan(d, now)
-        #endif // !SKIP
     }
     
     func test_DistantPast() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let now = Date()
         let d = Date.distantPast
 
         XCTAssertLessThan(d, now)
-        #endif // !SKIP
     }
     
     func test_DateByAddingTimeInterval() {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("TODO: SkipDate operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -143,7 +120,7 @@ class TestDate : XCTestCase {
     
     func test_EarlierDate() {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("TODO: SkipDate operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -154,7 +131,7 @@ class TestDate : XCTestCase {
     
     func test_LaterDate() {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("TODO: SkipDate operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -165,7 +142,7 @@ class TestDate : XCTestCase {
     
     func test_Compare() {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("TODO: SkipDate operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -176,7 +153,7 @@ class TestDate : XCTestCase {
     
     func test_IsEqualToDate() {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("TODO: SkipDate operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -187,23 +164,16 @@ class TestDate : XCTestCase {
     }
 
     func test_timeIntervalSinceReferenceDate() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let d1 = Date().timeIntervalSinceReferenceDate
         let sinceReferenceDate = Date.timeIntervalSinceReferenceDate
         let d2 = Date().timeIntervalSinceReferenceDate
         XCTAssertTrue(d1 <= sinceReferenceDate)
         XCTAssertTrue(d2 >= sinceReferenceDate)
-        #endif // !SKIP
     }
     
     func test_recreateDateComponentsFromDate() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let components = DateComponents(calendar: Calendar(identifier: .gregorian),
-                                        timeZone: .current,
+        let components = DateComponents(calendar: Calendar(identifier: SkipCalendarIdentifier.gregorian),
+                                        timeZone: TimeZone.current,
                                         era: 1,
                                         year: 2017,
                                         month: 11,
@@ -212,11 +182,14 @@ class TestDate : XCTestCase {
                                         minute: 38,
                                         second: 11,
                                         nanosecond: 40)
-        guard let date = Calendar(identifier: .gregorian).date(from: components) else {
+        #if SKIP
+        throw XCTSkip("TODO: Calendar.date(from: components)")
+        #endif
+        guard let date = Calendar(identifier: SkipCalendarIdentifier.gregorian).date(from: components) else {
             XCTFail()
             return
         }
-        let recreatedComponents = Calendar(identifier: .gregorian).dateComponents(in: .current, from: date)
+        let recreatedComponents = Calendar(identifier: SkipCalendarIdentifier.gregorian).dateComponents(in: TimeZone.current, from: date)
         XCTAssertEqual(recreatedComponents.era, 1)
         XCTAssertEqual(recreatedComponents.year, 2017)
         XCTAssertEqual(recreatedComponents.month, 11)
@@ -233,7 +206,6 @@ class TestDate : XCTestCase {
 
         // Quarter is currently not supported by UCalendar C API, returns 0
         XCTAssertEqual(recreatedComponents.quarter, 0)
-        #endif // !SKIP
     }
 
     func test_Hashing() {

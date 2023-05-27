@@ -6,6 +6,11 @@
 import Foundation
 import XCTest
 
+#if !SKIP
+// needed for SkipCalendarIdentifier shim
+@testable import SkipFoundation
+#endif
+
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -112,14 +117,11 @@ class TestDateComponents: XCTestCase {
     }
 
     func test_isValidDate() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         // SR-11569
         let calendarTimeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
         let dateComponentsTimeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 3600))
 
-        var calendar = Calendar(identifier: .gregorian)
+        var calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
         calendar.timeZone = calendarTimeZone
 
         var dc = DateComponents()
@@ -132,8 +134,11 @@ class TestDateComponents: XCTestCase {
         dc.minute = 4
         dc.second = 5
         dc.nanosecond = 6
+        #if SKIP
+        throw XCTSkip("TODO: DateComponents.isValueDate")
+        #else
         XCTAssertTrue(dc.isValidDate)
-        #endif // !SKIP
+        #endif
     }
 
     #if !SKIP

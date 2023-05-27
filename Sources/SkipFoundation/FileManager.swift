@@ -274,7 +274,7 @@ extension SkipFileManager {
                 
             case FileAttributeKey.modificationDate:
                 if let date = value as? SkipDate {
-                    java.nio.file.Files.setLastModifiedTime(_path(path), java.nio.file.attribute.FileTime.fromMillis(Long(date.getTime() * 1000.0)))
+                    java.nio.file.Files.setLastModifiedTime(_path(path), java.nio.file.attribute.FileTime.fromMillis(Long(date.timeIntervalSince1970 * 1000.0)))
                 }
 
             default:
