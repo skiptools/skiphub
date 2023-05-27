@@ -25,10 +25,10 @@ import XCTest
 
 class TestDateComponents: XCTestCase {
 
-//    func test_hash() {
-//        #if SKIP
-//        throw XCTSkip("TODO")
-//        #else
+    func test_hash() {
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
 //        let c1 = DateComponents(year: 2018, month: 8, day: 1)
 //        let c2 = DateComponents(year: 2018, month: 8, day: 1)
 //
@@ -113,8 +113,8 @@ class TestDateComponents: XCTestCase {
 //            byMutating: \DateComponents.weekdayOrdinal,
 //            throughValues: integers)
 //        // isLeapMonth does not have enough values to test it here.
-//        #endif // !SKIP
-//    }
+        #endif // !SKIP
+    }
 
     func test_isValidDate() throws {
         // SR-11569
