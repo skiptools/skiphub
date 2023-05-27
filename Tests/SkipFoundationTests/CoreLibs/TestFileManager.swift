@@ -456,9 +456,6 @@ class TestFileManager : XCTestCase {
     }
     
     func test_setFileAttributes() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let path = NSTemporaryDirectory() + "test_setFileAttributes\(NSUUID().uuidString)"
         let fm = FileManager.default
         
@@ -479,9 +476,9 @@ class TestFileManager : XCTestCase {
 #if os(Windows)
             XCTAssert((attributes[FileAttributeKey.posixPermissions] as? NSNumber)?.int16Value == 0o0700)
 #else
-            XCTAssert((attributes[FileAttributeKey.posixPermissions] as? NSNumber)?.int16Value == 0o0600)
+            XCTAssert((attributes[FileAttributeKey.posixPermissions] as? NSNumber)?.int16Value == Int16(0o0600))
 #endif
-            XCTAssertEqual((attributes[.modificationDate] as? NSDate)?.timeIntervalSince1970 ?? .nan, modificationDate.timeIntervalSince1970, accuracy: 1.0)
+            XCTAssertEqual((attributes[FileAttributeKey.modificationDate] as? NSDate)?.timeIntervalSince1970 ?? 0.0, modificationDate.timeIntervalSince1970, accuracy: 1.0)
         }
         catch { XCTFail("\(error)") }
 
@@ -499,7 +496,6 @@ class TestFileManager : XCTestCase {
             XCTFail("Setting permissions of non-existent file should throw")
         } catch {
         }
-        #endif // !SKIP
     }
     
     func test_pathEnumerator() {
@@ -1044,7 +1040,6 @@ class TestFileManager : XCTestCase {
 
             // A) Check non-symbolic linking resolution
             try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: true)
-            #if !SKIP
             try testData.write(to: testFileURL)
             let resolvedURL_A: URL = testFileURL.resolvingSymlinksInPath().standardized.absoluteURL
             XCTAssertEqual(resolvedURL_A.path, testFileURL.path)
@@ -1074,9 +1069,7 @@ class TestFileManager : XCTestCase {
             let destinationOfSymbolicLink1URL: URL = URL(fileURLWithPath: destinationOfSymbolicLink1).standardized.absoluteURL
             XCTAssertEqual(destinationOfSymbolicLink1URL.path, link2URL.path)
             try FileManager.default.removeItem(at: baseURL)
-            #endif
 
-            #if !SKIP
             #if !os(Windows)
             // D) Check infinite recursion loops are stopped and the function returns the intial symlink
             //
@@ -1087,7 +1080,6 @@ class TestFileManager : XCTestCase {
             try FileManager.default.createSymbolicLink(at: link3URL, withDestinationURL: link1URL)
             let resolvedURL_D = link1URL.resolvingSymlinksInPath()
             XCTAssertEqual(resolvedURL_D.lastPathComponent, link1URL.lastPathComponent)
-            #endif
             #endif
         }
     }
@@ -1106,9 +1098,6 @@ class TestFileManager : XCTestCase {
     }
     
     func test_temporaryDirectoryForUser() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let filemanger = FileManager.default
         let tmpDir = filemanger.temporaryDirectory
         let tmpFileUrl = tmpDir.appendingPathComponent("test.bin")
@@ -1126,7 +1115,6 @@ class TestFileManager : XCTestCase {
         } catch {
             XCTFail("Unable to write a file to the temporary directory: \(tmpDir), err: \(error)")
         }
-        #endif // !SKIP
     }
 
     func test_mountedVolumeURLs() {

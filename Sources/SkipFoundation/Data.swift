@@ -9,11 +9,13 @@ public typealias Data = Foundation.Data
 public typealias PlatformData = Foundation.Data
 public typealias DataProtocol = Foundation.DataProtocol
 public typealias StringProtocol = Swift.StringProtocol
+public typealias DataWritingOptions = Data.WritingOptions
 #else
 public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
 public typealias DataProtocol = SkipDataProtocol
 public typealias StringProtocol = kotlin.CharSequence
+public typealias DataWritingOptions = SkipData.WritingOptions
 #endif
 
 public protocol SkipDataProtocol {
@@ -64,6 +66,16 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
         return lhs.rawValue == rhs.rawValue
         #endif
     }
+
+    public struct WritingOptions : OptionSet, Sendable {
+        public let rawValue: UInt
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
+
+        public static let atomic = WritingOptions(rawValue: UInt(1 << 0))
+    }
+
 }
 
 public extension Data {
@@ -96,11 +108,11 @@ extension SkipData {
 
     /// static init until constructor overload works
     public static func contentsOfURL(url: SkipURL) throws -> Data {
-//        if url.isFileURL {
-//            return Data(java.io.File(url.path).readBytes())
-//        } else {
-//        return Data(url.rawValue.openConnection().getInputStream().readBytes())
-//        }
+        //if url.isFileURL {
+        //    return Data(java.io.File(url.path).readBytes())
+        //} else {
+        //    return Data(url.rawValue.openConnection().getInputStream().readBytes())
+        //}
 
         // this seems to work for both file URLs and network URLs
         return Data(url.rawValue.readBytes())

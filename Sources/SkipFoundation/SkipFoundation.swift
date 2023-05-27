@@ -31,7 +31,10 @@ public typealias AnyClass = kotlin.reflect.KClass<Any>
 public typealias NSString = String
 public typealias NSURL = SkipURL
 public typealias NSUUID = SkipUUID
+public typealias NSDate = SkipDate
 public typealias NSNumber = java.lang.Number
+
+
 
 public struct NSNull {
     public static let null = NSNull()
@@ -44,6 +47,9 @@ public extension java.lang.Number {
     var intValue: Int { intValue() }
     var longValue: Int64 { longValue() }
     var int64Value: Int64 { longValue() }
+    var int32Value: Int32 { intValue() }
+    var int16Value: Int16 { shortValue() }
+    var int8Value: Int8 { byteValue() }
 }
 
 /// Initializing an NSNumber with a numeric value just returns the instance itself

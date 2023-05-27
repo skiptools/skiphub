@@ -12,7 +12,7 @@ final class SkipKitKtTests: XCTestCase, XCGradleHarness {
     /// This test case will run the transpiled tests defined in the Swift peer module.
     /// New tests should be added there, not here.
     public func testSkipModule() async throws {
-        try await gradle(actions: ["test"])
+        try await gradle(actions: ["testDebug"])
     }
 }
 #endif

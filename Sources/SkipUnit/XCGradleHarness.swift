@@ -42,7 +42,7 @@ extension XCGradleHarness where Self : XCTestCase {
         let override = ProcessInfo.processInfo.environment["SKIP_GRADLE_TEST_TARGET"]
         if let testOverride = override {
             actions = actions.map {
-                $0 == "test" ? testOverride : $0
+                $0 == "test" || $0 == "testDebug" || $0 == "testRelease" ? testOverride : $0
             }
         }
 

@@ -73,7 +73,7 @@ final class GradleDriverTests: XCTestCase {
                 try sabotageTest(failure: failure, error: error)
             }
 
-            let (output, parseResults) = try await driver.launchGradleProcess(in: tmp, module: modname, actions: ["test"], arguments: [], failFast: failFast, offline: false, exitHandler: { result in
+            let (output, parseResults) = try await driver.launchGradleProcess(in: tmp, module: modname, actions: ["testDebug"], arguments: [], failFast: failFast, offline: false, exitHandler: { result in
                 if !failure && !error {
                     guard case .terminated(0) = result.exitStatus else {
                         // we failed, but did not expect an error

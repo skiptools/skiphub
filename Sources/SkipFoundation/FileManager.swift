@@ -28,6 +28,33 @@ internal class SkipFileManager {
 #endif
 }
 
+#if SKIP
+extension String {
+    public func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
+        var opts: [java.nio.file.StandardOpenOption] = []
+        opts.append(java.nio.file.StandardOpenOption.CREATE)
+        opts.append(java.nio.file.StandardOpenOption.WRITE)
+        if atomically {
+            opts.append(java.nio.file.StandardOpenOption.DSYNC)
+        }
+        java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
+    }
+}
+
+extension SkipData {
+    public func write(to url: SkipURL, options: DataWritingOptions = []) throws {
+        var opts: [java.nio.file.StandardOpenOption] = []
+        opts.append(java.nio.file.StandardOpenOption.CREATE)
+        opts.append(java.nio.file.StandardOpenOption.WRITE)
+        if options.contains(DataWritingOptions.atomic) {
+            opts.append(java.nio.file.StandardOpenOption.DSYNC)
+        }
+
+        java.nio.file.Files.write(url.toPath(), rawValue, *(opts.toList().toTypedArray()))
+    }
+}
+#endif
+
 extension SkipFileManager {
     public var temporaryDirectory: SkipURL {
         SkipURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
@@ -212,8 +239,14 @@ extension SkipFileManager {
                     permissions.insert(java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE)
                 }
                 java.nio.file.Files.setPosixFilePermissions(_path(path), permissions.toSet())
+                
+            case FileAttributeKey.modificationDate:
+                if let date = value as? SkipDate {
+                    java.nio.file.Files.setLastModifiedTime(_path(path), java.nio.file.attribute.FileTime.fromMillis(Long(date.getTime() * 1000.0)))
+                }
+
             default:
-                fatalError("TODO: unsupported file attribute: \(key)")
+                fatalError("cannot set file attribute: \(key)")
             }
         }
         #endif
@@ -290,7 +323,7 @@ extension SkipFileManager {
         if !recursive {
             java.nio.file.Files.delete(path)
         } else {
-            // doesn't necessarily traverse in depth-first order, and so cannot be used for recursive delete
+            // Cannot use java.nio.file.Files.walk for recursive delete because it doesn't list directories post-visit
             //for file in java.nio.file.Files.walk(path) {
             //    java.nio.file.Files.delete(file)
             //}

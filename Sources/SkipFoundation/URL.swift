@@ -344,11 +344,17 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
             return self
         }
         let originalPath = toPath()
-        if !java.nio.file.Files.isSymbolicLink(originalPath) {
-            return self // not a link
-        } else {
-            let normalized = java.nio.file.Files.readSymbolicLink(originalPath).normalize()
-            return SkipURL(rawValue: normalized.toUri().toURL())
+        //if !java.nio.file.Files.isSymbolicLink(originalPath) {
+        //    return self // not a link
+        //} else {
+        //    let normalized = java.nio.file.Files.readSymbolicLink(originalPath).normalize()
+        //    return SkipURL(rawValue: normalized.toUri().toURL())
+        //}
+        do {
+            return SkipURL(rawValue: originalPath.toRealPath().toUri().toURL())
+        } catch {
+            // this will fail if the file does not exist, but Foundation expects it to return the path itself
+            return self
         }
         #else
         return Self(foundationURL.resolvingSymlinksInPath() as PlatformURL)
@@ -366,6 +372,10 @@ internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// Returns whether the URL’s resource exists and is reachable.
     public func checkResourceIsReachable() throws -> Bool {
         #if SKIP
+        if !isFileURL {
+            // “This method is currently applicable only to URLs for file system resources. For other URL types, `false` is returned.”
+            return false
+        }
         // check whether the resource can be reached by opening and closing a connection
         rawValue.openConnection().getInputStream().close()
         return true

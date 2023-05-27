@@ -68,31 +68,6 @@ fileprivate func String(cString: String) -> String {
 }
 #endif
 
-fileprivate extension String {
-    func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
-        #if !SKIP
-        try write(to: url.foundationURL, atomically: atomically, encoding: encoding)
-        #else
-        if atomically {
-            java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, java.nio.file.StandardOpenOption.WRITE, java.nio.file.StandardOpenOption.DSYNC)
-        } else {
-            java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, java.nio.file.StandardOpenOption.WRITE)
-        }
-        #endif
-    }
-}
-
-fileprivate extension Data {
-    func write(to url: SkipURL) throws { // TODO:  options: WritingOptions = []) throws {
-        #if !SKIP
-        try write(to: url.foundationURL)
-        #else
-        java.nio.file.Files.write(url.toPath(), rawValue, java.nio.file.StandardOpenOption.WRITE)
-        #endif
-    }
-}
-
-
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
