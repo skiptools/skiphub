@@ -12,36 +12,34 @@ public typealias PlatformURL = java.net.URL
 /// `SkipFoundation.URL` is an alias to `Foundation.URL`
 public typealias URL = Foundation.URL
 /// The wrapped type for Swift URL is only included in Swift debug builds
-internal typealias PlatformURL = Foundation.URL
+public typealias PlatformURL = Foundation.URL
 #endif
 
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipURL: RawRepresentable<PlatformURL>, MutableStruct
-internal struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
+public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// `SkipURL` wraps either a `Foundation.URL` in Swift or `java.net.URL` in Kotlin.
-    var rawValue: PlatformURL
+    public var rawValue: PlatformURL
     #if SKIP
     private let isDirectoryFlag: Bool?
     public let baseURL: SkipURL?
 
-    init(_ rawValue: PlatformURL, isDirectory: Bool? = nil, baseURL: SkipURL? = nil) {
+    public init(_ rawValue: PlatformURL, isDirectory: Bool? = nil, baseURL: SkipURL? = nil) {
         self.rawValue = rawValue
         self.isDirectoryFlag = isDirectory
         self.baseURL = baseURL
     }
 
-    init(_ skipURL: SkipURL) {
+    public init(_ skipURL: SkipURL) {
         self.rawValue = skipURL.rawValue
         self.isDirectoryFlag = skipURL.isDirectoryFlag
         self.baseURL = skipURL.baseURL
     }
     #else
-    init(_ rawValue: PlatformURL) {
+    public init(_ rawValue: PlatformURL) {
         self.rawValue = rawValue
     }
 
-    init(rawValue: PlatformURL) {
+    public init(rawValue: PlatformURL) {
         self.rawValue = rawValue
     }
     #endif

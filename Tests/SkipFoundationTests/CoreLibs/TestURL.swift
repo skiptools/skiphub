@@ -8,18 +8,6 @@ import XCTest
 
 #if !SKIP
 
-// MARK: Shims for API parity
-
-// The URL for this test case uses the internal SkipURL type to prove Foundation API compatibility
-// TODO: change from fileprivate to internal to share across all foundation test cases
-fileprivate typealias URL = SkipURL
-
-fileprivate typealias FoundationURL = Foundation.URL
-
-// shims to support API comptibility with SkipURL -> Foundation.URL
-
-fileprivate typealias FileManager = SkipFileManager
-
 fileprivate extension URLComponents {
     func url(relativeTo url: SkipURL?) -> SkipURL? {
         self.url(relativeTo: url?.foundationURL).flatMap({ .init(rawValue: $0 as PlatformURL) })
@@ -708,11 +696,11 @@ class TestURL : XCTestCase {
         #else
         var nsURL = NSURL(fileURLWithPath: "/usr")
         #endif
-        XCTAssertEqual(true, try? (nsURL as FoundationURL).checkResourceIsReachable())
+        XCTAssertEqual(true, try? (nsURL as URL).checkResourceIsReachable())
 
         nsURL = NSURL(string: "https://www.swift.org")!
         do {
-            let _ = try (.init(nsURL as PlatformURL) as URL).checkResourceIsReachable()
+            let _ = try (nsURL as URL).checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
             #if !SKIP
@@ -725,7 +713,7 @@ class TestURL : XCTestCase {
 
         nsURL = NSURL(fileURLWithPath: "/some_random_path")
         do {
-            let _ = try (.init(nsURL as PlatformURL) as URL).checkResourceIsReachable()
+            let _ = try (nsURL as URL).checkResourceIsReachable()
             XCTFail()
         } catch let error as NSError {
             #if !SKIP

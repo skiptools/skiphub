@@ -28,9 +28,9 @@ internal class SkipFileManager {
 #endif
 }
 
-#if SKIP
-extension String {
-    public func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
+public extension String {
+    func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
+        #if SKIP
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)
         opts.append(java.nio.file.StandardOpenOption.WRITE)
@@ -38,11 +38,15 @@ extension String {
             opts.append(java.nio.file.StandardOpenOption.DSYNC)
         }
         java.nio.file.Files.write(url.toPath(), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
+        #else
+        try write(to: url.rawValue, atomically: atomically, encoding: encoding)
+        #endif
     }
 }
 
 extension SkipData {
     public func write(to url: SkipURL, options: DataWritingOptions = []) throws {
+        #if SKIP
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)
         opts.append(java.nio.file.StandardOpenOption.WRITE)
@@ -51,9 +55,11 @@ extension SkipData {
         }
 
         java.nio.file.Files.write(url.toPath(), rawValue, *(opts.toList().toTypedArray()))
+        #else
+        try rawValue.write(to: url.rawValue, options: options)
+        #endif
     }
 }
-#endif
 
 extension SkipFileManager {
     public var temporaryDirectory: SkipURL {
