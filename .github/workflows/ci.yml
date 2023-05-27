@@ -97,45 +97,45 @@ jobs:
 
       - name: SkipLib Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipLibTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipLibTests
       - name: SkipLib Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipLibKtTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipFoundationTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipFoundationTests
       - name: SkipFoundation Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipFoundationKtTests
 
       - name: SkipKit Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipKitTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipKitTests
       - name: SkipKit Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipKitKtTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipKitKtTests
 
       - name: SkipUI Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipUITests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipUITests
       - name: SkipUI Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter SkipUIKtTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter SkipUIKtTests
 
       - name: ExampleLib Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleLibTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleLibTests
       - name: ExampleLib Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleLibKtTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleLibKtTests
 
       - name: ExampleApp Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleAppTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleAppTests
       - name: ExampleApp Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --filter ExampleAppKtTests
+        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleAppKtTests
 
       - name: Checkout skipapp
         uses: actions/checkout@v3
