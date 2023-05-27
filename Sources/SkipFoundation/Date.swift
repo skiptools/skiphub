@@ -7,6 +7,7 @@
 import struct Foundation.Date
 public typealias Date = Foundation.Date
 public typealias PlatformDate = Foundation.Date
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 internal typealias SkipISO8601FormatStyle = Foundation.Date.ISO8601FormatStyle
 #else
 public typealias Date = SkipDate
@@ -158,6 +159,7 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #endif
     }
 
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func ISO8601Format(_ style: SkipISO8601FormatStyle = .iso8601) -> String {
         #if !SKIP
         return rawValue.ISO8601Format(style)
