@@ -8,8 +8,9 @@ import struct Foundation.DateComponents
 public typealias DateComponents = Foundation.DateComponents
 internal typealias PlatformDateComponents = Foundation.DateComponents
 #else
+// SKIP INSERT: import skip.lib.Set
 public typealias DateComponents = SkipDateComponents
-//public typealias PlatformDateComponents = java.text.DateFormat
+//public typealias PlatformDateComponents = java.??? // no PlatformDateComponents in Java, so we'll define all the fields in SkipDateComponents
 #endif
 
 
@@ -17,6 +18,10 @@ public typealias DateComponents = SkipDateComponents
 internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     #if !SKIP
     public var components: PlatformDateComponents
+
+    public var rawValue: PlatformDateComponents {
+        components
+    }
 
     public var calendar: PlatformCalendar? {
         get { components.calendar }
@@ -88,7 +93,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     }
     #else
 
-    // the is no direct analogue to DateComponents in Java (other then java.util.Calendar), so we store the fields individually
+    // the is no direct analogue to DateComponents in Java (other then java.util.Calendar), so we store the properties individually
 
     public var calendar: SkipCalendar? = nil
     public var timeZone: SkipTimeZone? = nil
@@ -130,6 +135,290 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         self.yearForWeekOfYear = yearForWeekOfYear
         #endif
     }
+
+    #if SKIP
+    internal init(fromCalendar calendar: SkipCalendar, in zone: SkipTimeZone? = nil, from date: SkipDate? = nil, to endDate: SkipDate? = nil, with components: Set<SkipCalendarComponent>? = nil) {
+        let platformCal = calendar.rawValue.clone() as PlatformCalendar
+
+        if let date = date {
+            platformCal.time = date.rawValue
+        }
+
+        if let zone = zone {
+            platformCal.timeZone = zone.rawValue
+        }
+
+        if components?.contains(.era) != false {
+            if let endDate = endDate {
+                // TODO: if components.contains(.year) { dc.year = Int(ucal_getFieldDifference(ucalendar, goal, UCAL_YEAR, &status)) }
+                fatalError("TODO: SkipDateComponents field differences")
+            } else {
+                self.era = platformCal.get(PlatformCalendar.ERA)
+            }
+        }
+        if components?.contains(.year) != false {
+            self.year = platformCal.get(PlatformCalendar.YEAR)
+        }
+        if components?.contains(.month) != false {
+            self.month = platformCal.get(PlatformCalendar.MONTH) + 1
+        }
+        if components?.contains(.day) != false {
+            self.day = platformCal.get(PlatformCalendar.DATE) // i.e., DAY_OF_MONTH
+        }
+        if components?.contains(.hour) != false {
+            self.hour = platformCal.get(PlatformCalendar.HOUR_OF_DAY)
+        }
+        if components?.contains(.minute) != false {
+            self.minute = platformCal.get(PlatformCalendar.MINUTE)
+        }
+        if components?.contains(.second) != false {
+            self.second = platformCal.get(PlatformCalendar.SECOND)
+        }
+        if components?.contains(.weekday) != false {
+            self.weekday = platformCal.get(PlatformCalendar.DAY_OF_WEEK)
+        }
+        if components?.contains(.weekOfMonth) != false {
+            self.weekOfMonth = platformCal.get(PlatformCalendar.WEEK_OF_MONTH)
+        }
+        if components?.contains(.weekOfYear) != false {
+            self.weekOfYear = platformCal.get(PlatformCalendar.WEEK_OF_YEAR)
+        }
+
+        // unsupported fields in java.util.Calendar:
+        //self.nanosecond = platformCal.get(PlatformCalendar.NANOSECOND)
+        //self.weekdayOrdinal = platformCal.get(PlatformCalendar.WEEKDAYORDINAL)
+        //self.quarter = platformCal.get(PlatformCalendar.QUARTER)
+        //self.yearForWeekOfYear = platformCal.get(PlatformCalendar.YEARFORWEEKOFYEAR)
+    }
+
+    /// Builds a java.util.Calendar from the fields
+    internal func createCalendarComponents() -> PlatformCalendar {
+        let c: PlatformCalendar = (self.calendar?.rawValue ?? PlatformCalendar.getInstance())
+        let cal: PlatformCalendar = (c as java.util.Calendar).clone() as PlatformCalendar
+
+        cal.setTimeInMillis(0) // clear the time and set the fields afresh
+
+        if let timeZone = self.timeZone {
+            cal.setTimeZone(timeZone.rawValue)
+        } else {
+            cal.setTimeZone(SkipTimeZone.current.rawValue)
+        }
+
+        if let era = self.era {
+            cal.set(PlatformCalendar.ERA, era)
+        }
+        if let year = self.year {
+            cal.set(PlatformCalendar.YEAR, year)
+        }
+        if let month = self.month {
+            // Foundation starts at 1, but Java: “Field number for get and set indicating the month. This is a calendar-specific value. The first month of the year in the Gregorian and Julian calendars is JANUARY which is 0; the last depends on the number of months in a year.”
+            cal.set(PlatformCalendar.MONTH, month - 1)
+        }
+        if let day = self.day {
+            cal.set(PlatformCalendar.DATE, day) // i.e., DAY_OF_MONTH
+        }
+        if let hour = self.hour {
+            cal.set(PlatformCalendar.HOUR_OF_DAY, hour)
+        }
+        if let minute = self.minute {
+            cal.set(PlatformCalendar.MINUTE, minute)
+        }
+        if let second = self.second {
+            cal.set(PlatformCalendar.SECOND, second)
+        }
+        if let nanosecond = self.nanosecond {
+            //cal.set(PlatformCalendar.NANOSECOND, nanosecond)
+            fatalError("DateComponents.nanosecond unsupported in Skip")
+        }
+        if let weekday = self.weekday {
+            cal.set(PlatformCalendar.DAY_OF_WEEK, weekday)
+        }
+        if let weekdayOrdinal = self.weekdayOrdinal {
+            //cal.set(PlatformCalendar.WEEKDAYORDINAL, weekdayOrdinal)
+            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+        }
+        if let quarter = self.quarter {
+            //cal.set(PlatformCalendar.QUARTER, quarter)
+            fatalError("DateComponents.quarter unsupported in Skip")
+        }
+        if let weekOfMonth = self.weekOfMonth {
+            cal.set(PlatformCalendar.WEEK_OF_MONTH, weekOfMonth)
+        }
+        if let weekOfYear = self.weekOfYear {
+            cal.set(PlatformCalendar.WEEK_OF_YEAR, weekOfYear)
+        }
+        if let yearForWeekOfYear = self.yearForWeekOfYear {
+            //cal.set(PlatformCalendar.YEARFORWEEKOFYEAR, yearForWeekOfYear)
+            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+        }
+
+        return cal
+    }
+    #endif
+
+
+    /// Set the value of one of the properties, using an enumeration value instead of a property name.
+    ///
+    /// The calendar and timeZone and isLeapMonth properties cannot be set by this method.
+    public mutating func setValue(_ value: Int?, for component: SkipCalendarComponent) {
+        switch component {
+        case .era: self.era = value
+        case .year: self.year = value
+        case .month: self.month = value
+        case .day: self.day = value
+        case .hour: self.hour = value
+        case .minute: self.minute = value
+        case .second: self.second = value
+        case .weekday: self.weekday = value
+        case .weekdayOrdinal: self.weekdayOrdinal = value
+        case .quarter: self.quarter = value
+        case .weekOfMonth: self.weekOfMonth = value
+        case .weekOfYear: self.weekOfYear = value
+        case .yearForWeekOfYear: self.yearForWeekOfYear = value
+        case .nanosecond: self.nanosecond = value
+        case .calendar, .timeZone: // , .isLeapMonth:
+            // Do nothing
+            break
+        @unknown default:
+            break
+        }
+    }
+
+    /// Adds one set of components to this date
+    public mutating func add(components: SkipDateComponents) {
+        #if !SKIP
+        fatalError("SkipDateComponents: add not implemented for Swift")
+        #else
+        let cal = createCalendarComponents()
+
+        if let value = components.era {
+            cal.roll(PlatformCalendar.ERA, value)
+        }
+        if let value = components.year {
+            cal.roll(PlatformCalendar.YEAR, value)
+        }
+        if let value = components.quarter {
+            //cal.roll(PlatformCalendar.QUARTER, value)
+            fatalError("DateComponents.quarter unsupported in Skip")
+        }
+        if let value = components.month {
+            cal.roll(PlatformCalendar.MONTH, value)
+        }
+        if let value = components.weekday {
+            cal.roll(PlatformCalendar.DAY_OF_WEEK, value)
+        }
+        if let value = components.weekdayOrdinal {
+            //cal.roll(PlatformCalendar.WEEKDAYORDINAL, value)
+            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+        }
+        if let value = components.weekOfMonth {
+            cal.roll(PlatformCalendar.WEEK_OF_MONTH, value)
+        }
+        if let value = components.weekOfYear {
+            cal.roll(PlatformCalendar.WEEK_OF_YEAR, value)
+        }
+        if let value = components.yearForWeekOfYear {
+            //cal.roll(PlatformCalendar.YEARFORWEEKOFYEAR, value)
+            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+        }
+        if let value = components.day {
+            cal.roll(PlatformCalendar.DATE, value) // i.e., DAY_OF_MONTH
+        }
+        if let value = components.hour {
+            cal.roll(PlatformCalendar.HOUR_OF_DAY, value)
+        }
+        if let value = components.minute {
+            cal.roll(PlatformCalendar.MINUTE, value)
+        }
+        if let value = components.second {
+            cal.roll(PlatformCalendar.SECOND, value)
+        }
+        if let value = components.nanosecond {
+            fatalError("DateComponents.nanosecond unsupported in Skip")
+        }
+
+        // update our fields from the rolled java.util.Calendar fields
+        self = SkipDateComponents(fromCalendar: SkipCalendar(rawValue: cal))
+        #endif
+    }
+
+    /// Adds a value for a given components
+    ///
+    /// The calendar and timeZone and isLeapMonth properties cannot be set by this method.
+    public mutating func addValue(_ value: Int, for component: SkipCalendarComponent) {
+        #if !SKIP
+        fatalError("SkipDateComponents: addValue not implemented for Swift")
+        #else
+        let cal = createCalendarComponents()
+
+        switch component {
+        case .era:
+            cal.roll(PlatformCalendar.ERA, value)
+        case .year:
+            cal.roll(PlatformCalendar.YEAR, value)
+        case .month:
+            cal.roll(PlatformCalendar.MONTH, value)
+        case .day:
+            cal.roll(PlatformCalendar.DATE, value) // i.e., DAY_OF_MONTH
+        case .hour:
+            cal.roll(PlatformCalendar.HOUR_OF_DAY, value)
+        case .minute:
+            cal.roll(PlatformCalendar.MINUTE, value)
+        case .second:
+            cal.roll(PlatformCalendar.SECOND, value)
+        case .weekday:
+            cal.roll(PlatformCalendar.DAY_OF_WEEK, value)
+        case .weekdayOrdinal:
+            //cal.roll(PlatformCalendar.WEEKDAYORDINAL, value)
+            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+        case .quarter:
+            //cal.roll(PlatformCalendar.QUARTER, value)
+            fatalError("DateComponents.quarter unsupported in Skip")
+        case .weekOfMonth:
+            cal.roll(PlatformCalendar.WEEK_OF_MONTH, value)
+        case .weekOfYear:
+            cal.roll(PlatformCalendar.WEEK_OF_YEAR, value)
+        case .yearForWeekOfYear:
+            //cal.roll(PlatformCalendar.YEARFORWEEKOFYEAR, value)
+            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+        case .nanosecond:
+            break // unsupported
+        case .calendar, .timeZone: // , .isLeapMonth:
+            // Do nothing
+            break
+        @unknown default:
+            break
+        }
+
+        // update our fields from the rolled java.util.Calendar fields
+        self = SkipDateComponents(fromCalendar: SkipCalendar(rawValue: cal))
+        #endif
+    }
+
+    /// Returns the value of one of the properties, using an enumeration value instead of a property name.
+    public func value(for component: SkipCalendarComponent) -> Int? {
+        switch component {
+        case .era: return self.era
+        case .year: return self.year
+        case .month: return self.month
+        case .day: return self.day
+        case .hour: return self.hour
+        case .minute: return self.minute
+        case .second: return self.second
+        case .weekday: return self.weekday
+        case .weekdayOrdinal: return self.weekdayOrdinal
+        case .quarter: return self.quarter
+        case .weekOfMonth: return self.weekOfMonth
+        case .weekOfYear: return self.weekOfYear
+        case .yearForWeekOfYear: return self.yearForWeekOfYear
+        case .nanosecond: return self.nanosecond
+        case .calendar, .timeZone: // , .isLeapMonth:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+
 
     public var description: String {
         #if !SKIP
@@ -190,74 +479,24 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         #endif
     }
 
-    #if SKIP
-    /// Builds a java.util.Calendar from the fields
-    private func createCalendar() -> PlatformCalendar {
-        let c: PlatformCalendar = (self.calendar?.rawValue ?? PlatformCalendar.getInstance())
-        let cal: PlatformCalendar = (c as java.util.Calendar).clone() as PlatformCalendar
-
-        if let timeZoneValue = timeZone {
-            cal.setTimeZone(timeZoneValue.rawValue)
-        }
-        if let eraValue = era {
-            cal.set(PlatformCalendar.ERA, eraValue)
-        }
-        if let yearValue = year {
-            cal.set(PlatformCalendar.YEAR, yearValue)
-        }
-        if let monthValue = month {
-            cal.set(PlatformCalendar.MONTH, monthValue)
-        }
-        if let dayValue = day {
-            cal.set(PlatformCalendar.DATE, dayValue) // i.e., DAY_OF_MONTH
-        }
-        if let hourValue = hour {
-            cal.set(PlatformCalendar.HOUR, hourValue)
-        }
-        if let minuteValue = minute {
-            cal.set(PlatformCalendar.MINUTE, minuteValue)
-        }
-        if let secondValue = second {
-            cal.set(PlatformCalendar.SECOND, secondValue)
-        }
-        if let nanosecondValue = nanosecond {
-            //cal.set(PlatformCalendar.NANOSECOND, nanosecondValue)
-            fatalError("DateComponents.nanosecond unsupported in Skip")
-        }
-        if let weekdayValue = weekday {
-            cal.set(PlatformCalendar.DAY_OF_WEEK, weekdayValue)
-        }
-        if let weekdayOrdinalValue = weekdayOrdinal {
-            //cal.set(PlatformCalendar.WEEKDAYORDINAL, weekdayOrdinalValue)
-            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
-        }
-        if let quarterValue = quarter {
-            //cal.set(PlatformCalendar.QUARTER, quarterValue)
-            fatalError("DateComponents.quarter unsupported in Skip")
-        }
-        if let weekOfMonthValue = weekOfMonth {
-            cal.set(PlatformCalendar.WEEK_OF_MONTH, weekOfMonthValue)
-        }
-        if let weekOfYearValue = weekOfYear {
-            cal.set(PlatformCalendar.WEEK_OF_YEAR, weekOfYearValue)
-        }
-        if let yearForWeekOfYearValue = yearForWeekOfYear {
-            //cal.set(PlatformCalendar.YEARFORWEEKOFYEAR, yearForWeekOfYearValue)
-            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
-        }
-
-        return cal
-    }
-    #endif
-
     public var isValidDate: Bool {
         #if !SKIP
         return components.isValidDate
         #else
-        if self.calendar == nil {
+        guard let calendar = self.calendar else {
             return false
         }
-        let cal = createCalendar()
+        return isValidDate(in: calendar)
+        #endif
+    }
+
+    public func isValidDate(in calendar: Calendar) -> Bool {
+        #if !SKIP
+        return components.isValidDate(in: calendar)
+        #else
+        // TODO: re-use implementation from: https://github.com/apple/swift-foundation/blob/68c2466c613a77d6c4453f3a06496a5da79a0cb9/Sources/FoundationInternationalization/DateComponents.swift#LL327C1-L328C1
+
+        let cal = createCalendarComponents()
         return cal.getActualMinimum(PlatformCalendar.DAY_OF_MONTH) <= cal.get(PlatformCalendar.DAY_OF_MONTH)
         && cal.getActualMaximum(PlatformCalendar.DAY_OF_MONTH) >= cal.get(PlatformCalendar.DAY_OF_MONTH)
         && cal.getActualMinimum(PlatformCalendar.MONTH) <= cal.get(PlatformCalendar.MONTH) + (cal.get(PlatformCalendar.MONTH) == 2 ? ((cal as? java.util.GregorianCalendar)?.isLeapYear(self.year ?? -1) == true ? 0 : 1) : 0)

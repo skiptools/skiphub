@@ -72,4 +72,90 @@ final class DateTests: XCTestCase {
         XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 8 + 1, month: 2, day: 29).isValidDate)
         #endif
     }
+
+    func testUSCalendarSymbols() {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "en_US")
+        XCTAssertEqual("AM", calendar.amSymbol)
+        XCTAssertEqual("PM", calendar.pmSymbol)
+        XCTAssertEqual(["BC", "AD"], calendar.eraSymbols)
+        XCTAssertEqual(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], calendar.monthSymbols)
+        XCTAssertEqual(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], calendar.shortMonthSymbols)
+        XCTAssertEqual(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], calendar.weekdaySymbols)
+        XCTAssertEqual(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], calendar.shortWeekdaySymbols)
+    }
+
+    func testFrenchCalendarSymbols() {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "fr_FR")
+        XCTAssertEqual("AM", calendar.amSymbol)
+        XCTAssertEqual("PM", calendar.pmSymbol)
+        XCTAssertEqual(["av. J.-C.", "ap. J.-C."], calendar.eraSymbols)
+        XCTAssertEqual(["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"], calendar.monthSymbols)
+        XCTAssertEqual(["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."], calendar.shortMonthSymbols)
+        XCTAssertEqual(["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], calendar.weekdaySymbols)
+        XCTAssertEqual(["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."], calendar.shortWeekdaySymbols)
+    }
+
+    func testChineseCalendarSymbols() {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "zh_Hans")
+        XCTAssertEqual("上午", calendar.amSymbol)
+        XCTAssertEqual("下午", calendar.pmSymbol)
+        XCTAssertEqual(["公元前", "公元"], calendar.eraSymbols)
+        XCTAssertEqual(["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], calendar.monthSymbols)
+        XCTAssertEqual(["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], calendar.shortMonthSymbols)
+        XCTAssertEqual(["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], calendar.weekdaySymbols)
+        XCTAssertEqual(["周日", "周一", "周二", "周三", "周四", "周五", "周六"], calendar.shortWeekdaySymbols)
+    }
+
+    func testJapaneseCalendarSymbols() {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "ja_JP")
+        XCTAssertEqual("午前", calendar.amSymbol)
+        XCTAssertEqual("午後", calendar.pmSymbol)
+        XCTAssertEqual(["紀元前", "西暦"], calendar.eraSymbols)
+        XCTAssertEqual(["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], calendar.monthSymbols)
+        XCTAssertEqual(["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], calendar.shortMonthSymbols)
+        XCTAssertEqual(["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"], calendar.weekdaySymbols)
+        XCTAssertEqual(["日", "月", "火", "水", "木", "金", "土"], calendar.shortWeekdaySymbols)
+    }
+
+    func testArabicCalendarSymbols() {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "ar_AR")
+        XCTAssertEqual("ص", calendar.amSymbol)
+        XCTAssertEqual("م", calendar.pmSymbol)
+        XCTAssertEqual(["ق.م", "م"], calendar.eraSymbols)
+        XCTAssertEqual(["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], calendar.monthSymbols)
+        XCTAssertEqual(["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], calendar.shortMonthSymbols)
+        XCTAssertEqual(["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], calendar.weekdaySymbols)
+
+        // java.lang.AssertionError: expected:<الأحد, الاثنين, الثلاثاء, الأربعاء, الخميس, الجمعة, السبت> but was:<أحد, اثنين, ثلاثاء, أربعاء, خميس, جمعة, سبت>
+
+        #if !SKIP
+        XCTAssertEqual(["أحد" ,"اثنين" ,"ثلاثاء" ,"أربعاء" ,"خميس" ,"جمعة" ,"سبت"], calendar.shortWeekdaySymbols)
+        #else
+        // shortWeekdaySymbols == weekdaySymbols for Java's Arabic localization
+        XCTAssertEqual(["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], calendar.shortWeekdaySymbols)
+        #endif
+    }
+
+    func testThaiCalendarSymbols() {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "th_TH")
+        #if !SKIP
+        // it seems Foundation is missing these Thai symbols
+        XCTAssertEqual("AM", calendar.amSymbol)
+        XCTAssertEqual("PM", calendar.pmSymbol)
+        #else
+        XCTAssertEqual("ก่อนเที่ยง", calendar.amSymbol)
+        XCTAssertEqual("หลังเที่ยง", calendar.pmSymbol)
+        #endif
+        XCTAssertEqual(["ก่อน ค.ศ.", "ค.ศ."], calendar.eraSymbols)
+        XCTAssertEqual(["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"], calendar.monthSymbols)
+        XCTAssertEqual(["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."], calendar.shortMonthSymbols)
+        XCTAssertEqual(["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"], calendar.weekdaySymbols)
+        XCTAssertEqual(["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."], calendar.shortWeekdaySymbols)
+    }
 }

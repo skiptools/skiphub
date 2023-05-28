@@ -22,6 +22,11 @@ public let CFAbsoluteTimeGetCurrent = Foundation.CFAbsoluteTimeGetCurrent
 public typealias TimeInterval = Double
 public typealias CFTimeInterval = TimeInterval
 
+/// Minic the constructor for `TimeInterval()` with an Int
+public func TimeInterval(_ seconds: Int) -> TimeInterval {
+    return seconds.toDouble()
+}
+
 /// absolute time is the time interval since the reference date the reference date (epoch) is 00:00:00 1 January 2001.
 public typealias CFAbsoluteTime = CFTimeInterval
 
@@ -64,6 +69,13 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         self.rawValue = rawValue
     }
 
+    #if SKIP
+    /// We don't support initializing doubles from int literals in Kotlin, so add a constructor that lets people do things like `Date(timeIntervalSince1970: 1449332351)`
+    public init(timeIntervalSince1970: Int) {
+        self.init(timeIntervalSince1970: timeIntervalSince1970.toDouble())
+    }
+    #endif
+
     public init(timeIntervalSince1970: TimeInterval) {
         #if !SKIP
         self.rawValue = PlatformDate(timeIntervalSince1970: timeIntervalSince1970)
@@ -98,7 +110,11 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
     }
 
     var description: String {
+        #if !SKIP
         return rawValue.description
+        #else
+        return description(with: nil)
+        #endif
     }
 
     func description(with locale: SkipLocale?) -> String {

@@ -42,17 +42,19 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         self.rawValue = rawValue
     }
 
-//    public init?(identifier: String) {
-//        #if !SKIP
-//        guard let tz = PlatformTimeZone(identifier: identifier) else {
-//            return nil
-//        }
-//        self.rawValue = tz
-//        #else
-//        fatalError("TODO: timeZome")
-//        #endif
-//    }
-
+    public init?(identifier: String) {
+        #if !SKIP
+        guard let tz = PlatformTimeZone(identifier: identifier) else {
+            return nil
+        }
+        self.rawValue = tz
+        #else
+        guard let tz = PlatformTimeZone.getTimeZone(identifier) else {
+            return nil
+        }
+        self.rawValue = tz
+        #endif
+    }
 
     public init?(secondsFromGMT seconds: Int) {
         #if !SKIP
@@ -64,15 +66,14 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         // java.time.ZoneId is more modern, but doesn't seem to be able to vend a java.util.TimeZone
         // guard let tz = PlatformTimeZone.getTimeZone(java.time.ZoneId.ofOffset(seconds))
 
-        let timeZoneId = seconds >= 0
-            ? String.format("GMT+%02d:%02d", seconds / 3600, (seconds % 3600) / 60)
-            : String.format("GMT-%02d:%02d", -seconds / 3600, (-seconds % 3600) / 60)
+        //let timeZoneId = seconds >= 0
+        //    ? String.format("GMT+%02d:%02d", seconds / 3600, (seconds % 3600) / 60)
+        //    : String.format("GMT-%02d:%02d", -seconds / 3600, (-seconds % 3600) / 60)
+        //guard let tz = PlatformTimeZone.getTimeZone(timeZoneId) else {
+        //    return nil
+        //}
 
-        guard let tz = PlatformTimeZone.getTimeZone(timeZoneId) else {
-            return nil
-        }
-
-        self.rawValue = tz
+        self.rawValue = java.util.SimpleTimeZone(seconds, "GMT")
         #endif
     }
 
