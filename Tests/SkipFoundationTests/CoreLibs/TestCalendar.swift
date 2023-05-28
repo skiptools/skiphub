@@ -331,7 +331,7 @@ class TestCalendar: XCTestCase {
 
     func test_nextDate() throws {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("TODO: dateComponents nextDate")
         #else
         var calendar = Calendar.current
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "US/Pacific"))

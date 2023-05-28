@@ -25,6 +25,14 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
+    public static var system: SkipTimeZone {
+        #if !SKIP
+        return SkipTimeZone(rawValue: PlatformTimeZone.current)
+        #else
+        return SkipTimeZone(rawValue: PlatformTimeZone.getDefault())
+        #endif
+    }
+
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public static var gmt: SkipTimeZone {
         #if !SKIP
@@ -95,6 +103,14 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         return rawValue.identifier
         #else
         return rawValue.getID()
+        #endif
+    }
+
+    public func abbreviation(for date: SkipDate = SkipDate()) -> String? {
+        #if !SKIP
+        return rawValue.abbreviation(for: date.rawValue)
+        #else
+        return rawValue.getDisplayName(true, PlatformTimeZone.SHORT)
         #endif
     }
 

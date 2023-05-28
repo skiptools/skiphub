@@ -8,6 +8,10 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
+#if SKIP
+/// Shim for test compat
+private typealias NSTimeZone = TimeZone
+#endif
 
 // This source file is part of the Swift.org open source project
 //
@@ -263,20 +267,26 @@ class TestDateFormatter: XCTestCase {
     // ------  --------------                        -------------------------
     // en_US   EEEE, MMMM d, y 'at' hh:mm:ss a zzzz  Friday, December 25, 2015 at 12:00:00 AM Greenwich Mean Time
     func test_customDateFormat() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let timestamps = [
              // Negative time offsets are still buggy on macOS
-             -31536000 : "Wednesday, January 1, 1969 at 12:00:00 AM GMT", 0.0 : "Thursday, January 1, 1970 at 12:00:00 AM Greenwich Mean Time",
-             31536000 : "Friday, January 1, 1971 at 12:00:00 AM Greenwich Mean Time", 2145916800 : "Friday, January 1, 2038 at 12:00:00 AM Greenwich Mean Time",
-             1456272000 : "Wednesday, February 24, 2016 at 12:00:00 AM Greenwich Mean Time", 1456358399 : "Wednesday, February 24, 2016 at 11:59:59 PM Greenwich Mean Time",
-             1452574638 : "Tuesday, January 12, 2016 at 04:57:18 AM Greenwich Mean Time", 1455685038 : "Wednesday, February 17, 2016 at 04:57:18 AM Greenwich Mean Time",
-             1458622638 : "Tuesday, March 22, 2016 at 04:57:18 AM Greenwich Mean Time", 1459745838 : "Monday, April 4, 2016 at 04:57:18 AM Greenwich Mean Time",
-             1462597038 : "Saturday, May 7, 2016 at 04:57:18 AM Greenwich Mean Time", 1465534638 : "Friday, June 10, 2016 at 04:57:18 AM Greenwich Mean Time",
-             1469854638 : "Saturday, July 30, 2016 at 04:57:18 AM Greenwich Mean Time", 1470718638 : "Tuesday, August 9, 2016 at 04:57:18 AM Greenwich Mean Time",
-             1473915438 : "Thursday, September 15, 2016 at 04:57:18 AM Greenwich Mean Time", 1477285038 : "Monday, October 24, 2016 at 04:57:18 AM Greenwich Mean Time",
-             1478062638 : "Wednesday, November 2, 2016 at 04:57:18 AM Greenwich Mean Time", 1482641838 : "Sunday, December 25, 2016 at 04:57:18 AM Greenwich Mean Time"
+             //-31536000.0 : "Wednesday, January 1, 1969 at 12:00:00 AM GMT",
+             0.0 : "Thursday, January 1, 1970 at 12:00:00 AM Greenwich Mean Time",
+             31536000.0 : "Friday, January 1, 1971 at 12:00:00 AM Greenwich Mean Time",
+             2145916800.0 : "Friday, January 1, 2038 at 12:00:00 AM Greenwich Mean Time",
+             1456272000.0 : "Wednesday, February 24, 2016 at 12:00:00 AM Greenwich Mean Time",
+             1456358399.0 : "Wednesday, February 24, 2016 at 11:59:59 PM Greenwich Mean Time",
+             1452574638.0 : "Tuesday, January 12, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1455685038.0 : "Wednesday, February 17, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1458622638.0 : "Tuesday, March 22, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1459745838.0 : "Monday, April 4, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1462597038.0 : "Saturday, May 7, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1465534638.0 : "Friday, June 10, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1469854638.0 : "Saturday, July 30, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1470718638.0 : "Tuesday, August 9, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1473915438.0 : "Thursday, September 15, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1477285038.0 : "Monday, October 24, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1478062638.0 : "Wednesday, November 2, 2016 at 04:57:18 AM Greenwich Mean Time",
+             1482641838.0 : "Sunday, December 25, 2016 at 04:57:18 AM Greenwich Mean Time",
         ]
         
         let f = DateFormatter()
@@ -293,9 +303,13 @@ class TestDateFormatter: XCTestCase {
         }
 
         let quarterTimestamps: [Double : String] = [
-            1451679712 : "1", 1459542112 : "2", 1467404512 : "3", 1475353312 : "4"
+            1451679712.0 : "1", 1459542112.0 : "2", 1467404512.0 : "3", 1475353312.0 : "4"
         ]
-        
+
+        #if SKIP
+        throw XCTSkip("Skip: no support for DateFormatter.Quarter")
+        #endif
+
         f.dateFormat = "Q"
         
         for (timestamp, stringResult) in quarterTimestamps {
@@ -316,14 +330,9 @@ class TestDateFormatter: XCTestCase {
         
         f.dateFormat = "dd-MM-yyyy"
         XCTAssertEqual(f.string(from: testDate), "11-03-2016")
-        
-        #endif // !SKIP
     }
 
     func test_setLocalizedDateFormatFromTemplate() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let locale = Locale(identifier: DEFAULT_LOCALE)
         let template = "EEEE MMMM d y hhmmss a zzzz"
 
@@ -333,7 +342,6 @@ class TestDateFormatter: XCTestCase {
 
         let dateFormat = DateFormatter.dateFormat(fromTemplate: template, options: 0, locale: locale)
         XCTAssertEqual(f.dateFormat, dateFormat)
-        #endif // !SKIP
     }
 
     func test_dateFormatString() {
@@ -383,41 +391,30 @@ class TestDateFormatter: XCTestCase {
     }
 
     func test_setLocaleToNil() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let f = DateFormatter()
         // Locale should be the current one by default
-        XCTAssertEqual(f.locale, .current)
+        XCTAssertEqual(f.locale, Locale.current)
 
         f.locale = nil
 
         // Locale should go back to current.
-        XCTAssertEqual(f.locale, .current)
+        XCTAssertEqual(f.locale, Locale.current)
 
         // A nil locale should not crash a subsequent operation
         let result: String? = f.string(from: Date())
         XCTAssertNotNil(result)
-        #endif // !SKIP
     }
 
     func test_setTimeZoneToNil() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let f = DateFormatter()
         // Time zone should be the system one by default.
         XCTAssertEqual(f.timeZone, NSTimeZone.system)
         f.timeZone = nil
         // Time zone should go back to the system one.
         XCTAssertEqual(f.timeZone, NSTimeZone.system)
-        #endif // !SKIP
     }
 
     func test_setTimeZone() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         // Test two different time zones. Should ensure that if one
         // happens to be TimeZone.current, we still get a valid test.
         let newYork = TimeZone(identifier: "America/New_York")!
@@ -433,13 +430,9 @@ class TestDateFormatter: XCTestCase {
         // Case 2: Los Angeles
         f.timeZone = losAngeles
         XCTAssertEqual(f.timeZone, losAngeles)
-        #endif // !SKIP
     }
 
     func test_expectedTimeZone() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let newYork = TimeZone(identifier: "America/New_York")!
         let losAngeles = TimeZone(identifier: "America/Los_Angeles")!
 
@@ -469,23 +462,25 @@ class TestDateFormatter: XCTestCase {
         // Case 3: Los Angeles
         f.timeZone = losAngeles
         XCTAssertEqual(f.string(from: now), losAngeles.abbreviation())
-        #endif // !SKIP
     }
 
     func test_dateFrom() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "UTC")
         formatter.dateFormat = "yyyy-MM-dd"
 
+        #if !SKIP // SimpleDateFormatter is lenient by default
         XCTAssertNil(formatter.date(from: "2018-03-09T10:25:16+01:00"))
+        #endif
         let d1 = try XCTUnwrap(formatter.date(from: "2018-03-09"))
         XCTAssertEqual(d1.description, "2018-03-09 00:00:00 +0000")
 
         // DateFormatter should allow any kind of whitespace before and after parsed content
+        #if SKIP
+        let whitespaces = " \t" // SKIP WARN: no support for unicode literals
+        #else
         let whitespaces = " \t\u{00a0}\u{1680}\u{2000}\u{2001}\u{2002}\u{2003}\u{2004}\u{2005}\u{2006}\u{2007}\u{2008}\u{2009}\u{200a}\u{202f}\u{205f}\u{3000}"
+        #endif
         let d1Prefix = try XCTUnwrap(formatter.date(from: "\(whitespaces)2018-03-09"))
         XCTAssertEqual(d1.description, d1Prefix.description)
         let d1PrefixSuffix = try XCTUnwrap(formatter.date(from: "\(whitespaces)2018-03-09\(whitespaces)"))
@@ -495,14 +490,16 @@ class TestDateFormatter: XCTestCase {
         
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         XCTAssertNil(formatter.date(from: "2018-03-09"))
+        #if SKIP
+        throw XCTSkip("Skip: differences in date format string") // the below date does not parse
+        #endif
         let d2 = try XCTUnwrap(formatter.date(from: "2018-03-09T10:25:16+01:00"))
         XCTAssertEqual(d2.description, "2018-03-09 09:25:16 +0000")
-        #endif // !SKIP
     }
     
     func test_dateParseAndFormatWithJapaneseCalendar() throws {
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("Skip: no support for JapeneseCalendar")
         #else
         let formatter = DateFormatter()
         
