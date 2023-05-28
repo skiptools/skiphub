@@ -16,6 +16,15 @@ extension NSIndexSet { func _bridgeToSwift() -> IndexSet { self as IndexSet } }
 
 #endif
 
+/// Generates the hash value for the given Hashable with the optional salt.
+internal func hash<H: Hashable>(_ value: H, salt: Int? = nil) -> Int {
+    var hasher = Hasher()
+    if let salt = salt {
+        hasher.combine(salt)
+    }
+    hasher.combine(value)
+    return hasher.finalize()
+}
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
@@ -416,15 +425,6 @@ internal func _checkEquatableImpl<Instance : Equatable>(
     }
 }
 
-func hash<H: Hashable>(_ value: H, salt: Int? = nil) -> Int {
-    var hasher = Hasher()
-    if let salt = salt {
-        hasher.combine(salt)
-    }
-    hasher.combine(value)
-    return hasher.finalize()
-}
-
 public func checkHashable<Instances: Collection>(
     _ instances: Instances,
     equalityOracle: (Instances.Index, Instances.Index) -> Bool,
@@ -756,5 +756,51 @@ public func withTemporaryDirectory<R>(block: (URL, String) throws -> R) throws -
 
     return try block(tmpDir, tmpDir.path)
 }
-#endif
 
+
+extension XCTestCase {
+    /// Simplified version of checkHashable without the un-skippable generics
+    public func checkHashable<T: Hashable>(_ instances: [T], equalityOracle: (Int, Int) -> Bool, allowIncompleteHashing: Bool = false) {
+        for (i, x) in instances.enumerated() {
+            for (j, y) in instances.enumerated() {
+                let predicted = equalityOracle(i, j)
+                XCTAssertEqual(
+                    predicted,
+                    equalityOracle(j, i),
+                    "bad hash oracle: broken symmetry between indices \(i), \(j)")
+                if x == y {
+                    XCTAssertTrue(
+                        predicted,
+                        """
+                        bad hash oracle: equality must imply hash equality
+                        lhs (at index \(i)): \(x)
+                        rhs (at index \(j)): \(y)
+                        """)
+                }
+                if predicted {
+                    XCTAssertEqual(
+                        hash(x), hash(y),
+                        """
+                        hash(into:) expected to match, found to differ
+                        lhs (at index \(i)): \(x)
+                        rhs (at index \(j)): \(y)
+                        """)
+                } else if !allowIncompleteHashing {
+                    // Try a few different seeds; at least one of them should discriminate
+                    // between the hashes. It is extremely unlikely this check will fail
+                    // all ten attempts, unless the type's hash encoding is not unique,
+                    // or unless the hash equality oracle is wrong.
+                    XCTAssertNotNil(
+                        (0..<10).first(where: { hash(x, salt: $0) != hash(y, salt: $0) }),
+                        """
+                        hash(into:) expected to differ, found to match
+                        lhs (at index \(i)): \(x)
+                        rhs (at index \(j)): \(y)
+                        """)
+                }
+            }
+        }
+    }
+}
+
+#endif

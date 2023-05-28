@@ -24,15 +24,11 @@ import XCTest
 //
 
 func dateWithString(_ str: String) -> Date {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
     let formatter = DateFormatter()
-    formatter.calendar = Calendar(identifier: .gregorian)
+    formatter.calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
     formatter.locale = Locale(identifier: "en_US")
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
     return formatter.date(from: str)! as Date
-        #endif // !SKIP
 }
 
 class TestDate : XCTestCase {
@@ -209,9 +205,6 @@ class TestDate : XCTestCase {
     }
 
     func test_Hashing() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let values: [Date] = [
             dateWithString("2010-05-17 14:49:47 -0700"),
             dateWithString("2011-05-17 14:49:47 -0700"),
@@ -221,8 +214,9 @@ class TestDate : XCTestCase {
             dateWithString("2010-05-17 14:50:47 -0700"),
             dateWithString("2010-05-17 14:49:48 -0700"),
         ]
+        #if !SKIP
         checkHashable(values, equalityOracle: { $0 == $1 })
-        #endif // !SKIP
+        #endif
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)

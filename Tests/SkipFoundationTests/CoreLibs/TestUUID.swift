@@ -80,9 +80,6 @@ class TestUUID : XCTestCase {
     }
 
     func test_hash() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let values: [UUID] = [
             // This list takes a UUID and tweaks every byte while
             // leaving the version/variant intact.
@@ -104,8 +101,9 @@ class TestUUID : XCTestCase {
             UUID(uuidString: "a53baa1c-b4f5-48db-9467-9786b76b266c")!,
             UUID(uuidString: "a53baa1c-b4f5-48db-9467-9786b76b256d")!,
         ]
-        checkHashable(values, equalityOracle: { $0 == $1 })
-        #endif // !SKIP
+        #if !SKIP
+        checkHashable(values, equalityOracle: { values[$0] == values[$1] })
+        #endif
     }
 }
 
