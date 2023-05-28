@@ -18,6 +18,9 @@ internal typealias PlatformCalendar = Foundation.Calendar
 internal typealias SkipCalendarIdentifier = PlatformCalendar.Identifier
 #endif
 
+// seems to be needed to expose java.util.Calendar.clone()
+// SKIP INSERT: fun PlatformCalendar.clone(): PlatformCalendar { return this.clone() as PlatformCalendar }
+
 // override the Kotlin type to be public while keeping the Swift version internal:
 // SKIP DECLARE: public class SkipCalendar: RawRepresentable<PlatformCalendar>, MutableStruct
 internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertible {
@@ -132,3 +135,4 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         case timeZone
     }
 }
+

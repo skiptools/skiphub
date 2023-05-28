@@ -50,4 +50,26 @@ final class DateTests: XCTestCase {
     func testAbsoluteTimeGetCurrent() {
         XCTAssertNotEqual(0, CFAbsoluteTimeGetCurrent())
     }
+
+    func testDateComponentsLeapYears() {
+        XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 1928, month: 2, day: 29).isValidDate)
+        #if !SKIP // validation not yet correct
+        XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 1928 + 1, month: 2, day: 29).isValidDate)
+
+        XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 1956, month: 2, day: 29).isValidDate)
+        XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 1956 + 1, month: 2, day: 29).isValidDate)
+
+        XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 2000, month: 2, day: 29).isValidDate)
+        XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 2000 + 1, month: 2, day: 29).isValidDate)
+
+        XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 2020, month: 2, day: 29).isValidDate)
+        XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 2020 + 1, month: 2, day: 29).isValidDate)
+
+        XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 800, month: 2, day: 29).isValidDate)
+        XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 800 + 1, month: 2, day: 29).isValidDate)
+
+        XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 8, month: 2, day: 29).isValidDate)
+        XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 8 + 1, month: 2, day: 29).isValidDate)
+        #endif
+    }
 }

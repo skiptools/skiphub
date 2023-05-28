@@ -18,7 +18,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     #if !SKIP
     public var components: PlatformDateComponents
 
-    public var calendar: Calendar? {
+    public var calendar: PlatformCalendar? {
         get { components.calendar }
         set { components.calendar = newValue }
     }
@@ -90,8 +90,8 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
 
     // the is no direct analogue to DateComponents in Java (other then java.util.Calendar), so we store the fields individually
 
-    public var calendar: Calendar? = nil
-    public var timeZone: TimeZone? = nil
+    public var calendar: SkipCalendar? = nil
+    public var timeZone: SkipTimeZone? = nil
     public var era: Int? = nil
     public var year: Int? = nil
     public var month: Int? = nil
@@ -190,6 +190,66 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         #endif
     }
 
+    #if SKIP
+    /// Builds a java.util.Calendar from the fields
+    private func createCalendar() -> PlatformCalendar {
+        let c: PlatformCalendar = (self.calendar?.rawValue ?? PlatformCalendar.getInstance())
+        let cal: PlatformCalendar = (c as java.util.Calendar).clone() as PlatformCalendar
+
+        if let timeZoneValue = timeZone {
+            cal.setTimeZone(timeZoneValue.rawValue)
+        }
+        if let eraValue = era {
+            cal.set(PlatformCalendar.ERA, eraValue)
+        }
+        if let yearValue = year {
+            cal.set(PlatformCalendar.YEAR, yearValue)
+        }
+        if let monthValue = month {
+            cal.set(PlatformCalendar.MONTH, monthValue)
+        }
+        if let dayValue = day {
+            cal.set(PlatformCalendar.DATE, dayValue) // i.e., DAY_OF_MONTH
+        }
+        if let hourValue = hour {
+            cal.set(PlatformCalendar.HOUR, hourValue)
+        }
+        if let minuteValue = minute {
+            cal.set(PlatformCalendar.MINUTE, minuteValue)
+        }
+        if let secondValue = second {
+            cal.set(PlatformCalendar.SECOND, secondValue)
+        }
+        if let nanosecondValue = nanosecond {
+            //cal.set(PlatformCalendar.NANOSECOND, nanosecondValue)
+            fatalError("DateComponents.nanosecond unsupported in Skip")
+        }
+        if let weekdayValue = weekday {
+            cal.set(PlatformCalendar.DAY_OF_WEEK, weekdayValue)
+        }
+        if let weekdayOrdinalValue = weekdayOrdinal {
+            //cal.set(PlatformCalendar.WEEKDAYORDINAL, weekdayOrdinalValue)
+            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+        }
+        if let quarterValue = quarter {
+            //cal.set(PlatformCalendar.QUARTER, quarterValue)
+            fatalError("DateComponents.quarter unsupported in Skip")
+        }
+        if let weekOfMonthValue = weekOfMonth {
+            cal.set(PlatformCalendar.WEEK_OF_MONTH, weekOfMonthValue)
+        }
+        if let weekOfYearValue = weekOfYear {
+            cal.set(PlatformCalendar.WEEK_OF_YEAR, weekOfYearValue)
+        }
+        if let yearForWeekOfYearValue = yearForWeekOfYear {
+            //cal.set(PlatformCalendar.YEARFORWEEKOFYEAR, yearForWeekOfYearValue)
+            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+        }
+
+        return cal
+    }
+    #endif
+
     public var isValidDate: Bool {
         #if !SKIP
         return components.isValidDate
@@ -197,7 +257,13 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         if self.calendar == nil {
             return false
         }
-        fatalError("TODO: DateComponents.isValueDate")
+        let cal = createCalendar()
+        return cal.getActualMinimum(PlatformCalendar.DAY_OF_MONTH) <= cal.get(PlatformCalendar.DAY_OF_MONTH)
+        && cal.getActualMaximum(PlatformCalendar.DAY_OF_MONTH) >= cal.get(PlatformCalendar.DAY_OF_MONTH)
+        && cal.getActualMinimum(PlatformCalendar.MONTH) <= cal.get(PlatformCalendar.MONTH) + (cal.get(PlatformCalendar.MONTH) == 2 ? ((cal as? java.util.GregorianCalendar)?.isLeapYear(self.year ?? -1) == true ? 0 : 1) : 0)
+        && cal.getActualMaximum(PlatformCalendar.MONTH) >= cal.get(PlatformCalendar.MONTH)
+        && cal.getActualMinimum(PlatformCalendar.YEAR) <= cal.get(PlatformCalendar.YEAR)
+        && cal.getActualMaximum(PlatformCalendar.YEAR) >= cal.get(PlatformCalendar.YEAR)
         #endif
     }
 }

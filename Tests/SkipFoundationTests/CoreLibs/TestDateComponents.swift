@@ -133,12 +133,10 @@ class TestDateComponents: XCTestCase {
         dc.hour = 3
         dc.minute = 4
         dc.second = 5
+        #if !SKIP // nanosecond unsupported in Skip due to no field in java.util.Calendar
         dc.nanosecond = 6
-        #if SKIP
-        throw XCTSkip("TODO: DateComponents.isValueDate")
-        #else
-        XCTAssertTrue(dc.isValidDate)
         #endif
+        XCTAssertTrue(dc.isValidDate)
     }
 
     #if !SKIP
