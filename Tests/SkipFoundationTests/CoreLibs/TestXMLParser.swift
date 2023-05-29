@@ -56,6 +56,12 @@ extension XMLParserDelegateEvent: Equatable {
 class XMLParserDelegateEventStream: NSObject, XMLParserDelegate {
     var events: [XMLParserDelegateEvent] = []
 
+    #if SKIP
+    init() {
+
+    }
+    #endif
+    
     func parserDidStartDocument(_ parser: XMLParser) {
         #if SKIP
         throw XCTSkip("TODO")

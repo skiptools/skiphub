@@ -760,6 +760,13 @@ public func withTemporaryDirectory<R>(block: (URL, String) throws -> R) throws -
 
 extension XCTestCase {
     /// Simplified version of checkHashable without the un-skippable generics
+    ///
+    /// This is needed to work around Kotlin misinterpreting the signature
+    public func checkHashable<T: Hashable>(_ instances: [T], equalityOracle: (Int, Int) -> Bool) {
+        return checkHashable(instances, equalityOracle: equalityOracle, allowIncompleteHashing: false)
+    }
+
+    /// Simplified version of checkHashable without the un-skippable generics
     public func checkHashable<T: Hashable>(_ instances: [T], equalityOracle: (Int, Int) -> Bool, allowIncompleteHashing: Bool = false) {
         for (i, x) in instances.enumerated() {
             for (j, y) in instances.enumerated() {

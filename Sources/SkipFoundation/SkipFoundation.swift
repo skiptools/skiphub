@@ -18,29 +18,32 @@ public func SkipFoundationPublicModuleName() -> String {
     return "SkipFoundation"
 }
 
-// MARK: Foundation Stubs
-
-// These are the types names that are sufficient for the core foundation
-// tests to compile and will eventually be implemented in SkipFoundation
-
-//internal class FoundationModuleClass {
-//}
+// MARK: Foundation Adapter Types
 
 #if SKIP
 public typealias AnyClass = kotlin.reflect.KClass<Any>
-public typealias NSString = String
+public typealias NSObject = java.lang.Object
+public typealias NSString = kotlin.String
+public typealias NSNumber = java.lang.Number
 public typealias NSURL = SkipURL
 public typealias NSUUID = SkipUUID
 public typealias NSDate = SkipDate
-public typealias NSNumber = java.lang.Number
 
+public protocol NSObjectProtocol {
+}
 
+//public extension NSObjectProtocol {
+//    public var description: String { "\(self)" }
+//    public func isEqual(_ other: Any?) -> Bool { other === self }
+//}
 
 public struct NSNull {
     public static let null = NSNull()
     public init() {
     }
 }
+
+public func NSString(string: String) -> NSString { string }
 
 public extension java.lang.Number {
     var doubleValue: Double { doubleValue() }
@@ -131,16 +134,7 @@ internal func strncmp(_ str1: String, _ str2: String) -> Int {
 
 internal func NSLog(_ message: String) {
     //logger.info(message)
-}
-
-
-
-public protocol NSObjectProtocol {
-}
-
-public class NSObject : NSObjectProtocol {
-    public var description: String { "\(self)" }
-    public func isEqual(_ other: Any?) -> Bool { false }
+    print(message)
 }
 
 public class NSCoder : NSObject {
@@ -306,7 +300,7 @@ internal protocol URLSessionTask {
 internal protocol URLSessionDataTask : URLSessionTask {
 }
 
-protocol URLSessionDelegate : NSObjectProtocol {
+protocol URLSessionDelegate {
 }
 
 internal protocol URLSessionTaskDelegate : URLSessionDelegate {

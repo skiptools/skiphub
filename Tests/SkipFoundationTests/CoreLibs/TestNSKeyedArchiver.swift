@@ -43,6 +43,7 @@ public class NSUserClass : NSObject, NSSecureCoding {
     }
     #endif
     
+    #if !SKIP
     public override var description: String {
         get {
             return "NSUserClass \(ivar)"
@@ -50,16 +51,13 @@ public class NSUserClass : NSObject, NSSecureCoding {
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         if let custom = object as? NSUserClass {
             return self.ivar == custom.ivar
         } else {
             return false
         }
-        #endif // !SKIP
     }
+    #endif
 }
 
 public class UserClass : NSObject, NSSecureCoding {
@@ -87,8 +85,7 @@ public class UserClass : NSObject, NSSecureCoding {
         self.ivar = aDecoder.decodeInteger(forKey: "$ivar")
         super.init()
     }
-    #endif
-    
+
     public override var description: String {
         get {
             return "UserClass \(ivar)"
@@ -96,16 +93,13 @@ public class UserClass : NSObject, NSSecureCoding {
     }
     
     public override func isEqual(_ other: Any?) -> Bool {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
       guard let other = other as? UserClass else {
         return false
       }
       
       return ivar == other.ivar
-        #endif // !SKIP
     }
+    #endif
 }
 
 class TestNSKeyedArchiver : XCTestCase {

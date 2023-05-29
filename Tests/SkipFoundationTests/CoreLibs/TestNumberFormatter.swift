@@ -939,58 +939,38 @@ class TestNumberFormatter: XCTestCase {
     }
     
     func test_multiplier() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.multiplier = 2
+        numberFormatter.multiplier = 2 as NSNumber
         let formattedString = numberFormatter.string(from: 21)
         XCTAssertEqual(formattedString, "42")
-        #endif // !SKIP
     }
     
     func test_positivePrefix() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
         numberFormatter.positivePrefix = "👍"
         let formattedString = numberFormatter.string(from: 42)
         XCTAssertEqual(formattedString, "👍42")
-        #endif // !SKIP
     }
     
     func test_positiveSuffix() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
         numberFormatter.positiveSuffix = "👍"
         let formattedString = numberFormatter.string(from: 42)
         XCTAssertEqual(formattedString, "42👍")
-        #endif // !SKIP
     }
     
     func test_negativePrefix() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
         numberFormatter.negativePrefix = "👎"
         let formattedString = numberFormatter.string(from: -42)
         XCTAssertEqual(formattedString, "👎42")
-        #endif // !SKIP
     }
     
     func test_negativeSuffix() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
         numberFormatter.negativeSuffix = "👎"
         let formattedString = numberFormatter.string(from: -42)
         XCTAssertEqual(formattedString, "-42👎")
-        #endif // !SKIP
     }
     
     func test_internationalCurrencySymbol() {
@@ -1088,9 +1068,6 @@ class TestNumberFormatter: XCTestCase {
     }
 
     func test_stringFor() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
         XCTAssertEqual(numberFormatter.string(for: 10)!, "10")
         XCTAssertEqual(numberFormatter.string(for: 3.14285714285714)!, "3")
@@ -1101,6 +1078,9 @@ class TestNumberFormatter: XCTestCase {
         XCTAssertNil(numberFormatter.string(for: "NaN"))
         XCTAssertNil(numberFormatter.string(for: NSString(string: "NaN")))
 
+        #if SKIP
+        throw XCTSkip("TODO: NumberFormatter.numberStyle = .spellOut")
+        #else
         numberFormatter.numberStyle = .spellOut
         XCTAssertEqual(numberFormatter.string(for: 234), "two hundred thirty-four")
         XCTAssertEqual(numberFormatter.string(for: 2007), "two thousand seven")
