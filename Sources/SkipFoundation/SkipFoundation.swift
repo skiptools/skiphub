@@ -291,15 +291,6 @@ internal protocol ISO8601DateFormatter {
 internal protocol FileHandle {
 }
 
-internal class URLSession {
-    class ResponseDisposition {
-    }
-}
-
-internal protocol URLResponse {
-}
-
-
 internal protocol URLSessionTask {
 }
 

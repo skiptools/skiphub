@@ -31,3 +31,8 @@
 //        return rawValue.description
 //    }
 //}
+
+internal class URLSession {
+    class ResponseDisposition {
+    }
+}
