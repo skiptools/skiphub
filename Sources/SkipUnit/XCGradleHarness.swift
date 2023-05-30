@@ -12,14 +12,14 @@ import XCTest
 /// A `XCTestCase` that invokes the `gradle` process.
 ///
 /// When run as part of a test suite, JUnit XML test reports are parsed and converted to Xcode issues, along with any reverse-source mappings from transpiled Kotlin back into the original Swift.
-@available(macOS 10.15, macCatalyst 11, *)
+@available(macOS 13, macCatalyst 16, *)
 @available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
 @available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
 @available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
 public protocol XCGradleHarness : GradleHarness {
 }
 
-@available(macOS 10.15, macCatalyst 11, *)
+@available(macOS 13, macCatalyst 16, *)
 extension XCGradleHarness where Self : XCTestCase {
 
     /// Invokes the `gradle` process with the specified arguments.
@@ -32,7 +32,7 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - moduleSuffix: the expected module name for automatic test determination
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
-    @available(macOS 10.15, macCatalyst 11, *)
+    @available(macOS 13, macCatalyst 16, *)
     public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
 
         var actions = actions
