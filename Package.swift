@@ -30,7 +30,7 @@ let package = Package(
         .library(name: "ExampleAppKt", targets: ["ExampleAppKt"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/skiptools/skip", from: "0.4.46"),
+        .package(url: "https://github.com/skiptools/skip", from: "0.4.47"),
     ],
     targets: [
         // The launcher executable for the transpiled Android APK
