@@ -38,7 +38,7 @@ internal class SkipHTTPURLResponse : SkipURLResponse {
 
         if let contentType = value(forHTTPHeaderField: "Content-Type") {
             // handle "text/HTML; charset=ISO-8859-4"
-            let parts = contentType.split(";")
+            let parts = contentType.split(";") // TODO: need to not split on semicolons within quotes strings, like a filename
             if parts.count > 1 {
                 self.mimeType = parts.firstOrNull()?.lowercased()
                 for part in parts.dropFirst() {

@@ -63,6 +63,7 @@ final class URLTests: XCTestCase {
         let HTTPResponse = try XCTUnwrap(response as? HTTPURLResponse)
         XCTAssertEqual("application/json", HTTPResponse.mimeType)
         XCTAssertEqual("utf-8", HTTPResponse.textEncodingName)
+        XCTAssertEqual(83, HTTPResponse.expectedContentLength)
 
         XCTAssertEqual(83, data.count)
         XCTAssertEqual(String(data: data, encoding: .utf8), """
