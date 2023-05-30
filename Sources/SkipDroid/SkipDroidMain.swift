@@ -1,4 +1,5 @@
 
+#if os(macOS) || os(Linux)
 /// Command-line runner for the transpiler.
 @available(macOS 13, macCatalyst 16, *)
 @available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
@@ -10,3 +11,4 @@
         print("TBD: launch the gradle app")
     }
 }
+#endif

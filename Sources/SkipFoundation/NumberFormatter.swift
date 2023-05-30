@@ -126,7 +126,7 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
         }
     }
 
-    #if !os(iOS)
+    #if os(macOS) || os(Linux) // seems to be unavailable on iOS
     @available(macOS 10.15, macCatalyst 11, *)
     @available(iOS, unavailable, message: "NumberFormatter.format unavailable on iOS")
     @available(watchOS, unavailable, message: "NumberFormatter.format unavailable on watchOS")
