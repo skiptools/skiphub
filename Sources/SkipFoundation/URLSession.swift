@@ -14,6 +14,7 @@ public typealias URLSession = SkipURLSession
 
 // override the Kotlin type to be public while keeping the Swift version internal:
 // SKIP DECLARE: class SkipURLSession
+@available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 internal class SkipURLSession {
     #if !SKIP
     public let rawValue: PlatformURLSession

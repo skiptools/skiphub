@@ -25,19 +25,21 @@ final class ConcurrencyTests: XCTestCase {
      */
     // SKIP DECLARE: suspend fun _testSimpleValue()
     func testSimpleValue() async throws {
-        //let task1 = Task {
-        //    return await asyncInt()
-        //}
-        //let task2 = Task.detached {
-        //    return await self.asyncInt2()
-        //}
-        //let value1 = await task1.value
-        //let value2 = await task2.value
-        //XCTAssertEqual(value1, 100)
-        //XCTAssertEqual(value2, 200)
+        let task1 = Task {
+            return await asyncInt()
+        }
+        let ai = asyncInt2
+        let task2 = Task.detached {
+            // return await self.asyncInt2() // self turns into this this, which is different in the coroutine context
+            return await ai()
+        }
+        let value1 = await task1.value
+        let value2 = await task2.value
+        XCTAssertEqual(value1, 100)
+        XCTAssertEqual(value2, 200)
 
-        //let value3 = await asyncInt()
-        //XCTAssertEqual(value3, 100)
+        let value3 = await asyncInt()
+        XCTAssertEqual(value3, 100)
     }
 
     func asyncInt() async -> Int {

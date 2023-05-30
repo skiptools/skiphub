@@ -363,7 +363,7 @@ extension SkipFileManager {
 
     private func checkCancelled() throws {
         #if !SKIP // TODO: enable once Task.checkCancellation() is implemented
-        try Task.checkCancellation()
+        //try Task.checkCancellation()
         #endif
     }
 

@@ -85,6 +85,7 @@ internal class SkipHTTPURLResponse : SkipURLResponse {
         return super.suggestedFilename // fallback to super impl
     }
 
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func value(forHTTPHeaderField field: String) -> String? {
         #if !SKIP
         return (rawValue as? PlatformHTTPURLResponse)?.value(forHTTPHeaderField: field)
