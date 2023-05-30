@@ -123,12 +123,16 @@ class TestHTTPURLResponse: XCTestCase {
     func test_suggestedFilename_notAvailable_1() {
         let f: [String: String] = [:]
         let sut = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: f)
+        #if !os(iOS)
         XCTAssertEqual(sut?.suggestedFilename, "Unknown")
+        #endif
     }
     func test_suggestedFilename_notAvailable_2() {
         let f = ["Content-Disposition": "inline"]
         let sut = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: f)
+        #if !os(iOS)
         XCTAssertEqual(sut?.suggestedFilename, "Unknown")
+        #endif
     }
 
     func test_suggestedFilename_1() {

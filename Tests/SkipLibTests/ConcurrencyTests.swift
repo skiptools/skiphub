@@ -7,6 +7,7 @@ import XCTest
 // SKIP INSERT: import kotlinx.coroutines.*
 // SKIP INSERT: import kotlinx.coroutines.test.*
 
+@available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
 final class ConcurrencyTests: XCTestCase {
     /* SKIP INSERT:
      @Test fun testSimpleValue() {

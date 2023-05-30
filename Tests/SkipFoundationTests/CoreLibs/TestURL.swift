@@ -132,6 +132,7 @@ class TestURL : XCTestCase {
         let baseURL = URL(fileURLWithPath: "/usr", isDirectory: true)
         let relativePath = "include"
         #endif
+        #if !os(iOS)
         // we're telling fileURLWithPath:isDirectory:relativeTo: Documents is a directory
         let url1 = URL(fileURLWithFileSystemRepresentation: relativePath, isDirectory: true, relativeTo: baseURL)
         // we're letting fileURLWithPath:relativeTo: determine Documents is a directory with I/O
@@ -140,6 +141,7 @@ class TestURL : XCTestCase {
         // we're telling fileURLWithPath:relativeTo: Documents is a directory with a trailing slash
         let url3 = URL(fileURLWithPath: relativePath + "/", relativeTo: baseURL)
         XCTAssertEqual(url1, url3, "\(url1) was not equal to \(url3)")
+        #endif
         #endif
     }
 

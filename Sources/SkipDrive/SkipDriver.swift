@@ -8,19 +8,13 @@ import Foundation
 
 
 /// A harness for invoking `gradle` and processing the output of builds and tests.
-@available(macOS 10.15, macCatalyst 11, *)
-@available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
-@available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
-@available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
 public protocol GradleHarness {
     /// Scans the output line of the Gradle command and processes it for errors or issues.
     func scanGradleOutput(line: String)
 }
 
-@available(macOS 10.15, macCatalyst 11, *)
-@available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
-@available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
-@available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
 extension GradleHarness {
     /// Returns the URL to the folder that holds the top-level `settings.gradle.kts` file for the destination module.
     /// - Parameters:

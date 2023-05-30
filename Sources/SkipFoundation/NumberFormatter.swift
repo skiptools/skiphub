@@ -126,6 +126,11 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
         }
     }
 
+    #if !os(iOS)
+    @available(macOS 10.15, macCatalyst 11, *)
+    @available(iOS, unavailable, message: "NumberFormatter.format unavailable on iOS")
+    @available(watchOS, unavailable, message: "NumberFormatter.format unavailable on watchOS")
+    @available(tvOS, unavailable, message: "NumberFormatter.format unavailable on tvOS")
     public var format: String {
         get {
             #if !SKIP
@@ -143,6 +148,7 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
             #endif
         }
     }
+    #endif
 
     public var groupingSize: Int {
         get {

@@ -6,6 +6,7 @@
 import Foundation
 import XCTest
 
+@available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
 final class URLTests: XCTestCase {
     func testURLs() throws {
         let url: URL? = URL(string: "https://github.com/skiptools/skip.git")
@@ -23,7 +24,7 @@ final class URLTests: XCTestCase {
         XCTAssertEqual(60.0, config.timeoutIntervalForRequest)
         XCTAssertEqual(604800.0, config.timeoutIntervalForResource)
         XCTAssertEqual(true, config.allowsCellularAccess)
-        XCTAssertEqual(true, config.allowsExpensiveNetworkAccess)
+        //XCTAssertEqual(true, config.allowsExpensiveNetworkAccess)
         XCTAssertEqual(true, config.allowsConstrainedNetworkAccess)
         XCTAssertEqual(false, config.waitsForConnectivity)
         XCTAssertEqual(false, config.isDiscretionary)
@@ -43,7 +44,7 @@ final class URLTests: XCTestCase {
         XCTAssertEqual(60.0, config.timeoutIntervalForRequest)
         XCTAssertEqual(604800.0, config.timeoutIntervalForResource)
         XCTAssertEqual(true, config.allowsCellularAccess)
-        XCTAssertEqual(true, config.allowsExpensiveNetworkAccess)
+        //XCTAssertEqual(true, config.allowsExpensiveNetworkAccess)
         XCTAssertEqual(true, config.allowsConstrainedNetworkAccess)
         XCTAssertEqual(false, config.waitsForConnectivity)
         XCTAssertEqual(false, config.isDiscretionary)

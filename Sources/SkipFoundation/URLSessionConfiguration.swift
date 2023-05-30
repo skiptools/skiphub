@@ -53,7 +53,7 @@ internal class SkipURLSessionConfiguration {
     public var timeoutIntervalForResource: TimeInterval = 604800.0
     //public var networkServiceType: NSURLRequest.NetworkServiceType
     public var allowsCellularAccess: Bool = true
-    public var allowsExpensiveNetworkAccess: Bool = true
+    //public var allowsExpensiveNetworkAccess: Bool = true
     public var allowsConstrainedNetworkAccess: Bool = true
     //public var requiresDNSSECValidation: Bool = true
     public var waitsForConnectivity: Bool = false
