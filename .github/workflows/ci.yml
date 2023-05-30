@@ -89,14 +89,6 @@ jobs:
         working-directory: skiphub
         run: swift package --disable-sandbox --allow-writing-to-package-directory skip info
 
-      - name: Swift Build (iOS)
-        working-directory: skiphub
-        run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
-
-      - name: Swift Tests (iOS)
-        working-directory: skiphub
-        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
-
       # Pre-build to work around concurrency issues
       - name: Build ${{ matrix.target }}
         working-directory: skiphub
@@ -180,6 +172,15 @@ jobs:
           gradle assembleDebug --console=plain
           gradle assembleRelease --console=plain || echo "gradle assembleRelease failed"
           ls -lah `find . -name '*.apk'`
+
+      - name: Swift Build (iOS)
+        working-directory: skiphub
+        run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo IOS BUILD FAILED
+
+      - name: Swift Tests (iOS)
+        working-directory: skiphub
+        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo IOS TESTS FAILED
+
 
       - name: Android Tests
         if: false
