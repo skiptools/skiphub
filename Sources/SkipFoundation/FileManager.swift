@@ -361,12 +361,19 @@ extension SkipFileManager {
         #endif
     }
 
+    private func checkCancelled() throws {
+        #if !SKIP // TODO: enable once Task.checkCancellation() is implemented
+        try Task.checkCancellation()
+        #endif
+    }
+
     #if SKIP
 
     private func delete(path: java.nio.file.Path, recursive: Bool) throws {
         if !recursive {
             java.nio.file.Files.delete(path)
         } else {
+
             // Cannot use java.nio.file.Files.walk for recursive delete because it doesn't list directories post-visit
             //for file in java.nio.file.Files.walk(path) {
             //    java.nio.file.Files.delete(file)
@@ -375,11 +382,13 @@ extension SkipFileManager {
             /* SKIP REPLACE:
             java.nio.file.Files.walkFileTree(path, object : java.nio.file.SimpleFileVisitor<java.nio.file.Path>() {
                 override fun visitFile(file: java.nio.file.Path, attrs: java.nio.file.attribute.BasicFileAttributes): java.nio.file.FileVisitResult {
+                    checkCancelled()
                     java.nio.file.Files.delete(file)
                     return java.nio.file.FileVisitResult.CONTINUE
                 }
 
                 override fun postVisitDirectory(dir: java.nio.file.Path, exc: java.io.IOException?): java.nio.file.FileVisitResult {
+                    checkCancelled()
                     java.nio.file.Files.delete(dir)
                     return java.nio.file.FileVisitResult.CONTINUE
                 }
@@ -396,11 +405,13 @@ extension SkipFileManager {
             /* SKIP REPLACE:
             java.nio.file.Files.walkFileTree(src, object : java.nio.file.SimpleFileVisitor<java.nio.file.Path>() {
                 override fun visitFile(file: java.nio.file.Path, attrs: java.nio.file.attribute.BasicFileAttributes): java.nio.file.FileVisitResult {
+                    checkCancelled()
                     java.nio.file.Files.copy(from, dest.resolve(src.relativize(file)), java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.COPY_ATTRIBUTES, java.nio.file.LinkOption.NOFOLLOW_LINKS)
                     return java.nio.file.FileVisitResult.CONTINUE
                 }
 
                 override fun preVisitDirectory(dir: java.nio.file.Path, attrs: java.nio.file.attribute.BasicFileAttributes): java.nio.file.FileVisitResult {
+                    checkCancelled()
                     java.nio.file.Files.createDirectories(dest.resolve(src.relativize(dir)))
                     return java.nio.file.FileVisitResult.CONTINUE
                 }

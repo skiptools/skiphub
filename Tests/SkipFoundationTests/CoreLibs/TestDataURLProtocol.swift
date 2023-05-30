@@ -67,6 +67,7 @@ class DataURLTestDelegate: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
         #endif // !SKIP
     }
 
+    #if !SKIP
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         #if SKIP
         throw XCTSkip("TODO")
@@ -76,7 +77,8 @@ class DataURLTestDelegate: NSObject, URLSessionTaskDelegate, URLSessionDataDeleg
         completionHandler(.allow)
         #endif // !SKIP
     }
-
+    #endif
+    
     func urlSession(_ session: URLSession, didFailWithError error: Error) {
         #if SKIP
         throw XCTSkip("TODO")

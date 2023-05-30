@@ -415,18 +415,22 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
     }
     
     func test_zeroSymbol() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let numberFormatter = NumberFormatter()
-        XCTAssertEqual(numberFormatter.numberStyle, .none)
+        XCTAssertEqual(numberFormatter.numberStyle, SkipNumberFormatterStyle.none)
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
         XCTAssertEqual(numberFormatter.minimumIntegerDigits, 1)
+        #if SKIP
+        XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2147483647)
+        #else
         XCTAssertEqual(numberFormatter.maximumIntegerDigits, 42)
+        #endif
         XCTAssertEqual(numberFormatter.minimumFractionDigits, 0)
         XCTAssertEqual(numberFormatter.maximumFractionDigits, 0)
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         XCTAssertEqual(numberFormatter.minimumSignificantDigits, -1)
         XCTAssertEqual(numberFormatter.maximumSignificantDigits, -1)
         XCTAssertEqual(numberFormatter.usesSignificantDigits, false)

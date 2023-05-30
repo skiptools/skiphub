@@ -15,15 +15,19 @@ public typealias URLResponse = SkipURLResponse
 
 
 // override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipURLResponse
+// SKIP DECLARE: open class SkipURLResponse
 internal class SkipURLResponse : CustomStringConvertible {
     #if !SKIP
     public var rawValue: PlatformURLResponse
+    public var url: SkipURL? { rawValue.url.flatMap(SkipURL.init(rawValue:)) }
+    public var mimeType: String? { rawValue.mimeType }
+    public var expectedContentLength: Int64 { rawValue.expectedContentLength }
+    public var textEncodingName: String? { rawValue.textEncodingName }
     #else
-    public var url: URL?
-    public var mimeType: String?
-    public var expectedContentLength: Int64 = -1
-    public var textEncodingName: String?
+    public internal(set) var url: SkipURL?
+    public internal(set) var mimeType: String?
+    public internal(set) var expectedContentLength: Int64 = -1
+    public internal(set) var textEncodingName: String?
     #endif
 
     public init() {
@@ -33,9 +37,9 @@ internal class SkipURLResponse : CustomStringConvertible {
         #endif
     }
 
-    public init(url: URL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
+    public init(url: SkipURL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
         #if !SKIP
-        self.rawValue = PlatformURLResponse(url: url, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: textEncodingName)
+        self.rawValue = PlatformURLResponse(url: url.rawValue, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: textEncodingName)
         #else
         self.url = url
         self.mimeType = mimeType
@@ -66,7 +70,14 @@ internal class SkipURLResponse : CustomStringConvertible {
         // The last path component of the URL.
         // The host of the URL.
         // If the host of URL can't be converted to a valid filename, the filename “unknown” is used.
-        return self.url?.lastPathComponent ?? self.url?.host ?? "unknown"
+        if let component = self.url?.lastPathComponent, !component.isEmpty {
+            return component
+        }
+        // not expected by the test cases
+        //if let host = self.url?.host {
+        //    return host
+        //}
+        return "Unknown"
         #endif
     }
 

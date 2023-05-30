@@ -149,7 +149,7 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
             #if !SKIP
             return rawValue.groupingSize
             #else
-            return rawValue.groupingSize
+            return rawValue.getGroupingSize()
             #endif
         }
 
@@ -157,7 +157,7 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
             #if !SKIP
             rawValue.groupingSize = newValue
             #else
-            rawValue.groupingSize = newValue
+            rawValue.setGroupingSize(newValue)
             #endif
         }
     }

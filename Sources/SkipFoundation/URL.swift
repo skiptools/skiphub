@@ -187,7 +187,7 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     /// The last path component of the URL, or an empty string if the path is an empty string.
     public var lastPathComponent: String {
         #if SKIP
-        return pathComponents.last()
+        return pathComponents.lastOrNull() ?? ""
         #else
         return foundationURL.lastPathComponent
         #endif
