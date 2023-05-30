@@ -137,19 +137,6 @@ jobs:
         working-directory: skiphub
         run: swift test -c ${CONFIG} --jobs 1 --filter ExampleAppKtTests
 
-      - name: Checkout skipapp
-        uses: actions/checkout@v3
-        with:
-          path: skipapp.swiftpm
-          repository: skiptools/skipapp.swiftpm
-      - name: skipapp tests
-        working-directory: skipapp.swiftpm
-        run: |
-          swift build --jobs 1
-          swift test --jobs 1
-          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/release/AppDemo-release-unsigned.apk
-          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
-
       - name: Debug Tests (Serial)
         if: false
         working-directory: skiphub
@@ -186,6 +173,14 @@ jobs:
           gradle assembleRelease --console=plain || echo "gradle assembleRelease failed"
           ls -lah `find . -name '*.apk'`
 
+      - name: Swift Tests (iOS)
+        working-directory: skiphub
+        run: |
+          xcodebuild -showsdks
+          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+          # note that tests are not yet expected to pass on iOS
+          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+
       - name: Android Tests
         if: false
         uses: reactivecircus/android-emulator-runner@v2
@@ -194,11 +189,18 @@ jobs:
           working-directory: skiphub
           script: SKIP_GRADLE_TEST_TARGET=connectedDebugAndroidTest swift test -c ${CONFIG} --filter '.*KtTests'
 
-      - name: Swift Tests (iOS)
-        working-directory: skiphub
+      - name: Checkout skipapp
+        uses: actions/checkout@v3
+        with:
+          path: skipapp.swiftpm
+          repository: skiptools/skipapp.swiftpm
+
+      - name: Build Demo App
+        working-directory: skipapp.swiftpm
         run: |
-          xcodebuild -showsdks
-          xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
-          # note that tests are not yet expected to pass on iOS
-          xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+          swift build --jobs 1
+          swift test --jobs 1
+          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/release/AppDemo-release-unsigned.apk
+          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
+          xcodebuild archive -jobs 1 -skipPackagePluginValidation -archivePath ".build/skipapp.xcarchive" -configuration "Release" -scheme 'Demo App' -sdk "iphoneos" -destination "generic/platform=iOS" CODE_SIGNING_ALLOWED=NO
 
