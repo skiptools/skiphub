@@ -45,16 +45,12 @@ class TestNSURLRequest : XCTestCase {
     let url = URL(string: "http://swift.org")!
     
     func test_construction() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let request = NSURLRequest(url: url)
         // Match macOS Foundation responses
         XCTAssertEqual(request.url, url)
         XCTAssertEqual(request.httpMethod, "GET")
         XCTAssertNil(request.allHTTPHeaderFields)
         XCTAssertNil(request.mainDocumentURL)
-        #endif // !SKIP
     }
     
     func test_mutableConstruction() {

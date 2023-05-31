@@ -38,7 +38,7 @@ internal class SkipHTTPURLResponse : SkipURLResponse {
 
         if let contentType = value(forHTTPHeaderField: "Content-Type") {
             // handle "text/HTML; charset=ISO-8859-4"
-            let parts = contentType.split(";") // TODO: need to not split on semicolons within quotes strings, like a filename
+            let parts = contentType.split(";") // TODO: need to not split on semicolons withid quotes strings, like a filename
             if parts.count > 1 {
                 self.mimeType = parts.firstOrNull()?.lowercased()
                 for part in parts.dropFirst() {
@@ -90,19 +90,7 @@ internal class SkipHTTPURLResponse : SkipURLResponse {
         #if !SKIP
         return (rawValue as? PlatformHTTPURLResponse)?.value(forHTTPHeaderField: field)
         #else
-        if let value = allHeaderFields[field] {
-            // fast case-sensitive match
-            return value.description
-        } else {
-            // case-insensitive key lookup
-            let fieldKey = field.lowercased()
-            for (key, value) in allHeaderFields {
-                if fieldKey == key.lowercased() {
-                    return value
-                }
-            }
-            return nil // not found
-        }
+        return SkipURLRequest.value(forHTTPHeaderField: field, in: allHeaderFields)
         #endif
     }
 

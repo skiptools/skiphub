@@ -43,22 +43,15 @@ class TestURLRequest : XCTestCase {
     let url = URL(string: "http://swift.org")!
     
     func test_construction() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let request = URLRequest(url: url)
         // Match macOS Foundation responses
         XCTAssertEqual(request.url, url)
         XCTAssertEqual(request.httpMethod, "GET")
         XCTAssertNil(request.allHTTPHeaderFields)
         XCTAssertNil(request.mainDocumentURL)
-        #endif // !SKIP
     }
     
     func test_mutableConstruction() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let url = URL(string: "http://swift.org")!
         var request = URLRequest(url: url)
         
@@ -77,13 +70,9 @@ class TestURLRequest : XCTestCase {
         let newURL = URL(string: "http://github.com")!
         request.url = newURL
         XCTAssertEqual(request.url, newURL)
-        #endif // !SKIP
     }
     
     func test_headerFields() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         var request = URLRequest(url: url)
         
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -99,13 +88,9 @@ class TestURLRequest : XCTestCase {
         // Adding to "Accept" should add to "Accept"
         request.addValue("text/html", forHTTPHeaderField: "Accept")
         XCTAssertEqual(request.allHTTPHeaderFields?["Accept"], "application/xml,text/html")
-        #endif // !SKIP
     }
     
     func test_copy() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         var mutableRequest = URLRequest(url: url)
         
         let urlA = URL(string: "http://swift.org")!
@@ -155,13 +140,9 @@ class TestURLRequest : XCTestCase {
         XCTAssertEqual(requestCopy2.url, urlB)
         XCTAssertEqual(requestCopy2.allHTTPHeaderFields?["Accept"], "application/json")
         XCTAssertEqual(requestCopy2.httpBody, postBody)
-        #endif // !SKIP
     }
     
     func test_mutableCopy_1() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         var originalRequest = URLRequest(url: url)
         
         let urlA = URL(string: "http://swift.org")!
@@ -184,13 +165,9 @@ class TestURLRequest : XCTestCase {
         XCTAssertEqual(requestCopy.httpMethod, "POST")
         XCTAssertEqual(requestCopy.url, urlB)
         XCTAssertEqual(requestCopy.allHTTPHeaderFields?["Accept"], "application/json")
-        #endif // !SKIP
     }
     
     func test_mutableCopy_2() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         var originalRequest = URLRequest(url: url)
         
         let urlA = URL(string: "http://swift.org")!
@@ -213,13 +190,9 @@ class TestURLRequest : XCTestCase {
         XCTAssertEqual(originalRequest.httpMethod, "POST")
         XCTAssertEqual(originalRequest.url, urlB)
         XCTAssertEqual(originalRequest.allHTTPHeaderFields?["Accept"], "application/json")
-        #endif // !SKIP
     }
     
     func test_mutableCopy_3() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let urlA = URL(string: "http://swift.org")!
         let originalRequest = URLRequest(url: urlA)
         
@@ -236,7 +209,6 @@ class TestURLRequest : XCTestCase {
         XCTAssertEqual(originalRequest.httpMethod, "GET")
         XCTAssertEqual(originalRequest.url, urlA)
         XCTAssertNil(originalRequest.allHTTPHeaderFields)
-        #endif // !SKIP
     }
 
     func test_hash() {
@@ -278,9 +250,6 @@ class TestURLRequest : XCTestCase {
     }
 
     func test_methodNormalization() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let expectedNormalizations = [
             "GET": "GET",
             "get": "GET",
@@ -320,13 +289,9 @@ class TestURLRequest : XCTestCase {
             request.httpMethod = n.key
             XCTAssertEqual(request.httpMethod, n.value)
         }
-        #endif // !SKIP
     }
 
     func test_description() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let url = URL(string: "http://swift.org")!
 
         var request = URLRequest(url: url)
@@ -334,15 +299,15 @@ class TestURLRequest : XCTestCase {
 
         request.url = nil
         XCTAssertEqual(request.description, "url: nil")
-        #endif // !SKIP
     }
 
     func test_relativeURL() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let baseUrl = URL(string: "http://httpbin.org")
         let url = try XCTUnwrap(URL(string: "/get", relativeTo: baseUrl))
+
+        #if SKIP
+        throw XCTSkip("TODO: relative URL support in SkipURL")
+        #endif
 
         XCTAssertEqual(url.description, "/get -- http://httpbin.org")
         XCTAssertEqual(url.baseURL?.description, "http://httpbin.org")
@@ -352,27 +317,26 @@ class TestURLRequest : XCTestCase {
         var req = URLRequest(url: url)
         XCTAssertEqual(req.url?.description, "http://httpbin.org/get")
         XCTAssertNil(req.url?.baseURL)
-        XCTAssertEqual(req.url?.absoluteURL.description, "http://httpbin.org/get")
-        XCTAssertEqual(req.url?.absoluteURL.relativeString, "http://httpbin.org/get")
-        XCTAssertEqual(req.url?.absoluteURL.absoluteString, "http://httpbin.org/get")
+        XCTAssertEqual(req.url!.absoluteURL.description, "http://httpbin.org/get")
+        XCTAssertEqual(req.url!.absoluteURL.relativeString, "http://httpbin.org/get")
+        XCTAssertEqual(req.url!.absoluteURL.absoluteString, "http://httpbin.org/get")
 
         req.url = url
         XCTAssertEqual(req.url?.description, "/get -- http://httpbin.org")
-        XCTAssertEqual(req.url?.baseURL?.description, "http://httpbin.org")
-        XCTAssertEqual(req.url?.baseURL?.relativeString, "http://httpbin.org")
-        XCTAssertEqual(req.url?.baseURL?.absoluteString, "http://httpbin.org")
+        XCTAssertEqual(req.url!.baseURL?.description, "http://httpbin.org")
+        XCTAssertEqual(req.url!.baseURL?.relativeString, "http://httpbin.org")
+        XCTAssertEqual(req.url!.baseURL?.absoluteString, "http://httpbin.org")
 
-        XCTAssertEqual(req.url?.absoluteURL.description, "http://httpbin.org/get")
-        XCTAssertEqual(req.url?.absoluteURL.relativeString, "http://httpbin.org/get")
-        XCTAssertEqual(req.url?.absoluteURL.absoluteString, "http://httpbin.org/get")
+        XCTAssertEqual(req.url!.absoluteURL.description, "http://httpbin.org/get")
+        XCTAssertEqual(req.url!.absoluteURL.relativeString, "http://httpbin.org/get")
+        XCTAssertEqual(req.url!.absoluteURL.absoluteString, "http://httpbin.org/get")
 
         let nsreq = NSURLRequest(url: url)
         XCTAssertEqual(nsreq.url?.description, "http://httpbin.org/get")
         XCTAssertNil(nsreq.url?.baseURL)
-        XCTAssertEqual(nsreq.url?.absoluteURL.description, "http://httpbin.org/get")
-        XCTAssertEqual(nsreq.url?.absoluteURL.relativeString, "http://httpbin.org/get")
-        XCTAssertEqual(nsreq.url?.absoluteURL.absoluteString, "http://httpbin.org/get")
-        #endif // !SKIP
+        XCTAssertEqual(nsreq.url!.absoluteURL.description, "http://httpbin.org/get")
+        XCTAssertEqual(nsreq.url!.absoluteURL.relativeString, "http://httpbin.org/get")
+        XCTAssertEqual(nsreq.url!.absoluteURL.absoluteString, "http://httpbin.org/get")
     }
 
     func test_invalidHeaderValues() {
@@ -404,9 +368,6 @@ class TestURLRequest : XCTestCase {
     }
 
     func test_validLineFoldedHeaderValues() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let url = URL(string: "http://swift.org")!
         var request = URLRequest(url: url)
 
@@ -417,7 +378,6 @@ class TestURLRequest : XCTestCase {
         let validHeaderValueLineFoldedSpace = "Bar\r\n Buz"
         request.setValue(validHeaderValueLineFoldedSpace, forHTTPHeaderField: "FooSpace")
         XCTAssertEqual(request.value(forHTTPHeaderField: "FooSpace"), validHeaderValueLineFoldedSpace)
-        #endif // !SKIP
     }
 }
 

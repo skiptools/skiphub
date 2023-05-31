@@ -44,20 +44,59 @@ internal class SkipURLSession {
         #endif
     }
 
-    public func data(from url: SkipURL) async throws -> (SkipData, SkipURLResponse) {
+    public func data(for request: SkipURLRequest) async throws -> (SkipData, SkipURLResponse) {
         #if !SKIP
-        let (data, response) = try await rawValue.data(from: url.rawValue)
+        let (data, response) = try await rawValue.data(for: request.rawValue)
         let result = (SkipData(rawValue: data), SkipURLResponse(rawValue: response))
         return result
         #else
         let config = self.configuration
         let (data, response) = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            guard let url = request.url else {
+                throw NoURLInRequestError()
+            }
+
+            // not that `openConnection` does not actually connect()
             let connection = url.rawValue.openConnection()
+
+            switch request.cachePolicy {
+            case .useProtocolCachePolicy:
+                connection.setUseCaches(true)
+            case .returnCacheDataElseLoad:
+                connection.setUseCaches(true)
+            case .returnCacheDataDontLoad:
+                connection.setUseCaches(true)
+            case .reloadRevalidatingCacheData:
+                connection.setUseCaches(true)
+            case .reloadIgnoringLocalCacheData:
+                connection.setUseCaches(true)
+            case .reloadIgnoringLocalAndRemoteCacheData:
+                connection.setUseCaches(false)
+            }
+
+            //connection.setDoInput(true)
+            //connection.setDoOutput(true)
+
+            if let httpConnection = connection as? java.net.HttpURLConnection {
+                if let httpMethod = request.httpMethod {
+                    httpConnection.setRequestMethod(httpMethod)
+                }
+
+                httpConnection.connectTimeout = request.timeoutInterval > 0 ? request.timeoutInterval.toInt() : config.timeoutIntervalForRequest.toInt()
+                httpConnection.readTimeout = config.timeoutIntervalForResource.toInt()
+            }
+
+            for (headerKey, headerValue) in request.allHTTPHeaderFields ?? [:] {
+                connection.setRequestProperty(headerKey, headerValue)
+            }
+
+
+
+            try connection.connect() // make the actual network connection
+
 
             var statusCode = -1
             if let httpConnection = connection as? java.net.HttpURLConnection {
-                httpConnection.connectTimeout = config.timeoutIntervalForRequest.toInt()
-                httpConnection.readTimeout = config.timeoutIntervalForResource.toInt()
                 statusCode = httpConnection.getResponseCode()
             }
 
@@ -74,7 +113,7 @@ internal class SkipURLSession {
                     }
                 }
             }
-            
+
             let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: httpVersion, headerFields: headers)
 
             let inputStream = connection.getInputStream()
@@ -94,13 +133,13 @@ internal class SkipURLSession {
         #endif
     }
 
-    public func data(for request: SkipURLRequest) async throws -> (SkipData, SkipURLResponse) {
+    public func data(from url: SkipURL) async throws -> (SkipData, SkipURLResponse) {
         #if !SKIP
-        let (data, response) = try await rawValue.data(for: request.rawValue)
+        let (data, response) = try await rawValue.data(from: url.rawValue)
         let result = (SkipData(rawValue: data), SkipURLResponse(rawValue: response))
         return result
         #else
-        fatalError("TODO: SkipURLSession.data")
+        return self.data(for: SkipURLRequest(url: url))
         #endif
     }
 
@@ -146,18 +185,21 @@ internal class SkipURLSession {
 }
 
 #if SKIP
-public protocol URLSessionDelegate {
-}
-
 public protocol URLSessionTask {
 }
 
 public protocol URLSessionDataTask : URLSessionTask {
 }
 
+public protocol URLSessionDelegate {
+}
+
 public protocol URLSessionTaskDelegate : URLSessionDelegate {
 }
 
 public protocol URLSessionDataDelegate : URLSessionTaskDelegate {
+}
+
+public struct NoURLInRequestError : Error {
 }
 #endif
