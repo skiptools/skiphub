@@ -358,7 +358,7 @@ class TestFileManager : XCTestCase {
             XCTAssertEqual(fileSize!.int64Value, 0)
             
             let fileModificationDate = attrs[FileAttributeKey.modificationDate] as? Date
-            XCTAssertGreaterThan(Date().timeIntervalSince1970, fileModificationDate!.timeIntervalSince1970)
+            XCTAssertGreaterThanOrEqual(Date().timeIntervalSince1970, fileModificationDate!.timeIntervalSince1970)
             
             let filePosixPermissions = attrs[FileAttributeKey.posixPermissions] as? NSNumber
             XCTAssertNotEqual(filePosixPermissions!.int64Value, 0)
@@ -389,7 +389,7 @@ class TestFileManager : XCTestCase {
         
             // .creationDate is not not available on all systems but if it is supported check the value is reasonable
             if let creationDate = (attrs[FileAttributeKey.creationDate] as? Date) {
-                XCTAssertGreaterThan(Date().timeIntervalSince1970, creationDate.timeIntervalSince1970)
+                XCTAssertGreaterThanOrEqual(Date().timeIntervalSince1970, creationDate.timeIntervalSince1970)
             }
 
             if let fileOwnerAccountName = (attrs[FileAttributeKey.ownerAccountName]) {

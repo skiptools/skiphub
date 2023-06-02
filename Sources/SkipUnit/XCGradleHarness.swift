@@ -127,7 +127,9 @@ extension XCGradleHarness where Self : XCTestCase {
         // turn: "at skip.lib.SkipLibTests.testSkipLib$SkipLib(SkipLibTests.kt:16)"
         // into: src/main/skip/lib/SkipLibTests.kt line: 16
 
-        for line in failure.contents?.split(separator: "\n") ?? [] {
+        let stackTrace = failure.contents ?? ""
+
+        for line in stackTrace.split(separator: "\n") {
             let trimmedLine = line.trimmingCharacters(in: .whitespaces)
             // make sure it matches the pattern: "at skip.lib.SkipLibTests.testSkipLib$SkipLib(SkipLibTests.kt:16)"
             if !trimmedLine.hasPrefix("at ") || !line.hasSuffix(")") {
@@ -170,8 +172,8 @@ extension XCGradleHarness where Self : XCTestCase {
             // e.g., "SkipLib" is extracted from "skip.lib.SkipLibTests.testSkipLib$SkipLib"
             // also handle Kotlin/Gradle/Android appending of _debug or _release to the module name:
             // "skip.device.SkipKitTests.testCanvas$SkipKit_debug" should turn into "SkipKit"
-            // this will break of the package/module name has an underscore in it.
 
+            // FIXME: this will break if the package/module name has an underscore in it
             // FIXME: only test cases seems to be appended with the "$Module_debug" suffix; non-test stack do not have it, so we'll need to try to figure out the module name for the code if we want to handle jumping to non-test locations
             guard let moduleElements = packageElements.last?.split(separator: "$"),
                   moduleElements.count == 2,
@@ -285,6 +287,7 @@ extension XCGradleHarness where Self : XCTestCase {
 
         var passTotal = 0, failTotal = 0, skipTotal = 0, suiteTotal = 0, testsTotal = 0
         var timeTotal = 0.0
+        var failedTests: [String] = []
 
         // parse the test result XML files and convert test failures into XCTIssues with links to the failing source and line
         for testSuite in testSuites {
@@ -341,8 +344,9 @@ extension XCGradleHarness where Self : XCTestCase {
                     }
 
                     let failureContents = failure.contents ?? ""
+                    print(failureContents)
 
-                    // TODO: extract the file path and report the failing file abd line to xcode
+                    // extract the file path and report the failing file and line to Xcode via an issue
                     var msg = msg
                     msg += failure.type
                     msg += ": "
@@ -381,6 +385,19 @@ extension XCGradleHarness where Self : XCTestCase {
             }
 
             print("JUNIT TEST SUITE: \(testSuiteName): PASSED \(pass) FAILED \(fail) SKIPPED \(skip) TIME \(round(timeSuite * 100.0) / 100.0)")
+        }
+
+
+        // show all the failures just before the final summary for ease of browsing
+        for testSuite in testSuites {
+            for testCase in testSuite.testCases {
+                for failure in testCase.failures {
+                    print(testCase.name, failure.message)
+                    if let stackTrace = failure.contents {
+                        print(stackTrace)
+                    }
+                }
+            }
         }
 
         let passPercentage = Double(passTotal) / (testsTotal == 0 ? Double.nan : Double(testsTotal))

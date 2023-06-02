@@ -6,6 +6,8 @@
 import Foundation
 import XCTest
 
+// SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
+// SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
 @available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
 final class URLTests: XCTestCase {
     func testURLs() throws {
@@ -58,7 +60,7 @@ final class URLTests: XCTestCase {
         XCTAssertEqual(false, config.shouldUseExtendedBackgroundIdleMode)
     }
 
-    func testDownloadURL() async throws {
+    func testFetchURLAsync() async throws {
         let (data, response) = try await URLSession.shared.data(from: URL(string: "https://jsonplaceholder.typicode.com/todos/1")!)
 
         let HTTPResponse = try XCTUnwrap(response as? HTTPURLResponse)
@@ -76,4 +78,28 @@ final class URLTests: XCTestCase {
         }
         """)
     }
+
+    func testDownloadURLAsync() async throws {
+        #if SKIP
+        throw XCTSkip("Skip: cannot run test with Robolectric ShadowDownloadManager non-functional stub implementation")
+        #endif
+
+        let (localURL, response) = try await URLSession.shared.download(from: URL(string: "https://jsonplaceholder.typicode.com/todos/1")!)
+        let HTTPResponse = try XCTUnwrap(response as? HTTPURLResponse)
+        XCTAssertEqual("application/json", HTTPResponse.mimeType)
+        XCTAssertEqual("utf-8", HTTPResponse.textEncodingName)
+        XCTAssertEqual(83, HTTPResponse.expectedContentLength)
+
+        let data = try Data(contentsOf: localURL)
+        XCTAssertEqual(83, data.count)
+        XCTAssertEqual(String(data: data, encoding: .utf8), """
+        {
+          "userId": 1,
+          "id": 1,
+          "title": "delectus aut autem",
+          "completed": false
+        }
+        """)
+    }
+
 }

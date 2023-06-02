@@ -148,6 +148,7 @@ internal struct SkipURLRequest : RawRepresentable, Hashable, CustomStringConvert
         let fieldKey = transformHeaderKey(field)
         var fields = self.allHTTPHeaderFields ?? [:]
         var fieldValue: String = value
+        // multiple vales are appended together with commas
         if let existingValue = fields[fieldKey], !existingValue.isEmpty, !value.isEmpty {
             fieldValue = existingValue + "," + value
         }
