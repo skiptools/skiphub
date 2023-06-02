@@ -12,7 +12,8 @@ public typealias URLSession = SkipURLSession
 //public typealias PlatformURLSession = java.util.URLSession
 #endif
 
-fileprivate let logger: Logger = Logger(subsystem: "network", category: "URLSession")
+@available(macOS 11, iOS 14, tvOS 14, watchOS 7, *)
+fileprivate let logger: Logger = Logger(subsystem: "skip", category: "SkipURLSession")
 
 // override the Kotlin type to be public while keeping the Swift version internal:
 // SKIP DECLARE: class SkipURLSession
