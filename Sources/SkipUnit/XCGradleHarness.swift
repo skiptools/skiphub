@@ -334,7 +334,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 for failure in testCase.failures {
                     var failureMessage = failure.message
                     let trimPrefixes = [
-                        "testProjectGradle(): ",
+                        "testSkipModule(): ",
                         //"java.lang.AssertionError: ",
                     ]
                     for trimPrefix in trimPrefixes {

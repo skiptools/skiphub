@@ -39,13 +39,22 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
         self.rawValue = skipData.rawValue
     }
 
-    #if SKIP
-    public init(_ bytes: [Int]) {
+    public init(_ bytes: [UInt8]) {
+        #if SKIP
         self.rawValue = PlatformData(size: bytes.count, init: {
             bytes[$0].toByte()
         })
+        #else
+        self.rawValue = PlatformData(bytes)
+        #endif
     }
-    #endif
+
+    // Platform declaration clash: The following declarations have the same JVM signature (<init>(Lskip/lib/Array;)V):
+    //public init(_ bytes: [Int]) {
+    //    self.rawValue = PlatformData(size: bytes.count, init: {
+    //        bytes[$0].toByte()
+    //    })
+    //}
 
     var description: String {
         return rawValue.description
@@ -56,6 +65,31 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
         self.rawValue = PlatformData(size: 0)
         #else
         self.rawValue = PlatformData(count: 0)
+        #endif
+    }
+
+    public init(count: Int) {
+        #if SKIP
+        self.rawValue = PlatformData(size: count)
+        #else
+        self.rawValue = PlatformData(count: count)
+        #endif
+    }
+
+    public init(capacity: Int) {
+        #if SKIP
+        // No equivalent kotlin.ByteArray(capacity:), so allocate with zero
+        self.rawValue = PlatformData(size: 0)
+        #else
+        self.rawValue = PlatformData(capacity: capacity)
+        #endif
+    }
+
+    public mutating func append(contentsOf bytes: [UInt8]) {
+        #if SKIP
+        self.rawValue += Data(bytes).rawValue
+        #else
+        self.rawValue.append(contentsOf: bytes)
         #endif
     }
 

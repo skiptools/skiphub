@@ -1026,7 +1026,7 @@ class TestFileManager : XCTestCase {
                 .appendingPathComponent(UUID().uuidString)
 
             try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: true)
-            let testData = Data([0x01])
+            let testData = Data([UInt8(0x01)])
 
             baseURL.resolveSymlinksInPath()
             baseURL.standardize()
