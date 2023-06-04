@@ -297,13 +297,25 @@ class TestDateFormatter: XCTestCase {
             XCTAssertEqual(sf, stringResult)
         }
 
-        let quarterTimestamps: [Double : String] = [
-            1451679712.0 : "1", 1459542112.0 : "2", 1467404512.0 : "3", 1475353312.0 : "4"
-        ]
+        // Check .dateFormat resets when style changes
+        let testDate = Date(timeIntervalSince1970: 1457738454)
+
+        // Fails on High Sierra
+        //f.dateStyle = .medium
+        //f.timeStyle = .medium
+        //XCTAssertEqual(f.string(from: testDate), "Mar 11, 2016, 11:20:54 PM")
+        //XCTAssertEqual(f.dateFormat, "MMM d, y, h:mm:ss a")
+
+        f.dateFormat = "dd-MM-yyyy"
+        XCTAssertEqual(f.string(from: testDate), "11-03-2016")
 
         #if SKIP
         throw XCTSkip("Skip: no support for DateFormatter.Quarter")
         #endif
+
+        let quarterTimestamps: [Double : String] = [
+            1451679712.0 : "1", 1459542112.0 : "2", 1467404512.0 : "3", 1475353312.0 : "4"
+        ]
 
         f.dateFormat = "Q"
         
@@ -313,18 +325,6 @@ class TestDateFormatter: XCTestCase {
             
             XCTAssertEqual(sf, stringResult)
         }
-        
-        // Check .dateFormat resets when style changes
-        let testDate = Date(timeIntervalSince1970: 1457738454)
-
-        // Fails on High Sierra
-        //f.dateStyle = .medium
-        //f.timeStyle = .medium
-        //XCTAssertEqual(f.string(from: testDate), "Mar 11, 2016, 11:20:54 PM")
-        //XCTAssertEqual(f.dateFormat, "MMM d, y, h:mm:ss a")
-        
-        f.dateFormat = "dd-MM-yyyy"
-        XCTAssertEqual(f.string(from: testDate), "11-03-2016")
     }
 
     func test_setLocalizedDateFormatFromTemplate() {
