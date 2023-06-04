@@ -409,6 +409,7 @@ public typealias PlatformAsyncStream<Element> = kotlinx.coroutines.flow.Flow<Ele
 #endif
 
 /// A type that provides asynchronous, sequential, iterated access to its elements.
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public protocol SkipAsyncSequence {
     associatedtype Element
 
@@ -558,6 +559,7 @@ public struct SkipAsyncStream<Element> : SkipAsyncSequence {
 // Wrap a kotlinx.coroutines.flow.Flow and provide an async interface
 // Mirrors the interface of Foundation.AsyncBytes, which extends AsyncSequence
 // Note that there could also be `SkipURLAsyncBytes` and `SkipFileHandleAsyncBytes` for `URL.bytes` and `FileHandle.bytes`.
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipURLSessionAsyncBytes : SkipAsyncSequence {
     //public typealias Element = UInt8
     public let stream: PlatformAsyncStream<UInt8>
@@ -583,6 +585,7 @@ public struct SkipURLSessionAsyncBytes : SkipAsyncSequence {
 
 #if !SKIP // need nested typealias support
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncLineSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     // where BytesStream.Element == UInt8 { // Skip does not support the referenced type as a generic constraint
     public let stream: PlatformAsyncStream<String>
@@ -594,73 +597,88 @@ public struct SkipAsyncLineSequence<Base: SkipAsyncSequence> : SkipAsyncSequence
 
 /// Default declaration: `class SkipAsyncCompactMapSequence<Base, ElementOfResult>: SkipAsyncSequence<Element> where Base: SkipAsyncSequence`
 // SKIP DECLARE: class SkipAsyncCompactMapSequence<Base, ElementOfResult, Element>: SkipAsyncSequence<Element> where Base: SkipAsyncSequence<Element>
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncCompactMapSequence<Base: SkipAsyncSequence, ElementOfResult> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncDropFirstSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncDropWhileSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncFilterSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncFlatMapSequence<Base: SkipAsyncSequence, SegmentOfResult> : SkipAsyncSequence where SegmentOfResult : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncMapSequence<Base: SkipAsyncSequence, Transformed> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncPrefixSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncPrefixWhileSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncThrowingCompactMapSequence<Base: SkipAsyncSequence, ElementOfResult> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncThrowingDropWhileSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncThrowingFilterSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncThrowingFlatMapSequence<Base: SkipAsyncSequence, SegmentOfResult: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncThrowingMapSequence<Base: SkipAsyncSequence, Transformed> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public struct SkipAsyncThrowingPrefixWhileSequence<Base: SkipAsyncSequence> : SkipAsyncSequence {
     public typealias Element = Base.Element
     public let stream: PlatformAsyncStream<Element>
 }
+
 #endif
