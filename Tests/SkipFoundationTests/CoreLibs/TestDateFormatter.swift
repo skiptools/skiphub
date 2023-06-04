@@ -8,11 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-#if SKIP
-/// Shim for test compat
-private typealias NSTimeZone = TimeZone
-#endif
-
 // This source file is part of the Swift.org open source project
 //
 // Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors

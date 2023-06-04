@@ -7,9 +7,11 @@
 import struct Foundation.Locale
 public typealias Locale = Foundation.Locale
 internal typealias PlatformLocale = Foundation.Locale
+public typealias NSLocale = Foundation.Locale.ReferenceType
 #else
 public typealias Locale = SkipLocale
 public typealias PlatformLocale = java.util.Locale
+public typealias NSLocale = Locale
 #endif
 
 // override the Kotlin type to be public while keeping the Swift version internal:
@@ -47,6 +49,14 @@ internal struct SkipLocale : RawRepresentable, Hashable {
         return SkipLocale(PlatformLocale.current)
         #else
         return SkipLocale(PlatformLocale.getDefault())
+        #endif
+    }
+
+    public static var system: SkipLocale {
+        #if !SKIP
+        return SkipLocale(NSLocale.system)
+        #else
+        return SkipLocale(PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
         #endif
     }
 

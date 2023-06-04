@@ -44,6 +44,7 @@ interface XCTestCase {
     fun <T> XCTUnwrap(ob: T?, msg: String): T { org.junit.Assert.assertNotNull(msg, ob); if (ob != null) { return ob }; throw AssertionError() }
 
     fun XCTAssert(a: Boolean): Unit = org.junit.Assert.assertTrue(a)
+    fun XCTAssert(a: Boolean, msg: String): Unit = org.junit.Assert.assertTrue(msg, a)
     fun XCTAssertTrue(a: Boolean): Unit = org.junit.Assert.assertTrue(a)
     fun XCTAssertTrue(a: Boolean, msg: String): Unit = org.junit.Assert.assertTrue(msg, a)
     fun XCTAssertFalse(a: Boolean): Unit = org.junit.Assert.assertFalse(a)
