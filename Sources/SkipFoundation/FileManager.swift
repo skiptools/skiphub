@@ -531,7 +531,7 @@ extension FileManager {
 
     public func contentsOfDirectory(at url: URL, includingPropertiesForKeys: [URLResourceKey]?) throws -> [URL] {
         #if !SKIP
-        return try platformValue.contentsOfDirectory(at: url.platformValue, includingPropertiesForKeys: includingPropertiesForKeys)
+        return try platformValue.contentsOfDirectory(at: url.platformValue, includingPropertiesForKeys: includingPropertiesForKeys?.map({ Foundation.URLResourceKey(rawValue: $0.rawValue) }))
             .map({ URL($0) })
         #else
         // https://developer.android.com/reference/kotlin/java/nio/file/Files

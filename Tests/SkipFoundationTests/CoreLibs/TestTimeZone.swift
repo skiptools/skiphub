@@ -148,15 +148,17 @@ class TestTimeZone: XCTestCase {
         XCTAssertEqual(actualName, expectedName, "expected name \"\(expectedName)\" is not equal to \"\(actualName?.description ?? "")\"")
         #endif
         let expectedLocalizedName = "GMT-04:00"
-        let actualLocalizedName = tz2?.localizedName(for: .generic, locale: Locale(identifier: "en_US"))
 
         #if SKIP
         throw XCTSkip("Skip TimeZone.secondsFromGMT")
-        #endif
+        #else
+        let actualLocalizedName = tz2?.localizedName(for: .generic, locale: Locale(identifier: "en_US"))
 
         XCTAssertEqual(actualLocalizedName, expectedLocalizedName, "expected name \"\(expectedLocalizedName)\" is not equal to \"\(actualLocalizedName?.description ?? "")\"")
         let seconds2 = tz2?.secondsFromGMT() ?? 0
         XCTAssertEqual(seconds2, -14400, "GMT-0400 should be -14400 seconds but got \(seconds2) instead")
+
+        #endif
 
         let tz3 = TimeZone(identifier: "GMT-9999")
         XCTAssertNil(tz3)

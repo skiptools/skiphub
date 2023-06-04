@@ -5,7 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 @_implementationOnly import struct Foundation.URL
-/* SKIP: @_implementationOnly */import struct Foundation.URLResourceKey
+@_implementationOnly import struct Foundation.URLResourceKey
 @_implementationOnly import struct Foundation.URLResourceValues
 @_implementationOnly import class Foundation.NSURL
 /// The wrapped type for Swift URL is only included in Swift debug builds
@@ -407,7 +407,9 @@ public struct URL : Hashable, CustomStringConvertible {
         #if SKIP
         fatalError("TODO: implement resourceValues")
         #else
-        return try foundationURL.resourceValues(forKeys: keys)
+        let platformKeys = keys.map({ Foundation.URLResourceKey(rawValue: $0.rawValue) })
+        let platformValue = try foundationURL.resourceValues(forKeys: Set(platformKeys))
+        return URLResourceValues(platformValue: platformValue)
         #endif
     }
 
@@ -420,7 +422,7 @@ public struct URL : Hashable, CustomStringConvertible {
         #if SKIP
         fatalError("TODO: implement setResourceValues")
         #else
-        try foundationURL.setResourceValues(values)
+        try foundationURL.setResourceValues(values.platformValue)
         #endif
     }
     #endif
@@ -429,7 +431,6 @@ public struct URL : Hashable, CustomStringConvertible {
 
 // MARK: Optional Constructors
 
-#if SKIP
 
 public struct URLResourceKey : Hashable, Equatable, RawRepresentable {
     public let rawValue: String
@@ -442,6 +443,21 @@ public struct URLResourceKey : Hashable, Equatable, RawRepresentable {
         self.rawValue = rawValue
     }
 }
+
+/// The properties that the file system resources support.
+public struct URLResourceValues {
+    #if !SKIP
+    internal var platformValue: Foundation.URLResourceValues
+
+    internal init(platformValue: Foundation.URLResourceValues) {
+        self.platformValue = platformValue
+    }
+    #else
+    public var allValues: [URLResourceKey : Any]
+    #endif
+}
+
+#if SKIP
 
 // The optional constructors must be implemented as global functions as Kotlin has no support for failable initializers
 

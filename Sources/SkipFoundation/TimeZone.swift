@@ -4,14 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* SKIP: @_implementationOnly */import struct Foundation.TimeZone
-/* SKIP: @_implementationOnly */import class Foundation.NSTimeZone
-public typealias PlatformTimeZone = Foundation.TimeZone
-public typealias PlatformTimeZoneNameStyle = NSTimeZone.NameStyle
+@_implementationOnly import struct Foundation.TimeZone
+@_implementationOnly import class Foundation.NSTimeZone
+internal typealias PlatformTimeZone = Foundation.TimeZone
 #else
 public typealias NSTimeZone = TimeZone
 public typealias PlatformTimeZone = java.util.TimeZone
-public typealias PlatformTimeZoneNameStyle = TimeZone.NameStyle
 #endif
 
 public struct TimeZone : Hashable, CustomStringConvertible {
@@ -234,9 +232,9 @@ public struct TimeZone : Hashable, CustomStringConvertible {
         #endif
     }
 
-    public func localizedName(for style: PlatformTimeZoneNameStyle, locale: Locale?) -> String? {
+    public func localizedName(for style: NameStyle, locale: Locale?) -> String? {
         #if !SKIP
-        return platformValue.localizedName(for: style, locale: locale?.platformValue)
+        return platformValue.localizedName(for: .init(rawValue: style.rawValue)!, locale: locale?.platformValue)
         #else
         switch style {
         case .generic:
