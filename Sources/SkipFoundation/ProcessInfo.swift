@@ -41,17 +41,17 @@ public class ProcessInfo {
     private var launchContext: android.content.Context?
 
     #else
-    public static var processInfo = ProcessInfo(rawValue: PlatformProcessInfo.processInfo)
-    let rawValue: PlatformProcessInfo
+    public static var processInfo = ProcessInfo(platformValue: PlatformProcessInfo.processInfo)
+    let platformValue: PlatformProcessInfo
 
-    init(rawValue: PlatformProcessInfo) {
-        self.rawValue = rawValue
+    init(platformValue: PlatformProcessInfo) {
+        self.platformValue = platformValue
     }
     #endif
 
     open var globallyUniqueString: String {
         #if !SKIP
-        return rawValue.globallyUniqueString
+        return platformValue.globallyUniqueString
         #else
         return UUID().description
         #endif
@@ -75,7 +75,7 @@ public class ProcessInfo {
 
     open var environment: [String : String] {
         #if !SKIP
-        return rawValue.environment
+        return platformValue.environment
         #else
         return systemProperties
         #endif
@@ -83,7 +83,7 @@ public class ProcessInfo {
 
     open var processIdentifier: Int32 {
         #if !SKIP
-        return rawValue.processIdentifier
+        return platformValue.processIdentifier
         #else
         do {
             return android.os.Process.myPid()
@@ -99,7 +99,7 @@ public class ProcessInfo {
 
     open var arguments: [String] {
         #if !SKIP
-        return rawValue.arguments
+        return platformValue.arguments
         #else
         return [] // no arguments on Android
         #endif
@@ -107,7 +107,7 @@ public class ProcessInfo {
 
     open var hostName: String {
         #if !SKIP
-        return rawValue.hostName
+        return platformValue.hostName
         #else
         // Android 30+: NetworkOnMainThreadException
         return java.net.InetAddress.getLocalHost().hostName
@@ -116,7 +116,7 @@ public class ProcessInfo {
 
     open var processName: String {
         #if !SKIP
-        return rawValue.processName
+        return platformValue.processName
         #else
         fatalError("TODO: ProcessInfo")
         #endif
@@ -124,7 +124,7 @@ public class ProcessInfo {
 
     open var processorCount: Int {
         #if !SKIP
-        return rawValue.processorCount
+        return platformValue.processorCount
         #else
         return Runtime.getRuntime().availableProcessors()
         #endif
@@ -132,7 +132,7 @@ public class ProcessInfo {
 
     open var operatingSystemVersionString: String {
         #if !SKIP
-        return rawValue.operatingSystemVersionString
+        return platformValue.operatingSystemVersionString
         #else
         return android.os.Build.VERSION.RELEASE
         #endif

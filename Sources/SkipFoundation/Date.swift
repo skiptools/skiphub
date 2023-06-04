@@ -49,7 +49,7 @@ public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
 
 /// A specific point in time, independent of any calendar or time zone.
 public struct Date : Hashable, CustomStringConvertible, Comparable {
-    internal var rawValue: PlatformDate
+    internal var platformValue: PlatformDate
 
     public static let timeIntervalBetween1970AndReferenceDate: TimeInterval = 978307200.0
 
@@ -66,11 +66,11 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
     public static let distantFuture = Date(timeIntervalSince1970: 64092211200.0)
 
     public init() {
-        self.rawValue = PlatformDate()
+        self.platformValue = PlatformDate()
     }
 
-    internal init(rawValue: PlatformDate) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformDate) {
+        self.platformValue = platformValue
     }
 
     #if SKIP
@@ -82,23 +82,23 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     public init(timeIntervalSince1970: TimeInterval) {
         #if !SKIP
-        self.rawValue = PlatformDate(timeIntervalSince1970: timeIntervalSince1970)
+        self.platformValue = PlatformDate(timeIntervalSince1970: timeIntervalSince1970)
         #else
-        self.rawValue = PlatformDate((timeIntervalSince1970 * 1000.0).toLong())
+        self.platformValue = PlatformDate((timeIntervalSince1970 * 1000.0).toLong())
         #endif
     }
 
     public init(timeIntervalSinceReferenceDate: TimeInterval) {
         #if !SKIP
-        self.rawValue = PlatformDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate)
+        self.platformValue = PlatformDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate)
         #else
-        self.rawValue = PlatformDate(((timeIntervalSinceReferenceDate + Date.timeIntervalBetween1970AndReferenceDate) * 1000.0).toLong())
+        self.platformValue = PlatformDate(((timeIntervalSinceReferenceDate + Date.timeIntervalBetween1970AndReferenceDate) * 1000.0).toLong())
         #endif
     }
 
     public init(timeInterval: TimeInterval, since: Date) {
         #if !SKIP
-        self.rawValue = PlatformDate(timeInterval: timeInterval, since: since.rawValue)
+        self.platformValue = PlatformDate(timeInterval: timeInterval, since: since.platformValue)
         #else
         self.init(timeIntervalSince1970: timeInterval + since.timeIntervalSince1970)
         #endif
@@ -107,15 +107,15 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
     /// Useful for converting to Java's `long` time representation
     public var currentTimeMillis: Int64 {
         #if !SKIP
-        return Int64(rawValue.timeIntervalSince1970 * 1000.0)
+        return Int64(platformValue.timeIntervalSince1970 * 1000.0)
         #else
-        return rawValue.getTime()
+        return platformValue.getTime()
         #endif
     }
 
     public var description: String {
         #if !SKIP
-        return rawValue.description
+        return platformValue.description
         #else
         return description(with: nil)
         #endif
@@ -123,17 +123,17 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     func description(with locale: Locale?) -> String {
         #if !SKIP
-        return rawValue.description(with: locale?.rawValue)
+        return platformValue.description(with: locale?.platformValue)
         #else
-        let fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", (locale ?? Locale.current).rawValue)
-        fmt.setTimeZone(TimeZone.gmt.rawValue);
-        return fmt.format(rawValue)
+        let fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", (locale ?? Locale.current).platformValue)
+        fmt.setTimeZone(TimeZone.gmt.platformValue)
+        return fmt.format(platformValue)
         #endif
     }
 
     public var timeIntervalSince1970: TimeInterval {
         #if !SKIP
-        return rawValue.timeIntervalSince1970
+        return platformValue.timeIntervalSince1970
         #else
         return currentTimeMillis.toDouble() / 1000.0
         #endif
@@ -141,7 +141,7 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     public var timeIntervalSinceReferenceDate: TimeInterval {
         #if !SKIP
-        return rawValue.timeIntervalSinceReferenceDate
+        return platformValue.timeIntervalSinceReferenceDate
         #else
         return timeIntervalSince1970 - Date.timeIntervalBetween1970AndReferenceDate
         #endif
@@ -149,7 +149,7 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     public static func < (lhs: Date, rhs: Date) -> Bool {
         #if !SKIP
-        lhs.rawValue.timeIntervalSince1970 < rhs.rawValue.timeIntervalSince1970
+        lhs.platformValue.timeIntervalSince1970 < rhs.platformValue.timeIntervalSince1970
         #else
         lhs.timeIntervalSince1970 < rhs.timeIntervalSince1970
         #endif
@@ -157,7 +157,7 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     public func timeIntervalSince(_ date: Date) -> TimeInterval {
         #if !SKIP
-        return rawValue.timeIntervalSince(date.rawValue)
+        return platformValue.timeIntervalSince(date.platformValue)
         #else
         return self.timeIntervalSinceReferenceDate - date.timeIntervalSinceReferenceDate
         #endif
@@ -165,7 +165,7 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     public func addingTimeInterval(_ timeInterval: TimeInterval) -> Date {
         #if !SKIP
-        return Date(rawValue: rawValue.addingTimeInterval(timeInterval))
+        return Date(platformValue: platformValue.addingTimeInterval(timeInterval))
         #else
         return Date(timeInterval: timeInterval, since: self)
         #endif
@@ -173,7 +173,7 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     public mutating func addTimeInterval(_ timeInterval: TimeInterval) {
         #if !SKIP
-        rawValue.addTimeInterval(timeInterval)
+        platformValue.addTimeInterval(timeInterval)
         #else
         self = addingTimeInterval(timeInterval)
         #endif
@@ -182,13 +182,13 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public func ISO8601Format(_ style: PlatformISO8601FormatStyle = .iso8601) -> String {
         #if !SKIP
-        return rawValue.ISO8601Format(style)
+        return platformValue.ISO8601Format(style)
         #else
         // local time zone specific
-        // return java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", java.util.Locale.getDefault()).format(rawValue)
+        // return java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", java.util.Locale.getDefault()).format(platformValue)
         var dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault())
         dateFormat.timeZone = java.util.TimeZone.getTimeZone("GMT")
-        return dateFormat.format(rawValue)
+        return dateFormat.format(platformValue)
         #endif
 
     }

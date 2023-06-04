@@ -7,7 +7,7 @@
 #if SKIP
 extension String {
     public func data(using: StringEncoding, allowLossyConversion: Bool = true) -> Data? {
-        return try? Data(rawValue: toByteArray(using.rawValue))
+        return try? Data(platformValue: toByteArray(using.rawValue))
     }
 
     public var utf8: Data {

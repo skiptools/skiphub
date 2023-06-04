@@ -14,75 +14,75 @@ internal typealias NSLocale = Locale
 
 /// Information about linguistic, cultural, and technological conventions for use in formatting data for presentation.
 public struct Locale : Hashable {
-    internal let rawValue: PlatformLocale
+    internal let platformValue: PlatformLocale
 
-    internal init(rawValue: PlatformLocale) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformLocale) {
+        self.platformValue = platformValue
     }
 
     public init(identifier: String) {
         #if SKIP
-        //self.rawValue = PlatformLocale(identifier)
-        //self.rawValue = PlatformLocale.forLanguageTag(identifier)
+        //self.platformValue = PlatformLocale(identifier)
+        //self.platformValue = PlatformLocale.forLanguageTag(identifier)
         let parts = Array(identifier.split("_"))
         if parts.count >= 2 {
             // turn fr_FR into the language/country form
-            self.rawValue = PlatformLocale(parts.first, parts.last)
+            self.platformValue = PlatformLocale(parts.first, parts.last)
         } else {
             // language only
-            self.rawValue = PlatformLocale(identifier)
+            self.platformValue = PlatformLocale(identifier)
         }
         #else
-        self.rawValue = PlatformLocale(identifier: identifier)
+        self.platformValue = PlatformLocale(identifier: identifier)
         #endif
     }
 
     public static var current: Locale {
         #if !SKIP
-        return Locale(rawValue: PlatformLocale.current)
+        return Locale(platformValue: PlatformLocale.current)
         #else
-        return Locale(rawValue: PlatformLocale.getDefault())
+        return Locale(platformValue: PlatformLocale.getDefault())
         #endif
     }
 
     public static var system: Locale {
         #if !SKIP
-        return Locale(rawValue: NSLocale.system)
+        return Locale(platformValue: NSLocale.system)
         #else
-        return Locale(rawValue: PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
+        return Locale(platformValue: PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
         #endif
     }
 
     public var identifier: String {
         #if !SKIP
-        return rawValue.identifier
+        return platformValue.identifier
         #else
-        //return rawValue.toLanguageTag()
-        return rawValue.toString()
+        //return platformValue.toLanguageTag()
+        return platformValue.toString()
         #endif
     }
 
     public var languageCode: String? {
         #if !SKIP
-        return rawValue.languageCode
+        return platformValue.languageCode
         #else
-        return rawValue.getLanguage()
+        return platformValue.getLanguage()
         #endif
     }
 
     public func localizedString(forLanguageCode languageCode: String) -> String? {
         #if !SKIP
-        return rawValue.localizedString(forLanguageCode: languageCode)
+        return platformValue.localizedString(forLanguageCode: languageCode)
         #else
-        return PlatformLocale(languageCode).getDisplayLanguage(rawValue)
+        return PlatformLocale(languageCode).getDisplayLanguage(platformValue)
         #endif
     }
 
     public var currencySymbol: String? {
         #if !SKIP
-        return rawValue.currencySymbol
+        return platformValue.currencySymbol
         #else
-        java.text.NumberFormat.getCurrencyInstance(rawValue).currency?.symbol
+        java.text.NumberFormat.getCurrencyInstance(platformValue).currency?.symbol
         #endif
     }
 

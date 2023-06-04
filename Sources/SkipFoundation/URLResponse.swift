@@ -13,11 +13,11 @@ internal typealias PlatformURLResponse = Foundation.URLResponse
 /// The metadata associated with the response to a URL load request, independent of protocol and URL scheme.
 public class URLResponse : CustomStringConvertible {
     #if !SKIP
-    internal var rawValue: PlatformURLResponse
-    public var url: URL? { rawValue.url.flatMap(URL.init(rawValue:)) }
-    public var mimeType: String? { rawValue.mimeType }
-    public var expectedContentLength: Int64 { rawValue.expectedContentLength }
-    public var textEncodingName: String? { rawValue.textEncodingName }
+    internal var platformValue: PlatformURLResponse
+    public var url: URL? { platformValue.url.flatMap(URL.init(platformValue:)) }
+    public var mimeType: String? { platformValue.mimeType }
+    public var expectedContentLength: Int64 { platformValue.expectedContentLength }
+    public var textEncodingName: String? { platformValue.textEncodingName }
     #else
     public internal(set) var url: URL?
     public internal(set) var mimeType: String?
@@ -27,14 +27,14 @@ public class URLResponse : CustomStringConvertible {
 
     public init() {
         #if !SKIP
-        self.rawValue = PlatformURLResponse()
+        self.platformValue = PlatformURLResponse()
         #else
         #endif
     }
 
     public init(url: URL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
         #if !SKIP
-        self.rawValue = PlatformURLResponse(url: url.rawValue, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: textEncodingName)
+        self.platformValue = PlatformURLResponse(url: url.platformValue, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: textEncodingName)
         #else
         self.url = url
         self.mimeType = mimeType
@@ -44,22 +44,18 @@ public class URLResponse : CustomStringConvertible {
     }
 
     #if !SKIP
-    internal init(rawValue: PlatformURLResponse) {
-        self.rawValue = rawValue
-    }
-
-    internal init(_ rawValue: PlatformURLResponse) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformURLResponse) {
+        self.platformValue = platformValue
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
     #endif
 
     public var suggestedFilename: String? {
         #if !SKIP
-        return rawValue.suggestedFilename
+        return platformValue.suggestedFilename
         #else
         // A filename specified using the content disposition header.
         // The last path component of the URL.
@@ -78,7 +74,7 @@ public class URLResponse : CustomStringConvertible {
 
     public func copy() -> Any {
         #if !SKIP
-        return rawValue.copy()
+        return platformValue.copy()
         #else
         if let url = self.url {
             return URLResponse(url: url, mimeType: self.mimeType, expectedContentLength: Int(self.expectedContentLength), textEncodingName: self.textEncodingName)
@@ -90,7 +86,7 @@ public class URLResponse : CustomStringConvertible {
 
     public func isEqual(_ other: Any?) -> Bool {
         #if !SKIP
-        return rawValue.isEqual(other)
+        return platformValue.isEqual(other)
         #else
         guard let other = other as? URLResponse else {
             return false
@@ -104,7 +100,7 @@ public class URLResponse : CustomStringConvertible {
 
     public var hash: Int {
         #if !SKIP
-        return rawValue.hash
+        return platformValue.hash
         #else
         return hashValue
         #endif

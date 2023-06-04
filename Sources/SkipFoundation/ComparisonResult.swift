@@ -14,18 +14,18 @@
 //#endif
 //
 //
-//public struct SkipXXX : RawRepresentable, Hashable {
-//    public let rawValue: PlatformXXX
+//public struct SkipXXX : Hashable {
+//    public let platformValue: PlatformXXX
 //
-//    public init(rawValue: PlatformXXX) {
-//        self.rawValue = rawValue
+//    public init(platformValue: PlatformXXX) {
+//        self.platformValue = platformValue
 //    }
 //
-//    public init(_ rawValue: PlatformXXX = PlatformXXX()) {
-//        self.rawValue = rawValue
+//    public init(_ platformValue: PlatformXXX = PlatformXXX()) {
+//        self.platformValue = platformValue
 //    }
 //
 //    var description: String {
-//        return rawValue.description
+//        return platformValue.description
 //    }
 //}

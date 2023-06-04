@@ -16,17 +16,17 @@ public struct DateComponents : Hashable, CustomStringConvertible {
     #if !SKIP
     internal var components: PlatformDateComponents
 
-    internal var rawValue: PlatformDateComponents {
+    internal var platformValue: PlatformDateComponents {
         components
     }
 
     public var calendar: Calendar? {
-        get { components.calendar.flatMap(Calendar.init(rawValue:)) }
-        set { components.calendar = newValue?.rawValue }
+        get { components.calendar.flatMap(Calendar.init(platformValue:)) }
+        set { components.calendar = newValue?.platformValue }
     }
     public var timeZone: TimeZone? {
-        get { components.timeZone.flatMap(TimeZone.init(rawValue:)) }
-        set { components.timeZone = newValue?.rawValue }
+        get { components.timeZone.flatMap(TimeZone.init(platformValue:)) }
+        set { components.timeZone = newValue?.platformValue }
     }
     public var era: Int? {
         get { components.era }
@@ -112,7 +112,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
 
     public init(calendar: Calendar? = nil, timeZone: TimeZone? = nil, era: Int? = nil, year: Int? = nil, month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil, nanosecond: Int? = nil, weekday: Int? = nil, weekdayOrdinal: Int? = nil, quarter: Int? = nil, weekOfMonth: Int? = nil, weekOfYear: Int? = nil, yearForWeekOfYear: Int? = nil) {
         #if !SKIP
-        self.components = PlatformDateComponents(calendar: calendar?.rawValue, timeZone: timeZone?.rawValue, era: era, year: year, month: month, day: day, hour: hour, minute: minute, second: second, nanosecond: nanosecond, weekday: weekday, weekdayOrdinal: weekdayOrdinal, quarter: quarter, weekOfMonth: weekOfMonth, weekOfYear: weekOfYear, yearForWeekOfYear: yearForWeekOfYear)
+        self.components = PlatformDateComponents(calendar: calendar?.platformValue, timeZone: timeZone?.platformValue, era: era, year: year, month: month, day: day, hour: hour, minute: minute, second: second, nanosecond: nanosecond, weekday: weekday, weekdayOrdinal: weekdayOrdinal, quarter: quarter, weekOfMonth: weekOfMonth, weekOfYear: weekOfYear, yearForWeekOfYear: yearForWeekOfYear)
         #else
         self.calendar = calendar
         self.timeZone = timeZone
@@ -135,14 +135,14 @@ public struct DateComponents : Hashable, CustomStringConvertible {
 
     #if SKIP
     internal init(fromCalendar calendar: Calendar, in zone: TimeZone? = nil, from date: Date? = nil, to endDate: Date? = nil, with components: Set<PlatformCalendarComponent>? = nil) {
-        let platformCal = calendar.rawValue.clone() as PlatformCalendar
+        let platformCal = calendar.platformValue.clone() as PlatformCalendar
 
         if let date = date {
-            platformCal.time = date.rawValue
+            platformCal.time = date.platformValue
         }
 
         if let zone = zone {
-            platformCal.timeZone = zone.rawValue
+            platformCal.timeZone = zone.platformValue
         }
 
         if components?.contains(.era) != false {
@@ -190,15 +190,15 @@ public struct DateComponents : Hashable, CustomStringConvertible {
 
     /// Builds a java.util.Calendar from the fields
     internal func createCalendarComponents() -> PlatformCalendar {
-        let c: PlatformCalendar = (self.calendar?.rawValue ?? PlatformCalendar.getInstance())
+        let c: PlatformCalendar = (self.calendar?.platformValue ?? PlatformCalendar.getInstance())
         let cal: PlatformCalendar = (c as java.util.Calendar).clone() as PlatformCalendar
 
         cal.setTimeInMillis(0) // clear the time and set the fields afresh
 
         if let timeZone = self.timeZone {
-            cal.setTimeZone(timeZone.rawValue)
+            cal.setTimeZone(timeZone.platformValue)
         } else {
-            cal.setTimeZone(TimeZone.current.rawValue)
+            cal.setTimeZone(TimeZone.current.platformValue)
         }
 
         if let era = self.era {
@@ -333,7 +333,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
 
         // update our fields from the rolled java.util.Calendar fields
-        self = DateComponents(fromCalendar: Calendar(rawValue: cal))
+        self = DateComponents(fromCalendar: Calendar(platformValue: cal))
         #endif
     }
 
@@ -386,7 +386,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
 
         // update our fields from the rolled java.util.Calendar fields
-        self = DateComponents(fromCalendar: Calendar(rawValue: cal))
+        self = DateComponents(fromCalendar: Calendar(platformValue: cal))
         #endif
     }
 
@@ -485,7 +485,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
 
     public func isValidDate(in calendar: Calendar) -> Bool {
         #if !SKIP
-        return components.isValidDate(in: calendar.rawValue)
+        return components.isValidDate(in: calendar.platformValue)
         #else
         // TODO: re-use implementation from: https://github.com/apple/swift-foundation/blob/68c2466c613a77d6c4453f3a06496a5da79a0cb9/Sources/FoundationInternationalization/DateComponents.swift#LL327C1-L328C1
 

@@ -12,17 +12,17 @@ internal typealias PlatformCharacterSet = skip.lib.Set<Character>
 #endif
 
 public struct CharacterSet : Hashable {
-    internal var rawValue: PlatformCharacterSet
+    internal var platformValue: PlatformCharacterSet
 
-    internal init(rawValue: PlatformCharacterSet) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformCharacterSet) {
+        self.platformValue = platformValue
     }
 
     public init() {
-        self.rawValue = PlatformCharacterSet()
+        self.platformValue = PlatformCharacterSet()
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 }

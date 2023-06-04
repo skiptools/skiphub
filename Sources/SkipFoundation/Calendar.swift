@@ -20,28 +20,28 @@ public typealias PlatformCalendarIdentifier = Calendar.Identifier
 
 /// A definition of the relationships between calendar units and absolute points in time, providing features for calculation and comparison of dates.
 public struct Calendar : Hashable, CustomStringConvertible {
-    internal var rawValue: PlatformCalendar
+    internal var platformValue: PlatformCalendar
     #if SKIP
     public var locale: Locale
     #endif
 
     public static var current: Calendar {
         #if !SKIP
-        return Calendar(rawValue: PlatformCalendar.current)
+        return Calendar(platformValue: PlatformCalendar.current)
         #else
-        return Calendar(rawValue: PlatformCalendar.getInstance())
+        return Calendar(platformValue: PlatformCalendar.getInstance())
         #endif
     }
 
-    internal init(rawValue: PlatformCalendar) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformCalendar) {
+        self.platformValue = platformValue
         #if SKIP
         self.locale = Locale.current
         #endif
     }
 
-    internal init(_ rawValue: PlatformCalendar) {
-        self.rawValue = rawValue
+    internal init(_ platformValue: PlatformCalendar) {
+        self.platformValue = platformValue
         #if SKIP
         self.locale = Locale.current
         #endif
@@ -49,11 +49,11 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     internal init(identifier: PlatformCalendarIdentifier) {
         #if !SKIP
-        self.rawValue = PlatformCalendar(identifier: identifier)
+        self.platformValue = PlatformCalendar(identifier: identifier)
         #else
         switch identifier {
         case .gregorian:
-            self.rawValue = java.util.GregorianCalendar()
+            self.platformValue = java.util.GregorianCalendar()
         default:
             // TODO: how to support the other calendars?
             fatalError("Skip: unsupported calendar identifier \(identifier)")
@@ -64,7 +64,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     internal var identifier: PlatformCalendarIdentifier {
         #if !SKIP
-        return rawValue.identifier
+        return platformValue.identifier
         #else
         // TODO: non-gregorian calendar
         if gregorianCalendar != nil {
@@ -77,21 +77,21 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     #if SKIP
     internal func toDate() -> Date {
-        Date(rawValue: rawValue.getTime())
+        Date(platformValue: platformValue.getTime())
     }
 
     private var dateFormatSymbols: java.text.DateFormatSymbols {
-        java.text.DateFormatSymbols.getInstance(locale.rawValue)
+        java.text.DateFormatSymbols.getInstance(locale.platformValue)
     }
 
     private var gregorianCalendar: java.util.GregorianCalendar? {
-        return rawValue as? java.util.GregorianCalendar
+        return platformValue as? java.util.GregorianCalendar
     }
     #endif
 
     public var amSymbol: String {
         #if !SKIP
-        return rawValue.amSymbol
+        return platformValue.amSymbol
         #else
         return dateFormatSymbols.getAmPmStrings()[0]
         #endif
@@ -99,7 +99,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public var pmSymbol: String {
         #if !SKIP
-        return rawValue.pmSymbol
+        return platformValue.pmSymbol
         #else
         return dateFormatSymbols.getAmPmStrings()[1]
         #endif
@@ -107,7 +107,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public var eraSymbols: [String] {
         #if !SKIP
-        return rawValue.eraSymbols
+        return platformValue.eraSymbols
         #else
         return Array(dateFormatSymbols.getEras().toList())
         #endif
@@ -115,7 +115,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public var monthSymbols: [String] {
         #if !SKIP
-        return rawValue.monthSymbols
+        return platformValue.monthSymbols
         #else
         // The java.text.DateFormatSymbols.getInstance().getMonths() method in Java returns an array of 13 symbols because it includes both the 12 months of the year and an additional symbol
         // some documentation says the blank symbol is at index 0, but other tests show it at the end, so just pare it out
@@ -125,7 +125,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public var shortMonthSymbols: [String] {
         #if !SKIP
-        return rawValue.shortMonthSymbols
+        return platformValue.shortMonthSymbols
         #else
         return Array(dateFormatSymbols.getShortMonths().toList()).filter({ $0?.isEmpty == false })
         #endif
@@ -133,7 +133,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public var weekdaySymbols: [String] {
         #if !SKIP
-        return rawValue.weekdaySymbols
+        return platformValue.weekdaySymbols
         #else
         return Array(dateFormatSymbols.getWeekdays().toList()).filter({ $0?.isEmpty == false })
         #endif
@@ -141,7 +141,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public var shortWeekdaySymbols: [String] {
         #if !SKIP
-        return rawValue.shortWeekdaySymbols
+        return platformValue.shortWeekdaySymbols
         #else
         return Array(dateFormatSymbols.getShortWeekdays().toList()).filter({ $0?.isEmpty == false })
         #endif
@@ -150,16 +150,16 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func date(from components: DateComponents) -> Date? {
         #if !SKIP
-        return rawValue.date(from: components.components).flatMap(Date.init(rawValue:))
+        return platformValue.date(from: components.components).flatMap(Date.init(platformValue:))
         #else
         // TODO: need to set `this` calendar in the components.calendar
-        return Date(rawValue: components.createCalendarComponents().getTime())
+        return Date(platformValue: components.createCalendarComponents().getTime())
         #endif
     }
 
     public func dateComponents(in zone: TimeZone? = nil, from date: Date) -> DateComponents {
         #if !SKIP
-        return DateComponents(components: rawValue.dateComponents(in: (zone ?? self.timeZone).rawValue, from: date.rawValue))
+        return DateComponents(components: platformValue.dateComponents(in: (zone ?? self.timeZone).platformValue, from: date.platformValue))
         #else
         return DateComponents(fromCalendar: self, in: zone ?? self.timeZone, from: date)
         #endif
@@ -167,7 +167,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func dateComponents(_ components: Set<PlatformCalendarComponent>, from start: Date, to end: Date) -> DateComponents {
         #if !SKIP
-        return DateComponents(components: rawValue.dateComponents(components, from: start.rawValue, to: end.rawValue))
+        return DateComponents(components: platformValue.dateComponents(components, from: start.platformValue, to: end.platformValue))
         #else
         return DateComponents(fromCalendar: self, in: nil, from: start, to: end)
         #endif
@@ -175,7 +175,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func dateComponents(_ components: Set<PlatformCalendarComponent>, from date: Date) -> DateComponents {
         #if !SKIP
-        return DateComponents(components: rawValue.dateComponents(components, from: date.rawValue))
+        return DateComponents(components: platformValue.dateComponents(components, from: date.platformValue))
         #else
         return DateComponents(fromCalendar: self, in: nil, from: date, with: components)
         #endif
@@ -183,7 +183,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func date(byAdding components: DateComponents, to date: Date, wrappingComponents: Bool = false) -> Date? {
         #if !SKIP
-        return rawValue.date(byAdding: components.rawValue, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(Date.init(rawValue:))
+        return platformValue.date(byAdding: components.platformValue, to: date.platformValue, wrappingComponents: wrappingComponents).flatMap(Date.init(platformValue:))
         #else
         var comps = DateComponents(fromCalendar: self, in: self.timeZone, from: date)
         comps.add(components)
@@ -193,7 +193,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func date(byAdding component: PlatformCalendarComponent, value: Int, to date: Date, wrappingComponents: Bool = false) -> Date? {
         #if !SKIP
-        return rawValue.date(byAdding: component, value: value, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(Date.init(rawValue:))
+        return platformValue.date(byAdding: component, value: value, to: date.platformValue, wrappingComponents: wrappingComponents).flatMap(Date.init(platformValue:))
         #else
         fatalError("TODO: Skip Calendar.date(byAdding:Calendar.Component)")
         #endif
@@ -201,7 +201,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func isDateInWeekend(_ date: Date) -> Bool {
         #if !SKIP
-        return rawValue.isDateInWeekend(date.rawValue)
+        return platformValue.isDateInWeekend(date.platformValue)
         #else
         let components = dateComponents(from: date)
         return components.weekday == PlatformCalendar.SATURDAY || components.weekday == PlatformCalendar.SUNDAY
@@ -210,7 +210,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func isDate(_ date1: Date, inSameDayAs date2: Date) -> Bool {
         #if !SKIP
-        return rawValue.isDate(date1.rawValue, inSameDayAs: date2.rawValue)
+        return platformValue.isDate(date1.platformValue, inSameDayAs: date2.platformValue)
         #else
         fatalError("TODO: Skip Calendar.isDate(:inSameDayAs:)")
         #endif
@@ -218,7 +218,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func isDateInToday(_ date: Date) -> Bool {
         #if !SKIP
-        return rawValue.isDateInToday(date.rawValue)
+        return platformValue.isDateInToday(date.platformValue)
         #else
         return isDate(date, inSameDayAs: Date())
         #endif
@@ -226,7 +226,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func isDateInTomorrow(_ date: Date) -> Bool {
         #if !SKIP
-        return rawValue.isDateInTomorrow(date.rawValue)
+        return platformValue.isDateInTomorrow(date.platformValue)
         #else
         if let tomorrow = date(byAdding: DateComponents(day: -1), to: Date()) {
             return isDate(date, inSameDayAs: tomorrow)
@@ -238,7 +238,7 @@ public struct Calendar : Hashable, CustomStringConvertible {
 
     public func isDateInYesterday(_ date: Date) -> Bool {
         #if !SKIP
-        return rawValue.isDateInYesterday(date.rawValue)
+        return platformValue.isDateInYesterday(date.platformValue)
         #else
         if let yesterday = date(byAdding: DateComponents(day: -1), to: Date()) {
             return isDate(date, inSameDayAs: yesterday)
@@ -251,23 +251,23 @@ public struct Calendar : Hashable, CustomStringConvertible {
     public var timeZone: TimeZone {
         get {
             #if !SKIP
-            return TimeZone(rawValue: rawValue.timeZone)
+            return TimeZone(platformValue: platformValue.timeZone)
             #else
-            return TimeZone(rawValue.getTimeZone())
+            return TimeZone(platformValue.getTimeZone())
             #endif
         }
 
         set {
             #if !SKIP
-            rawValue.timeZone = newValue.rawValue
+            platformValue.timeZone = newValue.platformValue
             #else
-            rawValue.setTimeZone(newValue.rawValue)
+            platformValue.setTimeZone(newValue.platformValue)
             #endif
         }
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
     public enum Component: Sendable {

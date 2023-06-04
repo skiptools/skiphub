@@ -86,7 +86,7 @@ internal class PlatformJSONSerialization {
 
             do {
 #if SKIP
-                string = jsonData.rawValue.toString(encoding.rawValue)
+                string = jsonData.platformValue.toString(encoding.rawValue)
                 //print("### DATA", jsonData.count, " IN ENCODING:", encoding, string.count)
                 break
 #endif

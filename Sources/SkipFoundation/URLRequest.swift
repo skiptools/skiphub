@@ -18,7 +18,7 @@ public typealias NSURLRequest = URLRequest
 /// A URL load request that is independent of protocol or URL scheme.
 public struct URLRequest : Hashable, CustomStringConvertible {
     #if !SKIP
-    internal var rawValue: PlatformURLRequest
+    internal var platformValue: PlatformURLRequest
     #else
     public var url: URL?
     public var httpMethod: String? = "GET" {
@@ -50,18 +50,18 @@ public struct URLRequest : Hashable, CustomStringConvertible {
     #endif
 
     #if !SKIP
-    internal init(rawValue: PlatformURLRequest) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformURLRequest) {
+        self.platformValue = platformValue
     }
 
-    internal init(_ rawValue: PlatformURLRequest) {
-        self.rawValue = rawValue
+    internal init(_ platformValue: PlatformURLRequest) {
+        self.platformValue = platformValue
     }
     #endif
 
     public init(url: URL, cachePolicy: PlatformURLRequestCachePolicy = PlatformURLRequestCachePolicy.useProtocolCachePolicy, timeoutInterval: TimeInterval = 0.0) {
         #if !SKIP
-        self.rawValue = PlatformURLRequest(url: url.rawValue, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+        self.platformValue = PlatformURLRequest(url: url.platformValue, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         #else
         self.url = url
         self.cachePolicy = cachePolicy
@@ -71,7 +71,7 @@ public struct URLRequest : Hashable, CustomStringConvertible {
 
     public var description: String {
         #if !SKIP
-        return rawValue.description
+        return platformValue.description
         #else
         return url?.toString() ?? "url: nil"
         #endif
@@ -79,7 +79,7 @@ public struct URLRequest : Hashable, CustomStringConvertible {
 
     public func value(forHTTPHeaderField field: String) -> String? {
         #if !SKIP
-        return rawValue.value(forHTTPHeaderField: field)
+        return platformValue.value(forHTTPHeaderField: field)
         #else
         return Self.value(forHTTPHeaderField: field, in: allHTTPHeaderFields ?? [:])
         #endif
@@ -123,7 +123,7 @@ public struct URLRequest : Hashable, CustomStringConvertible {
 
     public mutating func setValue(_ value: String?, forHTTPHeaderField field: String) {
         #if !SKIP
-        rawValue.setValue(value, forHTTPHeaderField: field)
+        platformValue.setValue(value, forHTTPHeaderField: field)
         #else
         if Self.reservedHeaderKeys.contains(field) {
             return // ignore reserved keys
@@ -136,7 +136,7 @@ public struct URLRequest : Hashable, CustomStringConvertible {
 
     public mutating func addValue(_ value: String, forHTTPHeaderField field: String) {
         #if !SKIP
-        rawValue.addValue(value, forHTTPHeaderField: field)
+        platformValue.addValue(value, forHTTPHeaderField: field)
         #else
         if Self.reservedHeaderKeys.contains(field) {
             return // ignore reserved keys

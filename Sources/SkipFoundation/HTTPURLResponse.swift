@@ -84,7 +84,7 @@ public class HTTPURLResponse : URLResponse {
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func value(forHTTPHeaderField field: String) -> String? {
         #if !SKIP
-        return (rawValue as? PlatformHTTPURLResponse)?.value(forHTTPHeaderField: field)
+        return (platformValue as? PlatformHTTPURLResponse)?.value(forHTTPHeaderField: field)
         #else
         return URLRequest.value(forHTTPHeaderField: field, in: allHeaderFields)
         #endif

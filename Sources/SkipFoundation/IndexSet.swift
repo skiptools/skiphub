@@ -13,18 +13,18 @@ internal typealias PlatformIndexSet = skip.lib.Set<Int>
 
 /// A collection of unique integer values that represent the indexes of elements in another collection.
 public struct IndexSet : Hashable, CustomStringConvertible {
-    internal var rawValue: PlatformIndexSet
+    internal var platformValue: PlatformIndexSet
 
-    internal init(rawValue: PlatformIndexSet) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformIndexSet) {
+        self.platformValue = platformValue
     }
 
     public init() {
-        self.rawValue = PlatformIndexSet()
+        self.platformValue = PlatformIndexSet()
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
 //    public typealias Element = Int

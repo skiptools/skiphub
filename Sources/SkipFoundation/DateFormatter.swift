@@ -12,35 +12,35 @@ public typealias PlatformDateFormatter = java.text.SimpleDateFormat
 
 /// A formatter that converts between dates and their textual representations.
 public class DateFormatter {
-    internal var rawValue: PlatformDateFormatter
+    internal var platformValue: PlatformDateFormatter
 
-    internal init(rawValue: PlatformDateFormatter) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformDateFormatter) {
+        self.platformValue = platformValue
     }
 
     public init() {
-        self.rawValue = PlatformDateFormatter()
+        self.platformValue = PlatformDateFormatter()
         self.isLenient = false // SimpleDateFormat is lenient by default
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
     public var isLenient: Bool {
         get {
             #if !SKIP
-            return rawValue.isLenient
+            return platformValue.isLenient
             #else
-            return rawValue.isLenient
+            return platformValue.isLenient
             #endif
         }
 
         set {
             #if !SKIP
-            rawValue.isLenient = newValue
+            platformValue.isLenient = newValue
             #else
-            rawValue.isLenient = newValue
+            platformValue.isLenient = newValue
             #endif
         }
     }
@@ -48,47 +48,47 @@ public class DateFormatter {
     public var dateFormat: String {
         get {
             #if !SKIP
-            return rawValue.dateFormat
+            return platformValue.dateFormat
             #else
-            return rawValue.toPattern()
+            return platformValue.toPattern()
             #endif
         }
 
         set {
             #if !SKIP
-            rawValue.dateFormat = newValue
+            platformValue.dateFormat = newValue
             #else
-            rawValue.applyPattern(newValue)
+            platformValue.applyPattern(newValue)
             #endif
         }
     }
 
     public func setLocalizedDateFormatFromTemplate(dateFormatTemplate: String) {
         #if !SKIP
-        rawValue.setLocalizedDateFormatFromTemplate(dateFormatTemplate)
+        platformValue.setLocalizedDateFormatFromTemplate(dateFormatTemplate)
         #else
-        rawValue.applyLocalizedPattern(dateFormatTemplate)
+        platformValue.applyLocalizedPattern(dateFormatTemplate)
         #endif
     }
 
     public static func dateFormat(fromTemplate: String, options: Int, locale: Locale?) -> String? {
         #if !SKIP
-        return PlatformDateFormatter.dateFormat(fromTemplate: fromTemplate, options: options, locale: locale?.rawValue)
+        return PlatformDateFormatter.dateFormat(fromTemplate: fromTemplate, options: options, locale: locale?.platformValue)
         #else
         let fmt = DateFormatter()
         fmt.locale = locale
         fmt.setLocalizedDateFormatFromTemplate(fromTemplate)
-        return fmt.rawValue.toLocalizedPattern()
+        return fmt.platformValue.toLocalizedPattern()
         #endif
     }
 
     public var timeZone: TimeZone? {
         get {
             #if !SKIP
-            return rawValue.timeZone.flatMap(TimeZone.init(rawValue:))
+            return platformValue.timeZone.flatMap(TimeZone.init(platformValue:))
             #else
-            if let rawTimeZone = rawValue.timeZone {
-                return TimeZone(rawValue: rawTimeZone)
+            if let rawTimeZone = platformValue.timeZone {
+                return TimeZone(platformValue: rawTimeZone)
             } else {
                 return TimeZone.current
             }
@@ -99,9 +99,9 @@ public class DateFormatter {
 
         set {
             #if !SKIP
-            rawValue.timeZone = newValue?.rawValue ?? TimeZone.system.rawValue
+            platformValue.timeZone = newValue?.platformValue ?? TimeZone.system.platformValue
             #else
-            rawValue.timeZone = newValue?.rawValue ?? TimeZone.current.rawValue
+            platformValue.timeZone = newValue?.platformValue ?? TimeZone.current.platformValue
             #endif
         }
     }
@@ -114,7 +114,7 @@ public class DateFormatter {
     public var locale: Locale? {
         get {
             #if !SKIP
-            return rawValue.locale.flatMap(Locale.init(rawValue:))
+            return platformValue.locale.flatMap(Locale.init(platformValue:))
             #else
             return self._locale ?? Locale.current
             #endif
@@ -122,13 +122,13 @@ public class DateFormatter {
 
         set {
             #if !SKIP
-            rawValue.locale = newValue?.rawValue
+            platformValue.locale = newValue?.platformValue
             #else
             // need to make a whole new SimpleDateFormat with the locale, since the instance does not provide access to the locale that was used to initialize it
             if let newValue = newValue {
-                var formatter = PlatformDateFormatter(self.rawValue.toPattern(), newValue.rawValue)
-                formatter.timeZone = self.timeZone?.rawValue
-                self.rawValue = formatter
+                var formatter = PlatformDateFormatter(self.platformValue.toPattern(), newValue.platformValue)
+                formatter.timeZone = self.timeZone?.platformValue
+                self.platformValue = formatter
                 self._locale = newValue
             }
             #endif
@@ -138,27 +138,27 @@ public class DateFormatter {
     public var calendar: Calendar? {
         get {
             #if !SKIP
-            return rawValue.calendar.flatMap(Calendar.init(rawValue:))
+            return platformValue.calendar.flatMap(Calendar.init(platformValue:))
             #else
-            return Calendar(rawValue: rawValue.calendar)
+            return Calendar(platformValue: platformValue.calendar)
             #endif
         }
 
         set {
             #if !SKIP
-            rawValue.calendar = newValue?.rawValue
+            platformValue.calendar = newValue?.platformValue
             #else
-            rawValue.calendar = newValue?.rawValue
+            platformValue.calendar = newValue?.platformValue
             #endif
         }
     }
 
     public func date(from string: String) -> Date? {
         #if !SKIP
-        return rawValue.date(from: string).flatMap(Date.init(rawValue:))
+        return platformValue.date(from: string).flatMap(Date.init(platformValue:))
         #else
-        if let date = try? rawValue.parse(string) { // DateFormat throws java.text.ParseException: Unparseable date: "2018-03-09"
-            return Date(rawValue: date)
+        if let date = try? platformValue.parse(string) { // DateFormat throws java.text.ParseException: Unparseable date: "2018-03-09"
+            return Date(platformValue: date)
         } else {
             return nil
         }
@@ -167,9 +167,9 @@ public class DateFormatter {
 
     public func string(from date: Date) -> String {
         #if !SKIP
-        return rawValue.string(from: date.rawValue)
+        return platformValue.string(from: date.platformValue)
         #else
-        return rawValue.format(date.rawValue)
+        return platformValue.format(date.platformValue)
         #endif
     }
 

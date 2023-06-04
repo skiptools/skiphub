@@ -13,13 +13,13 @@ public typealias PlatformDateInterval = java.time.Duration
 
 /// The span of time between a specific start date and end date.
 public struct DateInterval : Hashable, CustomStringConvertible {
-    internal var rawValue: PlatformDateInterval
+    internal var platformValue: PlatformDateInterval
 
-    internal init(rawValue: PlatformDateInterval) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformDateInterval) {
+        self.platformValue = platformValue
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 }

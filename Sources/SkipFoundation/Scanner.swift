@@ -11,22 +11,22 @@ typealias PlatformScanner = java.util.Scanner
 #endif
 
 public class Scanner : CustomStringConvertible {
-    let rawValue: PlatformScanner
+    let platformValue: PlatformScanner
 
-    init(rawValue: PlatformScanner) {
-        self.rawValue = rawValue
+    init(platformValue: PlatformScanner) {
+        self.platformValue = platformValue
     }
 
     public init(_ string: String) {
         #if !SKIP
-        self.rawValue = PlatformScanner(string: string)
+        self.platformValue = PlatformScanner(string: string)
         #else
-        self.rawValue = PlatformScanner(string)
+        self.platformValue = PlatformScanner(string)
         #endif
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
     public enum NumberRepresentation: Hashable {

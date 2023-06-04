@@ -1322,7 +1322,7 @@ extension JSONElementEncoder {
         case SkipJSONEncoder.DateEncodingStrategy.deferredToDate:
             // Must be called with a surrounding with(pushedKey:) call.
             // Dates encode as single-value objects; this can't both throw and push a container, so no need to catch the error.
-            try date.rawValue.encode(to: self)
+            try date.platformValue.encode(to: self)
             return _JSONContainer(json: self.storage.popContainer().json)
 
         case SkipJSONEncoder.DateEncodingStrategy.secondsSince1970:
@@ -1334,7 +1334,7 @@ extension JSONElementEncoder {
         case SkipJSONEncoder.DateEncodingStrategy.iso8601:
             #if !SKIP
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
-                return _JSONContainer(json: JSON.string(_iso8601Formatter.string(from: date.rawValue)))
+                return _JSONContainer(json: JSON.string(_iso8601Formatter.string(from: date.platformValue)))
             } else {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
@@ -1380,7 +1380,7 @@ extension JSONElementEncoder {
             // Must be called with a surrounding with(pushedKey:) call.
             let depth = self.storage.count
             do {
-                try data.rawValue.encode(to: self)
+                try data.platformValue.encode(to: self)
             } catch {
                 // If the value pushed a container before throwing, pop it back off to restore state.
                 // This shouldn't be possible for Data (which encodes as an array of bytes), but it can't hurt to catch a failure.
@@ -1416,8 +1416,8 @@ extension JSONElementEncoder {
 
             // We can pop because the closure encoded something.
             return self.storage.popContainer()
-        @unknown default:
-            return .init(json: JSON.string(data.base64EncodedString()))
+        //@unknown default:
+        //    return .init(json: JSON.string(data.base64EncodedString()))
         }
     }
     #endif
@@ -2678,7 +2678,7 @@ extension _JSONDecoder {
     fileprivate func unbox(_ value: JSON, as type: Date.Type) throws -> Date? {
         switch options.dateDecodingStrategy {
         case SkipJSONDecoder.DateDecodingStrategy.deferredToDate:
-            return try Date(rawValue: PlatformDate(from: self))
+            return try Date(platformValue: PlatformDate(from: self))
 
         case SkipJSONDecoder.DateDecodingStrategy.secondsSince1970:
             guard let number = value.number else {
@@ -2705,7 +2705,7 @@ extension _JSONDecoder {
                     throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
                 }
 
-                return Date(rawValue: date)
+                return Date(platformValue: date)
             } else {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
@@ -2727,9 +2727,9 @@ extension _JSONDecoder {
         case SkipJSONDecoder.DateDecodingStrategy.custom(let closure):
             return try closure(self)
 
-        @unknown default:
-            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Unhandled date decoding strategy."))
+        //@unknown default:
+        //    // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
+        //    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Unhandled date decoding strategy."))
         }
     }
     #endif
@@ -2754,11 +2754,11 @@ extension _JSONDecoder {
             return data
 
         case SkipJSONDecoder.DataDecodingStrategy.custom(let closure):
-            return try closure(self).rawValue
+            return try closure(self).platformValue
 
-        @unknown default:
-            // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Unhandled data decoding strategy."))
+        //@unknown default:
+        //    // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
+        //    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Unhandled data decoding strategy."))
         }
     }
     #endif

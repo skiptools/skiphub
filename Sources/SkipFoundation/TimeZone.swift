@@ -15,69 +15,69 @@ public typealias PlatformTimeZoneNameStyle = TimeZone.NameStyle
 #endif
 
 public struct TimeZone : Hashable, CustomStringConvertible {
-    internal var rawValue: PlatformTimeZone
+    internal var platformValue: PlatformTimeZone
 
     public static var current: TimeZone {
         #if !SKIP
-        return TimeZone(rawValue: PlatformTimeZone.current)
+        return TimeZone(platformValue: PlatformTimeZone.current)
         #else
-        return TimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(platformValue: PlatformTimeZone.getDefault())
         #endif
     }
 
     public static var `default`: TimeZone {
         get {
             #if !SKIP
-            return TimeZone(rawValue: NSTimeZone.default)
+            return TimeZone(platformValue: NSTimeZone.default)
             #else
-            return TimeZone(rawValue: PlatformTimeZone.getDefault())
+            return TimeZone(platformValue: PlatformTimeZone.getDefault())
             #endif
         }
 
         set {
             #if !SKIP
-            NSTimeZone.default = newValue.rawValue
+            NSTimeZone.default = newValue.platformValue
             #else
-            PlatformTimeZone.setDefault(newValue.rawValue)
+            PlatformTimeZone.setDefault(newValue.platformValue)
             #endif
         }
     }
 
     public static var system: TimeZone {
         #if !SKIP
-        return TimeZone(rawValue: PlatformTimeZone.current)
+        return TimeZone(platformValue: PlatformTimeZone.current)
         #else
-        return TimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(platformValue: PlatformTimeZone.getDefault())
         #endif
     }
     
     public static var local: TimeZone {
         #if !SKIP
-        return TimeZone(rawValue: PlatformTimeZone.current)
+        return TimeZone(platformValue: PlatformTimeZone.current)
         #else
-        return TimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(platformValue: PlatformTimeZone.getDefault())
         #endif
     }
 
     public static var autoupdatingCurrent: TimeZone {
         #if !SKIP
-        return TimeZone(rawValue: .autoupdatingCurrent)
+        return TimeZone(platformValue: .autoupdatingCurrent)
         #else
-        return TimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(platformValue: PlatformTimeZone.getDefault())
         #endif
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
     public static var gmt: TimeZone {
         #if !SKIP
-        return TimeZone(rawValue: PlatformTimeZone.gmt)
+        return TimeZone(platformValue: PlatformTimeZone.gmt)
         #else
-        return TimeZone(rawValue: PlatformTimeZone.getTimeZone("GMT"))
+        return TimeZone(platformValue: PlatformTimeZone.getTimeZone("GMT"))
         #endif
     }
 
-    internal init(rawValue: PlatformTimeZone) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformTimeZone) {
+        self.platformValue = platformValue
     }
 
     public init?(identifier: String) {
@@ -85,12 +85,12 @@ public struct TimeZone : Hashable, CustomStringConvertible {
         guard let tz = PlatformTimeZone(identifier: identifier) else {
             return nil
         }
-        self.rawValue = tz
+        self.platformValue = tz
         #else
         guard let tz = PlatformTimeZone.getTimeZone(identifier) else {
             return nil
         }
-        self.rawValue = tz
+        self.platformValue = tz
         #endif
     }
 
@@ -99,14 +99,14 @@ public struct TimeZone : Hashable, CustomStringConvertible {
         guard let tz = PlatformTimeZone(abbreviation: abbreviation) else {
             return nil
         }
-        self.rawValue = tz
+        self.platformValue = tz
         #else
         guard let identifier = Self.abbreviationDictionary[abbreviation] else {
         }
         guard let tz = PlatformTimeZone.getTimeZone(identifier) else {
             return nil
         }
-        self.rawValue = tz
+        self.platformValue = tz
         #endif
     }
 
@@ -115,7 +115,7 @@ public struct TimeZone : Hashable, CustomStringConvertible {
         guard let tz = PlatformTimeZone(secondsFromGMT: seconds) else {
             return nil
         }
-        self.rawValue = tz
+        self.platformValue = tz
         #else
         // java.time.ZoneId is more modern, but doesn't seem to be able to vend a java.util.TimeZone
         // guard let tz = PlatformTimeZone.getTimeZone(java.time.ZoneId.ofOffset(seconds))
@@ -127,57 +127,57 @@ public struct TimeZone : Hashable, CustomStringConvertible {
         //    return nil
         //}
 
-        self.rawValue = java.util.SimpleTimeZone(seconds, "GMT")
+        self.platformValue = java.util.SimpleTimeZone(seconds, "GMT")
         #endif
     }
 
     public var identifier: String {
         #if !SKIP
-        return rawValue.identifier
+        return platformValue.identifier
         #else
-        return rawValue.getID()
+        return platformValue.getID()
         #endif
     }
 
     public func abbreviation(for date: Date = Date()) -> String? {
         #if !SKIP
-        return rawValue.abbreviation(for: date.rawValue)
+        return platformValue.abbreviation(for: date.platformValue)
         #else
-        return rawValue.getDisplayName(true, PlatformTimeZone.SHORT)
+        return platformValue.getDisplayName(true, PlatformTimeZone.SHORT)
         #endif
     }
 
     public func secondsFromGMT(for date: Date = Date()) -> Int {
         #if !SKIP
-        return rawValue.secondsFromGMT(for: date.rawValue)
+        return platformValue.secondsFromGMT(for: date.platformValue)
         #else
-        return rawValue.getOffset(date.currentTimeMillis) / 1000 // offset is in milliseconds
+        return platformValue.getOffset(date.currentTimeMillis) / 1000 // offset is in milliseconds
         #endif
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
     public func isDaylightSavingTime(for date: Date = Date()) -> Bool {
         #if !SKIP
-        return rawValue.isDaylightSavingTime(for: date.rawValue)
+        return platformValue.isDaylightSavingTime(for: date.platformValue)
         #else
-        return rawValue.toZoneId().rules.isDaylightSavings(java.time.ZonedDateTime.ofInstant(date.rawValue.toInstant(), rawValue.toZoneId()).toInstant())
+        return platformValue.toZoneId().rules.isDaylightSavings(java.time.ZonedDateTime.ofInstant(date.platformValue.toInstant(), platformValue.toZoneId()).toInstant())
         #endif
     }
 
     public func daylightSavingTimeOffset(for date: Date = Date()) -> TimeInterval {
         #if !SKIP
-        return rawValue.daylightSavingTimeOffset(for: date.rawValue)
+        return platformValue.daylightSavingTimeOffset(for: date.platformValue)
         #else
-        return isDaylightSavingTime(for: date) ? java.time.ZonedDateTime.ofInstant(date.rawValue.toInstant(), rawValue.toZoneId()).offset.getTotalSeconds().toDouble() : 0.0
+        return isDaylightSavingTime(for: date) ? java.time.ZonedDateTime.ofInstant(date.platformValue.toInstant(), platformValue.toZoneId()).offset.getTotalSeconds().toDouble() : 0.0
         #endif
     }
 
     public var nextDaylightSavingTimeTransition: Date? {
         #if !SKIP
-        return rawValue.nextDaylightSavingTimeTransition.flatMap(Date.init(rawValue:))
+        return platformValue.nextDaylightSavingTimeTransition.flatMap(Date.init(platformValue:))
         #else
         return nextDaylightSavingTimeTransition(after: Date())
         #endif
@@ -185,14 +185,14 @@ public struct TimeZone : Hashable, CustomStringConvertible {
 
     public func nextDaylightSavingTimeTransition(after date: Date) -> Date? {
         #if !SKIP
-        return rawValue.nextDaylightSavingTimeTransition(after: date.rawValue).flatMap(Date.init(rawValue:))
+        return platformValue.nextDaylightSavingTimeTransition(after: date.platformValue).flatMap(Date.init(platformValue:))
         #else
         // testSkipModule(): java.lang.NullPointerException: Cannot invoke "java.time.zone.ZoneOffsetTransition.getInstant()" because the return value of "java.time.zone.ZoneRules.nextTransition(java.time.Instant)" is null
-        let zonedDateTime = java.time.ZonedDateTime.ofInstant(date.rawValue.toInstant(), rawValue.toZoneId())
-        guard let transition = rawValue.toZoneId().rules.nextTransition(zonedDateTime.toInstant()) else {
+        let zonedDateTime = java.time.ZonedDateTime.ofInstant(date.platformValue.toInstant(), platformValue.toZoneId())
+        guard let transition = platformValue.toZoneId().rules.nextTransition(zonedDateTime.toInstant()) else {
             return nil
         }
-        return Date(rawValue: java.util.Date.from(transition.getInstant()))
+        return Date(platformValue: java.util.Date.from(transition.getInstant()))
         #endif
     }
 
@@ -236,21 +236,21 @@ public struct TimeZone : Hashable, CustomStringConvertible {
 
     public func localizedName(for style: PlatformTimeZoneNameStyle, locale: Locale?) -> String? {
         #if !SKIP
-        return rawValue.localizedName(for: style, locale: locale?.rawValue)
+        return platformValue.localizedName(for: style, locale: locale?.platformValue)
         #else
         switch style {
         case .generic:
-            return rawValue.toZoneId().getDisplayName(java.time.format.TextStyle.FULL, locale?.rawValue)
+            return platformValue.toZoneId().getDisplayName(java.time.format.TextStyle.FULL, locale?.platformValue)
         case .standard:
-            return rawValue.toZoneId().getDisplayName(java.time.format.TextStyle.FULL_STANDALONE, locale?.rawValue)
+            return platformValue.toZoneId().getDisplayName(java.time.format.TextStyle.FULL_STANDALONE, locale?.platformValue)
         case .shortStandard:
-            return rawValue.toZoneId().getDisplayName(java.time.format.TextStyle.SHORT_STANDALONE, locale?.rawValue)
+            return platformValue.toZoneId().getDisplayName(java.time.format.TextStyle.SHORT_STANDALONE, locale?.platformValue)
         case .daylightSaving:
-            return rawValue.toZoneId().getDisplayName(java.time.format.TextStyle.FULL, locale?.rawValue)
+            return platformValue.toZoneId().getDisplayName(java.time.format.TextStyle.FULL, locale?.platformValue)
         case .shortDaylightSaving:
-            return rawValue.toZoneId().getDisplayName(java.time.format.TextStyle.SHORT, locale?.rawValue)
+            return platformValue.toZoneId().getDisplayName(java.time.format.TextStyle.SHORT, locale?.platformValue)
         case .shortGeneric:
-            return rawValue.toZoneId().getDisplayName(java.time.format.TextStyle.SHORT, locale?.rawValue)
+            return platformValue.toZoneId().getDisplayName(java.time.format.TextStyle.SHORT, locale?.platformValue)
         }
         #endif
     }

@@ -17,22 +17,22 @@ public typealias PlatformIndexPathElement = Int
 public struct IndexPath : Hashable, CustomStringConvertible {
     //public typealias Element = Int // "Kotlin does not support typealias declarations within functions and types. Consider moving this to a top level declaration"
 
-    internal var rawValue: PlatformIndexPath
+    internal var platformValue: PlatformIndexPath
 
-    internal init(rawValue: PlatformIndexPath) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformIndexPath) {
+        self.platformValue = platformValue
     }
 
 //    public init(indexes: Array<PlatformIndexPathElement>) {
-//        self.rawValue = PlatformIndexPath(indexes: indexes)
+//        self.platformValue = PlatformIndexPath(indexes: indexes)
 //    }
 
     public init(index: PlatformIndexPathElement) {
-        self.rawValue = [index]
+        self.platformValue = [index]
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
 //    public typealias Index = Array<Int>.Index

@@ -16,16 +16,16 @@ public typealias PlatformBundle = AnyClass
 public class Bundle {
     /// A reference to the singleton `main` bundle
     #if !SKIP
-    public static let main = Bundle(rawValue: PlatformBundle.main)
+    public static let main = Bundle(platformValue: PlatformBundle.main)
     #else
     public static let main = Bundle(location: .main)
     #endif
 
     #if !SKIP
-    internal let rawValue: PlatformBundle
+    internal let platformValue: PlatformBundle
 
-    internal init(rawValue: PlatformBundle) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformBundle) {
+        self.platformValue = platformValue
     }
     #else
     private let location: SkipLocalizedStringResource.BundleDescription
@@ -40,7 +40,7 @@ public class Bundle {
         guard let platformBundle = PlatformBundle(path: path) else {
             return nil
         }
-        self.init(rawValue: platformBundle)
+        self.init(platformValue: platformBundle)
         #else
         self.init(location: .atURL(URL(fileURLWithPath: path)))
         #endif
@@ -48,10 +48,10 @@ public class Bundle {
 
     public convenience init?(url: URL) {
         #if !SKIP
-        guard let platformBundle = PlatformBundle(url: url.rawValue) else {
+        guard let platformBundle = PlatformBundle(url: url.platformValue) else {
             return nil
         }
-        self.init(rawValue: platformBundle)
+        self.init(platformValue: platformBundle)
         #else
         self.init(location: .atURL(url))
         #endif
@@ -59,7 +59,7 @@ public class Bundle {
 
     public convenience init(for forClass: AnyClass) {
         #if !SKIP
-        self.init(rawValue: PlatformBundle(for: forClass))
+        self.init(platformValue: PlatformBundle(for: forClass))
         #else
         self.init(location: .forClass(`for`))
         #endif
@@ -67,7 +67,7 @@ public class Bundle {
 
     public var description: String {
         #if !SKIP
-        return rawValue.description
+        return platformValue.description
         #else
         return location.description
         #endif
@@ -75,7 +75,7 @@ public class Bundle {
 
     public var bundleURL: URL {
         #if !SKIP
-        return URL(rawValue: rawValue.bundleURL)
+        return URL(platformValue: platformValue.bundleURL)
         #else
         let loc: SkipLocalizedStringResource.BundleDescription = location
         switch loc {
@@ -92,7 +92,7 @@ public class Bundle {
 
     public var resourceURL: URL? {
         #if !SKIP
-        return URL(rawValue: rawValue.bundleURL)
+        return URL(platformValue: platformValue.bundleURL)
         #else
         return bundleURL // Skip FIXME: this is probably not correct
         #endif

@@ -19,12 +19,12 @@ public class FileManager {
     /// Returns the shared single file manager
     public static var `default` = FileManager()
     #else
-    static var `default` = FileManager(rawValue: PlatformFileManager.default)
+    static var `default` = FileManager(platformValue: PlatformFileManager.default)
 
-    let rawValue: PlatformFileManager
+    let platformValue: PlatformFileManager
 
-    init(rawValue: PlatformFileManager) {
-        self.rawValue = rawValue
+    init(platformValue: PlatformFileManager) {
+        self.platformValue = platformValue
     }
 
     #endif
@@ -50,9 +50,9 @@ public extension String {
             opts.append(java.nio.file.StandardOpenOption.DSYNC)
             opts.append(java.nio.file.StandardOpenOption.SYNC)
         }
-        java.nio.file.Files.write(_path(url), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
+        java.nio.file.Files.write(_path(url), self.data(using: encoding)?.platformValue, *(opts.toList().toTypedArray()))
         #else
-        try write(to: url.rawValue, atomically: atomically, encoding: encoding)
+        try write(to: url.platformValue, atomically: atomically, encoding: encoding)
         #endif
     }
 }
@@ -67,7 +67,7 @@ public extension String {
             opts.append(java.nio.file.StandardOpenOption.DSYNC)
             opts.append(java.nio.file.StandardOpenOption.SYNC)
         }
-        java.nio.file.Files.write(_path(path), self.data(using: encoding)?.rawValue, *(opts.toList().toTypedArray()))
+        java.nio.file.Files.write(_path(path), self.data(using: encoding)?.platformValue, *(opts.toList().toTypedArray()))
     }
 }
 #endif
@@ -75,7 +75,7 @@ public extension String {
 extension Data {
     public func write(to url: URL, options: Data.WritingOptions = []) throws {
         #if !SKIP
-        try rawValue.write(to: url.rawValue, options: .init(rawValue: options.rawValue))
+        try platformValue.write(to: url.platformValue, options: .init(rawValue: options.rawValue))
         #else
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)
@@ -84,7 +84,7 @@ extension Data {
             opts.append(java.nio.file.StandardOpenOption.DSYNC)
         }
 
-        java.nio.file.Files.write(url.toPath(), rawValue, *(opts.toList().toTypedArray()))
+        java.nio.file.Files.write(url.toPath(), platformValue, *(opts.toList().toTypedArray()))
         #endif
     }
 }
@@ -96,7 +96,7 @@ extension FileManager {
     
     public func createSymbolicLink(at url: URL, withDestinationURL destinationURL: URL) throws {
         #if !SKIP
-        try rawValue.createSymbolicLink(at: url.foundationURL, withDestinationURL: destinationURL.foundationURL)
+        try platformValue.createSymbolicLink(at: url.foundationURL, withDestinationURL: destinationURL.foundationURL)
         #else
         java.nio.file.Files.createSymbolicLink(_path(url), _path(destinationURL))
         #endif
@@ -104,7 +104,7 @@ extension FileManager {
 
     public func createSymbolicLink(atPath path: String, withDestinationPath destinationPath: String) throws {
         #if !SKIP
-        try rawValue.createSymbolicLink(atPath: path, withDestinationPath: destinationPath)
+        try platformValue.createSymbolicLink(atPath: path, withDestinationPath: destinationPath)
         #else
         java.nio.file.Files.createSymbolicLink(_path(path), _path(destinationPath))
         #endif
@@ -112,7 +112,7 @@ extension FileManager {
 
     public func createDirectory(at url: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         #if !SKIP
-        try rawValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
+        try platformValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
         let p = _path(url)
         if withIntermediateDirectories == true {
@@ -128,7 +128,7 @@ extension FileManager {
 
     public func createDirectory(atPath path: String, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         #if !SKIP
-        return try rawValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
+        return try platformValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
         if withIntermediateDirectories == true {
             java.nio.file.Files.createDirectories(_path(path))
@@ -143,7 +143,7 @@ extension FileManager {
 
     public func destinationOfSymbolicLink(atPath path: String) throws -> String {
         #if !SKIP
-        return try rawValue.destinationOfSymbolicLink(atPath: path)
+        return try platformValue.destinationOfSymbolicLink(atPath: path)
         #else
         return java.nio.file.Files.readSymbolicLink(_path(path)).toString()
         #endif
@@ -151,7 +151,7 @@ extension FileManager {
 
     public func attributesOfItem(atPath path: String) throws -> [FileAttributeKey: Any] {
         #if !SKIP
-        return try rawValue.attributesOfItem(atPath: path)
+        return try platformValue.attributesOfItem(atPath: path)
         #else
         // As a convenience, NSDictionary provides a set of methods (declared as a category on NSDictionary) for quickly and efficiently obtaining attribute information from the returned dictionary: fileGroupOwnerAccountName(), fileModificationDate(), fileOwnerAccountName(), filePosixPermissions(), fileSize(), fileSystemFileNumber(), fileSystemNumber(), and fileType().
 
@@ -238,7 +238,7 @@ extension FileManager {
 
     public func setAttributes(_ attributes: [FileAttributeKey : Any], ofItemAtPath path: String) throws {
         #if !SKIP
-        try rawValue.setAttributes(attributes, ofItemAtPath: path)
+        try platformValue.setAttributes(attributes, ofItemAtPath: path)
         #else
         for (key, value) in attributes {
             switch key {
@@ -289,10 +289,10 @@ extension FileManager {
 
     public func createFile(atPath path: String, contents: Data? = nil, attributes: [FileAttributeKey : Any]? = nil) -> Bool {
         #if !SKIP
-        return rawValue.createFile(atPath: path, contents: contents?.rawValue, attributes: attributes)
+        return platformValue.createFile(atPath: path, contents: contents?.platformValue, attributes: attributes)
         #else
         do {
-            java.nio.file.Files.write(_path(path), (contents ?? Data(rawValue: PlatformData(size: 0))).rawValue)
+            java.nio.file.Files.write(_path(path), (contents ?? Data(platformValue: PlatformData(size: 0))).platformValue)
             if let attributes = attributes {
                 setAttributes(attributes, ofItemAtPath: path)
             }
@@ -305,7 +305,7 @@ extension FileManager {
 
     public func copyItem(atPath path: String, toPath: String) throws {
         #if !SKIP
-        try rawValue.copyItem(atPath: path, toPath: toPath)
+        try platformValue.copyItem(atPath: path, toPath: toPath)
         #else
         try copy(from: _path(path), to: _path(toPath), recursive: true)
         #endif
@@ -313,7 +313,7 @@ extension FileManager {
 
     public func copyItem(at url: URL, to: URL) throws {
         #if !SKIP
-        try rawValue.copyItem(at: url.rawValue, to: to.rawValue)
+        try platformValue.copyItem(at: url.platformValue, to: to.platformValue)
         #else
         try copy(from: _path(url), to: _path(to), recursive: true)
         #endif
@@ -321,7 +321,7 @@ extension FileManager {
 
     public func moveItem(atPath path: String, toPath: String) throws {
         #if !SKIP
-        try rawValue.moveItem(atPath: path, toPath: toPath)
+        try platformValue.moveItem(atPath: path, toPath: toPath)
         #else
         java.nio.file.Files.move(_path(path), _path(toPath))
         #endif
@@ -329,7 +329,7 @@ extension FileManager {
 
     public func moveItem(at path: URL, to: URL) throws {
         #if !SKIP
-        try rawValue.moveItem(at: path.rawValue, to: to.rawValue)
+        try platformValue.moveItem(at: path.platformValue, to: to.platformValue)
         #else
         java.nio.file.Files.move(path.toPath(), to.toPath())
         #endif
@@ -338,7 +338,7 @@ extension FileManager {
     @available(*, unavailable, message: "contentsEqual is unimplemented in Skip")
     public func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
         #if !SKIP
-        return rawValue.contentsEqual(atPath: path1, andPath: path2)
+        return platformValue.contentsEqual(atPath: path1, andPath: path2)
         #else
         // TODO: recursively compare folders and files, taking into account special files; see https://github.com/apple/swift-corelibs-foundation/blob/818de4858f3c3f72f75d25fbe94d2388ca653f18/Sources/Foundation/FileManager%2BPOSIX.swift#L997
         fatalError("contentsEqual is unimplemented in Skip")
@@ -349,7 +349,7 @@ extension FileManager {
     @available(*, unavailable, message: "changeCurrentDirectoryPath is unavailable in Skip: the current directory cannot be changed in the JVM")
     public func changeCurrentDirectoryPath(_ path: String) -> Bool {
         #if !SKIP
-        return rawValue.changeCurrentDirectoryPath(path)
+        return platformValue.changeCurrentDirectoryPath(path)
         #else
         fatalError("FileManager.changeCurrentDirectoryPath unavailable")
         #endif
@@ -357,7 +357,7 @@ extension FileManager {
 
     public var currentDirectoryPath: String {
         #if !SKIP
-        return rawValue.currentDirectoryPath
+        return platformValue.currentDirectoryPath
         #else
         return System.getProperty("user.dir")
         #endif
@@ -426,7 +426,7 @@ extension FileManager {
 
     public func subpathsOfDirectory(atPath path: String) throws -> [String] {
         #if !SKIP
-        return try rawValue.subpathsOfDirectory(atPath: path)
+        return try platformValue.subpathsOfDirectory(atPath: path)
         #else
         var subpaths: [String] = []
         let p = _path(path)
@@ -442,7 +442,7 @@ extension FileManager {
 
     public func subpaths(atPath path: String) -> [String]? {
         #if !SKIP
-        return rawValue.subpaths(atPath: path)
+        return platformValue.subpaths(atPath: path)
         #else
         return try? subpathsOfDirectory(atPath: path)
         #endif
@@ -450,7 +450,7 @@ extension FileManager {
 
     public func removeItem(atPath path: String) throws {
         #if !SKIP
-        try rawValue.removeItem(atPath: path)
+        try platformValue.removeItem(atPath: path)
         #else
         try delete(path: _path(path), recursive: true)
         #endif
@@ -458,7 +458,7 @@ extension FileManager {
 
     public func removeItem(at url: URL) throws {
         #if !SKIP
-        try rawValue.removeItem(at: url.foundationURL)
+        try platformValue.removeItem(at: url.foundationURL)
         #else
         try delete(path: _path(url), recursive: true)
         #endif
@@ -466,7 +466,7 @@ extension FileManager {
 
     public func fileExists(atPath path: String) -> Bool {
         #if !SKIP
-        return rawValue.fileExists(atPath: path)
+        return platformValue.fileExists(atPath: path)
         #else
         return java.nio.file.Files.exists(java.nio.file.Paths.get(path))
         #endif
@@ -474,7 +474,7 @@ extension FileManager {
 
     public func fileExists(atPath path: String, isDirectory: inout ObjCBool) -> Bool {
         #if !SKIP
-        return rawValue.fileExists(atPath: path, isDirectory: &isDirectory)
+        return platformValue.fileExists(atPath: path, isDirectory: &isDirectory)
         #else
         let p = _path(path)
         if java.nio.file.Files.isDirectory(p) {
@@ -491,7 +491,7 @@ extension FileManager {
 
     public func isReadableFile(atPath path: String) -> Bool {
         #if !SKIP
-        return rawValue.isReadableFile(atPath: path)
+        return platformValue.isReadableFile(atPath: path)
         #else
         return java.nio.file.Files.isReadable(_path(path))
         #endif
@@ -499,7 +499,7 @@ extension FileManager {
 
     public func isExecutableFile(atPath path: String) -> Bool {
         #if !SKIP
-        return rawValue.isExecutableFile(atPath: path)
+        return platformValue.isExecutableFile(atPath: path)
         #else
         return java.nio.file.Files.isExecutable(_path(path))
         #endif
@@ -507,7 +507,7 @@ extension FileManager {
 
     public func isDeletableFile(atPath path: String) -> Bool {
         #if !SKIP
-        return rawValue.isDeletableFile(atPath: path)
+        return platformValue.isDeletableFile(atPath: path)
         #else
         let p = _path(path)
         if !java.nio.file.Files.isWritable(p) {
@@ -523,7 +523,7 @@ extension FileManager {
 
     public func isWritableFile(atPath path: String) -> Bool {
         #if !SKIP
-        return rawValue.isWritableFile(atPath: path)
+        return platformValue.isWritableFile(atPath: path)
         #else
         return java.nio.file.Files.isWritable(_path(path))
         #endif
@@ -531,7 +531,7 @@ extension FileManager {
 
     public func contentsOfDirectory(at url: URL, includingPropertiesForKeys: [URLResourceKey]?) throws -> [URL] {
         #if !SKIP
-        return try rawValue.contentsOfDirectory(at: url.rawValue, includingPropertiesForKeys: includingPropertiesForKeys)
+        return try platformValue.contentsOfDirectory(at: url.platformValue, includingPropertiesForKeys: includingPropertiesForKeys)
             .map({ URL($0) })
         #else
         // https://developer.android.com/reference/kotlin/java/nio/file/Files
@@ -543,7 +543,7 @@ extension FileManager {
 
     public func contentsOfDirectory(atPath path: String) throws -> [String] {
         #if !SKIP
-        return try rawValue.contentsOfDirectory(atPath: path)
+        return try platformValue.contentsOfDirectory(atPath: path)
         #else
         // https://developer.android.com/reference/kotlin/java/nio/file/Files
         let files = java.nio.file.Files.list(_path(path)).collect(java.util.stream.Collectors.toList())

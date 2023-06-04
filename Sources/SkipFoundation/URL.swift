@@ -20,77 +20,77 @@ public typealias NSURL = URL
 /// A value that identifies the location of a resource, such as an item on a remote server or the path to a local file.
 public struct URL : Hashable, CustomStringConvertible {
     /// `URL` wraps either a `Foundation.URL` in Swift or `java.net.URL` in Kotlin.
-    internal var rawValue: PlatformURL
+    internal var platformValue: PlatformURL
     #if SKIP
     private let isDirectoryFlag: Bool?
     public let baseURL: URL?
 
-    public init(_ rawValue: PlatformURL, isDirectory: Bool? = nil, baseURL: URL? = nil) {
-        self.rawValue = rawValue
+    public init(_ platformValue: PlatformURL, isDirectory: Bool? = nil, baseURL: URL? = nil) {
+        self.platformValue = platformValue
         self.isDirectoryFlag = isDirectory
         self.baseURL = baseURL
     }
 
     public init(_ url: URL) {
-        self.rawValue = url.rawValue
+        self.platformValue = url.platformValue
         self.isDirectoryFlag = url.isDirectoryFlag
         self.baseURL = url.baseURL
     }
     #else
-    internal init(_ rawValue: PlatformURL) {
-        self.rawValue = rawValue
+    internal init(_ platformValue: PlatformURL) {
+        self.platformValue = platformValue
     }
 
-    internal init(rawValue: PlatformURL) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformURL) {
+        self.platformValue = platformValue
     }
     #endif
 
     /// This is an overloaded form of three separate `URL.fileURLWithPath` constructors. We defer to those on nil, because they have subtle behavior differences.
     public init(fileURLWithPath path: String, isDirectory: Bool? = nil, relativeTo base: URL? = nil) {
         #if SKIP
-        self.rawValue = PlatformURL("file://" + path) // TODO: escaping
+        self.platformValue = PlatformURL("file://" + path) // TODO: escaping
         self.baseURL = base // TODO: base resolution
         self.isDirectoryFlag = isDirectory ?? path.hasSuffix("/") // TODO: should we hit the file system like NSURL does?
         #else
         if let isDirectory = isDirectory {
             if let base = base {
-                self.rawValue = Foundation.URL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: base.rawValue)
+                self.platformValue = Foundation.URL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: base.platformValue)
             } else {
-                self.rawValue = Foundation.URL(fileURLWithPath: path, isDirectory: isDirectory)
+                self.platformValue = Foundation.URL(fileURLWithPath: path, isDirectory: isDirectory)
             }
         } else {
             if let base = base {
-                self.rawValue = Foundation.URL(fileURLWithPath: path, relativeTo: base.rawValue)
+                self.platformValue = Foundation.URL(fileURLWithPath: path, relativeTo: base.platformValue)
             } else {
-                self.rawValue = Foundation.URL(fileURLWithPath: path)
+                self.platformValue = Foundation.URL(fileURLWithPath: path)
             }
         }
         #endif
     }
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
     #if SKIP
     /// Converts this URL to a java.nio.file.Path
     public func toPath() -> java.nio.file.Path {
-        return java.nio.file.Paths.get(rawValue.toURI())
+        return java.nio.file.Paths.get(platformValue.toURI())
     }
     #endif
 
     #if !SKIP
     /// The base URL. It is provided as a member in SKIP but a calculated property in Swift
     public var baseURL: URL? {
-        return foundationURL.baseURL.flatMap({ .init(rawValue: $0 as PlatformURL) })
+        return foundationURL.baseURL.flatMap({ .init(platformValue: $0 as PlatformURL) })
     }
     #endif
 
     /// The host component of a URL if the URL conforms to RFC 1808 (the most common form of URL), otherwise nil.
     public var host: String? {
         #if SKIP
-        return rawValue.host
+        return platformValue.host
         #else
         return foundationURL.host
         #endif
@@ -108,7 +108,7 @@ public struct URL : Hashable, CustomStringConvertible {
     /// The path component of the URL if the URL conforms to RFC 1808 (the most common form of URL), otherwise an empty string.
     public var path: String {
         #if SKIP
-        return rawValue.path
+        return platformValue.path
         #else
         return foundationURL.path
         #endif
@@ -180,7 +180,7 @@ public struct URL : Hashable, CustomStringConvertible {
     /// The absolute string for the URL.
     public var absoluteString: String {
         #if SKIP
-        return rawValue.toExternalForm()
+        return platformValue.toExternalForm()
         #else
         return foundationURL.absoluteString
         #endif
@@ -212,7 +212,7 @@ public struct URL : Hashable, CustomStringConvertible {
     /// A Boolean that is true if the scheme is file:.
     public var isFileURL: Bool {
         #if SKIP
-        return rawValue.`protocol` == "file"
+        return platformValue.`protocol` == "file"
         #else
         return foundationURL.isFileURL
         #endif
@@ -221,7 +221,7 @@ public struct URL : Hashable, CustomStringConvertible {
     /// The path components of the URL, or an empty array if the path is an empty string.
     public var pathComponents: [String] {
         #if SKIP
-        return Array(rawValue.path.split("/")).filter({ !$0.isEmpty })
+        return Array(platformValue.path.split("/")).filter({ !$0.isEmpty })
         #else
         return foundationURL.pathComponents
         #endif
@@ -258,7 +258,7 @@ public struct URL : Hashable, CustomStringConvertible {
         #if SKIP
         self = standardized
         #else
-        rawValue.standardize()
+        platformValue.standardize()
         #endif
     }
 
@@ -274,10 +274,10 @@ public struct URL : Hashable, CustomStringConvertible {
     /// Returns a URL by appending the specified path component to self.
     public func appendingPathComponent(_ pathComponent: String) -> URL {
         #if SKIP
-        var url = self.rawValue.toExternalForm()
+        var url = self.platformValue.toExternalForm()
         if !url.hasSuffix("/") { url = url + "/" }
         url = url + pathComponent
-        return URL(rawValue: PlatformURL(url))
+        return URL(platformValue: PlatformURL(url))
         #else
         return Self(foundationURL.appendingPathComponent(pathComponent) as PlatformURL)
         #endif
@@ -286,10 +286,10 @@ public struct URL : Hashable, CustomStringConvertible {
     /// Returns a URL by appending the specified path component to self.
     public func appendingPathComponent(_ pathComponent: String, isDirectory: Bool) -> URL {
         #if SKIP
-        var url = self.rawValue.toExternalForm()
+        var url = self.platformValue.toExternalForm()
         if !url.hasSuffix("/") { url = url + "/" }
         url = url + pathComponent
-        return URL(rawValue: PlatformURL(url), isDirectory: isDirectory)
+        return URL(platformValue: PlatformURL(url), isDirectory: isDirectory)
         #else
         return Self(foundationURL.appendingPathComponent(pathComponent, isDirectory: isDirectory) as PlatformURL)
         #endif
@@ -298,14 +298,14 @@ public struct URL : Hashable, CustomStringConvertible {
     /// Returns a URL constructed by removing the last path component of self.
     public func deletingLastPathComponent() -> URL {
         #if SKIP
-        var url = self.rawValue.toExternalForm()
+        var url = self.platformValue.toExternalForm()
         while url.hasSuffix("/") && !url.isEmpty {
             url = url.dropLast(1)
         }
         while !url.hasSuffix("/") && !url.isEmpty {
             url = url.dropLast(1)
         }
-        return URL(rawValue: PlatformURL(url))
+        return URL(platformValue: PlatformURL(url))
         #else
         return Self(foundationURL.deletingLastPathComponent() as PlatformURL)
         #endif
@@ -324,14 +324,14 @@ public struct URL : Hashable, CustomStringConvertible {
     public func deletingPathExtension() -> URL {
         #if SKIP
         let ext = pathExtension
-        var url = self.rawValue.toExternalForm()
+        var url = self.platformValue.toExternalForm()
         while url.hasSuffix("/") {
             url = url.dropLast(1)
         }
         if url.hasSuffix("." + ext) {
             url = url.dropLast(ext.count + 1)
         }
-        return URL(rawValue: PlatformURL(url))
+        return URL(platformValue: PlatformURL(url))
         #else
         return Self(foundationURL.deletingPathExtension() as PlatformURL)
         #endif
@@ -348,10 +348,10 @@ public struct URL : Hashable, CustomStringConvertible {
         //    return self // not a link
         //} else {
         //    let normalized = java.nio.file.Files.readSymbolicLink(originalPath).normalize()
-        //    return URL(rawValue: normalized.toUri().toURL())
+        //    return URL(platformValue: normalized.toUri().toURL())
         //}
         do {
-            return URL(rawValue: originalPath.toRealPath().toUri().toURL())
+            return URL(platformValue: originalPath.toRealPath().toUri().toURL())
         } catch {
             // this will fail if the file does not exist, but Foundation expects it to return the path itself
             return self
@@ -365,7 +365,7 @@ public struct URL : Hashable, CustomStringConvertible {
         #if SKIP
         self = resolvingSymlinksInPath()
         #else
-        rawValue.resolveSymlinksInPath()
+        platformValue.resolveSymlinksInPath()
         #endif
     }
 
@@ -377,7 +377,7 @@ public struct URL : Hashable, CustomStringConvertible {
             return false
         }
         // check whether the resource can be reached by opening and closing a connection
-        rawValue.openConnection().getInputStream().close()
+        platformValue.openConnection().getInputStream().close()
         return true
         #else
         return try self.foundationURL.checkResourceIsReachable()
@@ -447,7 +447,7 @@ public struct URLResourceKey : Hashable, Equatable, RawRepresentable {
 
 public func URL(string: String, relativeTo baseURL: URL? = nil) -> URL? {
     do {
-        let url = PlatformURL(relativeTo?.rawValue, string) // throws on malformed
+        let url = PlatformURL(relativeTo?.platformValue, string) // throws on malformed
         return URL(url, isDirectory: nil, baseURL: baseURL)
     } catch {
         // e.g., malformed URL
@@ -462,9 +462,9 @@ public func URL(string: String, relativeTo baseURL: URL? = nil) -> URL? {
 //public func URL(fileURLWithFileSystemRepresentation path: String, relativeTo: URL?, isDirectory: Bool) -> URL {
 //    // SKIP INSERT: val nil = null
 //    if (relativeTo != nil) {
-//        return URL(rawValue: PlatformURL(relativeTo?.rawValue, path))
+//        return URL(platformValue: PlatformURL(relativeTo?.platformValue, path))
 //    } else {
-//        return URL(rawValue: PlatformURL("file://" + path)) // TODO: isDirectory handling?
+//        return URL(platformValue: PlatformURL("file://" + path)) // TODO: isDirectory handling?
 //    }
 //}
 
@@ -476,38 +476,38 @@ extension URL {
 
     /// The underlying Foundation.URL for the Swift target
     internal var foundationURL: Foundation.URL {
-        get { rawValue as Foundation.URL }
-        set { rawValue = newValue as PlatformURL }
+        get { platformValue as Foundation.URL }
+        set { platformValue = newValue as PlatformURL }
     }
 
     public init?(string: String) {
         guard let url = Foundation.URL(string: string) else {
             return nil
         }
-        self.rawValue = url as PlatformURL
+        self.platformValue = url as PlatformURL
     }
 
     public init?(string: String, relativeTo: URL?) {
-        guard let url = Foundation.URL(string: string, relativeTo: relativeTo?.rawValue as Foundation.URL?) else {
+        guard let url = Foundation.URL(string: string, relativeTo: relativeTo?.platformValue as Foundation.URL?) else {
             return nil
         }
-        self.rawValue = url as PlatformURL
+        self.platformValue = url as PlatformURL
     }
 
     public init(fileURLWithPath path: String) {
-        self.rawValue = PlatformURL(fileURLWithPath: path)
+        self.platformValue = PlatformURL(fileURLWithPath: path)
     }
 
     public init(fileURLWithPath path: String, relativeTo: URL? = nil) {
-        self.rawValue = PlatformURL(fileURLWithPath: path, relativeTo: relativeTo?.rawValue as Foundation.URL?)
+        self.platformValue = PlatformURL(fileURLWithPath: path, relativeTo: relativeTo?.platformValue as Foundation.URL?)
     }
 
     public init(fileURLWithPath path: String, isDirectory: Bool, relativeTo: URL? = nil) {
-        self.rawValue = PlatformURL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: relativeTo?.rawValue as Foundation.URL?)
+        self.platformValue = PlatformURL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: relativeTo?.platformValue as Foundation.URL?)
     }
 
     public init(fileURLWithFileSystemRepresentation path: String, isDirectory: Bool, relativeTo: URL? = nil) {
-        self.rawValue = PlatformURL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: relativeTo?.rawValue as Foundation.URL?)
+        self.platformValue = PlatformURL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: relativeTo?.platformValue as Foundation.URL?)
     }
 }
 

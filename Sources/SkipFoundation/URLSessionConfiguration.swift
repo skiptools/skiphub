@@ -11,14 +11,14 @@ internal typealias PlatformURLSessionConfiguration = Foundation.URLSessionConfig
 
 /// A configuration object that defines behavior and policies for a URL session.
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-internal class URLSessionConfiguration {
+open class URLSessionConfiguration {
     #if SKIP
     private static let _default = URLSessionConfiguration()
     #endif
 
     static var `default`: URLSessionConfiguration {
         #if !SKIP
-        return URLSessionConfiguration(rawValue: PlatformURLSessionConfiguration.default)
+        return URLSessionConfiguration(platformValue: PlatformURLSessionConfiguration.default)
         #else
         return _default
         #endif
@@ -31,17 +31,17 @@ internal class URLSessionConfiguration {
 
     open class var ephemeral: URLSessionConfiguration {
         #if !SKIP
-        return URLSessionConfiguration(rawValue: PlatformURLSessionConfiguration.ephemeral)
+        return URLSessionConfiguration(platformValue: PlatformURLSessionConfiguration.ephemeral)
         #else
         return _ephemeral
         #endif
     }
 
     #if !SKIP
-    public var rawValue: PlatformURLSessionConfiguration
+    internal var platformValue: PlatformURLSessionConfiguration
 
-    init(rawValue: PlatformURLSessionConfiguration) {
-        self.rawValue = rawValue
+    init(platformValue: PlatformURLSessionConfiguration) {
+        self.platformValue = platformValue
     }
     #else
     public var identifier: String?

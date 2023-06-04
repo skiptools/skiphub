@@ -22,32 +22,32 @@ public protocol DataProtocol {
 }
 
 /// A byte buffer in memory.
-public struct Data : Hashable, DataProtocol, CustomStringConvertible {
-    internal var rawValue: PlatformData
+public struct Data : DataProtocol, Hashable, CustomStringConvertible {
+    internal var platformValue: PlatformData
 
     internal var platformData: any PlatformDataProtocol {
-        return rawValue
+        return platformValue
     }
 
     #if !SKIP
-    internal init(rawValue: PlatformData) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformData) {
+        self.platformValue = platformValue
     }
     #else
-    public init(rawValue: PlatformData) {
-        self.rawValue = rawValue
+    public init(platformValue: PlatformData) {
+        self.platformValue = platformValue
     }
     #endif
 
     public init(_ data: Data) {
-        self.rawValue = data.rawValue
+        self.platformValue = data.platformValue
     }
 
     public init(_ bytes: [UInt8]) {
         #if !SKIP
-        self.rawValue = PlatformData(bytes)
+        self.platformValue = PlatformData(bytes)
         #else
-        self.rawValue = PlatformData(size: bytes.count, init: {
+        self.platformValue = PlatformData(size: bytes.count, init: {
             bytes[$0].toByte()
         })
         #endif
@@ -55,19 +55,19 @@ public struct Data : Hashable, DataProtocol, CustomStringConvertible {
 
     // Platform declaration clash: The following declarations have the same JVM signature (<init>(Lskip/lib/Array;)V):
     //public init(_ bytes: [Int]) {
-    //    self.rawValue = PlatformData(size: bytes.count, init: {
+    //    self.platformValue = PlatformData(size: bytes.count, init: {
     //        bytes[$0].toByte()
     //    })
     //}
 
     public var description: String {
-        return rawValue.description
+        return platformValue.description
     }
 
     /// A UTF8-encoded `String` created from this `Data`
     public var utf8String: String? {
         #if !SKIP
-        String(data: rawValue, encoding: String.Encoding.utf8)
+        String(data: platformValue, encoding: String.Encoding.utf8)
         #else
         String(data: self, encoding: String.Encoding.utf8)
         #endif
@@ -75,42 +75,42 @@ public struct Data : Hashable, DataProtocol, CustomStringConvertible {
 
     public init() {
         #if !SKIP
-        self.rawValue = PlatformData(count: 0)
+        self.platformValue = PlatformData(count: 0)
         #else
-        self.rawValue = PlatformData(size: 0)
+        self.platformValue = PlatformData(size: 0)
         #endif
     }
 
     public init(count: Int) {
         #if !SKIP
-        self.rawValue = PlatformData(count: count)
+        self.platformValue = PlatformData(count: count)
         #else
-        self.rawValue = PlatformData(size: count)
+        self.platformValue = PlatformData(size: count)
         #endif
     }
 
     public init(capacity: Int) {
         #if !SKIP
-        self.rawValue = PlatformData(capacity: capacity)
+        self.platformValue = PlatformData(capacity: capacity)
         #else
         // No equivalent kotlin.ByteArray(capacity:), so allocate with zero
-        self.rawValue = PlatformData(size: 0)
+        self.platformValue = PlatformData(size: 0)
         #endif
     }
 
     public mutating func append(contentsOf bytes: [UInt8]) {
         #if !SKIP
-        self.rawValue.append(contentsOf: bytes)
+        self.platformValue.append(contentsOf: bytes)
         #else
-        self.rawValue += Data(bytes).rawValue
+        self.platformValue += Data(bytes).platformValue
         #endif
     }
 
     public static func ==(lhs: Data, rhs: Data) -> Bool {
         #if !SKIP
-        return lhs.rawValue == rhs.rawValue
+        return lhs.platformValue == rhs.platformValue
         #else
-        return lhs.rawValue.contentEquals(rhs.rawValue)
+        return lhs.platformValue.contentEquals(rhs.platformValue)
         #endif
     }
 
@@ -127,9 +127,9 @@ public struct Data : Hashable, DataProtocol, CustomStringConvertible {
 // SKIP TODO: fake constructor until Kotlin can add constructor extensions to external types
 public func String(data: Data, encoding: PlatformStringEncoding) -> String? {
     #if !SKIP
-    return String.init(data: data.rawValue, encoding: encoding)
+    return String.init(data: data.platformValue, encoding: encoding)
     #else
-    return java.lang.String(data.rawValue, encoding.rawValue) as kotlin.String?
+    return java.lang.String(data.platformValue, encoding.rawValue) as kotlin.String?
     #endif
 }
 
@@ -137,7 +137,7 @@ extension String {
     /// The UTF8-encoded data for this string
     public var utf8Data: Data {
         #if !SKIP
-        Data(rawValue: data(using: String.Encoding.utf8) ?? PlatformData())
+        Data(platformValue: data(using: String.Encoding.utf8) ?? PlatformData())
         #else
         data(using: String.Encoding.utf8) ?? Data()
         #endif
@@ -146,7 +146,7 @@ extension String {
 
 #if SKIP
 
-// SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: URL): String { return contentsOf.rawValue.readText() }
+// SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: URL): String { return contentsOf.platformValue.readText() }
 
 // SKIP INSERT: public operator fun Data.Companion.invoke(contentsOf: URL): Data { return Data.contentsOfURL(url = contentsOf) }
 
@@ -161,15 +161,15 @@ extension Data {
         //if url.isFileURL {
         //    return Data(java.io.File(url.path).readBytes())
         //} else {
-        //    return Data(url.rawValue.openConnection().getInputStream().readBytes())
+        //    return Data(url.platformValue.openConnection().getInputStream().readBytes())
         //}
 
         // this seems to work for both file URLs and network URLs
-        return Data(url.rawValue.readBytes())
+        return Data(url.platformValue.readBytes())
     }
 
     /// Foundation uses `count`, Java uses `size`.
-    public var count: Int { return rawValue.size }
+    public var count: Int { return platformValue.size }
 }
 
 public extension StringProtocol {

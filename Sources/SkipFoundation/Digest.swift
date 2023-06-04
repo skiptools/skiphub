@@ -94,9 +94,9 @@ extension Data {
     /// Convert the bytes into a base64 string
     public func base64EncodedString() -> String {
         #if !SKIP
-        return rawValue.base64EncodedString()
+        return platformValue.base64EncodedString()
         #else
-        return java.util.Base64.getEncoder().encodeToString(rawValue)
+        return java.util.Base64.getEncoder().encodeToString(platformValue)
         #endif
     }
 
@@ -104,7 +104,7 @@ extension Data {
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha256() -> Data {
         #if !SKIP
-        return Data(rawValue: Foundation.Data(SHA256.hash(data: rawValue)))
+        return Data(platformValue: Foundation.Data(SHA256.hash(data: platformValue)))
         #else
         return Data(SHA256.hash(data: self).bytes)
         #endif
@@ -112,7 +112,7 @@ extension Data {
 
     /// Convert the bytes into a hex string
     public func hex() -> String {
-        return rawValue.hex()
+        return platformValue.hex()
     }
 }
 
@@ -146,7 +146,7 @@ public struct SHA256 : NamedHashFunction {
     public let digestName = "SHA256"
 
     public static func hash(data: Data) -> SHA256Digest {
-        return SHA256Digest(bytes: SHA256().digest.digest(data.rawValue))
+        return SHA256Digest(bytes: SHA256().digest.digest(data.platformValue))
     }
 
     public func update(_ data: DataProtocol) {
@@ -172,7 +172,7 @@ public struct SHA384 : NamedHashFunction {
     public let digestName = "SHA384"
 
     public static func hash(data: Data) -> SHA384Digest {
-        return SHA384Digest(bytes: SHA384().digest.digest(data.rawValue))
+        return SHA384Digest(bytes: SHA384().digest.digest(data.platformValue))
     }
 
     public func update(_ data: DataProtocol) {
@@ -198,7 +198,7 @@ public struct SHA512 : NamedHashFunction {
     public let digestName = "SHA"
 
     public static func hash(data: Data) -> SHA512Digest {
-        return SHA512Digest(bytes: SHA512().digest.digest(data.rawValue))
+        return SHA512Digest(bytes: SHA512().digest.digest(data.platformValue))
     }
 
     public func update(_ data: DataProtocol) {
@@ -225,7 +225,7 @@ public struct Insecure {
         public let digestName = "MD5"
 
         public static func hash(data: Data) -> MD5Digest {
-            return MD5Digest(bytes: MD5().digest.digest(data.rawValue))
+            return MD5Digest(bytes: MD5().digest.digest(data.platformValue))
         }
 
         public func update(_ data: DataProtocol) {
@@ -251,7 +251,7 @@ public struct Insecure {
         public let digestName = "SHA1"
 
         public static func hash(data: Data) -> SHA1Digest {
-            return SHA1Digest(bytes: SHA1().digest.digest(data.rawValue))
+            return SHA1Digest(bytes: SHA1().digest.digest(data.platformValue))
         }
 
         public func update(_ data: DataProtocol) {
@@ -320,12 +320,12 @@ public extension kotlin.ByteArray {
 
 open class DigestFunction {
     static func authenticationCode(for message: Data, using secret: SymmetricKey, algorithm hashName: String) -> PlatformData {
-        let secretKeySpec = javax.crypto.spec.SecretKeySpec(secret.data.rawValue, "Hmac\(hashName)")
+        let secretKeySpec = javax.crypto.spec.SecretKeySpec(secret.data.platformValue, "Hmac\(hashName)")
         let mac = javax.crypto.Mac.getInstance("Hmac\(hashName)")
         // Skip removes .init because it assumes you want a constructor, so we need to put it back in
         // SKIP REPLACE: mac.init(secretKeySpec)
         mac.init(secretKeySpec)
-        let signature = mac.doFinal(message.rawValue)
+        let signature = mac.doFinal(message.platformValue)
         return signature
     }
 }

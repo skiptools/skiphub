@@ -14,61 +14,61 @@ public typealias NSUUID = UUID
 
 /// Represents UUID strings, which can be used to uniquely identify types, interfaces, and other items.
 public struct UUID : Hashable, CustomStringConvertible {
-    internal var rawValue: PlatformUUID
+    internal var platformValue: PlatformUUID
 
     public init?(uuidString: String) {
         #if !SKIP
-        guard let rawValue = PlatformUUID(uuidString: uuidString) else {
+        guard let platformValue = PlatformUUID(uuidString: uuidString) else {
             return nil
         }
-        self.rawValue = rawValue
+        self.platformValue = platformValue
         #else
         // Java throws an exception for bad UUID, but Foundation expects it to return nil
         guard let uuid = try? java.util.UUID.fromString(uuidString) else {
             return nil
         }
-        self.rawValue = uuid
+        self.platformValue = uuid
         #endif
     }
 
 
-    internal init(_ rawValue: PlatformUUID) {
-        self.rawValue = rawValue
+    internal init(_ platformValue: PlatformUUID) {
+        self.platformValue = platformValue
     }
 
     #if !SKIP
-    internal init(rawValue: PlatformUUID) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformUUID) {
+        self.platformValue = platformValue
     }
     #endif
 
     #if SKIP
     public init() {
-        self.rawValue = java.util.UUID.randomUUID()
+        self.platformValue = java.util.UUID.randomUUID()
     }
     #endif
 
     #if SKIP
     public static func fromString(uuidString: String) -> UUID? {
         // Java throws an exception for bad UUID, but Foundation expects it to return nil
-        // return try? UUID(rawValue: PlatformUUID.fromString(uuidString)) // mistranspiles to: (PlatformUUID.companionObjectInstance as java.util.UUID.Companion).fromString(uuidString))
-        return try? UUID(rawValue: java.util.UUID.fromString(uuidString))
+        // return try? UUID(platformValue: PlatformUUID.fromString(uuidString)) // mistranspiles to: (PlatformUUID.companionObjectInstance as java.util.UUID.Companion).fromString(uuidString))
+        return try? UUID(platformValue: java.util.UUID.fromString(uuidString))
     }
     #endif
 
     #if SKIP
     // Kotlin does not support constructors that return nil. Consider creating a factory function
 //    init?(uuidString: String) {
-//        self.rawValue = java.util.UUID.fromString(uuidString)
+//        self.platformValue = java.util.UUID.fromString(uuidString)
 //    }
     #endif
 
     public var uuidString: String {
         #if SKIP
         // java.util.UUID is lowercase, Foundation.UUID is uppercase
-        return rawValue.toString().uppercase()
+        return platformValue.toString().uppercase()
         #else
-        return rawValue.uuidString
+        return platformValue.uuidString
         #endif
     }
 
@@ -84,7 +84,7 @@ extension UUID {
     public init(mostSigBits: Int64, leastSigBits: Int64) {
         var mostSigBits = mostSigBits
         var leastSigBits = leastSigBits
-        self.rawValue = withUnsafeBytes(of: &mostSigBits) { a in
+        self.platformValue = withUnsafeBytes(of: &mostSigBits) { a in
             withUnsafeBytes(of: &leastSigBits) { b in
                 PlatformUUID(uuid: (a[7], a[6], a[5], a[4], a[3], a[2], a[1], a[0], b[7], b[6], b[5], b[4], b[3], b[2], b[1], b[0]))
             }
@@ -105,7 +105,7 @@ extension UUID {
 
 //    public var uuidString: String {
 //        // java.util.UUID is lowercase, Foundation.UUID is uppercase
-//        return rawValue.toString().uppercase()
+//        return platformValue.toString().uppercase()
 //    }
 //
 //    public var description: String {

@@ -4,11 +4,9 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.URLSession
-public typealias PlatformURLSession = Foundation.URLSession
-//public typealias PlatformAsyncSequence<T> = _Concurrency.AsyncSequence<T>
+@_implementationOnly import class Foundation.URLSession
+internal typealias PlatformURLSession = Foundation.URLSession
 #else
-public typealias PlatformAsyncSequence<T> = kotlinx.coroutines.flow.Flow<T>
 #endif
 
 @available(macOS 11, iOS 14, tvOS 14, watchOS 7, *)
@@ -16,12 +14,12 @@ fileprivate let logger: Logger = Logger(subsystem: "skip", category: "URLSession
 
 /// An object that coordinates a group of related, network data transfer tasks.
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-internal class URLSession {
+public final class URLSession {
     #if !SKIP
-    public let rawValue: PlatformURLSession
+    internal let platformValue: PlatformURLSession
 
-    public init(rawValue: PlatformURLSession) {
-        self.rawValue = rawValue
+    internal init(platformValue: PlatformURLSession) {
+        self.platformValue = platformValue
     }
     #else
     private static let _shared = URLSession(configuration: URLSessionConfiguration.default)
@@ -31,7 +29,7 @@ internal class URLSession {
 
     public init(configuration: URLSessionConfiguration) {
         #if !SKIP
-        self.rawValue = PlatformURLSession(configuration: configuration.rawValue)
+        self.platformValue = PlatformURLSession(configuration: configuration.platformValue)
         #else
         self.configuration = configuration
         #endif
@@ -39,7 +37,7 @@ internal class URLSession {
 
     public static var shared: URLSession {
         #if !SKIP
-        return URLSession(rawValue: PlatformURLSession.shared)
+        return URLSession(platformValue: PlatformURLSession.shared)
         #else
         return _shared
         #endif
@@ -53,7 +51,7 @@ internal class URLSession {
         }
 
         // not that `openConnection` does not actually connect(); we do that below in a Dispatchers.IO coroutine
-        let connection = url.rawValue.openConnection()
+        let connection = url.platformValue.openConnection()
 
         switch request.cachePolicy {
         case .useProtocolCachePolicy:
@@ -118,8 +116,8 @@ internal class URLSession {
 
     public func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         #if !SKIP
-        let (data, response) = try await rawValue.data(for: request.rawValue)
-        let result = (Data(rawValue: data), URLResponse(rawValue: response))
+        let (data, response) = try await platformValue.data(for: request.platformValue)
+        let result = (Data(platformValue: data), URLResponse(platformValue: response))
         return result
         #else
         let (data, response) = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -134,7 +132,7 @@ internal class URLSession {
             inputStream.close()
 
             let bytes = outputStream.toByteArray()
-            return (data: Data(rawValue: bytes), response: response as HTTPURLResponse)
+            return (data: Data(platformValue: bytes), response: response as HTTPURLResponse)
         }
 
         return (data, response)
@@ -143,8 +141,8 @@ internal class URLSession {
 
     public func data(from url: URL) async throws -> (Data, URLResponse) {
         #if !SKIP
-        let (data, response) = try await rawValue.data(from: url.rawValue)
-        let result = (Data(rawValue: data), URLResponse(rawValue: response))
+        let (data, response) = try await platformValue.data(from: url.platformValue)
+        let result = (Data(platformValue: data), URLResponse(platformValue: response))
         return result
         #else
         return self.data(for: URLRequest(url: url))
@@ -153,8 +151,8 @@ internal class URLSession {
 
     public func download(for request: URLRequest) async throws -> (URL, URLResponse) {
         #if !SKIP
-        let (localURL, response) = try await rawValue.download(for: request.rawValue)
-        let result = (URL(rawValue: localURL), URLResponse(rawValue: response))
+        let (localURL, response) = try await platformValue.download(for: request.platformValue)
+        let result = (URL(platformValue: localURL), URLResponse(platformValue: response))
         return result
         #else
         // WARNING: this is untested, since Robolectric's ShadowDownloadManager is a stub
@@ -280,8 +278,8 @@ internal class URLSession {
 
     public func download(from url: URL) async throws -> (URL, URLResponse) {
         #if !SKIP
-        let (localURL, response) = try await rawValue.download(from: url.rawValue)
-        let result = (URL(rawValue: localURL), URLResponse(rawValue: response))
+        let (localURL, response) = try await platformValue.download(from: url.platformValue)
+        let result = (URL(platformValue: localURL), URLResponse(platformValue: response))
         return result
         #else
         return self.download(for: URLRequest(url: url))
@@ -290,8 +288,8 @@ internal class URLSession {
 
     public func upload(for request: URLRequest, fromFile fileURL: URL) async throws -> (Data, URLResponse) {
         #if !SKIP
-        let (data, response) = try await rawValue.upload(for: request.rawValue, fromFile: fileURL.rawValue)
-        let result = (Data(rawValue: data), URLResponse(rawValue: response))
+        let (data, response) = try await platformValue.upload(for: request.platformValue, fromFile: fileURL.platformValue)
+        let result = (Data(platformValue: data), URLResponse(platformValue: response))
         return result
         #else
         fatalError("TODO: URLSession.data")
@@ -300,8 +298,8 @@ internal class URLSession {
 
     public func upload(for request: URLRequest, from bodyData: Data) async throws -> (Data, URLResponse) {
         #if !SKIP
-        let (data, response) = try await rawValue.upload(for: request.rawValue, from: bodyData.rawValue)
-        let result = (Data(rawValue: data), URLResponse(rawValue: response))
+        let (data, response) = try await platformValue.upload(for: request.platformValue, from: bodyData.platformValue)
+        let result = (Data(platformValue: data), URLResponse(platformValue: response))
         return result
         #else
         fatalError("TODO: URLSession.data")
@@ -310,9 +308,9 @@ internal class URLSession {
 
     public func bytes(from url: URL) async throws -> (URLSessionAsyncBytes, URLResponse) {
         #if !SKIP
-        let (bytes, response) = try await rawValue.bytes(from: url.rawValue)
+        let (bytes, response) = try await platformValue.bytes(from: url.platformValue)
         fatalError("TODO: non-Skip bytes(from:")
-        //let result = (URLSessionAsyncBytes(stream: bytes), URLResponse(rawValue: response))
+        //let result = (URLSessionAsyncBytes(stream: bytes), URLResponse(platformValue: response))
         //return result
         #else
         return bytes(for: URLRequest(url: url))
@@ -321,7 +319,7 @@ internal class URLSession {
 
     public func bytes(for request: URLRequest) async throws -> (URLSessionAsyncBytes, URLResponse) {
         #if !SKIP
-        let (stream, response) = try await rawValue.bytes(for: request.rawValue)
+        let (stream, response) = try await platformValue.bytes(for: request.platformValue)
         fatalError("TODO: non-Skip bytes(from:")
         //let result = (URLSessionAsyncBytes(byteStream: stream), URLResponse(rawValue: response))
         //return result

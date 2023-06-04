@@ -12,14 +12,14 @@ internal typealias PlatformUserDefaults = android.content.SharedPreferences
 
 /// An interface to the user’s defaults database, where you store key-value pairs persistently across launches of your app.
 public class UserDefaults {
-    let rawValue: PlatformUserDefaults
+    let platformValue: PlatformUserDefaults
 
-    init(rawValue: PlatformUserDefaults) {
-        self.rawValue = rawValue
+    init(platformValue: PlatformUserDefaults) {
+        self.platformValue = platformValue
     }
 
-    init(_ rawValue: PlatformUserDefaults) {
-        self.rawValue = rawValue
+    init(_ platformValue: PlatformUserDefaults) {
+        self.platformValue = platformValue
     }
 }
 
@@ -31,43 +31,43 @@ extension UserDefaults {
     }
 
     public func `set`(_ value: Int, forKey keyName: String) {
-        let prefs = rawValue.edit()
+        let prefs = platformValue.edit()
         prefs.putInt(keyName, value)
         prefs.apply()
     }
 
     public func `set`(_ value: Boolean, forKey keyName: String) {
-        let prefs = rawValue.edit()
+        let prefs = platformValue.edit()
         prefs.putBoolean(keyName, value)
         prefs.apply()
     }
 
     public func `set`(_ value: Double, forKey keyName: String) {
-        let prefs = rawValue.edit()
+        let prefs = platformValue.edit()
         prefs.putFloat(keyName, value.toFloat())
         prefs.apply()
     }
 
     public func `set`(_ value: String, forKey keyName: String) {
-        let prefs = rawValue.edit()
+        let prefs = platformValue.edit()
         prefs.putString(keyName, value)
         prefs.apply()
     }
 
     public func string(forKey keyName: String) -> String? {
-        rawValue.getString(keyName, nil)
+        platformValue.getString(keyName, nil)
     }
 
     public func double(forKey keyName: String) -> Double? {
-        !rawValue.contains(keyName) ? nil : rawValue.getFloat(keyName, 0.toFloat()).toDouble()
+        !platformValue.contains(keyName) ? nil : platformValue.getFloat(keyName, 0.toFloat()).toDouble()
     }
 
     public func integer(forKey keyName: String) -> Int? {
-        !rawValue.contains(keyName) ? nil : rawValue.getInt(keyName, 0)
+        !platformValue.contains(keyName) ? nil : platformValue.getInt(keyName, 0)
     }
 
     public func bool(forKey keyName: String) -> Bool? {
-        !rawValue.contains(keyName) ? nil : rawValue.getBoolean(keyName, false)
+        !platformValue.contains(keyName) ? nil : platformValue.getBoolean(keyName, false)
     }
 
 }

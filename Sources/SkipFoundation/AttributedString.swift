@@ -14,14 +14,14 @@
 //#endif
 //
 //
-//public struct SkipAttributedString : RawRepresentable, Hashable {
-//    public let rawValue: PlatformAttributedString
+//public struct SkipAttributedString {
+//    public let platformValue: PlatformAttributedString
 //
-//    public init(rawValue: PlatformAttributedString) {
-//        self.rawValue = rawValue
+//    public init(platformValue: PlatformAttributedString) {
+//        self.platformValue = platformValue
 //    }
 //
-//    public init(_ rawValue: PlatformAttributedString = PlatformAttributedString()) {
-//        self.rawValue = rawValue
+//    public init(_ platformValue: PlatformAttributedString = PlatformAttributedString()) {
+//        self.platformValue = platformValue
 //    }
 //}
