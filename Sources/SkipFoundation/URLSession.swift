@@ -54,17 +54,17 @@ public final class URLSession {
         let connection = url.platformValue.openConnection()
 
         switch request.cachePolicy {
-        case .useProtocolCachePolicy:
+        case URLRequest.CachePolicy.useProtocolCachePolicy:
             connection.setUseCaches(true)
-        case .returnCacheDataElseLoad:
+        case URLRequest.CachePolicy.returnCacheDataElseLoad:
             connection.setUseCaches(true)
-        case .returnCacheDataDontLoad:
+        case URLRequest.CachePolicy.returnCacheDataDontLoad:
             connection.setUseCaches(true)
-        case .reloadRevalidatingCacheData:
+        case URLRequest.CachePolicy.reloadRevalidatingCacheData:
             connection.setUseCaches(true)
-        case .reloadIgnoringLocalCacheData:
+        case URLRequest.CachePolicy.reloadIgnoringLocalCacheData:
             connection.setUseCaches(false)
-        case .reloadIgnoringLocalAndRemoteCacheData:
+        case URLRequest.CachePolicy.reloadIgnoringLocalAndRemoteCacheData:
             connection.setUseCaches(false)
         }
 

@@ -5,13 +5,11 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* SKIP: @_implementationOnly */import struct Foundation.URLRequest
+@_implementationOnly import struct Foundation.URLRequest
 internal typealias PlatformURLRequest = Foundation.URLRequest
-public typealias PlatformURLRequestCachePolicy = Foundation.URLRequest.CachePolicy
 internal typealias NSURLRequest = Foundation.URLRequest.ReferenceType // i.e., NSURLRequest
 #else
 public typealias PlatformURLRequest = java.net.HttpURLConnection
-public typealias PlatformURLRequestCachePolicy = URLRequest.CachePolicy
 public typealias NSURLRequest = URLRequest
 #endif
 
@@ -34,7 +32,7 @@ public struct URLRequest : Hashable, CustomStringConvertible {
     }
     public var httpBody: Data? = nil
     public var allHTTPHeaderFields: [String : String]? = nil
-    public var cachePolicy: PlatformURLRequestCachePolicy = .useProtocolCachePolicy
+    public var cachePolicy: CachePolicy = CachePolicy.useProtocolCachePolicy
     public var timeoutInterval: TimeInterval = 0.0
     public var allowsCellularAccess: Bool = true
     public var allowsExpensiveNetworkAccess: Bool = true
@@ -59,9 +57,9 @@ public struct URLRequest : Hashable, CustomStringConvertible {
     }
     #endif
 
-    public init(url: URL, cachePolicy: PlatformURLRequestCachePolicy = PlatformURLRequestCachePolicy.useProtocolCachePolicy, timeoutInterval: TimeInterval = 0.0) {
+    public init(url: URL, cachePolicy: CachePolicy = CachePolicy.useProtocolCachePolicy, timeoutInterval: TimeInterval = 0.0) {
         #if !SKIP
-        self.platformValue = PlatformURLRequest(url: url.platformValue, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+        self.platformValue = PlatformURLRequest(url: url.platformValue, cachePolicy: .init(rawValue: UInt(cachePolicy.rawValue))!, timeoutInterval: timeoutInterval)
         #else
         self.url = url
         self.cachePolicy = cachePolicy
