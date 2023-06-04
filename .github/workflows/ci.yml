@@ -137,25 +137,25 @@ jobs:
         working-directory: skiphub
         run: swift test -c ${CONFIG} --jobs 1 --filter ExampleAppKtTests
 
-      - name: Debug Tests (Serial)
-        if: false
-        working-directory: skiphub
-        run: swift test --jobs 1 -c debug
+      #- name: Debug Tests (Serial)
+      #  if: false
+      #  working-directory: skiphub
+      #  run: swift test --jobs 1 -c debug
 
-      - name: Debug Tests (Parallel)
-        if: false
-        working-directory: skiphub
-        run: swift test --parallel -c debug
+      #- name: Debug Tests (Parallel)
+      #  if: false
+      #  working-directory: skiphub
+      #  run: swift test --parallel -c debug
 
-      - name: Release Tests (Serial)
-        if: false
-        working-directory: skiphub
-        run: swift test --jobs 1 -c release
+      #- name: Release Tests (Serial)
+      #  if: false
+      #  working-directory: skiphub
+      #  run: swift test --jobs 1 -c release
 
-      - name: Release Tests (Parallel)
-        if: false
-        working-directory: skiphub
-        run: swift test --parallel -c release
+      #- name: Release Tests (Parallel)
+      #  if: false
+      #  working-directory: skiphub
+      #  run: swift test --parallel -c release
 
       - name: Gradle Build (Android)
         # folder links in Packages/Skip/ should have been created by tests

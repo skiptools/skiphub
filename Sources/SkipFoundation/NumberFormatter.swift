@@ -4,14 +4,13 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* SKIP: @_implementationOnly */import class Foundation.NumberFormatter
+@_implementationOnly import class Foundation.NumberFormatter
 internal typealias PlatformNumberFormatter = Foundation.NumberFormatter
-public typealias PlatformNumberFormatterStyle = Foundation.NumberFormatter.Style
 #else
 public typealias PlatformNumberFormatter = java.text.DecimalFormat
-public typealias PlatformNumberFormatterStyle = NumberFormatter.Style
 #endif
 
+/// A formatter that converts between numeric values and their textual representations.
 public class NumberFormatter {
     internal var rawValue: PlatformNumberFormatter
 
@@ -29,17 +28,17 @@ public class NumberFormatter {
     }
 
     #if SKIP
-    private var _numberStyle: PlatformNumberFormatterStyle = .none
+    private var _numberStyle: NumberFormatter.Style = .none
     #endif
 
     public var description: String {
         return rawValue.description
     }
 
-    public var numberStyle: PlatformNumberFormatterStyle {
+    public var numberStyle: NumberFormatter.Style {
         get {
             #if !SKIP
-            return rawValue.numberStyle
+            return Style(rawValue: .init(rawValue.numberStyle.rawValue))!
             #else
             return _numberStyle
             #endif
@@ -47,7 +46,7 @@ public class NumberFormatter {
 
         set {
             #if !SKIP
-            rawValue.numberStyle = newValue
+            rawValue.numberStyle = PlatformNumberFormatter.Style(rawValue: .init(newValue.rawValue))!
             #else
             var fmt: PlatformNumberFormatter = self.rawValue
             switch newValue {
