@@ -302,20 +302,20 @@ class TestURL : XCTestCase {
     }
     #endif
 
-    static let gBaseTemporaryDirectoryPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.swift.foundation.TestFoundation.TestURL.\(ProcessInfo.processInfo.processIdentifier)")
+    static let gBaseTemporaryDirectoryPath: String = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.swift.foundation.TestFoundation.TestURL.\(ProcessInfo.processInfo.processIdentifier)")
     static var gBaseCurrentWorkingDirectoryPath : String {
         return FileManager.default.currentDirectoryPath
     }
-    static var gSavedPath = ""
+    static var gSavedPath: String = ""
     static var gRelativeOffsetFromBaseCurrentWorkingDirectory: UInt = UInt(0)
-    static let gFileExistsName = "TestCFURL_file_exists\(ProcessInfo.processInfo.globallyUniqueString)"
-    static let gFileDoesNotExistName = "TestCFURL_file_does_not_exist"
-    static let gDirectoryExistsName = "TestCFURL_directory_exists\(ProcessInfo.processInfo.globallyUniqueString)"
-    static let gDirectoryDoesNotExistName = "TestCFURL_directory_does_not_exist"
-    static let gFileExistsPath = gBaseTemporaryDirectoryPath + gFileExistsName
-    static let gFileDoesNotExistPath = gBaseTemporaryDirectoryPath + gFileDoesNotExistName
-    static let gDirectoryExistsPath = gBaseTemporaryDirectoryPath + gDirectoryExistsName
-    static let gDirectoryDoesNotExistPath = gBaseTemporaryDirectoryPath + gDirectoryDoesNotExistName
+    static let gFileExistsName: String = "TestCFURL_file_exists\(ProcessInfo.processInfo.globallyUniqueString)"
+    static let gFileDoesNotExistName: String = "TestCFURL_file_does_not_exist"
+    static let gDirectoryExistsName: String = "TestCFURL_directory_exists\(ProcessInfo.processInfo.globallyUniqueString)"
+    static let gDirectoryDoesNotExistName: String = "TestCFURL_directory_does_not_exist"
+    static let gFileExistsPath: String = gBaseTemporaryDirectoryPath + gFileExistsName
+    static let gFileDoesNotExistPath: String = gBaseTemporaryDirectoryPath + gFileDoesNotExistName
+    static let gDirectoryExistsPath: String = gBaseTemporaryDirectoryPath + gDirectoryExistsName
+    static let gDirectoryDoesNotExistPath: String = gBaseTemporaryDirectoryPath + gDirectoryDoesNotExistName
 
     #if !SKIP
     override class func tearDown() {

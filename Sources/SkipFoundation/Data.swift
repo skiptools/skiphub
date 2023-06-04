@@ -4,32 +4,40 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* SKIP: @_implementationOnly */import struct Foundation.Data
-/* SKIP: @_implementationOnly */import protocol Foundation.DataProtocol
+@_implementationOnly import struct Foundation.Data
+@_implementationOnly import protocol Foundation.DataProtocol
 internal typealias PlatformData = Foundation.Data
-public typealias PlatformDataProtocol = Foundation.DataProtocol
+internal typealias PlatformDataProtocol = Foundation.DataProtocol
 public typealias StringProtocol = Swift.StringProtocol
 #else
 public typealias PlatformData = kotlin.ByteArray
 public typealias StringProtocol = kotlin.CharSequence
-public typealias PlatformDataProtocol = kotlin.ByteArray
+internal typealias PlatformDataProtocol = kotlin.ByteArray
 #endif
 
 public protocol DataProtocol {
+    #if SKIP
     var platformData: any PlatformDataProtocol { get }
+    #endif
 }
 
 /// A byte buffer in memory.
 public struct Data : Hashable, DataProtocol, CustomStringConvertible {
     internal var rawValue: PlatformData
 
-    public var platformData: any PlatformDataProtocol {
+    internal var platformData: any PlatformDataProtocol {
         return rawValue
     }
 
+    #if !SKIP
     internal init(rawValue: PlatformData) {
         self.rawValue = rawValue
     }
+    #else
+    public init(rawValue: PlatformData) {
+        self.rawValue = rawValue
+    }
+    #endif
 
     public init(_ data: Data) {
         self.rawValue = data.rawValue
@@ -106,9 +114,6 @@ public struct Data : Hashable, DataProtocol, CustomStringConvertible {
         #endif
     }
 
-    #if !SKIP
-    public typealias WritingOptions = Foundation.Data.WritingOptions
-    #else
     public struct WritingOptions : OptionSet, Sendable {
         public let rawValue: UInt
         public init(rawValue: UInt) {
@@ -117,11 +122,10 @@ public struct Data : Hashable, DataProtocol, CustomStringConvertible {
 
         public static let atomic = WritingOptions(rawValue: UInt(1 << 0))
     }
-    #endif
 }
 
 // SKIP TODO: fake constructor until Kotlin can add constructor extensions to external types
-public func String(data: Data, encoding: String.Encoding) -> String? {
+public func String(data: Data, encoding: PlatformStringEncoding) -> String? {
     #if !SKIP
     return String.init(data: data.rawValue, encoding: encoding)
     #else

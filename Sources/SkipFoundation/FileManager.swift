@@ -75,7 +75,7 @@ public extension String {
 extension Data {
     public func write(to url: URL, options: Data.WritingOptions = []) throws {
         #if !SKIP
-        try rawValue.write(to: url.rawValue, options: options)
+        try rawValue.write(to: url.rawValue, options: .init(rawValue: options.rawValue))
         #else
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)

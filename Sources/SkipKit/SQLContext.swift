@@ -425,7 +425,7 @@ public final class SQLContext {
             guard let blob = self.cursor.getBlob(column) else {
                 return nil
             }
-            return Data(blob)
+            return Data(rawValue: blob)
             #else
             if let pointer = sqlite3_column_blob(handle, Int32(column)) {
                 let length = Int(sqlite3_column_bytes(handle, Int32(column)))

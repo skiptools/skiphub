@@ -20,13 +20,13 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         components
     }
 
-    public var calendar: PlatformCalendar? {
-        get { components.calendar }
-        set { components.calendar = newValue }
+    public var calendar: Calendar? {
+        get { components.calendar.flatMap(Calendar.init(rawValue:)) }
+        set { components.calendar = newValue?.rawValue }
     }
-    public var timeZone: PlatformTimeZone? {
-        get { components.timeZone }
-        set { components.timeZone = newValue }
+    public var timeZone: TimeZone? {
+        get { components.timeZone.flatMap(TimeZone.init(rawValue:)) }
+        set { components.timeZone = newValue?.rawValue }
     }
     public var era: Int? {
         get { components.era }
@@ -276,8 +276,6 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         case .calendar, .timeZone: // , .isLeapMonth:
             // Do nothing
             break
-        @unknown default:
-            break
         }
     }
 
@@ -410,8 +408,6 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         case .yearForWeekOfYear: return self.yearForWeekOfYear
         case .nanosecond: return self.nanosecond
         case .calendar, .timeZone: // , .isLeapMonth:
-            return nil
-        @unknown default:
             return nil
         }
     }
