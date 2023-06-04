@@ -4,18 +4,15 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.NumberFormatter
-public typealias NumberFormatter = Foundation.NumberFormatter
+/* @_implementationOnly */import class Foundation.NumberFormatter
 public typealias PlatformNumberFormatter = Foundation.NumberFormatter
-public typealias SkipNumberFormatterStyle = NumberFormatter.Style
+public typealias PlatformNumberFormatterStyle = Foundation.NumberFormatter.Style
 #else
-public typealias NumberFormatter = SkipNumberFormatter
 public typealias PlatformNumberFormatter = java.text.DecimalFormat
-public typealias SkipNumberFormatterStyle = SkipNumberFormatter.Style
+public typealias PlatformNumberFormatterStyle = NumberFormatter.Style
 #endif
 
-// SKIP DECLARE: open class SkipNumberFormatter: RawRepresentable<PlatformNumberFormatter>
-internal class SkipNumberFormatter : RawRepresentable, Hashable {
+public class NumberFormatter : RawRepresentable, Hashable {
     public var rawValue: PlatformNumberFormatter
 
     public required init(rawValue: PlatformNumberFormatter) {
@@ -36,14 +33,14 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
     }
 
     #if SKIP
-    private var _numberStyle: SkipNumberFormatterStyle = .none
+    private var _numberStyle: PlatformNumberFormatterStyle = .none
     #endif
 
     public var description: String {
         return rawValue.description
     }
 
-    public var numberStyle: SkipNumberFormatterStyle {
+    public var numberStyle: PlatformNumberFormatterStyle {
         get {
             #if !SKIP
             return rawValue.numberStyle
@@ -102,13 +99,13 @@ internal class SkipNumberFormatter : RawRepresentable, Hashable {
     }
 
     #if SKIP
-    private var _locale: SkipLocale? = SkipLocale.current
+    private var _locale: Locale? = Locale.current
     #endif
 
-    public var locale: SkipLocale? {
+    public var locale: Locale? {
         get {
             #if !SKIP
-            return rawValue.locale.flatMap(SkipLocale.init(rawValue:))
+            return rawValue.locale.flatMap(Locale.init(rawValue:))
             #else
             return _locale
             #endif

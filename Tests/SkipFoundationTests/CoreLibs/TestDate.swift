@@ -6,11 +6,6 @@
 import Foundation
 import XCTest
 
-#if !SKIP
-// needed for SkipCalendarIdentifier shim
-@testable import SkipFoundation
-#endif
-
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -25,7 +20,7 @@ import XCTest
 
 func dateWithString(_ str: String) -> Date {
     let formatter = DateFormatter()
-    formatter.calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+    formatter.calendar = Calendar(identifier: Calendar.Identifier.gregorian)
     formatter.locale = Locale(identifier: "en_US")
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
     return formatter.date(from: str)! as Date
@@ -168,7 +163,7 @@ class TestDate : XCTestCase {
     }
     
     func test_recreateDateComponentsFromDate() {
-        let components = DateComponents(calendar: Calendar(identifier: SkipCalendarIdentifier.gregorian),
+        let components = DateComponents(calendar: Calendar(identifier: Calendar.Identifier.gregorian),
                                         timeZone: TimeZone.current,
                                         era: 1,
                                         year: 2017,
@@ -181,11 +176,11 @@ class TestDate : XCTestCase {
         #if SKIP
         throw XCTSkip("TODO: Calendar.date(from: components)")
         #endif
-        guard let date = Calendar(identifier: SkipCalendarIdentifier.gregorian).date(from: components) else {
+        guard let date = Calendar(identifier: Calendar.Identifier.gregorian).date(from: components) else {
             XCTFail()
             return
         }
-        let recreatedComponents = Calendar(identifier: SkipCalendarIdentifier.gregorian).dateComponents(in: TimeZone.current, from: date)
+        let recreatedComponents = Calendar(identifier: Calendar.Identifier.gregorian).dateComponents(in: TimeZone.current, from: date)
         XCTAssertEqual(recreatedComponents.era, 1)
         XCTAssertEqual(recreatedComponents.year, 2017)
         XCTAssertEqual(recreatedComponents.month, 11)

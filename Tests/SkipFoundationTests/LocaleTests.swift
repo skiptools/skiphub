@@ -4,9 +4,6 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 import Foundation
-#if !SKIP
-@testable import SkipFoundation
-#endif
 import XCTest
 
 @available(macOS 13, iOS 16, watchOS 10, tvOS 16, *)
@@ -69,9 +66,9 @@ final class LocaleTests: XCTestCase {
 
         //XCTAssertEqual(["en", "fr"], Bundle.module.localizations.sorted())
 
-        let foundationBundle = _SkipFoundationBundle // Bundle(for: SkipFoundationModule.self)
+        //let foundationBundle = _SkipFoundationBundle // Bundle(for: SkipFoundationModule.self)
 
-        let localeIdentifiers = foundationBundle.localizations.sorted()
+        //let localeIdentifiers = foundationBundle.localizations.sorted()
 
         #if !SKIP
         // TODO: the test resources list is overriding the foundation resources
@@ -148,9 +145,6 @@ final class LocaleTests: XCTestCase {
 
         // run the same test again, but this time verifying the SkipPropertyListSerialization implementation on Darwin
         do {
-            #if !SKIP
-            typealias PropertyListSerialization = SkipPropertyListSerialization
-            #endif
             let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
 
             let dict = try XCTUnwrap(plist as? Dictionary<String, String>)
@@ -161,6 +155,7 @@ final class LocaleTests: XCTestCase {
     }
 
     func testLocalizedStrings() throws {
+        #if SKIP
         let bundle = _SkipFoundationBundle
 
         XCTAssertNil(bundle.url(forResource: "Localizable", withExtension: "strings", subdirectory: nil, localization: "xxx"), "unknown localization should return nil")
@@ -221,6 +216,7 @@ final class LocaleTests: XCTestCase {
         //XCTAssertEqual("Bonjour", String(localized: "Hello", bundle: bundle, locale: Locale(identifier: "zh"), comment: "greetings"))
         XCTAssertEqual("Hello", String(localized: LocalizedStringResource("Hello", table: "DOES_NOT_EXIST", bundle: .atURL(bundle.bundleURL), comment: nil)))
 
+        #endif
         #endif
     }
 

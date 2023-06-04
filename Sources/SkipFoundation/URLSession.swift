@@ -5,22 +5,18 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 import class Foundation.URLSession
-public typealias URLSession = Foundation.URLSession
-internal typealias PlatformURLSession = Foundation.URLSession
+public typealias PlatformURLSession = Foundation.URLSession
 //public typealias PlatformAsyncSequence<T> = _Concurrency.AsyncSequence<T>
 #else
-public typealias URLSession = SkipURLSession
-//public typealias PlatformURLSession = java.util.URLSession
 public typealias PlatformAsyncSequence<T> = kotlinx.coroutines.flow.Flow<T>
 #endif
 
 @available(macOS 11, iOS 14, tvOS 14, watchOS 7, *)
-fileprivate let logger: Logger = Logger(subsystem: "skip", category: "SkipURLSession")
+fileprivate let logger: Logger = Logger(subsystem: "skip", category: "URLSession")
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipURLSession
+/// An object that coordinates a group of related, network data transfer tasks.
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-internal class SkipURLSession {
+internal class URLSession {
     #if !SKIP
     public let rawValue: PlatformURLSession
 
@@ -28,12 +24,12 @@ internal class SkipURLSession {
         self.rawValue = rawValue
     }
     #else
-    private static let _shared = SkipURLSession(configuration: SkipURLSessionConfiguration.default)
+    private static let _shared = URLSession(configuration: URLSessionConfiguration.default)
 
-    public var configuration: SkipURLSessionConfiguration
+    public var configuration: URLSessionConfiguration
     #endif
 
-    public init(configuration: SkipURLSessionConfiguration) {
+    public init(configuration: URLSessionConfiguration) {
         #if !SKIP
         self.rawValue = PlatformURLSession(configuration: configuration.rawValue)
         #else
@@ -41,16 +37,16 @@ internal class SkipURLSession {
         #endif
     }
 
-    public static var shared: SkipURLSession {
+    public static var shared: URLSession {
         #if !SKIP
-        return SkipURLSession(rawValue: PlatformURLSession.shared)
+        return URLSession(rawValue: PlatformURLSession.shared)
         #else
         return _shared
         #endif
     }
 
     #if SKIP
-    private func openConnection(request: SkipURLRequest) -> java.net.URLConnection {
+    private func openConnection(request: URLRequest) -> java.net.URLConnection {
         let config = self.configuration
         guard let url = request.url else {
             throw NoURLInRequestError()
@@ -93,7 +89,7 @@ internal class SkipURLSession {
         return connection
     }
 
-    private func connect(request: SkipURLRequest) -> (java.net.URLConnection, HTTPURLResponse) {
+    private func connect(request: URLRequest) -> (java.net.URLConnection, HTTPURLResponse) {
         let connection = try openConnection(request: request)
 
         var statusCode = -1
@@ -120,10 +116,10 @@ internal class SkipURLSession {
     }
     #endif
 
-    public func data(for request: SkipURLRequest) async throws -> (SkipData, SkipURLResponse) {
+    public func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         #if !SKIP
         let (data, response) = try await rawValue.data(for: request.rawValue)
-        let result = (SkipData(rawValue: data), SkipURLResponse(rawValue: response))
+        let result = (Data(rawValue: data), URLResponse(rawValue: response))
         return result
         #else
         let (data, response) = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -138,27 +134,27 @@ internal class SkipURLSession {
             inputStream.close()
 
             let bytes = outputStream.toByteArray()
-            return (data: SkipData(rawValue: bytes), response: response as HTTPURLResponse)
+            return (data: Data(rawValue: bytes), response: response as HTTPURLResponse)
         }
 
         return (data, response)
         #endif
     }
 
-    public func data(from url: SkipURL) async throws -> (SkipData, SkipURLResponse) {
+    public func data(from url: URL) async throws -> (Data, URLResponse) {
         #if !SKIP
         let (data, response) = try await rawValue.data(from: url.rawValue)
-        let result = (SkipData(rawValue: data), SkipURLResponse(rawValue: response))
+        let result = (Data(rawValue: data), URLResponse(rawValue: response))
         return result
         #else
-        return self.data(for: SkipURLRequest(url: url))
+        return self.data(for: URLRequest(url: url))
         #endif
     }
 
-    public func download(for request: SkipURLRequest) async throws -> (SkipURL, SkipURLResponse) {
+    public func download(for request: URLRequest) async throws -> (URL, URLResponse) {
         #if !SKIP
         let (localURL, response) = try await rawValue.download(for: request.rawValue)
-        let result = (SkipURL(rawValue: localURL), SkipURLResponse(rawValue: response))
+        let result = (URL(rawValue: localURL), URLResponse(rawValue: response))
         return result
         #else
         // WARNING: this is untested, since Robolectric's ShadowDownloadManager is a stub
@@ -185,7 +181,7 @@ internal class SkipURLSession {
             .setFilterById(downloadId)
 
         /// Query the DownloadManager for the response, which returns a SQLite cursor with the current download status of all the outstanding downloads.
-        func queryDownload() -> Result<(SkipURL, SkipURLResponse), Error>? {
+        func queryDownload() -> Result<(URL, URLResponse), Error>? {
             let cursor = downloadManager.query(query)
 
             defer { cursor.close() }
@@ -231,8 +227,8 @@ internal class SkipURLSession {
                 headers["Content-Length"] = totalSizeBytes?.description
                 //headers["Last-Modified"] = lastModified // TODO: convert to Date
                 let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: httpVersion, headerFields: headers)
-                let localURL = SkipURL(fileURLWithPath: localFilename)
-                return Result.success((localURL as SkipURL, response as SkipURLResponse))
+                let localURL = URL(fileURLWithPath: localFilename)
+                return Result.success((localURL as URL, response as URLResponse))
             } else if status == android.app.DownloadManager.STATUS_FAILED {
                 // File download failed
                 // TODO: create error from error
@@ -250,12 +246,12 @@ internal class SkipURLSession {
 
         let isRobolectric = (try? Class.forName("org.robolectric.Robolectric")) != nil
 
-        let response: Result<(SkipURL, SkipURLResponse), Error> = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        let response: Result<(URL, URLResponse), Error> = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
             if isRobolectric {
                 // Robolectric's ShadowDownloadManager doesn't actually download anything, so we fake it for testing by just getting the data in-memory (hoping it isn't too large!) and saving it to a temporary file
                 do {
                     let (data, response) = try await data(for: request)
-                    let outputFileURL: SkipURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+                    let outputFileURL: URL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
                     try data.write(to: outputFileURL)
                     return Result.success((outputFileURL, response))
                 } catch {
@@ -282,52 +278,52 @@ internal class SkipURLSession {
         #endif
     }
 
-    public func download(from url: SkipURL) async throws -> (SkipURL, SkipURLResponse) {
+    public func download(from url: URL) async throws -> (URL, URLResponse) {
         #if !SKIP
         let (localURL, response) = try await rawValue.download(from: url.rawValue)
-        let result = (SkipURL(rawValue: localURL), SkipURLResponse(rawValue: response))
+        let result = (URL(rawValue: localURL), URLResponse(rawValue: response))
         return result
         #else
-        return self.download(for: SkipURLRequest(url: url))
+        return self.download(for: URLRequest(url: url))
         #endif
     }
 
-    public func upload(for request: SkipURLRequest, fromFile fileURL: SkipURL) async throws -> (SkipData, SkipURLResponse) {
+    public func upload(for request: URLRequest, fromFile fileURL: URL) async throws -> (Data, URLResponse) {
         #if !SKIP
         let (data, response) = try await rawValue.upload(for: request.rawValue, fromFile: fileURL.rawValue)
-        let result = (SkipData(rawValue: data), SkipURLResponse(rawValue: response))
+        let result = (Data(rawValue: data), URLResponse(rawValue: response))
         return result
         #else
-        fatalError("TODO: SkipURLSession.data")
+        fatalError("TODO: URLSession.data")
         #endif
     }
 
-    public func upload(for request: SkipURLRequest, from bodyData: SkipData) async throws -> (SkipData, SkipURLResponse) {
+    public func upload(for request: URLRequest, from bodyData: Data) async throws -> (Data, URLResponse) {
         #if !SKIP
         let (data, response) = try await rawValue.upload(for: request.rawValue, from: bodyData.rawValue)
-        let result = (SkipData(rawValue: data), SkipURLResponse(rawValue: response))
+        let result = (Data(rawValue: data), URLResponse(rawValue: response))
         return result
         #else
-        fatalError("TODO: SkipURLSession.data")
+        fatalError("TODO: URLSession.data")
         #endif
     }
 
-    public func bytes(from url: SkipURL) async throws -> (SkipURLSessionAsyncBytes, SkipURLResponse) {
+    public func bytes(from url: URL) async throws -> (URLSessionAsyncBytes, URLResponse) {
         #if !SKIP
         let (bytes, response) = try await rawValue.bytes(from: url.rawValue)
         fatalError("TODO: non-Skip bytes(from:")
-        //let result = (SkipURLSessionAsyncBytes(stream: bytes), SkipURLResponse(rawValue: response))
+        //let result = (URLSessionAsyncBytes(stream: bytes), URLResponse(rawValue: response))
         //return result
         #else
-        return bytes(for: SkipURLRequest(url: url))
+        return bytes(for: URLRequest(url: url))
         #endif
     }
 
-    public func bytes(for request: SkipURLRequest) async throws -> (SkipURLSessionAsyncBytes, SkipURLResponse) {
+    public func bytes(for request: URLRequest) async throws -> (URLSessionAsyncBytes, URLResponse) {
         #if !SKIP
         let (stream, response) = try await rawValue.bytes(for: request.rawValue)
         fatalError("TODO: non-Skip bytes(from:")
-        //let result = (SkipURLSessionAsyncBytes(byteStream: stream), SkipURLResponse(rawValue: response))
+        //let result = (URLSessionAsyncBytes(byteStream: stream), URLResponse(rawValue: response))
         //return result
         #else
         return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -345,7 +341,7 @@ internal class SkipURLSession {
                 }
             }
 
-            return (SkipURLSessionAsyncBytes(stream: stream), response)
+            return (URLSessionAsyncBytes(stream: stream), response)
         }
         #endif
     }
@@ -560,14 +556,14 @@ public struct SkipAsyncStream<Element> : SkipAsyncSequence {
 
 // Wrap a kotlinx.coroutines.flow.Flow and provide an async interface
 // Mirrors the interface of Foundation.AsyncBytes, which extends AsyncSequence
-// Note that there could also be `SkipURLAsyncBytes` and `SkipFileHandleAsyncBytes` for `URL.bytes` and `FileHandle.bytes`.
+// Note that there could also be `URLAsyncBytes` and `SkipFileHandleAsyncBytes` for `URL.bytes` and `FileHandle.bytes`.
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public struct SkipURLSessionAsyncBytes : SkipAsyncSequence {
+public struct URLSessionAsyncBytes : SkipAsyncSequence {
     //public typealias Element = UInt8
     public let stream: PlatformAsyncStream<UInt8>
 
     //#if !SKIP
-    //public var lines: SkipAsyncLineSequence<SkipURLSessionAsyncBytes> {
+    //public var lines: SkipAsyncLineSequence<URLSessionAsyncBytes> {
     //    return SkipAsyncLineSequence(stream: self)
     //}
     //#endif

@@ -411,17 +411,17 @@ func JSONNumber(_ value: Double) -> JSONNumber { value }
 // MARK: Foundation type imports constructors
 
 #if !SKIP
-import struct Foundation.Date
-import struct Foundation.Data
-import struct Foundation.URL
-import struct Foundation.Decimal
-import class Foundation.NSDate
-import class Foundation.NSData
-import class Foundation.NSURL
-import class Foundation.NSDecimalNumber
-import class Foundation.JSONDecoder
-import class Foundation.JSONEncoder
-import class Foundation.ISO8601DateFormatter
+/* @_implementationOnly */import struct Foundation.Date
+/* @_implementationOnly */import struct Foundation.Data
+/* @_implementationOnly */import struct Foundation.URL
+/* @_implementationOnly */import struct Foundation.Decimal
+/* @_implementationOnly */import class Foundation.NSDate
+/* @_implementationOnly */import class Foundation.NSData
+/* @_implementationOnly */import class Foundation.NSURL
+/* @_implementationOnly */import class Foundation.NSDecimalNumber
+/* @_implementationOnly */import class Foundation.JSONDecoder
+/* @_implementationOnly */import class Foundation.JSONEncoder
+/* @_implementationOnly */import class Foundation.ISO8601DateFormatter
 #endif
 
 
@@ -710,8 +710,8 @@ open class SkipJSONEncoder {
     /// - returns: A new `Data` value containing the encoded JSON data.
     /// - throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - throws: An error if any value throws an error during encoding.
-    open func encode<T>(_ value: T) throws -> Data where T : Encodable {
-        try value.json().stringify(pretty: outputFormatting.contains([SkipJSONEncoder.OutputFormatting.prettyPrinted])).data(using: .utf8)!
+    open func encode<T>(_ value: T) throws -> Foundation.Data where T : Encodable {
+        try value.json().stringify(pretty: outputFormatting.contains([SkipJSONEncoder.OutputFormatting.prettyPrinted])).data(using: String.Encoding.utf8)!
     }
 }
 
@@ -824,7 +824,7 @@ extension Decodable {
             decoder.userInfo = userInfo
         }
 
-        return try decoder.decode(T.self, from: Data(json))
+        return try decoder.decode(T.self, from: Foundation.Data(json))
     }
 }
 #endif
@@ -1322,7 +1322,7 @@ extension JSONElementEncoder {
         case SkipJSONEncoder.DateEncodingStrategy.deferredToDate:
             // Must be called with a surrounding with(pushedKey:) call.
             // Dates encode as single-value objects; this can't both throw and push a container, so no need to catch the error.
-            try date.encode(to: self)
+            try date.rawValue.encode(to: self)
             return _JSONContainer(json: self.storage.popContainer().json)
 
         case SkipJSONEncoder.DateEncodingStrategy.secondsSince1970:
@@ -1334,7 +1334,7 @@ extension JSONElementEncoder {
         case SkipJSONEncoder.DateEncodingStrategy.iso8601:
             #if !SKIP
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
-                return _JSONContainer(json: JSON.string(_iso8601Formatter.string(from: date)))
+                return _JSONContainer(json: JSON.string(_iso8601Formatter.string(from: date.rawValue)))
             } else {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
@@ -1380,7 +1380,7 @@ extension JSONElementEncoder {
             // Must be called with a surrounding with(pushedKey:) call.
             let depth = self.storage.count
             do {
-                try data.encode(to: self)
+                try data.rawValue.encode(to: self)
             } catch {
                 // If the value pushed a container before throwing, pop it back off to restore state.
                 // This shouldn't be possible for Data (which encodes as an array of bytes), but it can't hurt to catch a failure.
@@ -1435,8 +1435,8 @@ extension JSONElementEncoder {
         #endif
 
         #if !SKIP // TODO: Data support
-        if type == Data.self || type == NSData.self {
-            return try self.box((value as! Data))
+        if type == Foundation.Data.self || type == NSData.self {
+            return try self.box((value as! Foundation.Data))
         }
         #endif
 
@@ -1707,7 +1707,7 @@ fileprivate final class _JSONDecoder: Decoder {
 
         guard let obj = self.storage.topContainer.obj else {
             // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
-            throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String: Any].self, reality: self.storage.topContainer)
+            throw DecodingError._typeMismatch(at: self.codingPath, expectation: Dictionary<String, Any>.self, reality: self.storage.topContainer)
         }
 
         let container = _JSONKeyedDecodingContainer<Key>(referencing: self, wrapping: obj)
@@ -2074,7 +2074,7 @@ fileprivate struct _JSONKeyedDecodingContainer<_DecodingContainerKey: CodingKey>
 
         guard let obj = value.obj else {
             // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
-            throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String: Any].self, reality: value)
+            throw DecodingError._typeMismatch(at: self.codingPath, expectation: Dictionary<String, Any>.self, reality: value)
         }
 
         let container = _JSONKeyedDecodingContainer<NestedKey>(referencing: self.decoder, wrapping: obj)
@@ -2453,7 +2453,7 @@ fileprivate struct _JSONUnkeyedDecodingContainer: UnkeyedDecodingContainer {
 
         guard let obj = value.obj else {
             // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
-            throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String: JSON].self, reality: value)
+            throw DecodingError._typeMismatch(at: self.codingPath, expectation: Dictionary<String, JSON>.self, reality: value)
         }
 
         self.currentIndex += 1
@@ -2678,7 +2678,7 @@ extension _JSONDecoder {
     fileprivate func unbox(_ value: JSON, as type: Date.Type) throws -> Date? {
         switch options.dateDecodingStrategy {
         case SkipJSONDecoder.DateDecodingStrategy.deferredToDate:
-            return try Date(from: self)
+            return try Date(rawValue: PlatformDate(from: self))
 
         case SkipJSONDecoder.DateDecodingStrategy.secondsSince1970:
             guard let number = value.number else {
@@ -2705,7 +2705,7 @@ extension _JSONDecoder {
                     throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
                 }
 
-                return date
+                return Date(rawValue: date)
             } else {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
@@ -2735,10 +2735,10 @@ extension _JSONDecoder {
     #endif
 
     #if !SKIP
-    fileprivate func unbox(_ value: JSON, as type: Data.Type) throws -> Data? {
+    fileprivate func unbox(_ value: JSON, as type: Foundation.Data.Type) throws -> Foundation.Data? {
         switch options.dataDecodingStrategy {
         case SkipJSONDecoder.DataDecodingStrategy.deferredToData:
-            return try Data(from: self)
+            return try Foundation.Data(from: self)
 
         case SkipJSONDecoder.DataDecodingStrategy.base64:
             guard let string = value.string else {
@@ -2746,7 +2746,7 @@ extension _JSONDecoder {
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected data to be Base64."))
             }
 
-            guard let data = Data(base64Encoded: string) else {
+            guard let data = Foundation.Data(base64Encoded: string) else {
                 // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Encountered Data is not valid Base64."))
             }
@@ -2754,7 +2754,7 @@ extension _JSONDecoder {
             return data
 
         case SkipJSONDecoder.DataDecodingStrategy.custom(let closure):
-            return try closure(self)
+            return try closure(self).rawValue
 
         @unknown default:
             // SKIP REPLACE: throw UnknownDecodingError() as Throwable // until errors are ported
@@ -2776,20 +2776,20 @@ extension _JSONDecoder {
 
     fileprivate func unbox<T: Decodable>(_ value: JSON, as type: T.Type) throws -> T? {
         #if !SKIP
-        if type == Date.self || type == NSDate.self {
-            return try self.unbox(value, as: Date.self) as? T
+        if type == Foundation.Date.self || type == NSDate.self {
+            return try self.unbox(value, as: Foundation.Date.self) as? T
         }
         #endif
 
         #if !SKIP
-        if type == Data.self || type == NSData.self {
-            return try self.unbox(value, as: Data.self) as? T
+        if type == Foundation.Data.self || type == NSData.self {
+            return try self.unbox(value, as: Foundation.Data.self) as? T
         }
         #endif
 
         #if !SKIP
-        if type == URL.self || type == NSURL.self {
-            return try self.unbox(value, as: URL.self) as? T
+        if type == Foundation.URL.self || type == NSURL.self {
+            return try self.unbox(value, as: Foundation.URL.self) as? T
         }
         #endif
 
@@ -2947,7 +2947,7 @@ extension Decodable where Self : Encodable {
     ///   - encoder: the custom encoder to use, or `nil` to use the system default
     ///   - decoder: the custom decoder to use, or `nil` to use the system default
     /// - Returns: a tuple with both the parsed codable instance, as well as an optional `difference` JSON that will be nil if the codability was an exact match
-    public static func codableComplete(data: Data, encoder: JSONEncoder? = nil, decoder: JSONDecoder? = nil) throws -> (instance: Self, difference: JSON?) {
+    public static func codableComplete(data: Foundation.Data, encoder: JSONEncoder? = nil, decoder: JSONDecoder? = nil) throws -> (instance: Self, difference: JSON?) {
         let item = try (decoder ?? debugJSONDecoder).decode(Self.self, from: data)
         let itemJSON = try item.toJSONString(encoder: { encoder ?? canonicalJSONEncoder })
 

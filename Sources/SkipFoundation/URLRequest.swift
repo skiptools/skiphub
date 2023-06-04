@@ -5,26 +5,22 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-import struct Foundation.URLRequest
-public typealias URLRequest = Foundation.URLRequest
-internal typealias PlatformURLRequest = Foundation.URLRequest
-public typealias SkipURLRequestCachePolicy = Foundation.URLRequest.CachePolicy
+/* @_implementationOnly */import struct Foundation.URLRequest
+public typealias PlatformURLRequest = Foundation.URLRequest
+public typealias PlatformURLRequestCachePolicy = Foundation.URLRequest.CachePolicy
 public typealias NSURLRequest = Foundation.URLRequest.ReferenceType // i.e., NSURLRequest
 #else
-public typealias URLRequest = SkipURLRequest
 public typealias PlatformURLRequest = java.net.HttpURLConnection
-public typealias SkipURLRequestCachePolicy = SkipURLRequest.CachePolicy
-public typealias NSURLRequest = SkipURLRequest
+public typealias PlatformURLRequestCachePolicy = URLRequest.CachePolicy
+public typealias NSURLRequest = URLRequest
 #endif
 
-
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipURLRequest: MutableStruct
-internal struct SkipURLRequest : RawRepresentable, Hashable, CustomStringConvertible {
+/// A URL load request that is independent of protocol or URL scheme.
+public struct URLRequest : Hashable, CustomStringConvertible {
     #if !SKIP
     public var rawValue: PlatformURLRequest
     #else
-    public var url: SkipURL?
+    public var url: URL?
     public var httpMethod: String? = "GET" {
         didSet {
             if let method = httpMethod,
@@ -38,7 +34,7 @@ internal struct SkipURLRequest : RawRepresentable, Hashable, CustomStringConvert
     }
     public var httpBody: Data? = nil
     public var allHTTPHeaderFields: [String : String]? = nil
-    public var cachePolicy: SkipURLRequestCachePolicy = .useProtocolCachePolicy
+    public var cachePolicy: PlatformURLRequestCachePolicy = .useProtocolCachePolicy
     public var timeoutInterval: TimeInterval = 0.0
     public var allowsCellularAccess: Bool = true
     public var allowsExpensiveNetworkAccess: Bool = true
@@ -63,7 +59,7 @@ internal struct SkipURLRequest : RawRepresentable, Hashable, CustomStringConvert
     }
     #endif
 
-    public init(url: SkipURL, cachePolicy: SkipURLRequestCachePolicy = SkipURLRequestCachePolicy.useProtocolCachePolicy, timeoutInterval: TimeInterval = 0.0) {
+    public init(url: URL, cachePolicy: PlatformURLRequestCachePolicy = PlatformURLRequestCachePolicy.useProtocolCachePolicy, timeoutInterval: TimeInterval = 0.0) {
         #if !SKIP
         self.rawValue = PlatformURLRequest(url: url.rawValue, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         #else
@@ -73,7 +69,7 @@ internal struct SkipURLRequest : RawRepresentable, Hashable, CustomStringConvert
         #endif
     }
 
-    var description: String {
+    public var description: String {
         #if !SKIP
         return rawValue.description
         #else

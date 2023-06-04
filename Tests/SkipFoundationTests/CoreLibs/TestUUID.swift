@@ -49,7 +49,7 @@ class TestUUID : XCTestCase {
     }
     
     func test_UUIDInvalid() {
-        let uuid = UUID(uuidString: "Invalid UUID")
+        let uuid = UUID(uuidString: "Invalid UUID") ?? nil // SKIP TODO: needed to force treatment as optional and avoid `skip.lib.NullReturnException at TestUUID.kt:33`
         XCTAssertNil(uuid, "The convenience initializer `init?(uuidString string:)` must return nil for an invalid UUID string.")
     }
     

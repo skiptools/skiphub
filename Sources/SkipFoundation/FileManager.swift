@@ -4,32 +4,34 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.FileManager
-public typealias FileManager = Foundation.FileManager
-internal typealias PlatformFileManager = Foundation.FileManager
+/* @_implementationOnly */import class Foundation.FileManager
+/* @_implementationOnly */import struct Foundation.FileAttributeKey
+/* @_implementationOnly */import struct Foundation.URLResourceKey
+/* @_implementationOnly */import struct Foundation.ObjCBool
+/* @_implementationOnly */import func Foundation.NSTemporaryDirectory
+public typealias PlatformFileManager = Foundation.FileManager
 #else
-public typealias FileManager = SkipFileManager
 #endif
 
-// SKIP DECLARE: open class SkipFileManager
 /// An interface to the file system compatible with ``Foundation.FileManager``
-internal class SkipFileManager {
-#if SKIP
+public class FileManager {
+    #if SKIP
     /// Returns the shared single file manager
-    public static var `default` = SkipFileManager()
-#else
-    static var `default` = SkipFileManager(rawValue: FileManager.default)
+    public static var `default` = FileManager()
+    #else
+    static var `default` = FileManager(rawValue: PlatformFileManager.default)
 
-    init(rawValue: FileManager) {
+    let rawValue: PlatformFileManager
+
+    init(rawValue: PlatformFileManager) {
         self.rawValue = rawValue
     }
 
-    let rawValue: FileManager
-#endif
+    #endif
 }
 
 #if SKIP // conversion from URLs and Strings to a java.nio.file.Path
-private func _path(_ url: SkipURL) -> java.nio.file.Path {
+private func _path(_ url: URL) -> java.nio.file.Path {
     url.toPath()
 }
 
@@ -39,7 +41,7 @@ private func _path(_ path: String) -> java.nio.file.Path {
 #endif
 
 public extension String {
-    func write(to url: SkipURL, atomically: Bool, encoding: String.Encoding) throws {
+    func write(to url: URL, atomically: Bool, encoding: String.Encoding) throws {
         #if SKIP
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)
@@ -70,29 +72,29 @@ public extension String {
 }
 #endif
 
-extension SkipData {
-    public func write(to url: SkipURL, options: DataWritingOptions = []) throws {
-        #if SKIP
+extension Data {
+    public func write(to url: URL, options: Data.WritingOptions = []) throws {
+        #if !SKIP
+        try rawValue.write(to: url.rawValue, options: options)
+        #else
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)
         opts.append(java.nio.file.StandardOpenOption.WRITE)
-        if options.contains(DataWritingOptions.atomic) {
+        if options.contains(Data.WritingOptions.atomic) {
             opts.append(java.nio.file.StandardOpenOption.DSYNC)
         }
 
         java.nio.file.Files.write(url.toPath(), rawValue, *(opts.toList().toTypedArray()))
-        #else
-        try rawValue.write(to: url.rawValue, options: options)
         #endif
     }
 }
 
-extension SkipFileManager {
-    public var temporaryDirectory: SkipURL {
-        SkipURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+extension FileManager {
+    public var temporaryDirectory: URL {
+        URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
     }
     
-    public func createSymbolicLink(at url: SkipURL, withDestinationURL destinationURL: SkipURL) throws {
+    public func createSymbolicLink(at url: URL, withDestinationURL destinationURL: URL) throws {
         #if !SKIP
         try rawValue.createSymbolicLink(at: url.foundationURL, withDestinationURL: destinationURL.foundationURL)
         #else
@@ -108,7 +110,7 @@ extension SkipFileManager {
         #endif
     }
 
-    public func createDirectory(at url: SkipURL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
+    public func createDirectory(at url: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         #if !SKIP
         try rawValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
         #else
@@ -161,9 +163,9 @@ extension SkipFileManager {
         let size = battrs.size()
         attrs[FileAttributeKey.size] = size
         let creationTime = battrs.creationTime()
-        attrs[FileAttributeKey.creationDate] = SkipDate(PlatformDate(creationTime.toMillis()))
+        attrs[FileAttributeKey.creationDate] = Date(PlatformDate(creationTime.toMillis()))
         let lastModifiedTime = battrs.lastModifiedTime()
-        attrs[FileAttributeKey.modificationDate] = SkipDate(PlatformDate(creationTime.toMillis()))
+        attrs[FileAttributeKey.modificationDate] = Date(PlatformDate(creationTime.toMillis()))
         //let lastAccessTime = battrs.lastAccessTime()
 
         let isDirectory = battrs.isDirectory()
@@ -273,7 +275,7 @@ extension SkipFileManager {
                 java.nio.file.Files.setPosixFilePermissions(_path(path), permissions.toSet())
                 
             case FileAttributeKey.modificationDate:
-                if let date = value as? SkipDate {
+                if let date = value as? Date {
                     java.nio.file.Files.setLastModifiedTime(_path(path), java.nio.file.attribute.FileTime.fromMillis(Long(date.timeIntervalSince1970 * 1000.0)))
                 }
 
@@ -287,7 +289,7 @@ extension SkipFileManager {
 
     public func createFile(atPath path: String, contents: Data? = nil, attributes: [FileAttributeKey : Any]? = nil) -> Bool {
         #if !SKIP
-        return rawValue.createFile(atPath: path, contents: contents, attributes: attributes)
+        return rawValue.createFile(atPath: path, contents: contents?.rawValue, attributes: attributes)
         #else
         do {
             java.nio.file.Files.write(_path(path), (contents ?? Data(rawValue: PlatformData(size: 0))).rawValue)
@@ -309,7 +311,7 @@ extension SkipFileManager {
         #endif
     }
 
-    public func copyItem(at url: SkipURL, to: SkipURL) throws {
+    public func copyItem(at url: URL, to: URL) throws {
         #if !SKIP
         try rawValue.copyItem(at: url.rawValue, to: to.rawValue)
         #else
@@ -325,7 +327,7 @@ extension SkipFileManager {
         #endif
     }
 
-    public func moveItem(at path: SkipURL, to: SkipURL) throws {
+    public func moveItem(at path: URL, to: URL) throws {
         #if !SKIP
         try rawValue.moveItem(at: path.rawValue, to: to.rawValue)
         #else
@@ -349,7 +351,7 @@ extension SkipFileManager {
         #if !SKIP
         return rawValue.changeCurrentDirectoryPath(path)
         #else
-        fatalError("SkipFileManager.changeCurrentDirectoryPath unavailable")
+        fatalError("FileManager.changeCurrentDirectoryPath unavailable")
         #endif
     }
 
@@ -454,7 +456,7 @@ extension SkipFileManager {
         #endif
     }
 
-    public func removeItem(at url: SkipURL) throws {
+    public func removeItem(at url: URL) throws {
         #if !SKIP
         try rawValue.removeItem(at: url.foundationURL)
         #else
@@ -527,14 +529,14 @@ extension SkipFileManager {
         #endif
     }
 
-    public func contentsOfDirectory(at url: SkipURL, includingPropertiesForKeys: [URLResourceKey]?) throws -> [SkipURL] {
+    public func contentsOfDirectory(at url: URL, includingPropertiesForKeys: [URLResourceKey]?) throws -> [URL] {
         #if !SKIP
         return try rawValue.contentsOfDirectory(at: url.rawValue, includingPropertiesForKeys: includingPropertiesForKeys)
-            .map({ SkipURL($0) })
+            .map({ URL($0) })
         #else
         // https://developer.android.com/reference/kotlin/java/nio/file/Files
         let shallowFiles = java.nio.file.Files.list(_path(url)).collect(java.util.stream.Collectors.toList())
-        let contents = shallowFiles.map { SkipURL($0.toUri().toURL()) }
+        let contents = shallowFiles.map { URL($0.toUri().toURL()) }
         return Array(contents)
         #endif
     }

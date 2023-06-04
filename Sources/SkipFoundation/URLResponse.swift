@@ -5,26 +5,21 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-import class Foundation.URLResponse
-public typealias URLResponse = Foundation.URLResponse
-internal typealias PlatformURLResponse = Foundation.URLResponse
+/* @_implementationOnly */import class Foundation.URLResponse
+public typealias PlatformURLResponse = Foundation.URLResponse
 #else
-public typealias URLResponse = SkipURLResponse
-//public typealias PlatformURLResponse = java.net.HttpURLConnection
 #endif
 
-
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: open class SkipURLResponse
-internal class SkipURLResponse : CustomStringConvertible {
+/// The metadata associated with the response to a URL load request, independent of protocol and URL scheme.
+public class URLResponse : CustomStringConvertible {
     #if !SKIP
     public var rawValue: PlatformURLResponse
-    public var url: SkipURL? { rawValue.url.flatMap(SkipURL.init(rawValue:)) }
+    public var url: URL? { rawValue.url.flatMap(URL.init(rawValue:)) }
     public var mimeType: String? { rawValue.mimeType }
     public var expectedContentLength: Int64 { rawValue.expectedContentLength }
     public var textEncodingName: String? { rawValue.textEncodingName }
     #else
-    public internal(set) var url: SkipURL?
+    public internal(set) var url: URL?
     public internal(set) var mimeType: String?
     public internal(set) var expectedContentLength: Int64 = -1
     public internal(set) var textEncodingName: String?
@@ -37,7 +32,7 @@ internal class SkipURLResponse : CustomStringConvertible {
         #endif
     }
 
-    public init(url: SkipURL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
+    public init(url: URL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
         #if !SKIP
         self.rawValue = PlatformURLResponse(url: url.rawValue, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: textEncodingName)
         #else
@@ -57,7 +52,7 @@ internal class SkipURLResponse : CustomStringConvertible {
         self.rawValue = rawValue
     }
 
-    var description: String {
+    public var description: String {
         return rawValue.description
     }
     #endif
@@ -86,9 +81,9 @@ internal class SkipURLResponse : CustomStringConvertible {
         return rawValue.copy()
         #else
         if let url = self.url {
-            return SkipURLResponse(url: url, mimeType: self.mimeType, expectedContentLength: Int(self.expectedContentLength), textEncodingName: self.textEncodingName)
+            return URLResponse(url: url, mimeType: self.mimeType, expectedContentLength: Int(self.expectedContentLength), textEncodingName: self.textEncodingName)
         } else {
-            return SkipURLResponse()
+            return URLResponse()
         }
         #endif
     }
@@ -97,7 +92,7 @@ internal class SkipURLResponse : CustomStringConvertible {
         #if !SKIP
         return rawValue.isEqual(other)
         #else
-        guard let other = other as? SkipURLResponse else {
+        guard let other = other as? URLResponse else {
             return false
         }
         return self.url == other.url &&

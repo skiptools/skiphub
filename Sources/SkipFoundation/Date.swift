@@ -4,19 +4,23 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import struct Foundation.Date
-public typealias Date = Foundation.Date
+/* @_implementationOnly */import struct Foundation.Date
+/* @_implementationOnly */import typealias Foundation.TimeInterval
+/* @_implementationOnly */import func Foundation.CFAbsoluteTimeGetCurrent
+/* @_implementationOnly */import class Foundation.NSDate
 public typealias PlatformDate = Foundation.Date
+public typealias NSDate = Foundation.NSDate
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-internal typealias SkipISO8601FormatStyle = Foundation.Date.ISO8601FormatStyle
+public typealias PlatformISO8601FormatStyle = Foundation.Date.ISO8601FormatStyle
 #else
-public typealias Date = SkipDate
 public typealias PlatformDate = java.util.Date
-public typealias SkipISO8601FormatStyle = SkipDate.ISO8601FormatStyle
+public typealias PlatformISO8601FormatStyle = Date.ISO8601FormatStyle
+public typealias NSDate = Date
 #endif
 
 #if !SKIP
 public let CFAbsoluteTimeGetCurrent = Foundation.CFAbsoluteTimeGetCurrent
+public typealias TimeInterval = Foundation.TimeInterval
 #else
 
 public typealias TimeInterval = Double
@@ -33,14 +37,13 @@ public typealias CFAbsoluteTime = CFTimeInterval
 
 /// Absolute time is measured in seconds relative to the absolute reference date of Jan 1 2001 00:00:00 GMT. A positive value represents a date after the reference date, a negative value represents a date before it. For example, the absolute time -32940326 is equivalent to December 16th, 1999 at 17:54:34. Repeated calls to this function do not guarantee monotonically increasing results. The system time may decrease due to synchronization with external time references or due to an explicit user change of the clock.
 public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
-    SkipDate.timeIntervalSinceReferenceDate
+    Date.timeIntervalSinceReferenceDate
 }
 
 #endif
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipDate: RawRepresentable<PlatformDate>, MutableStruct, Comparable<SkipDate>
-internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, Comparable {
+/// A specific point in time, independent of any calendar or time zone.
+public struct Date : RawRepresentable, Hashable, CustomStringConvertible, Comparable {
     public var rawValue: PlatformDate
 
     public static let timeIntervalBetween1970AndReferenceDate: TimeInterval = 978307200.0
@@ -54,8 +57,8 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #endif
     }
 
-    public static let distantPast = SkipDate(timeIntervalSince1970: -62135769600.0)
-    public static let distantFuture = SkipDate(timeIntervalSince1970: 64092211200.0)
+    public static let distantPast = Date(timeIntervalSince1970: -62135769600.0)
+    public static let distantFuture = Date(timeIntervalSince1970: 64092211200.0)
 
     public init() {
         self.rawValue = PlatformDate()
@@ -88,11 +91,11 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #if !SKIP
         self.rawValue = PlatformDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate)
         #else
-        self.rawValue = PlatformDate(((timeIntervalSinceReferenceDate + SkipDate.timeIntervalBetween1970AndReferenceDate) * 1000.0).toLong())
+        self.rawValue = PlatformDate(((timeIntervalSinceReferenceDate + Date.timeIntervalBetween1970AndReferenceDate) * 1000.0).toLong())
         #endif
     }
 
-    public init(timeInterval: TimeInterval, since: SkipDate) {
+    public init(timeInterval: TimeInterval, since: Date) {
         #if !SKIP
         self.rawValue = PlatformDate(timeInterval: timeInterval, since: since.rawValue)
         #else
@@ -109,7 +112,7 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #endif
     }
 
-    var description: String {
+    public var description: String {
         #if !SKIP
         return rawValue.description
         #else
@@ -117,12 +120,12 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #endif
     }
 
-    func description(with locale: SkipLocale?) -> String {
+    func description(with locale: Locale?) -> String {
         #if !SKIP
         return rawValue.description(with: locale?.rawValue)
         #else
-        let fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", (locale ?? SkipLocale.current).rawValue)
-        fmt.setTimeZone(SkipTimeZone.gmt.rawValue);
+        let fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", (locale ?? Locale.current).rawValue)
+        fmt.setTimeZone(TimeZone.gmt.rawValue);
         return fmt.format(rawValue)
         #endif
     }
@@ -139,11 +142,11 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #if !SKIP
         return rawValue.timeIntervalSinceReferenceDate
         #else
-        return timeIntervalSince1970 - SkipDate.timeIntervalBetween1970AndReferenceDate
+        return timeIntervalSince1970 - Date.timeIntervalBetween1970AndReferenceDate
         #endif
     }
 
-    public static func < (lhs: SkipDate, rhs: SkipDate) -> Bool {
+    public static func < (lhs: Date, rhs: Date) -> Bool {
         #if !SKIP
         lhs.rawValue.timeIntervalSince1970 < rhs.rawValue.timeIntervalSince1970
         #else
@@ -151,7 +154,7 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #endif
     }
 
-    public func timeIntervalSince(_ date: SkipDate) -> TimeInterval {
+    public func timeIntervalSince(_ date: Date) -> TimeInterval {
         #if !SKIP
         return rawValue.timeIntervalSince(date.rawValue)
         #else
@@ -159,11 +162,11 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
         #endif
     }
 
-    public func addingTimeInterval(_ timeInterval: TimeInterval) -> SkipDate {
+    public func addingTimeInterval(_ timeInterval: TimeInterval) -> Date {
         #if !SKIP
-        return SkipDate(rawValue.addingTimeInterval(timeInterval))
+        return Date(rawValue.addingTimeInterval(timeInterval))
         #else
-        return SkipDate(timeInterval: timeInterval, since: self)
+        return Date(timeInterval: timeInterval, since: self)
         #endif
     }
 
@@ -176,7 +179,7 @@ internal struct SkipDate : RawRepresentable, Hashable, CustomStringConvertible, 
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-    public func ISO8601Format(_ style: SkipISO8601FormatStyle = .iso8601) -> String {
+    public func ISO8601Format(_ style: PlatformISO8601FormatStyle = .iso8601) -> String {
         #if !SKIP
         return rawValue.ISO8601Format(style)
         #else

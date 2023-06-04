@@ -71,7 +71,7 @@ final class URLTests: XCTestCase {
         XCTAssertEqual(83, HTTPResponse.expectedContentLength)
 
         XCTAssertEqual(83, data.count)
-        XCTAssertEqual(String(data: data, encoding: .utf8), """
+        XCTAssertEqual(String(data: data, encoding: String.Encoding.utf8), """
         {
           "userId": 1,
           "id": 1,
@@ -90,7 +90,7 @@ final class URLTests: XCTestCase {
 
         let data = try Data(contentsOf: localURL)
         XCTAssertEqual(83, data.count)
-        XCTAssertEqual(String(data: data, encoding: .utf8), """
+        XCTAssertEqual(String(data: data, encoding: String.Encoding.utf8), """
         {
           "userId": 1,
           "id": 1,
@@ -111,7 +111,7 @@ final class URLTests: XCTestCase {
             data.append(contentsOf: [byte])
         })
 
-        XCTAssertEqual(String(data: data, encoding: .utf8), """
+        XCTAssertEqual(String(data: data, encoding: String.Encoding.utf8), """
         {
           "userId": 1,
           "id": 1,

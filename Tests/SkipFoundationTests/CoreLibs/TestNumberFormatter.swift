@@ -8,8 +8,6 @@ import XCTest
 
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
-@testable import SkipFoundation // for SkipNumberFormatterStyle
-
 // This source file is part of the Swift.org open source project
 //
 // Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
@@ -27,7 +25,7 @@ class TestNumberFormatter: XCTestCase {
 
     func test_defaultPropertyValues() {
         let numberFormatter = NumberFormatter()
-        XCTAssertEqual(numberFormatter.numberStyle, SkipNumberFormatterStyle.none)
+        XCTAssertEqual(numberFormatter.numberStyle, NumberFormatter.Style.none)
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -53,7 +51,7 @@ class TestNumberFormatter: XCTestCase {
 
     func test_defaultDecimalPropertyValues() {
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -83,7 +81,7 @@ class TestNumberFormatter: XCTestCase {
     func test_defaultCurrencyPropertyValues() {
         let numberFormatter = NumberFormatter()
         let currency = Locale.current.currencySymbol ?? ""
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -112,7 +110,7 @@ class TestNumberFormatter: XCTestCase {
 
     func test_defaultPercentPropertyValues() {
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.percent
+        numberFormatter.numberStyle = NumberFormatter.Style.percent
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -144,7 +142,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("Skip scientific style")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.scientific
+        numberFormatter.numberStyle = NumberFormatter.Style.scientific
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -175,7 +173,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("Skip SpellOut style")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -206,7 +204,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("Skip Ordinal Style")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.ordinal
+        numberFormatter.numberStyle = NumberFormatter.Style.ordinal
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -233,7 +231,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("Skip CurrencyISO style")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currencyISOCode
+        numberFormatter.numberStyle = NumberFormatter.Style.currencyISOCode
         numberFormatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
@@ -262,7 +260,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currencyPlural
+        numberFormatter.numberStyle = NumberFormatter.Style.currencyPlural
         numberFormatter.locale = Locale(identifier: "en_GB")
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
@@ -290,7 +288,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currencyAccounting
+        numberFormatter.numberStyle = NumberFormatter.Style.currencyAccounting
         numberFormatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
@@ -315,7 +313,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
     func test_currencyCode() {
         let numberFormatter = NumberFormatter()
         numberFormatter.locale = Locale(identifier: "en_GB")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
 //        XCTAssertEqual(numberFormatter.format, "¤#,##0.00;£0.00;¤#,##0.00")
         XCTAssertEqual(numberFormatter.string(from: 1.1), "£1.10")
         XCTAssertEqual(numberFormatter.string(from: 0), "£0.00")
@@ -333,7 +331,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
 
         // Check that the currencyCode is preferred over the locale when no currencySymbol is set
         let codeFormatter = NumberFormatter()
-        codeFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        codeFormatter.numberStyle = NumberFormatter.Style.currency
         codeFormatter.locale = Locale(identifier: "en_US")
         codeFormatter.currencyCode = "GBP"
         XCTAssertEqual(codeFormatter.string(from: 3.02), "£3.02")
@@ -341,7 +339,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
 
     func test_decimalSeparator() {
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
 //        XCTAssertEqual(numberFormatter.format, "#,##0.###;0;#,##0.###")
 
         let separator = "-"
@@ -356,7 +354,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
     func test_currencyDecimalSeparator() {
         let numberFormatter = NumberFormatter()
         numberFormatter.locale = Locale(identifier: "fr_FR")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
         numberFormatter.currencyDecimalSeparator = "-"
         numberFormatter.currencyCode = "T"
         #if !SKIP
@@ -377,7 +375,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
     func test_groupingSeparator() {
         let decFormatter1 = NumberFormatter()
         XCTAssertEqual(decFormatter1.groupingSize, 0)
-        decFormatter1.numberStyle = SkipNumberFormatterStyle.decimal
+        decFormatter1.numberStyle = NumberFormatter.Style.decimal
         #if !SKIP
         XCTAssertEqual(decFormatter1.groupingSize, 3)
         #endif
@@ -386,7 +384,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let decFormatter2 = NumberFormatter()
         XCTAssertEqual(decFormatter2.groupingSize, 0)
         decFormatter2.groupingSize = 1
-        decFormatter2.numberStyle = SkipNumberFormatterStyle.decimal
+        decFormatter2.numberStyle = NumberFormatter.Style.decimal
         #if !SKIP
         XCTAssertEqual(decFormatter2.groupingSize, 1)
         #endif
@@ -404,7 +402,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
     
     func test_percentSymbol() {
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.percent
+        numberFormatter.numberStyle = NumberFormatter.Style.percent
         numberFormatter.percentSymbol = "💯"
         let formattedString = numberFormatter.string(from: 0.42)
         #if SKIP
@@ -416,7 +414,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
     
     func test_zeroSymbol() {
         let numberFormatter = NumberFormatter()
-        XCTAssertEqual(numberFormatter.numberStyle, SkipNumberFormatterStyle.none)
+        XCTAssertEqual(numberFormatter.numberStyle, NumberFormatter.Style.none)
         XCTAssertEqual(numberFormatter.generatesDecimalNumbers, false)
 //        XCTAssertEqual(numberFormatter.localizesFormat, true)
         XCTAssertEqual(numberFormatter.locale, Locale.current)
@@ -515,7 +513,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
 
     func test_currencySymbol() {
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
         numberFormatter.currencySymbol = "🍯"
         numberFormatter.currencyDecimalSeparator = "_"
 //        XCTAssertEqual(numberFormatter.format, "¤#,##0.00;🍯0_00;¤#,##0.00")
@@ -528,7 +526,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO Scientific")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.scientific
+        numberFormatter.numberStyle = NumberFormatter.Style.scientific
         numberFormatter.exponentSymbol = "⬆️"
 #if true || DARWIN_COMPATIBILITY_TESTS
 //        XCTAssertEqual(numberFormatter.format, "#E0;1⬆️-100;#E0")
@@ -544,7 +542,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let numberFormatter1 = NumberFormatter()
         XCTAssertEqual(numberFormatter1.minimumIntegerDigits, 1)
         numberFormatter1.minimumIntegerDigits = 3
-        numberFormatter1.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter1.numberStyle = NumberFormatter.Style.decimal
         #if SKIP
         numberFormatter1.minimumIntegerDigits = 3
         #endif
@@ -552,7 +550,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
 
         let numberFormatter = NumberFormatter()
         XCTAssertEqual(numberFormatter.minimumIntegerDigits, 1)
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         #if SKIP
         numberFormatter.minimumIntegerDigits = 1
         #endif
@@ -561,7 +559,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         var formattedString = numberFormatter.string(from: 0)
         XCTAssertEqual(formattedString, "000")
 
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         #if SKIP
         numberFormatter.minimumIntegerDigits = 3
         #endif
@@ -576,7 +574,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         formatter.locale = Locale(identifier: "en_GB")
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.currency
+        formatter.numberStyle = NumberFormatter.Style.currency
         #if SKIP
         formatter.minimumIntegerDigits = 0
         #endif
@@ -592,7 +590,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter2 = NumberFormatter()
         formatter2.locale = Locale(identifier: "en_GB")
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.currency
+        formatter2.numberStyle = NumberFormatter.Style.currency
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
         formatter2.locale = Locale(identifier: "en_US")
         #if !SKIP // currency not showig up for some reason
@@ -607,7 +605,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.percent
+        formatter.numberStyle = NumberFormatter.Style.percent
         #if SKIP
         formatter.minimumIntegerDigits = 0
         #endif
@@ -620,7 +618,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.percent
+        formatter2.numberStyle = NumberFormatter.Style.percent
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0.01), "1%")
@@ -636,7 +634,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.scientific
+        formatter.numberStyle = NumberFormatter.Style.scientific
         XCTAssertEqual(formatter.minimumIntegerDigits, 0)
         formatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter.string(from: 0), "0E0")
@@ -646,7 +644,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.scientific
+        formatter2.numberStyle = NumberFormatter.Style.scientific
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0.01), "1E-2")
@@ -663,7 +661,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        formatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(formatter.minimumIntegerDigits, 0)
         formatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter.string(from: 0), "zero")
@@ -673,7 +671,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.spellOut
+        formatter2.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(formatter2.minimumIntegerDigits, 0)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0.01), "zero point zero one")
@@ -690,7 +688,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.ordinal
+        formatter.numberStyle = NumberFormatter.Style.ordinal
         XCTAssertEqual(formatter.minimumIntegerDigits, 0)
         formatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter.string(from: 0), "0th")
@@ -700,7 +698,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.ordinal
+        formatter2.numberStyle = NumberFormatter.Style.ordinal
         XCTAssertEqual(formatter2.minimumIntegerDigits, 0)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0.01), "0th")
@@ -717,7 +715,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.currencyPlural
+        formatter.numberStyle = NumberFormatter.Style.currencyPlural
         XCTAssertEqual(formatter.minimumIntegerDigits, 0)
         formatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter.string(from: 0), "0.00 US dollars")
@@ -727,7 +725,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.currencyPlural
+        formatter2.numberStyle = NumberFormatter.Style.currencyPlural
         XCTAssertEqual(formatter2.minimumIntegerDigits, 0)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0.01), "0.01 US dollars")
@@ -744,7 +742,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.currencyISOCode
+        formatter.numberStyle = NumberFormatter.Style.currencyISOCode
         XCTAssertEqual(formatter.minimumIntegerDigits, 0)
         formatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter.string(from: 0), "USD.00")
@@ -754,7 +752,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.currencyISOCode
+        formatter2.numberStyle = NumberFormatter.Style.currencyISOCode
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0.01), "USD\(currencySpacing)0.01")
@@ -771,7 +769,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         let formatter = NumberFormatter()
         XCTAssertEqual(formatter.minimumIntegerDigits, 1)
         formatter.minimumIntegerDigits = 0
-        formatter.numberStyle = SkipNumberFormatterStyle.currencyAccounting
+        formatter.numberStyle = NumberFormatter.Style.currencyAccounting
         XCTAssertEqual(formatter.minimumIntegerDigits, 0)
         formatter.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter.string(from: 0), "$.00")
@@ -781,7 +779,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // If .minimumIntegerDigits is not set before .numberStyle change, update the value
         let formatter2 = NumberFormatter()
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
-        formatter2.numberStyle = SkipNumberFormatterStyle.currencyAccounting
+        formatter2.numberStyle = NumberFormatter.Style.currencyAccounting
         XCTAssertEqual(formatter2.minimumIntegerDigits, 1)
         formatter2.locale = Locale(identifier: "en_US")
         XCTAssertEqual(formatter2.string(from: 0), "$0.00")
@@ -859,7 +857,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         numberFormatter.roundingIncrement = 0.2
         let formattedString = numberFormatter.string(from: 4.25)
         XCTAssertEqual(formattedString, "4.2")
@@ -933,7 +931,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         // What does internationalCurrencySymbol actually do?
 #if false
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currencyPlural
+        numberFormatter.numberStyle = NumberFormatter.Style.currencyPlural
         numberFormatter.internationalCurrencySymbol = "💵"
         numberFormatter.currencyDecimalSeparator = "_"
         let formattedString = numberFormatter.string(from: 42)
@@ -948,7 +946,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         #else
         let numberFormatter = NumberFormatter()
         numberFormatter.locale = Locale(identifier: "en_GB")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
         numberFormatter.currencyGroupingSeparator = "_"
         numberFormatter.currencyCode = "T"
         numberFormatter.currencyDecimalSeparator = "/"
@@ -967,7 +965,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         XCTAssertFalse(numberFormatter.isLenient)
 
         // Lenient allows wrong style -- not lenient here
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.numberStyle, .spellOut)
 //        let nilNumber = numberFormatter.number(from: "2.22")
         // FIXME: Not nil on Linux?
@@ -979,7 +977,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         XCTAssertEqual(number, 2.22)
 
         // TODO: Add some tests with currency after [SR-250] resolved
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.currency
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
         numberFormatter.isLenient = false
         let nilNumberBeforeLenient = numberFormatter.number(from: "42")
 
@@ -995,7 +993,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         XCTAssertEqual(numberFormatter.maximumSignificantDigits, -1)
         numberFormatter.minimumSignificantDigits = 3
         XCTAssertEqual(numberFormatter.maximumSignificantDigits, 999)
@@ -1009,7 +1007,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO")
         #else
         let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         var formattedString = numberFormatter.string(from: 987654321)
         XCTAssertEqual(formattedString, "987,654,321")
         
@@ -1034,21 +1032,21 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         #if SKIP
         throw XCTSkip("TODO: NumberFormatter.numberStyle = .spellOut")
         #else
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.string(for: 234), "two hundred thirty-four")
         XCTAssertEqual(numberFormatter.string(for: 2007), "two thousand seven")
         XCTAssertEqual(numberFormatter.string(for: 3), "three")
         XCTAssertEqual(numberFormatter.string(for: 0.3), "zero point three")
 
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         XCTAssertEqual(numberFormatter.string(for: 234.5678), "234.568")
         
         numberFormatter.locale = Locale(identifier: "zh_CN")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.string(from: 11.4), "十一点四")
 
         numberFormatter.locale = Locale(identifier: "fr_FR")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.string(from: 11.4), "onze virgule quatre")
 
         #endif // !SKIP
@@ -1069,21 +1067,21 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         XCTAssertEqual(numberFormatter.number(from: "0.01"), 0.01)
         XCTAssertEqual(numberFormatter.number(from: ".01"), 0.01)
         // These don't work unless lenient/style set
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.decimal
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
         XCTAssertEqual(numberFormatter.number(from: "1,001"), 1001)
         XCTAssertEqual(numberFormatter.number(from: "1,050,001"), 1050001)
 
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.number(from: "two thousand and seven"), 2007)
         XCTAssertEqual(numberFormatter.number(from: "one point zero"), 1.0)
         XCTAssertEqual(numberFormatter.number(from: "one hundred million"), 1E8)
 
         numberFormatter.locale = Locale(identifier: "zh_CN")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.number(from: "十一点四"), 11.4)
 
         numberFormatter.locale = Locale(identifier: "fr_FR")
-        numberFormatter.numberStyle = SkipNumberFormatterStyle.spellOut
+        numberFormatter.numberStyle = NumberFormatter.Style.spellOut
         XCTAssertEqual(numberFormatter.number(from: "onze virgule quatre"), 11.4)
         #endif // !SKIP
     }
@@ -1346,19 +1344,19 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         #if !SKIP
         XCTAssertNil(formatter.multiplier)
         #endif
-        formatter.numberStyle = SkipNumberFormatterStyle.percent
+        formatter.numberStyle = NumberFormatter.Style.percent
         XCTAssertEqual(formatter.multiplier, NSNumber(100))
-        formatter.numberStyle = SkipNumberFormatterStyle.decimal
+        formatter.numberStyle = NumberFormatter.Style.decimal
         #if !SKIP
         XCTAssertNil(formatter.multiplier)
         #endif
         formatter.multiplier = NSNumber(1)
-        formatter.numberStyle = SkipNumberFormatterStyle.percent
+        formatter.numberStyle = NumberFormatter.Style.percent
         #if !SKIP
         XCTAssertEqual(formatter.multiplier, NSNumber(1))
         #endif
         formatter.multiplier = NSNumber(27)
-        formatter.numberStyle = SkipNumberFormatterStyle.decimal
+        formatter.numberStyle = NumberFormatter.Style.decimal
         #if !SKIP
         XCTAssertEqual(formatter.multiplier, NSNumber(27))
         #endif
@@ -1369,7 +1367,7 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         throw XCTSkip("TODO")
         #else
         let formatter: NumberFormatter = NumberFormatter()
-        formatter.numberStyle = SkipNumberFormatterStyle.scientific
+        formatter.numberStyle = NumberFormatter.Style.scientific
         formatter.positiveInfinitySymbol = ".inf"
         formatter.negativeInfinitySymbol = "-.inf"
         formatter.notANumberSymbol = ".nan"
@@ -1401,13 +1399,13 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
                            "Unexpected value in `copied`.", file: file, line: line)
         }
 
-        copied.numberStyle = SkipNumberFormatterStyle.decimal
+        copied.numberStyle = NumberFormatter.Style.decimal
         __assert(\.numberStyle, original: .none, copy: .decimal)
         __assert(\.maximumIntegerDigits, original: 42, copy: 2_000_000_000)
         __assert(\.maximumFractionDigits, original: 0, copy: 3)
         __assert(\.groupingSize, original: 0, copy: 3)
 
-        original.numberStyle = SkipNumberFormatterStyle.percent
+        original.numberStyle = NumberFormatter.Style.percent
         original.percentSymbol = "％"
         __assert(\.numberStyle, original: .percent, copy: .decimal)
 //        __assert(\.format, original: "#,##0%;0％;#,##0%", copy: "#,##0.###;0;#,##0.###")

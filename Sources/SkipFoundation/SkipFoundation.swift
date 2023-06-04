@@ -4,9 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-@_exported import Foundation
+/* @_implementationOnly */import Foundation
 #endif
-
 /// A runtime check for whether we are running in a JVM, which is based on whether Ints are 32 or 64 bit
 public let isJVM = Int.max == Int32.max
 
@@ -23,25 +22,40 @@ public func SkipFoundationPublicModuleName() -> String {
 #if SKIP
 public typealias AnyClass = kotlin.reflect.KClass<Any>
 public typealias NSObject = java.lang.Object
+public typealias NSError = java.lang.Exception
 public typealias NSString = kotlin.String
-public typealias NSNumber = java.lang.Number
-public typealias NSURL = SkipURL
-public typealias NSUUID = SkipUUID
-public typealias NSDate = SkipDate
+#endif
 
+#if SKIP
 public protocol NSObjectProtocol {
 }
+#endif
+
+#if !SKIP
+/* @_implementationOnly */import class Foundation.NSNumber
+public typealias NSNumber = Foundation.NSNumber
+#else
+public typealias NSNumber = java.lang.Number
+#endif
+
+
+#if !SKIP
+/* @_implementationOnly */import class Foundation.NSNull
+public typealias NSNull = Foundation.NSNull
+#else
+public class NSNull {
+    public static let null = NSNull()
+    public init() {
+    }
+}
+#endif
+
+#if SKIP
 
 //public extension NSObjectProtocol {
 //    public var description: String { "\(self)" }
 //    public func isEqual(_ other: Any?) -> Bool { other === self }
 //}
-
-public struct NSNull {
-    public static let null = NSNull()
-    public init() {
-    }
-}
 
 public func NSString(string: String) -> NSString { string }
 
@@ -148,8 +162,8 @@ public class NSCoder : NSObject {
 
 
 // Cannot extend `NSObject`: An Error type cannot extend another class because it will be translated to extend Exception in Kotlin
-public class NSError : Error {
-}
+//public class NSError : Error {
+//}
 
 public protocol CustomNSError : Error {
     /// The domain of the error.

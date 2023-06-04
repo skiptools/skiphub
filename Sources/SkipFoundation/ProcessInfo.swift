@@ -4,17 +4,17 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.ProcessInfo
-public typealias ProcessInfo = Foundation.ProcessInfo
+/* @_implementationOnly */import class Foundation.ProcessInfo
+public typealias PlatformProcessInfo = Foundation.ProcessInfo
 #else
-public typealias ProcessInfo = SkipProcessInfo
 #endif
 
-public class SkipProcessInfo {
+/// A collection of information about the current process.
+public class ProcessInfo {
     #if SKIP
     /// The global `processInfo` must be set manually at app launch with `skip.foundation.ProcessInfo.launch(context)`
     /// Otherwise error: `skip.lib.ErrorException: kotlin.UninitializedPropertyAccessException: lateinit property processInfo has not been initialized`
-    public static var processInfo: SkipProcessInfo = SkipProcessInfo()
+    public static var processInfo: ProcessInfo = ProcessInfo()
 
     init() {
     }
@@ -26,7 +26,7 @@ public class SkipProcessInfo {
 
     /// Called when an app is launched to store the global context from the `android.app.Application` subclass.
     public static func launch(context: android.content.Context) {
-        SkipProcessInfo.processInfo.launchContext = context
+        ProcessInfo.processInfo.launchContext = context
     }
 
     private var testContext: android.content.Context {
@@ -41,10 +41,10 @@ public class SkipProcessInfo {
     private var launchContext: android.content.Context?
 
     #else
-    public static var processInfo = SkipProcessInfo(rawValue: Foundation.ProcessInfo.processInfo)
-    let rawValue: Foundation.ProcessInfo
+    public static var processInfo = ProcessInfo(rawValue: PlatformProcessInfo.processInfo)
+    let rawValue: PlatformProcessInfo
 
-    init(rawValue: Foundation.ProcessInfo) {
+    init(rawValue: PlatformProcessInfo) {
         self.rawValue = rawValue
     }
     #endif

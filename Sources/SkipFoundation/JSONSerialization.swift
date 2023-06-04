@@ -4,6 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
+/* @_implementationOnly */import class Foundation.JSONSerialization
+/* @_implementationOnly */import struct Foundation.Data
 public typealias PlatformJSONObject = [String: Any]
 public typealias PlatformJSONArray = [Any]
 let PlatformJSONNull = NSNull()
@@ -265,7 +267,7 @@ extension PlatformJSONSerialization {
         let pretty = opt.contains(WritingOptions.prettyPrinted)
 
         let string = convertToJsonString(obj, indent: pretty ? 0 : nil)
-        return Data(string.utf8)
+        return string.utf8Data
     }
 
     private static func convertToJsonString(_ value: Any?, indent: Int?) -> String {
@@ -403,7 +405,7 @@ final class JSONObjectAny {
         #if SKIP
         self.json = try PlatformJSONObject(json)
         #else
-        self.json = (try JSONSerialization.jsonObject(with: Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONObject) ?? [:]
+        self.json = (try JSONSerialization.jsonObject(with: Foundation.Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONObject) ?? [:]
         #endif
     }
 
@@ -452,7 +454,7 @@ final class JSONArrayAny {
         #if SKIP
         self.json = try PlatformJSONArray(json)
         #else
-        self.json = (try JSONSerialization.jsonObject(with: Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONArray) ?? []
+        self.json = (try JSONSerialization.jsonObject(with: Foundation.Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONArray) ?? []
         #endif
     }
 

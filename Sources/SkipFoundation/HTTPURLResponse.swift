@@ -5,18 +5,14 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-import class Foundation.HTTPURLResponse
-public typealias HTTPURLResponse = Foundation.HTTPURLResponse
-internal typealias PlatformHTTPURLResponse = Foundation.HTTPURLResponse
+/* @_implementationOnly */import class Foundation.HTTPURLResponse
+public typealias PlatformHTTPURLResponse = Foundation.HTTPURLResponse
 #else
-public typealias HTTPURLResponse = SkipHTTPURLResponse
 #endif
 
-
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipHTTPURLResponse: SkipURLResponse
-internal class SkipHTTPURLResponse : SkipURLResponse {
-    override init(url: SkipURL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
+/// The metadata associated with the response to an HTTP protocol URL load request.
+public class HTTPURLResponse : URLResponse {
+    override init(url: URL, mimeType: String?, expectedContentLength: Int, textEncodingName: String?) {
         super.init(url: url, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: textEncodingName)
     }
 
@@ -25,7 +21,7 @@ internal class SkipHTTPURLResponse : SkipURLResponse {
     public private(set) var allHeaderFields: [String : String] = [:]
     private var httpVersion: String? = nil
 
-    public init?(url: SkipURL, statusCode: Int, httpVersion: String?, headerFields: [String : String]?) {
+    public init?(url: URL, statusCode: Int, httpVersion: String?, headerFields: [String : String]?) {
         // get content length and type from header fields, bearing in mind their case-insensitivity
         // "conTent-lenGTH": "123"
         // "CONTENT-type": "text/plAIn; charset=ISO-8891-1"
@@ -90,7 +86,7 @@ internal class SkipHTTPURLResponse : SkipURLResponse {
         #if !SKIP
         return (rawValue as? PlatformHTTPURLResponse)?.value(forHTTPHeaderField: field)
         #else
-        return SkipURLRequest.value(forHTTPHeaderField: field, in: allHeaderFields)
+        return URLRequest.value(forHTTPHeaderField: field, in: allHeaderFields)
         #endif
     }
 

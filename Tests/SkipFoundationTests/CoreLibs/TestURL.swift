@@ -3,35 +3,22 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-@testable import SkipFoundation
+import Foundation
 import XCTest
 
-#if !SKIP
+#if SKIP
 
-fileprivate extension URLComponents {
-    func url(relativeTo url: SkipURL?) -> SkipURL? {
-        self.url(relativeTo: url?.foundationURL).flatMap({ .init(rawValue: $0 as PlatformURL) })
-    }
-}
-
-#else // SKIP
-
-fileprivate typealias FoundationURL = SkipURL
-
-// test case handling for NSError (which is not provided by Skip)
-fileprivate typealias NSError = java.lang.Exception
-
-fileprivate func NSURL(string: String, relativeTo: SkipURL? = nil) -> SkipURL? {
+fileprivate func NSURL(string: String, relativeTo: URL? = nil) -> URL? {
     return URL(string: string, relativeTo: relativeTo)
 }
 
-fileprivate extension SkipURL {
+fileprivate extension URL {
     var fileSystemRepresentation: String {
         return path
     }
 
     func copy() -> NSURL {
-        SkipURL(self)
+        URL(self)
     }
 
     func isEqual(_ other: NSURL) -> Bool {
@@ -169,7 +156,7 @@ class TestURL : XCTestCase {
     }
 
     fileprivate func generateResults(_ url: URL, pathComponent: String?, pathExtension : String?) -> [String : Any] {
-        var result = [String : Any]()
+        var result = Dictionary<String, Any>()
         if let pathComponent = pathComponent {
             let newFileURL = url.appendingPathComponent(pathComponent, isDirectory: false)
             result["appendingPathComponent-File"] = newFileURL.relativeString
@@ -213,7 +200,7 @@ class TestURL : XCTestCase {
     // TODO: plist parsing
 
     fileprivate func compareResults(_ url : URL, expected : [String : Any], got : [String : Any]) -> (Bool, [String]) {
-        var differences = [String]()
+        var differences = Array<String>()
         for (key, expectation) in expected {
             // Skip non-string expected results
             if ["port", "standardizedURL", "pathComponents"].contains(key) {
@@ -391,7 +378,7 @@ class TestURL : XCTestCase {
         let cwdURL = URL(fileURLWithPath: cwd, isDirectory: true)
         // 1 for path separator
         #if !SKIP
-        cwdURL.foundationURL.withUnsafeFileSystemRepresentation {
+        cwdURL.withUnsafeFileSystemRepresentation {
             gRelativeOffsetFromBaseCurrentWorkingDirectory = UInt(strlen($0!) + 1)
         }
         #endif

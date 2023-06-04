@@ -4,18 +4,15 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import struct Foundation.DateComponents
-public typealias DateComponents = Foundation.DateComponents
-internal typealias PlatformDateComponents = Foundation.DateComponents
+/* @_implementationOnly */import struct Foundation.DateComponents
+public typealias PlatformDateComponents = Foundation.DateComponents
 #else
 // SKIP INSERT: import skip.lib.Set
-public typealias DateComponents = SkipDateComponents
-//public typealias PlatformDateComponents = java.??? // no PlatformDateComponents in Java, so we'll define all the fields in SkipDateComponents
+private typealias BogusTypealiasForComment = Int // SKIP FIXME: need something here or SKIP INSERT above won't get inserted
 #endif
 
-
-// SKIP DECLARE: open class SkipDateComponents: Hashable, MutableStruct
-internal struct SkipDateComponents : Hashable, CustomStringConvertible {
+/// A date or time specified in terms of units (such as year, month, day, hour, and minute) to be evaluated in a calendar system and time zone.
+public struct DateComponents : Hashable, CustomStringConvertible {
     #if !SKIP
     public var components: PlatformDateComponents
 
@@ -27,7 +24,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         get { components.calendar }
         set { components.calendar = newValue }
     }
-    public var timeZone: TimeZone? {
+    public var timeZone: PlatformTimeZone? {
         get { components.timeZone }
         set { components.timeZone = newValue }
     }
@@ -95,8 +92,8 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
 
     // the is no direct analogue to DateComponents in Java (other then java.util.Calendar), so we store the properties individually
 
-    public var calendar: SkipCalendar? = nil
-    public var timeZone: SkipTimeZone? = nil
+    public var calendar: Calendar? = nil
+    public var timeZone: TimeZone? = nil
     public var era: Int? = nil
     public var year: Int? = nil
     public var month: Int? = nil
@@ -113,7 +110,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     public var yearForWeekOfYear: Int? = nil
     #endif
 
-    public init(calendar: SkipCalendar? = nil, timeZone: SkipTimeZone? = nil, era: Int? = nil, year: Int? = nil, month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil, nanosecond: Int? = nil, weekday: Int? = nil, weekdayOrdinal: Int? = nil, quarter: Int? = nil, weekOfMonth: Int? = nil, weekOfYear: Int? = nil, yearForWeekOfYear: Int? = nil) {
+    public init(calendar: Calendar? = nil, timeZone: TimeZone? = nil, era: Int? = nil, year: Int? = nil, month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil, nanosecond: Int? = nil, weekday: Int? = nil, weekdayOrdinal: Int? = nil, quarter: Int? = nil, weekOfMonth: Int? = nil, weekOfYear: Int? = nil, yearForWeekOfYear: Int? = nil) {
         #if !SKIP
         self.components = PlatformDateComponents(calendar: calendar?.rawValue, timeZone: timeZone?.rawValue, era: era, year: year, month: month, day: day, hour: hour, minute: minute, second: second, nanosecond: nanosecond, weekday: weekday, weekdayOrdinal: weekdayOrdinal, quarter: quarter, weekOfMonth: weekOfMonth, weekOfYear: weekOfYear, yearForWeekOfYear: yearForWeekOfYear)
         #else
@@ -137,7 +134,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     }
 
     #if SKIP
-    internal init(fromCalendar calendar: SkipCalendar, in zone: SkipTimeZone? = nil, from date: SkipDate? = nil, to endDate: SkipDate? = nil, with components: Set<SkipCalendarComponent>? = nil) {
+    internal init(fromCalendar calendar: Calendar, in zone: TimeZone? = nil, from date: Date? = nil, to endDate: Date? = nil, with components: Set<PlatformCalendarComponent>? = nil) {
         let platformCal = calendar.rawValue.clone() as PlatformCalendar
 
         if let date = date {
@@ -201,7 +198,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         if let timeZone = self.timeZone {
             cal.setTimeZone(timeZone.rawValue)
         } else {
-            cal.setTimeZone(SkipTimeZone.current.rawValue)
+            cal.setTimeZone(TimeZone.current.rawValue)
         }
 
         if let era = self.era {
@@ -260,7 +257,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     /// Set the value of one of the properties, using an enumeration value instead of a property name.
     ///
     /// The calendar and timeZone and isLeapMonth properties cannot be set by this method.
-    public mutating func setValue(_ value: Int?, for component: SkipCalendarComponent) {
+    public mutating func setValue(_ value: Int?, for component: Calendar.Component) {
         switch component {
         case .era: self.era = value
         case .year: self.year = value
@@ -285,7 +282,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
     }
 
     /// Adds one set of components to this date
-    public mutating func add(components: SkipDateComponents) {
+    public mutating func add(components: DateComponents) {
         #if !SKIP
         fatalError("SkipDateComponents: add not implemented for Swift")
         #else
@@ -338,14 +335,14 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         }
 
         // update our fields from the rolled java.util.Calendar fields
-        self = SkipDateComponents(fromCalendar: SkipCalendar(rawValue: cal))
+        self = DateComponents(fromCalendar: Calendar(rawValue: cal))
         #endif
     }
 
     /// Adds a value for a given components
     ///
     /// The calendar and timeZone and isLeapMonth properties cannot be set by this method.
-    public mutating func addValue(_ value: Int, for component: SkipCalendarComponent) {
+    public mutating func addValue(_ value: Int, for component: Calendar.Component) {
         #if !SKIP
         fatalError("SkipDateComponents: addValue not implemented for Swift")
         #else
@@ -391,12 +388,12 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
         }
 
         // update our fields from the rolled java.util.Calendar fields
-        self = SkipDateComponents(fromCalendar: SkipCalendar(rawValue: cal))
+        self = DateComponents(fromCalendar: Calendar(rawValue: cal))
         #endif
     }
 
     /// Returns the value of one of the properties, using an enumeration value instead of a property name.
-    public func value(for component: SkipCalendarComponent) -> Int? {
+    public func value(for component: Calendar.Component) -> Int? {
         switch component {
         case .era: return self.era
         case .year: return self.year
@@ -492,7 +489,7 @@ internal struct SkipDateComponents : Hashable, CustomStringConvertible {
 
     public func isValidDate(in calendar: Calendar) -> Bool {
         #if !SKIP
-        return components.isValidDate(in: calendar)
+        return components.isValidDate(in: calendar.rawValue)
         #else
         // TODO: re-use implementation from: https://github.com/apple/swift-foundation/blob/68c2466c613a77d6c4453f3a06496a5da79a0cb9/Sources/FoundationInternationalization/DateComponents.swift#LL327C1-L328C1
 

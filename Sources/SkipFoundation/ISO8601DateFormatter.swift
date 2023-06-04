@@ -6,17 +6,13 @@
 
 //#if !SKIP
 //import struct Foundation.XXX
-//public typealias XXX = Foundation.XXX
-//internal typealias PlatformXXX = Foundation.XXX
+//public typealias PlatformXXX = Foundation.XXX
 //#else
-//public typealias XXX = SkipXXX
 //public typealias PlatformXXX = java.util.XXX
 //#endif
 //
 //
-//// override the Kotlin type to be public while keeping the Swift version internal:
-//// SKIP DECLARE: class SkipXXX: RawRepresentable<PlatformXXX>, MutableStruct
-//internal struct SkipXXX : RawRepresentable, Hashable, CustomStringConvertible {
+//public struct XXX : RawRepresentable, Hashable, CustomStringConvertible {
 //    public var rawValue: PlatformXXX
 //
 //    public init(rawValue: PlatformXXX) {

@@ -3,59 +3,51 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if SKIP
-// SKIP INSERT: import skip.lib.Set
-
-/// `Calendar` aliases to `SkipCalendar` type and wraps `java.util.Calendar`
-public typealias Calendar = SkipCalendar
-//public typealias SkipCalendar = Calendar
-/// The wrapped type for Kotlin's Calendar equivalent
-public typealias PlatformCalendar = java.util.Calendar
-public typealias SkipCalendarIdentifier = SkipCalendar.Identifier
-public typealias SkipCalendarComponent = SkipCalendar.Component
+#if !SKIP
+/* @_implementationOnly */import struct Foundation.Calendar
+public typealias PlatformCalendar = Foundation.Calendar
+public typealias PlatformCalendarComponent = Foundation.Calendar.Component
+public typealias PlatformCalendarIdentifier = Foundation.Calendar.Identifier
 #else
-/// `SkipFoundation.Calendar` is an alias to `Foundation.Calendar`
-public typealias Calendar = Foundation.Calendar
-/// The wrapped type for Swift Calendar is only included in Swift debug builds
-internal typealias PlatformCalendar = Foundation.Calendar
-internal typealias SkipCalendarIdentifier = PlatformCalendar.Identifier
-internal typealias SkipCalendarComponent = PlatformCalendar.Component
+// SKIP INSERT: import skip.lib.Set
+public typealias PlatformCalendar = java.util.Calendar
+public typealias PlatformCalendarComponent = Calendar.Component
+public typealias PlatformCalendarIdentifier = Calendar.Identifier
 #endif
 
 // seems to be needed to expose java.util.Calendar.clone()
 // SKIP INSERT: fun PlatformCalendar.clone(): PlatformCalendar { return this.clone() as PlatformCalendar }
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: public class SkipCalendar: RawRepresentable<PlatformCalendar>, MutableStruct
-internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertible {
+/// A definition of the relationships between calendar units and absolute points in time, providing features for calculation and comparison of dates.
+public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
     public var rawValue: PlatformCalendar
     #if SKIP
-    public var locale: SkipLocale
+    public var locale: Locale
     #endif
 
-    public static var current: SkipCalendar {
+    public static var current: Calendar {
         #if !SKIP
-        return SkipCalendar(rawValue: PlatformCalendar.current)
+        return Calendar(rawValue: PlatformCalendar.current)
         #else
-        return SkipCalendar(rawValue: PlatformCalendar.getInstance())
+        return Calendar(rawValue: PlatformCalendar.getInstance())
         #endif
     }
 
     public init(rawValue: PlatformCalendar) {
         self.rawValue = rawValue
         #if SKIP
-        self.locale = SkipLocale.current
+        self.locale = Locale.current
         #endif
     }
 
     public init(_ rawValue: PlatformCalendar) {
         self.rawValue = rawValue
         #if SKIP
-        self.locale = SkipLocale.current
+        self.locale = Locale.current
         #endif
     }
 
-    public init(identifier: SkipCalendarIdentifier) {
+    public init(identifier: PlatformCalendarIdentifier) {
         #if !SKIP
         self.rawValue = PlatformCalendar(identifier: identifier)
         #else
@@ -66,26 +58,26 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
             // TODO: how to support the other calendars?
             fatalError("Skip: unsupported calendar identifier \(identifier)")
         }
-        self.locale = SkipLocale.current
+        self.locale = Locale.current
         #endif
     }
 
-    public var identifier: SkipCalendarIdentifier {
+    public var identifier: PlatformCalendarIdentifier {
         #if !SKIP
         return rawValue.identifier
         #else
         // TODO: non-gregorian calendar
         if gregorianCalendar != nil {
-            return SkipCalendarIdentifier.gregorian
+            return Calendar.Identifier.gregorian
         } else {
-            return SkipCalendarIdentifier.iso8601
+            return Calendar.Identifier.iso8601
         }
         #endif
     }
 
     #if SKIP
-    internal func toDate() -> SkipDate {
-        SkipDate(rawValue: rawValue.getTime())
+    internal func toDate() -> Date {
+        Date(rawValue: rawValue.getTime())
     }
 
     private var dateFormatSymbols: java.text.DateFormatSymbols {
@@ -156,58 +148,58 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
     }
 
 
-    public func date(from components: SkipDateComponents) -> SkipDate? {
+    public func date(from components: DateComponents) -> Date? {
         #if !SKIP
-        return rawValue.date(from: components.components).flatMap(SkipDate.init(rawValue:))
+        return rawValue.date(from: components.components).flatMap(Date.init(rawValue:))
         #else
         // TODO: need to set `this` calendar in the components.calendar
-        return SkipDate(rawValue: components.createCalendarComponents().getTime())
+        return Date(rawValue: components.createCalendarComponents().getTime())
         #endif
     }
 
-    public func dateComponents(in zone: SkipTimeZone? = nil, from date: SkipDate) -> SkipDateComponents {
+    public func dateComponents(in zone: TimeZone? = nil, from date: Date) -> DateComponents {
         #if !SKIP
-        return SkipDateComponents(components: rawValue.dateComponents(in: (zone ?? self.timeZone).rawValue, from: date.rawValue))
+        return DateComponents(components: rawValue.dateComponents(in: (zone ?? self.timeZone).rawValue, from: date.rawValue))
         #else
-        return SkipDateComponents(fromCalendar: self, in: zone ?? self.timeZone, from: date)
+        return DateComponents(fromCalendar: self, in: zone ?? self.timeZone, from: date)
         #endif
     }
 
-    public func dateComponents(_ components: Set<SkipCalendarComponent>, from start: SkipDate, to end: SkipDate) -> SkipDateComponents {
+    public func dateComponents(_ components: Set<PlatformCalendarComponent>, from start: Date, to end: Date) -> DateComponents {
         #if !SKIP
-        return SkipDateComponents(components: rawValue.dateComponents(components, from: start.rawValue, to: end.rawValue))
+        return DateComponents(components: rawValue.dateComponents(components, from: start.rawValue, to: end.rawValue))
         #else
-        return SkipDateComponents(fromCalendar: self, in: nil, from: start, to: end)
+        return DateComponents(fromCalendar: self, in: nil, from: start, to: end)
         #endif
     }
 
-    public func dateComponents(_ components: Set<SkipCalendarComponent>, from date: SkipDate) -> SkipDateComponents {
+    public func dateComponents(_ components: Set<PlatformCalendarComponent>, from date: Date) -> DateComponents {
         #if !SKIP
-        return SkipDateComponents(components: rawValue.dateComponents(components, from: date.rawValue))
+        return DateComponents(components: rawValue.dateComponents(components, from: date.rawValue))
         #else
-        return SkipDateComponents(fromCalendar: self, in: nil, from: date, with: components)
+        return DateComponents(fromCalendar: self, in: nil, from: date, with: components)
         #endif
     }
 
-    public func date(byAdding components: SkipDateComponents, to date: SkipDate, wrappingComponents: Bool = false) -> SkipDate? {
+    public func date(byAdding components: DateComponents, to date: Date, wrappingComponents: Bool = false) -> Date? {
         #if !SKIP
-        return rawValue.date(byAdding: components.rawValue, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(SkipDate.init(rawValue:))
+        return rawValue.date(byAdding: components.rawValue, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(Date.init(rawValue:))
         #else
-        var comps = SkipDateComponents(fromCalendar: self, in: self.timeZone, from: date)
+        var comps = DateComponents(fromCalendar: self, in: self.timeZone, from: date)
         comps.add(components)
         return date(from: comps)
         #endif
     }
 
-    public func date(byAdding component: SkipCalendarComponent, value: Int, to date: SkipDate, wrappingComponents: Bool = false) -> SkipDate? {
+    public func date(byAdding component: PlatformCalendarComponent, value: Int, to date: Date, wrappingComponents: Bool = false) -> Date? {
         #if !SKIP
-        return rawValue.date(byAdding: component, value: value, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(SkipDate.init(rawValue:))
+        return rawValue.date(byAdding: component, value: value, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(Date.init(rawValue:))
         #else
-        fatalError("TODO: SkipCalendar.date(byAdding:SkipCalendarComponent)")
+        fatalError("TODO: SkipCalendar.date(byAdding:Calendar.Component)")
         #endif
     }
 
-    public func isDateInWeekend(_ date: SkipDate) -> Bool {
+    public func isDateInWeekend(_ date: Date) -> Bool {
         #if !SKIP
         return rawValue.isDateInWeekend(date.rawValue)
         #else
@@ -216,7 +208,7 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public func isDate(_ date1: SkipDate, inSameDayAs date2: SkipDate) -> Bool {
+    public func isDate(_ date1: Date, inSameDayAs date2: Date) -> Bool {
         #if !SKIP
         return rawValue.isDate(date1.rawValue, inSameDayAs: date2.rawValue)
         #else
@@ -224,19 +216,19 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public func isDateInToday(_ date: SkipDate) -> Bool {
+    public func isDateInToday(_ date: Date) -> Bool {
         #if !SKIP
         return rawValue.isDateInToday(date.rawValue)
         #else
-        return isDate(date, inSameDayAs: SkipDate())
+        return isDate(date, inSameDayAs: Date())
         #endif
     }
 
-    public func isDateInTomorrow(_ date: SkipDate) -> Bool {
+    public func isDateInTomorrow(_ date: Date) -> Bool {
         #if !SKIP
         return rawValue.isDateInTomorrow(date.rawValue)
         #else
-        if let tomorrow = date(byAdding: DateComponents(day: -1), to: SkipDate()) {
+        if let tomorrow = date(byAdding: DateComponents(day: -1), to: Date()) {
             return isDate(date, inSameDayAs: tomorrow)
         } else {
             return false
@@ -244,11 +236,11 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public func isDateInYesterday(_ date: SkipDate) -> Bool {
+    public func isDateInYesterday(_ date: Date) -> Bool {
         #if !SKIP
         return rawValue.isDateInYesterday(date.rawValue)
         #else
-        if let yesterday = date(byAdding: DateComponents(day: -1), to: SkipDate()) {
+        if let yesterday = date(byAdding: DateComponents(day: -1), to: Date()) {
             return isDate(date, inSameDayAs: yesterday)
         } else {
             return false
@@ -256,12 +248,12 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public var timeZone: SkipTimeZone {
+    public var timeZone: TimeZone {
         get {
             #if !SKIP
-            return SkipTimeZone(rawValue.timeZone)
+            return TimeZone(rawValue.timeZone)
             #else
-            return SkipTimeZone(rawValue.getTimeZone())
+            return TimeZone(rawValue.getTimeZone())
             #endif
         }
 
@@ -274,7 +266,7 @@ internal struct SkipCalendar : RawRepresentable, Hashable, CustomStringConvertib
         }
     }
 
-    var description: String {
+    public var description: String {
         return rawValue.description
     }
 

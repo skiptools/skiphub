@@ -4,7 +4,7 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.PropertyListSerialization
+/* @_implementationOnly */import class Foundation.PropertyListSerialization
 public typealias PropertyListSerialization = Foundation.PropertyListSerialization
 #else
 public typealias PropertyListSerialization = SkipPropertyListSerialization
@@ -27,7 +27,12 @@ public class SkipPropertyListSerialization {
         let re = "\"(.*)\"[ ]*=[ ]*\"(.*)\";"
         //let re = #"(?<!\\)"(.*?)(?<!\\)"\s*=\s*"(.*?)(?<!\\)";"# // Swift Regex error: "lookbehind is not currently supported"
 
-        let text = String(data: from, encoding: String.Encoding.utf8) ?? ""
+        let text = from.utf8String
+
+        guard let text = text else {
+            // TODO: should this throw an error?
+            return nil
+        }
 
         #if SKIP
         let exp: kotlin.text.Regex = re.toRegex()

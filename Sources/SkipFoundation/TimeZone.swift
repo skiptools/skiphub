@@ -4,36 +4,33 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import struct Foundation.TimeZone
-public typealias TimeZone = Foundation.TimeZone
-internal typealias PlatformTimeZone = Foundation.TimeZone
-public typealias SkipTimeZoneNameStyle = NSTimeZone.NameStyle
+/* @_implementationOnly */import struct Foundation.TimeZone
+/* @_implementationOnly */import class Foundation.NSTimeZone
+public typealias PlatformTimeZone = Foundation.TimeZone
+public typealias PlatformTimeZoneNameStyle = NSTimeZone.NameStyle
 #else
-public typealias TimeZone = SkipTimeZone
 public typealias NSTimeZone = TimeZone
 public typealias PlatformTimeZone = java.util.TimeZone
-public typealias SkipTimeZoneNameStyle = SkipTimeZone.NameStyle
+public typealias PlatformTimeZoneNameStyle = TimeZone.NameStyle
 #endif
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipTimeZone: RawRepresentable<PlatformTimeZone>, Hashable, MutableStruct
-internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertible {
+public struct TimeZone : RawRepresentable, Hashable, CustomStringConvertible {
     public var rawValue: PlatformTimeZone
 
-    public static var current: SkipTimeZone {
+    public static var current: TimeZone {
         #if !SKIP
-        return SkipTimeZone(rawValue: PlatformTimeZone.current)
+        return TimeZone(rawValue: PlatformTimeZone.current)
         #else
-        return SkipTimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(rawValue: PlatformTimeZone.getDefault())
         #endif
     }
 
-    public static var `default`: SkipTimeZone {
+    public static var `default`: TimeZone {
         get {
             #if !SKIP
-            return SkipTimeZone(rawValue: NSTimeZone.default)
+            return TimeZone(rawValue: NSTimeZone.default)
             #else
-            return SkipTimeZone(rawValue: PlatformTimeZone.getDefault())
+            return TimeZone(rawValue: PlatformTimeZone.getDefault())
             #endif
         }
 
@@ -46,36 +43,36 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         }
     }
 
-    public static var system: SkipTimeZone {
+    public static var system: TimeZone {
         #if !SKIP
-        return SkipTimeZone(rawValue: PlatformTimeZone.current)
+        return TimeZone(rawValue: PlatformTimeZone.current)
         #else
-        return SkipTimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(rawValue: PlatformTimeZone.getDefault())
         #endif
     }
     
-    public static var local: SkipTimeZone {
+    public static var local: TimeZone {
         #if !SKIP
-        return SkipTimeZone(rawValue: PlatformTimeZone.current)
+        return TimeZone(rawValue: PlatformTimeZone.current)
         #else
-        return SkipTimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(rawValue: PlatformTimeZone.getDefault())
         #endif
     }
 
-    public static var autoupdatingCurrent: SkipTimeZone {
+    public static var autoupdatingCurrent: TimeZone {
         #if !SKIP
-        return SkipTimeZone(.autoupdatingCurrent)
+        return TimeZone(.autoupdatingCurrent)
         #else
-        return SkipTimeZone(rawValue: PlatformTimeZone.getDefault())
+        return TimeZone(rawValue: PlatformTimeZone.getDefault())
         #endif
     }
 
     @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-    public static var gmt: SkipTimeZone {
+    public static var gmt: TimeZone {
         #if !SKIP
-        return SkipTimeZone(rawValue: PlatformTimeZone.gmt)
+        return TimeZone(rawValue: PlatformTimeZone.gmt)
         #else
-        return SkipTimeZone(rawValue: PlatformTimeZone.getTimeZone("GMT"))
+        return TimeZone(rawValue: PlatformTimeZone.getTimeZone("GMT"))
         #endif
     }
 
@@ -146,7 +143,7 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public func abbreviation(for date: SkipDate = SkipDate()) -> String? {
+    public func abbreviation(for date: Date = Date()) -> String? {
         #if !SKIP
         return rawValue.abbreviation(for: date.rawValue)
         #else
@@ -154,7 +151,7 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public func secondsFromGMT(for date: SkipDate = SkipDate()) -> Int {
+    public func secondsFromGMT(for date: Date = Date()) -> Int {
         #if !SKIP
         return rawValue.secondsFromGMT(for: date.rawValue)
         #else
@@ -162,11 +159,11 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    var description: String {
+    public var description: String {
         return rawValue.description
     }
 
-    public func isDaylightSavingTime(for date: SkipDate = SkipDate()) -> Bool {
+    public func isDaylightSavingTime(for date: Date = Date()) -> Bool {
         #if !SKIP
         return rawValue.isDaylightSavingTime(for: date.rawValue)
         #else
@@ -174,7 +171,7 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
         #endif
     }
 
-    public func daylightSavingTimeOffset(for date: SkipDate = SkipDate()) -> TimeInterval {
+    public func daylightSavingTimeOffset(for date: Date = Date()) -> TimeInterval {
         #if !SKIP
         return rawValue.daylightSavingTimeOffset(for: date.rawValue)
         #else
@@ -184,28 +181,28 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
 
     public var nextDaylightSavingTimeTransition: Date? {
         #if !SKIP
-        return rawValue.nextDaylightSavingTimeTransition
+        return rawValue.nextDaylightSavingTimeTransition.flatMap(Date.init(rawValue:))
         #else
-        return nextDaylightSavingTimeTransition(after: SkipDate())
+        return nextDaylightSavingTimeTransition(after: Date())
         #endif
     }
 
-    public func nextDaylightSavingTimeTransition(after date: SkipDate) -> Date? {
+    public func nextDaylightSavingTimeTransition(after date: Date) -> Date? {
         #if !SKIP
-        return rawValue.nextDaylightSavingTimeTransition(after: date.rawValue)
+        return rawValue.nextDaylightSavingTimeTransition(after: date.rawValue).flatMap(Date.init(rawValue:))
         #else
         // testSkipModule(): java.lang.NullPointerException: Cannot invoke "java.time.zone.ZoneOffsetTransition.getInstant()" because the return value of "java.time.zone.ZoneRules.nextTransition(java.time.Instant)" is null
         let zonedDateTime = java.time.ZonedDateTime.ofInstant(date.rawValue.toInstant(), rawValue.toZoneId())
         guard let transition = rawValue.toZoneId().rules.nextTransition(zonedDateTime.toInstant()) else {
             return nil
         }
-        return SkipDate(rawValue: java.util.Date.from(transition.getInstant()))
+        return Date(rawValue: java.util.Date.from(transition.getInstant()))
         #endif
     }
 
     public static var knownTimeZoneIdentifiers: [String] {
         #if !SKIP
-        return TimeZone.knownTimeZoneIdentifiers
+        return PlatformTimeZone.knownTimeZoneIdentifiers
         #else
         return Array(java.time.ZoneId.getAvailableZoneIds())
         #endif
@@ -222,11 +219,11 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
     #if !SKIP
     public static var abbreviationDictionary: [String : String] {
         get {
-            return TimeZone.abbreviationDictionary
+            return PlatformTimeZone.abbreviationDictionary
         }
 
         set {
-            return TimeZone.abbreviationDictionary = newValue
+            return PlatformTimeZone.abbreviationDictionary = newValue
         }
     }
     #else
@@ -235,13 +232,13 @@ internal struct SkipTimeZone : RawRepresentable, Hashable, CustomStringConvertib
 
     public static var timeZoneDataVersion: String {
         #if !SKIP
-        return TimeZone.timeZoneDataVersion
+        return PlatformTimeZone.timeZoneDataVersion
         #else
-        fatalError("TODO: SkipTimeZone")
+        fatalError("TODO: TimeZone")
         #endif
     }
 
-    public func localizedName(for style: SkipTimeZoneNameStyle, locale: SkipLocale?) -> String? {
+    public func localizedName(for style: PlatformTimeZoneNameStyle, locale: Locale?) -> String? {
         #if !SKIP
         return rawValue.localizedName(for: style, locale: locale?.rawValue)
         #else

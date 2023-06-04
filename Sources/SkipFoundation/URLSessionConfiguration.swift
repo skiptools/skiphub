@@ -4,24 +4,21 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.URLSessionConfiguration
-public typealias URLSessionConfiguration = Foundation.URLSessionConfiguration
-internal typealias PlatformURLSessionConfiguration = Foundation.URLSessionConfiguration
+/* @_implementationOnly */import class Foundation.URLSessionConfiguration
+public typealias PlatformURLSessionConfiguration = Foundation.URLSessionConfiguration
 #else
-public typealias URLSessionConfiguration = SkipURLSessionConfiguration
 #endif
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipURLSessionConfiguration
+/// A configuration object that defines behavior and policies for a URL session.
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
-internal class SkipURLSessionConfiguration {
+internal class URLSessionConfiguration {
     #if SKIP
-    private static let _default = SkipURLSessionConfiguration()
+    private static let _default = URLSessionConfiguration()
     #endif
 
-    static var `default`: SkipURLSessionConfiguration {
+    static var `default`: URLSessionConfiguration {
         #if !SKIP
-        return SkipURLSessionConfiguration(rawValue: PlatformURLSessionConfiguration.default)
+        return URLSessionConfiguration(rawValue: PlatformURLSessionConfiguration.default)
         #else
         return _default
         #endif
@@ -29,12 +26,12 @@ internal class SkipURLSessionConfiguration {
 
     #if SKIP
     // TODO: ephemeral config
-    private static let _ephemeral = SkipURLSessionConfiguration()
+    private static let _ephemeral = URLSessionConfiguration()
     #endif
 
-    open class var ephemeral: SkipURLSessionConfiguration {
+    open class var ephemeral: URLSessionConfiguration {
         #if !SKIP
-        return SkipURLSessionConfiguration(rawValue: PlatformURLSessionConfiguration.ephemeral)
+        return URLSessionConfiguration(rawValue: PlatformURLSessionConfiguration.ephemeral)
         #else
         return _ephemeral
         #endif

@@ -4,17 +4,14 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import class Foundation.DateFormatter
-public typealias DateFormatter = Foundation.DateFormatter
-internal typealias PlatformDateFormatter = Foundation.DateFormatter
+/* @_implementationOnly */import class Foundation.DateFormatter
+public typealias PlatformDateFormatter = Foundation.DateFormatter
 #else
-public typealias DateFormatter = SkipDateFormatter
 public typealias PlatformDateFormatter = java.text.SimpleDateFormat
 #endif
 
-
-// SKIP DECLARE: open class SkipDateFormatter: RawRepresentable<PlatformDateFormatter>
-internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConvertible {
+/// A formatter that converts between dates and their textual representations.
+public class DateFormatter : RawRepresentable, Hashable, CustomStringConvertible {
     public var rawValue: PlatformDateFormatter
 
     public required init(rawValue: PlatformDateFormatter) {
@@ -78,26 +75,26 @@ internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConve
         #endif
     }
 
-    public static func dateFormat(fromTemplate: String, options: Int, locale: SkipLocale?) -> String? {
+    public static func dateFormat(fromTemplate: String, options: Int, locale: Locale?) -> String? {
         #if !SKIP
         return PlatformDateFormatter.dateFormat(fromTemplate: fromTemplate, options: options, locale: locale?.rawValue)
         #else
-        let fmt = SkipDateFormatter()
+        let fmt = DateFormatter()
         fmt.locale = locale
         fmt.setLocalizedDateFormatFromTemplate(fromTemplate)
         return fmt.rawValue.toLocalizedPattern()
         #endif
     }
 
-    public var timeZone: SkipTimeZone? {
+    public var timeZone: TimeZone? {
         get {
             #if !SKIP
-            return rawValue.timeZone.flatMap(SkipTimeZone.init(rawValue:))
+            return rawValue.timeZone.flatMap(TimeZone.init(rawValue:))
             #else
             if let rawTimeZone = rawValue.timeZone {
-                return SkipTimeZone(rawValue: rawTimeZone)
+                return TimeZone(rawValue: rawTimeZone)
             } else {
-                return SkipTimeZone.current
+                return TimeZone.current
             }
 
             fatalError("unreachable") // “A 'return' expression required in a function with a block body ('{...}'). If you got this error after the compiler update, then it's most likely due to a fix of a bug introduced in 1.3.0 (see KT-28061 for details)”
@@ -106,7 +103,7 @@ internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConve
 
         set {
             #if !SKIP
-            rawValue.timeZone = newValue?.rawValue ?? TimeZone.current
+            rawValue.timeZone = newValue?.rawValue ?? TimeZone.system.rawValue
             #else
             rawValue.timeZone = newValue?.rawValue ?? TimeZone.current.rawValue
             #endif
@@ -115,15 +112,15 @@ internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConve
 
     #if SKIP
     /// SimpleDateFormat holds a locale, but it is not readable
-    private var _locale: SkipLocale? = nil
+    private var _locale: Locale? = nil
     #endif
 
-    public var locale: SkipLocale? {
+    public var locale: Locale? {
         get {
             #if !SKIP
-            return rawValue.locale.flatMap(SkipLocale.init(rawValue:))
+            return rawValue.locale.flatMap(Locale.init(rawValue:))
             #else
-            return self._locale ?? SkipLocale.current
+            return self._locale ?? Locale.current
             #endif
         }
 
@@ -142,12 +139,12 @@ internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConve
         }
     }
 
-    public var calendar: SkipCalendar? {
+    public var calendar: Calendar? {
         get {
             #if !SKIP
-            return rawValue.calendar.flatMap(SkipCalendar.init(rawValue:))
+            return rawValue.calendar.flatMap(Calendar.init(rawValue:))
             #else
-            return SkipCalendar(rawValue: rawValue.calendar)
+            return Calendar(rawValue: rawValue.calendar)
             #endif
         }
 
@@ -160,19 +157,19 @@ internal class SkipDateFormatter : RawRepresentable, Hashable, CustomStringConve
         }
     }
 
-    public func date(from string: String) -> SkipDate? {
+    public func date(from string: String) -> Date? {
         #if !SKIP
-        return rawValue.date(from: string).flatMap(SkipDate.init(rawValue:))
+        return rawValue.date(from: string).flatMap(Date.init(rawValue:))
         #else
         if let date = try? rawValue.parse(string) { // DateFormat throws java.text.ParseException: Unparseable date: "2018-03-09"
-            return SkipDate(rawValue: date)
+            return Date(rawValue: date)
         } else {
             return nil
         }
         #endif
     }
 
-    public func string(from date: SkipDate) -> String {
+    public func string(from date: Date) -> String {
         #if !SKIP
         return rawValue.string(from: date.rawValue)
         #else

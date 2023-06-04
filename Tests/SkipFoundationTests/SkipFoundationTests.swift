@@ -6,7 +6,9 @@
 import Foundation
 import XCTest
 #if !SKIP
-@testable import SkipFoundation
+@testable import func SkipFoundation.SkipFoundationInternalModuleName
+@testable import func SkipFoundation.SkipFoundationPublicModuleName
+@testable import func SkipFoundation.foundationHelperDemo
 #endif
 
 final class SkipFoundationTests: XCTestCase {

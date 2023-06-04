@@ -6,6 +6,7 @@
 
 #if !SKIP
 import CryptoKit
+/* @_implementationOnly */import struct Foundation.Data
 
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SymmetricKey = CryptoKit.SymmetricKey
@@ -42,11 +43,10 @@ public typealias SHA512Digest = CryptoKit.SHA512Digest
 
 
 /// A sequence that both `Data` and `String.UTF8View` conform to.
-@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 extension Sequence where Element == UInt8 {
     /// Returns this data as a base-64 encoded string
     public func base64() -> String {
-        Data(self).base64EncodedString()
+        Foundation.Data(self).base64EncodedString()
     }
 
     /// Returns the contents of the Data as a hex string
@@ -54,16 +54,19 @@ extension Sequence where Element == UInt8 {
         map { String(format: "%02x", $0) }.joined()
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha256() -> SHA256.Digest {
-        SHA256.hash(data: Data(self))
+        CryptoKit.SHA256.hash(data: Foundation.Data(self))
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha384() -> SHA384.Digest {
-        SHA384.hash(data: Data(self))
+        CryptoKit.SHA384.hash(data: Foundation.Data(self))
     }
 
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func sha512() -> SHA512.Digest {
-        SHA512.hash(data: Data(self))
+        CryptoKit.SHA512.hash(data: Foundation.Data(self))
     }
 }
 
@@ -84,10 +87,37 @@ public typealias HMACSHA384 = HMAC<SHA384>
 public typealias HMACSHA512 = HMAC<SHA512>
 
 #else
-
 public typealias MessageDigest = java.security.MessageDigest
+#endif
 
-extension SkipData {
+extension Data {
+    /// Convert the bytes into a base64 string
+    public func base64EncodedString() -> String {
+        #if !SKIP
+        return rawValue.base64EncodedString()
+        #else
+        return java.util.Base64.getEncoder().encodeToString(rawValue)
+        #endif
+    }
+
+    /// Convert the bytes into a hex string
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    public func sha256() -> Data {
+        #if !SKIP
+        return Data(rawValue: Foundation.Data(SHA256.hash(data: rawValue)))
+        #else
+        return Data(SHA256.hash(data: self).bytes)
+        #endif
+    }
+
+    /// Convert the bytes into a hex string
+    public func hex() -> String {
+        return rawValue.hex()
+    }
+}
+
+#if SKIP
+extension Data {
     public init(_ checksum: Digest) {
         self.init(checksum.bytes)
     }
@@ -278,23 +308,6 @@ open class HMACSHA512 : DigestFunction {
     }
 }
 
-
-public extension SkipData {
-    /// Convert the bytes into a base64 string
-    public func base64EncodedString() -> String {
-        return java.util.Base64.getEncoder().encodeToString(rawValue)
-    }
-
-    /// Convert the bytes into a hex string
-    public func sha256() -> Data {
-        Data(SHA256.hash(data: self).bytes)
-    }
-
-    /// Convert the bytes into a hex string
-    public func hex() -> String {
-        return rawValue.hex()
-    }
-}
 
 public extension kotlin.ByteArray {
     /// Convert the bytes of this data into a hex string

@@ -3,26 +3,17 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-
 #if !SKIP
-import class Foundation.Scanner
-public typealias Scanner = Foundation.Scanner
-internal typealias PlatformScanner = Foundation.Scanner
+/* @_implementationOnly */import class Foundation.Scanner
+typealias PlatformScanner = Foundation.Scanner
 #else
-public typealias Scanner = SkipScanner
-public typealias PlatformScanner = java.util.Scanner
+typealias PlatformScanner = java.util.Scanner
 #endif
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: open class SkipScanner: RawRepresentable<PlatformScanner>
-internal class SkipScanner : RawRepresentable, Hashable, CustomStringConvertible {
-    public let rawValue: PlatformScanner
+public class Scanner : CustomStringConvertible {
+    let rawValue: PlatformScanner
 
-    public required init(rawValue: PlatformScanner) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformScanner) {
+    init(rawValue: PlatformScanner) {
         self.rawValue = rawValue
     }
 
@@ -34,7 +25,7 @@ internal class SkipScanner : RawRepresentable, Hashable, CustomStringConvertible
         #endif
     }
 
-    var description: String {
+    public var description: String {
         return rawValue.description
     }
 
@@ -79,11 +70,3 @@ internal class SkipScanner : RawRepresentable, Hashable, CustomStringConvertible
 //    open var isAtEnd: Bool { get }
 //    open class func localizedScanner(with string: String) -> Any
 }
-
-#if !SKIP
-extension SkipScanner {
-}
-#else
-extension SkipScanner {
-}
-#endif

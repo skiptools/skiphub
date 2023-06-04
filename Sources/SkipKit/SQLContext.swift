@@ -3,7 +3,7 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-import SkipFoundation
+import Foundation
 
 #if SKIP
 #else
@@ -16,6 +16,8 @@ import SQLite3
 
 #if !SKIP
 import CryptoKit
+import struct Foundation.Data // explicit to not overlap with SQLite3
+import struct Foundation.URL
 #endif
 
 /// A context for evaluating SQL Statements against a SQLite database.

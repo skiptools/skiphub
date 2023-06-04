@@ -3,36 +3,38 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if SKIP
-/// `URL` aliases to `SkipURL` type and wraps `java.net.URL`
-public typealias URL = SkipURL
-/// The wrapped type for Kotlin's URL equivalent
-public typealias PlatformURL = java.net.URL
-#else
-/// `SkipFoundation.URL` is an alias to `Foundation.URL`
-public typealias URL = Foundation.URL
+#if !SKIP
+/* @_implementationOnly */import struct Foundation.URL
+/* @_implementationOnly */import struct Foundation.URLResourceKey
+/* @_implementationOnly */import struct Foundation.URLResourceValues
+/* @_implementationOnly */import class Foundation.NSURL
 /// The wrapped type for Swift URL is only included in Swift debug builds
 public typealias PlatformURL = Foundation.URL
+public typealias NSURL = Foundation.NSURL
+#else
+/// The wrapped type for Kotlin's URL equivalent
+public typealias PlatformURL = java.net.URL
+public typealias NSURL = URL
 #endif
 
-
-public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
-    /// `SkipURL` wraps either a `Foundation.URL` in Swift or `java.net.URL` in Kotlin.
+/// A value that identifies the location of a resource, such as an item on a remote server or the path to a local file.
+public struct URL : RawRepresentable, Hashable, CustomStringConvertible {
+    /// `URL` wraps either a `Foundation.URL` in Swift or `java.net.URL` in Kotlin.
     public var rawValue: PlatformURL
     #if SKIP
     private let isDirectoryFlag: Bool?
-    public let baseURL: SkipURL?
+    public let baseURL: URL?
 
-    public init(_ rawValue: PlatformURL, isDirectory: Bool? = nil, baseURL: SkipURL? = nil) {
+    public init(_ rawValue: PlatformURL, isDirectory: Bool? = nil, baseURL: URL? = nil) {
         self.rawValue = rawValue
         self.isDirectoryFlag = isDirectory
         self.baseURL = baseURL
     }
 
-    public init(_ skipURL: SkipURL) {
-        self.rawValue = skipURL.rawValue
-        self.isDirectoryFlag = skipURL.isDirectoryFlag
-        self.baseURL = skipURL.baseURL
+    public init(_ url: URL) {
+        self.rawValue = url.rawValue
+        self.isDirectoryFlag = url.isDirectoryFlag
+        self.baseURL = url.baseURL
     }
     #else
     public init(_ rawValue: PlatformURL) {
@@ -45,7 +47,7 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     #endif
 
     /// This is an overloaded form of three separate `URL.fileURLWithPath` constructors. We defer to those on nil, because they have subtle behavior differences.
-    public init(fileURLWithPath path: String, isDirectory: Bool? = nil, relativeTo base: SkipURL? = nil) {
+    public init(fileURLWithPath path: String, isDirectory: Bool? = nil, relativeTo base: URL? = nil) {
         #if SKIP
         self.rawValue = PlatformURL("file://" + path) // TODO: escaping
         self.baseURL = base // TODO: base resolution
@@ -80,7 +82,7 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
 
     #if !SKIP
     /// The base URL. It is provided as a member in SKIP but a calculated property in Swift
-    public var baseURL: SkipURL? {
+    public var baseURL: URL? {
         return foundationURL.baseURL.flatMap({ .init(rawValue: $0 as PlatformURL) })
     }
     #endif
@@ -167,9 +169,9 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
     /// A version of the URL with any instances of “..” or “.” removed from its path.
-    public var standardized: SkipURL {
+    public var standardized: URL {
         #if SKIP
-        return SkipURL(toPath().normalize().toUri().toURL())
+        return URL(toPath().normalize().toUri().toURL())
         #else
         return Self(foundationURL.standardized as PlatformURL)
         #endif
@@ -244,7 +246,7 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
     /// A standardized version of the path of a file URL.
-    public var standardizedFileURL: SkipURL {
+    public var standardizedFileURL: URL {
         #if SKIP
         fatalError("TODO: implement standardizedFileURL")
         #else
@@ -261,7 +263,7 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
     /// The absolute URL.
-    public var absoluteURL: SkipURL {
+    public var absoluteURL: URL {
         #if SKIP
         return self
         #else
@@ -270,31 +272,31 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
     /// Returns a URL by appending the specified path component to self.
-    public func appendingPathComponent(_ pathComponent: String) -> SkipURL {
+    public func appendingPathComponent(_ pathComponent: String) -> URL {
         #if SKIP
         var url = self.rawValue.toExternalForm()
         if !url.hasSuffix("/") { url = url + "/" }
         url = url + pathComponent
-        return SkipURL(rawValue: PlatformURL(url))
+        return URL(rawValue: PlatformURL(url))
         #else
         return Self(foundationURL.appendingPathComponent(pathComponent) as PlatformURL)
         #endif
     }
 
     /// Returns a URL by appending the specified path component to self.
-    public func appendingPathComponent(_ pathComponent: String, isDirectory: Bool) -> SkipURL {
+    public func appendingPathComponent(_ pathComponent: String, isDirectory: Bool) -> URL {
         #if SKIP
         var url = self.rawValue.toExternalForm()
         if !url.hasSuffix("/") { url = url + "/" }
         url = url + pathComponent
-        return SkipURL(rawValue: PlatformURL(url), isDirectory: isDirectory)
+        return URL(rawValue: PlatformURL(url), isDirectory: isDirectory)
         #else
         return Self(foundationURL.appendingPathComponent(pathComponent, isDirectory: isDirectory) as PlatformURL)
         #endif
     }
 
     /// Returns a URL constructed by removing the last path component of self.
-    public func deletingLastPathComponent() -> SkipURL {
+    public func deletingLastPathComponent() -> URL {
         #if SKIP
         var url = self.rawValue.toExternalForm()
         while url.hasSuffix("/") && !url.isEmpty {
@@ -303,14 +305,14 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
         while !url.hasSuffix("/") && !url.isEmpty {
             url = url.dropLast(1)
         }
-        return SkipURL(rawValue: PlatformURL(url))
+        return URL(rawValue: PlatformURL(url))
         #else
         return Self(foundationURL.deletingLastPathComponent() as PlatformURL)
         #endif
     }
 
     /// Returns a URL by appending the specified path extension to self.
-    public func appendingPathExtension(_ pathExtension: String) -> SkipURL {
+    public func appendingPathExtension(_ pathExtension: String) -> URL {
         #if SKIP
         fatalError("TODO: implement appendingPathExtension")
         #else
@@ -319,7 +321,7 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
     /// Returns a URL constructed by removing any path extension.
-    public func deletingPathExtension() -> SkipURL {
+    public func deletingPathExtension() -> URL {
         #if SKIP
         let ext = pathExtension
         var url = self.rawValue.toExternalForm()
@@ -329,14 +331,14 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
         if url.hasSuffix("." + ext) {
             url = url.dropLast(ext.count + 1)
         }
-        return SkipURL(rawValue: PlatformURL(url))
+        return URL(rawValue: PlatformURL(url))
         #else
         return Self(foundationURL.deletingPathExtension() as PlatformURL)
         #endif
     }
 
     /// Resolves any symlinks in the path of a file URL.
-    public func resolvingSymlinksInPath() -> SkipURL {
+    public func resolvingSymlinksInPath() -> URL {
         #if SKIP
         if isFileURL == false {
             return self
@@ -346,10 +348,10 @@ public struct SkipURL : RawRepresentable, Hashable, CustomStringConvertible {
         //    return self // not a link
         //} else {
         //    let normalized = java.nio.file.Files.readSymbolicLink(originalPath).normalize()
-        //    return SkipURL(rawValue: normalized.toUri().toURL())
+        //    return URL(rawValue: normalized.toUri().toURL())
         //}
         do {
-            return SkipURL(rawValue: originalPath.toRealPath().toUri().toURL())
+            return URL(rawValue: originalPath.toRealPath().toUri().toURL())
         } catch {
             // this will fail if the file does not exist, but Foundation expects it to return the path itself
             return self
@@ -443,26 +445,26 @@ public struct URLResourceKey : Hashable, Equatable, RawRepresentable {
 
 // The optional constructors must be implemented as global functions as Kotlin has no support for failable initializers
 
-public func URL(string: String, relativeTo baseURL: SkipURL? = nil) -> SkipURL? {
+public func URL(string: String, relativeTo baseURL: URL? = nil) -> URL? {
     do {
         let url = PlatformURL(relativeTo?.rawValue, string) // throws on malformed
-        return SkipURL(url, isDirectory: nil, baseURL: baseURL)
+        return URL(url, isDirectory: nil, baseURL: baseURL)
     } catch {
         // e.g., malformed URL
         return nil
     }
 }
 
-//public func URL(fileURLWithPath path: String, relativeTo: SkipURL? = nil, isDirectory: Bool? = nil) -> SkipURL {
-//    SkipURL(fileURLWithPath: path, relativeTo: relativeTo, isDirectory: isDirectory)
+//public func URL(fileURLWithPath path: String, relativeTo: URL? = nil, isDirectory: Bool? = nil) -> URL {
+//    URL(fileURLWithPath: path, relativeTo: relativeTo, isDirectory: isDirectory)
 //}
 
-//public func URL(fileURLWithFileSystemRepresentation path: String, relativeTo: SkipURL?, isDirectory: Bool) -> SkipURL {
+//public func URL(fileURLWithFileSystemRepresentation path: String, relativeTo: URL?, isDirectory: Bool) -> URL {
 //    // SKIP INSERT: val nil = null
 //    if (relativeTo != nil) {
-//        return SkipURL(rawValue: PlatformURL(relativeTo?.rawValue, path))
+//        return URL(rawValue: PlatformURL(relativeTo?.rawValue, path))
 //    } else {
-//        return SkipURL(rawValue: PlatformURL("file://" + path)) // TODO: isDirectory handling?
+//        return URL(rawValue: PlatformURL("file://" + path)) // TODO: isDirectory handling?
 //    }
 //}
 
@@ -470,7 +472,7 @@ public func URL(string: String, relativeTo baseURL: SkipURL? = nil) -> SkipURL? 
 
 // MARK: Foundation.URL compatibility
 
-extension SkipURL {
+extension URL {
 
     /// The underlying Foundation.URL for the Swift target
     internal var foundationURL: Foundation.URL {
@@ -485,7 +487,7 @@ extension SkipURL {
         self.rawValue = url as PlatformURL
     }
 
-    public init?(string: String, relativeTo: SkipURL?) {
+    public init?(string: String, relativeTo: URL?) {
         guard let url = Foundation.URL(string: string, relativeTo: relativeTo?.rawValue as Foundation.URL?) else {
             return nil
         }
@@ -496,15 +498,15 @@ extension SkipURL {
         self.rawValue = PlatformURL(fileURLWithPath: path)
     }
 
-    public init(fileURLWithPath path: String, relativeTo: SkipURL? = nil) {
+    public init(fileURLWithPath path: String, relativeTo: URL? = nil) {
         self.rawValue = PlatformURL(fileURLWithPath: path, relativeTo: relativeTo?.rawValue as Foundation.URL?)
     }
 
-    public init(fileURLWithPath path: String, isDirectory: Bool, relativeTo: SkipURL? = nil) {
+    public init(fileURLWithPath path: String, isDirectory: Bool, relativeTo: URL? = nil) {
         self.rawValue = PlatformURL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: relativeTo?.rawValue as Foundation.URL?)
     }
 
-    public init(fileURLWithFileSystemRepresentation path: String, isDirectory: Bool, relativeTo: SkipURL? = nil) {
+    public init(fileURLWithFileSystemRepresentation path: String, isDirectory: Bool, relativeTo: URL? = nil) {
         self.rawValue = PlatformURL(fileURLWithPath: path, isDirectory: isDirectory, relativeTo: relativeTo?.rawValue as Foundation.URL?)
     }
 }

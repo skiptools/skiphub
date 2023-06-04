@@ -4,25 +4,33 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import struct Foundation.UUID
-public typealias UUID = Foundation.UUID
-internal typealias PlatformUUID = Foundation.UUID
+/* @_implementationOnly */import struct Foundation.UUID
+public typealias PlatformUUID = Foundation.UUID
+public typealias NSUUID = Foundation.UUID
 #else
-public typealias UUID = SkipUUID
 public typealias PlatformUUID = java.util.UUID
+public typealias NSUUID = UUID
 #endif
 
-#if SKIP
-public func UUID(uuidString: String) -> SkipUUID? {
-    // Java throws an exception for bad UUID, but Foundation expects it to return nil
-    guard let uuid = try? java.util.UUID.fromString(uuidString) else { return nil }
-    return SkipUUID(rawValue: uuid)
-}
-#endif
-
-// SKIP DECLARE: class SkipUUID: RawRepresentable<PlatformUUID>, MutableStruct
-internal struct SkipUUID : RawRepresentable, Hashable, CustomStringConvertible {
+/// Represents UUID strings, which can be used to uniquely identify types, interfaces, and other items.
+public struct UUID : RawRepresentable, Hashable, CustomStringConvertible {
     public var rawValue: PlatformUUID
+
+    public init?(uuidString: String) {
+        #if !SKIP
+        guard let rawValue = PlatformUUID(uuidString: uuidString) else {
+            return nil
+        }
+        self.rawValue = rawValue
+        #else
+        // Java throws an exception for bad UUID, but Foundation expects it to return nil
+        guard let uuid = try? java.util.UUID.fromString(uuidString) else {
+            return nil
+        }
+        self.rawValue = uuid
+        #endif
+    }
+
 
     public init(_ rawValue: PlatformUUID) {
         self.rawValue = rawValue
@@ -41,10 +49,10 @@ internal struct SkipUUID : RawRepresentable, Hashable, CustomStringConvertible {
     #endif
 
     #if SKIP
-    public static func fromString(uuidString: String) -> SkipUUID? {
+    public static func fromString(uuidString: String) -> UUID? {
         // Java throws an exception for bad UUID, but Foundation expects it to return nil
-        // return try? SkipUUID(rawValue: PlatformUUID.fromString(uuidString)) // mistranspiles to: (PlatformUUID.companionObjectInstance as java.util.UUID.Companion).fromString(uuidString))
-        return try? SkipUUID(rawValue: java.util.UUID.fromString(uuidString))
+        // return try? UUID(rawValue: PlatformUUID.fromString(uuidString)) // mistranspiles to: (PlatformUUID.companionObjectInstance as java.util.UUID.Companion).fromString(uuidString))
+        return try? UUID(rawValue: java.util.UUID.fromString(uuidString))
     }
     #endif
 
@@ -76,9 +84,9 @@ extension UUID {
     @inlinable public init(mostSigBits: Int64, leastSigBits: Int64) {
         var mostSigBits = mostSigBits
         var leastSigBits = leastSigBits
-        self = withUnsafeBytes(of: &mostSigBits) { a in
+        self.rawValue = withUnsafeBytes(of: &mostSigBits) { a in
             withUnsafeBytes(of: &leastSigBits) { b in
-                UUID(uuid: (a[7], a[6], a[5], a[4], a[3], a[2], a[1], a[0], b[7], b[6], b[5], b[4], b[3], b[2], b[1], b[0]))
+                PlatformUUID(uuid: (a[7], a[6], a[5], a[4], a[3], a[2], a[1], a[0], b[7], b[6], b[5], b[4], b[3], b[2], b[1], b[0]))
             }
         }
     }
@@ -86,13 +94,13 @@ extension UUID {
 
 #else
 
-// SKIP INSERT: public fun UUID(mostSigBits: Long, leastSigBits: Long): SkipUUID { return SkipUUID(PlatformUUID(mostSigBits, leastSigBits)) }
+// SKIP INSERT: public fun UUID(mostSigBits: Long, leastSigBits: Long): UUID { return UUID(PlatformUUID(mostSigBits, leastSigBits)) }
 
-extension SkipUUID {
+extension UUID {
 
     // TODO: constructor support (remove SKIP INSERT above)
 //    public init(mostSigBits: Int64, leastSigBits: Int64) {
-//        SkipUUID(mostSigBits, leastSigBits)
+//        UUID(mostSigBits, leastSigBits)
 //    }
 
 //    public var uuidString: String {

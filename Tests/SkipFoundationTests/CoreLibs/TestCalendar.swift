@@ -6,8 +6,6 @@
 import Foundation
 import XCTest
 
-@testable import SkipFoundation // for SkipCalendarIdentifier.gregorian
-
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -46,16 +44,16 @@ class TestCalendar: XCTestCase {
                 XCTAssertEqual(identifier,calendar.identifier)
         }
         #else
-        XCTAssertEqual(SkipCalendarIdentifier.gregorian, Calendar(identifier: SkipCalendarIdentifier.gregorian).identifier)
+        XCTAssertEqual(Calendar.Identifier.gregorian, Calendar(identifier: Calendar.Identifier.gregorian).identifier)
         #endif
     }
 
     func test_gettingDatesOnGregorianCalendar() {
         let date = Date(timeIntervalSince1970: 1449332351)
 
-        var calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        var calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         calendar.timeZone = TimeZone(identifier: "UTC")!
-        let components = calendar.dateComponents(Set([SkipCalendarComponent.year, SkipCalendarComponent.month, SkipCalendarComponent.day]), from: date)
+        let components = calendar.dateComponents(Set([Calendar.Component.year, Calendar.Component.month, Calendar.Component.day]), from: date)
 
         XCTAssertEqual(components.year, 2015)
         XCTAssertEqual(components.month, 12)
@@ -69,7 +67,7 @@ class TestCalendar: XCTestCase {
         #if SKIP
         throw XCTSkip("TODO: dateComponents interval calculations")
         #endif
-        let fromToComponents = calendar.dateComponents(Set([SkipCalendarComponent.second]), from: fromDate, to: toDate)
+        let fromToComponents = calendar.dateComponents(Set([Calendar.Component.second]), from: fromDate, to: toDate)
         XCTAssertEqual(fromToComponents.second, interval);
 
         // Issue with 32-bit CF calendar vector on Linux
@@ -178,13 +176,13 @@ class TestCalendar: XCTestCase {
     }
 
     func test_ampmSymbols() {
-        let calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         XCTAssertEqual(calendar.amSymbol, "AM")
         XCTAssertEqual(calendar.pmSymbol, "PM")
     }
 
     func test_currentCalendarRRstability() {
-        var AMSymbols = [String]()
+        var AMSymbols = Array<String>()
         for _ in 1...10 {
             let cal = Calendar.current
             AMSymbols.append(cal.amSymbol)
@@ -215,10 +213,10 @@ class TestCalendar: XCTestCase {
     }
 
     func test_addingDates() {
-        let calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let thisDay = calendar.date(from: DateComponents(year: 2016, month: 10, day: 4))!
 
-        let thisDayComponents = calendar.dateComponents(Set([SkipCalendarComponent.year, SkipCalendarComponent.month, SkipCalendarComponent.day]), from: thisDay)
+        let thisDayComponents = calendar.dateComponents(Set([Calendar.Component.year, Calendar.Component.month, Calendar.Component.day]), from: thisDay)
         XCTAssertEqual(thisDayComponents.year, 2016)
         XCTAssertEqual(thisDayComponents.month, 10)
         XCTAssertEqual(thisDayComponents.day, 4)
@@ -226,14 +224,14 @@ class TestCalendar: XCTestCase {
         let diffComponents = DateComponents(day: 1)
         let dayAfter = calendar.date(byAdding: diffComponents, to: thisDay)
 
-        let dayAfterComponents = calendar.dateComponents(Set([SkipCalendarComponent.year, SkipCalendarComponent.month, SkipCalendarComponent.day]), from: dayAfter!)
+        let dayAfterComponents = calendar.dateComponents(Set([Calendar.Component.year, Calendar.Component.month, Calendar.Component.day]), from: dayAfter!)
         XCTAssertEqual(dayAfterComponents.year, 2016)
         XCTAssertEqual(dayAfterComponents.month, 10)
         XCTAssertEqual(dayAfterComponents.day, 5)
     }
 
     func test_datesNotOnWeekend() {
-        let calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let mondayInDecember = calendar.date(from: DateComponents(year: 2018, month: 12, day: 10))!
         XCTAssertFalse(calendar.isDateInWeekend(mondayInDecember))
         let tuesdayInNovember = calendar.date(from: DateComponents(year: 2017, month: 11, day: 14))!
@@ -247,7 +245,7 @@ class TestCalendar: XCTestCase {
     }
 
     func test_datesOnWeekend() {
-        let calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let saturdayInJanuary = calendar.date(from: DateComponents(year:2017, month: 1, day: 7))!
         XCTAssertTrue(calendar.isDateInWeekend(saturdayInJanuary))
         let sundayInFebruary = calendar.date(from: DateComponents(year: 2016, month: 2, day: 14))!
@@ -258,7 +256,7 @@ class TestCalendar: XCTestCase {
         #if SKIP
         throw XCTSkip("TODO")
         #else
-        let calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let calendarMirror = calendar.customMirror
 
         XCTAssertEqual(calendar.identifier, calendarMirror.descendant("identifier") as? Calendar.Identifier)
@@ -298,7 +296,7 @@ class TestCalendar: XCTestCase {
         df.dateFormat = "yyyy-MM-dd"
         df.timeZone = try XCTUnwrap(TimeZone(identifier: "UTC"))
 
-        var calendar = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        var calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         calendar.locale = Locale(identifier: "en_US_POSIX")
         calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
 
@@ -325,7 +323,7 @@ class TestCalendar: XCTestCase {
 
     func test_sr10638() {
         // https://bugs.swift.org/browse/SR-10638
-        let cal = Calendar(identifier: SkipCalendarIdentifier.gregorian)
+        let cal = Calendar(identifier: Calendar.Identifier.gregorian)
         XCTAssertGreaterThan(cal.eraSymbols.count, 0)
     }
 

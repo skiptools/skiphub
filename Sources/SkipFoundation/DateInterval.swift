@@ -5,9 +5,9 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-import struct Foundation.DateInterval
+/* @_implementationOnly */import struct Foundation.DateInterval
 public typealias DateInterval = Foundation.DateInterval
-internal typealias PlatformDateInterval = Foundation.DateInterval
+public typealias PlatformDateInterval = Foundation.DateInterval
 #else
 public typealias DateInterval = SkipDateInterval
 public typealias PlatformDateInterval = java.time.Duration

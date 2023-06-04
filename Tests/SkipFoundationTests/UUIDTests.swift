@@ -20,6 +20,7 @@ final class UUIDTests: XCTestCase {
     }
 
     func testUUIDFromBits() throws {
+        #if SKIP // works, but would require import SkipFoundation.UUID
         XCTAssertEqual("00000000-0000-0000-0000-000000000000", UUID(mostSigBits: 0, leastSigBits: 0).uuidString)
         XCTAssertEqual("00000000-0000-0001-0000-000000000000", UUID(mostSigBits: 1, leastSigBits: 0).uuidString)
         XCTAssertEqual("00000000-0000-0000-0000-000000000001", UUID(mostSigBits: 0, leastSigBits: 1).uuidString)
@@ -36,6 +37,7 @@ final class UUIDTests: XCTestCase {
         XCTAssertEqual("7FFFFFFF-FFFF-FFFF-8000-000000000000", UUID(mostSigBits: mx, leastSigBits: mn).uuidString)
         XCTAssertEqual("80000000-0000-0000-8000-000000000000", UUID(mostSigBits: mn, leastSigBits: mn).uuidString)
         XCTAssertEqual("7FFFFFFF-FFFF-FFFF-8000-000000000000", UUID(mostSigBits: mx, leastSigBits: mn).uuidString)
+        #endif
     }
 
     func test_UUIDEquality() {

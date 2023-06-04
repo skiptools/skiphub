@@ -4,27 +4,20 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import struct Foundation.Data
-public typealias Data = Foundation.Data
+/* @_implementationOnly */import struct Foundation.Data
 public typealias PlatformData = Foundation.Data
-public typealias DataProtocol = Foundation.DataProtocol
 public typealias StringProtocol = Swift.StringProtocol
-public typealias DataWritingOptions = Data.WritingOptions
 #else
-public typealias Data = SkipData
 public typealias PlatformData = kotlin.ByteArray
-public typealias DataProtocol = SkipDataProtocol
 public typealias StringProtocol = kotlin.CharSequence
-public typealias DataWritingOptions = SkipData.WritingOptions
 #endif
 
-public protocol SkipDataProtocol {
+public protocol DataProtocol {
     var rawValue: PlatformData { get }
 }
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipData: RawRepresentable<PlatformData>, MutableStruct, SkipDataProtocol
-internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomStringConvertible {
+/// A byte buffer in memory.
+public struct Data : RawRepresentable, Hashable, DataProtocol, CustomStringConvertible {
     public var rawValue: PlatformData
 
     public init(rawValue: PlatformData) {
@@ -35,17 +28,17 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
         self.rawValue = rawValue
     }
 
-    public init(_ skipData: SkipData) {
-        self.rawValue = skipData.rawValue
+    public init(_ data: Data) {
+        self.rawValue = data.rawValue
     }
 
     public init(_ bytes: [UInt8]) {
-        #if SKIP
+        #if !SKIP
+        self.rawValue = PlatformData(bytes)
+        #else
         self.rawValue = PlatformData(size: bytes.count, init: {
             bytes[$0].toByte()
         })
-        #else
-        self.rawValue = PlatformData(bytes)
         #endif
     }
 
@@ -56,51 +49,63 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
     //    })
     //}
 
-    var description: String {
+    public var description: String {
         return rawValue.description
     }
 
-    public init() {
-        #if SKIP
-        self.rawValue = PlatformData(size: 0)
+    /// A UTF8-encoded `String` created from this `Data`
+    public var utf8String: String? {
+        #if !SKIP
+        String(data: rawValue, encoding: String.Encoding.utf8)
         #else
+        String(data: self, encoding: String.Encoding.utf8)
+        #endif
+    }
+
+    public init() {
+        #if !SKIP
         self.rawValue = PlatformData(count: 0)
+        #else
+        self.rawValue = PlatformData(size: 0)
         #endif
     }
 
     public init(count: Int) {
-        #if SKIP
-        self.rawValue = PlatformData(size: count)
-        #else
+        #if !SKIP
         self.rawValue = PlatformData(count: count)
+        #else
+        self.rawValue = PlatformData(size: count)
         #endif
     }
 
     public init(capacity: Int) {
-        #if SKIP
+        #if !SKIP
+        self.rawValue = PlatformData(capacity: capacity)
+        #else
         // No equivalent kotlin.ByteArray(capacity:), so allocate with zero
         self.rawValue = PlatformData(size: 0)
-        #else
-        self.rawValue = PlatformData(capacity: capacity)
         #endif
     }
 
     public mutating func append(contentsOf bytes: [UInt8]) {
-        #if SKIP
-        self.rawValue += Data(bytes).rawValue
-        #else
+        #if !SKIP
         self.rawValue.append(contentsOf: bytes)
-        #endif
-    }
-
-    static func ==(lhs: SkipData, rhs: SkipData) -> Bool {
-        #if SKIP
-        return lhs.rawValue.contentEquals(rhs.rawValue)
         #else
-        return lhs.rawValue == rhs.rawValue
+        self.rawValue += Data(bytes).rawValue
         #endif
     }
 
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+        #if !SKIP
+        return lhs.rawValue == rhs.rawValue
+        #else
+        return lhs.rawValue.contentEquals(rhs.rawValue)
+        #endif
+    }
+
+    #if !SKIP
+    public typealias WritingOptions = Foundation.Data.WritingOptions
+    #else
     public struct WritingOptions : OptionSet, Sendable {
         public let rawValue: UInt
         public init(rawValue: UInt) {
@@ -109,39 +114,43 @@ internal struct SkipData : RawRepresentable, Hashable, SkipDataProtocol, CustomS
 
         public static let atomic = WritingOptions(rawValue: UInt(1 << 0))
     }
-
+    #endif
 }
 
-public extension Data {
-    /// The UTF8-encoded String for this data
-    var utf8String: String? {
-        String(data: self, encoding: .utf8)
+// SKIP TODO: fake constructor until Kotlin can add constructor extensions to external types
+public func String(data: Data, encoding: String.Encoding) -> String? {
+    #if !SKIP
+    return String.init(data: data.rawValue, encoding: encoding)
+    #else
+    return java.lang.String(data.rawValue, encoding.rawValue) as kotlin.String?
+    #endif
+}
+
+extension String {
+    /// The UTF8-encoded data for this string
+    @inlinable public var utf8Data: Data {
+        #if !SKIP
+        Data(rawValue: data(using: String.Encoding.utf8) ?? PlatformData())
+        #else
+        data(using: String.Encoding.utf8) ?? Data()
+        #endif
     }
 }
 
-
 #if SKIP
 
-// SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: SkipURL): String { return contentsOf.rawValue.readText() }
+// SKIP INSERT: public operator fun String.Companion.invoke(contentsOf: URL): String { return contentsOf.rawValue.readText() }
 
-// SKIP INSERT: public operator fun SkipData.Companion.invoke(contentsOf: SkipURL): SkipData { return SkipData.contentsOfURL(url = contentsOf) }
+// SKIP INSERT: public operator fun Data.Companion.invoke(contentsOf: URL): Data { return Data.contentsOfURL(url = contentsOf) }
 
-
-/// A byte buffer in memory.
-///
-/// This is a `Foundation.Data` wrapper around `kotlin.ByteArray`.
-extension SkipData {
-//    public init(rawValue: PlatformData) {
-//        self.rawValue = rawValue
-//    }
-
+extension Data {
     /// static init until constructor overload works
     public static func contentsOfFile(filePath: String) throws -> Data {
         return Data(java.io.File(filePath).readBytes())
     }
 
     /// static init until constructor overload works
-    public static func contentsOfURL(url: SkipURL) throws -> Data {
+    public static func contentsOfURL(url: URL) throws -> Data {
         //if url.isFileURL {
         //    return Data(java.io.File(url.path).readBytes())
         //} else {
@@ -162,10 +171,6 @@ public extension StringProtocol {
 
     public func hasPrefix(_ string: String) -> Bool { description.hasPrefix(string) }
     public func hasSuffix(_ string: String) -> Bool { description.hasSuffix(string) }
-}
-
-public func String(data: SkipData, encoding: String.Encoding) -> String? {
-    String(data.rawValue, encoding.rawValue)
 }
 
 #endif

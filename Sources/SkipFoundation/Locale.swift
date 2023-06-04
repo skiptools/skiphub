@@ -4,19 +4,16 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-import struct Foundation.Locale
-public typealias Locale = Foundation.Locale
-internal typealias PlatformLocale = Foundation.Locale
+/* @_implementationOnly */import struct Foundation.Locale
+public typealias PlatformLocale = Foundation.Locale
 public typealias NSLocale = Foundation.Locale.ReferenceType
 #else
-public typealias Locale = SkipLocale
 public typealias PlatformLocale = java.util.Locale
 public typealias NSLocale = Locale
 #endif
 
-// override the Kotlin type to be public while keeping the Swift version internal:
-// SKIP DECLARE: class SkipLocale: RawRepresentable<PlatformLocale>
-internal struct SkipLocale : RawRepresentable, Hashable {
+/// Information about linguistic, cultural, and technological conventions for use in formatting data for presentation.
+public struct Locale : RawRepresentable, Hashable {
     public let rawValue: PlatformLocale
 
     public init(rawValue: PlatformLocale) {
@@ -44,19 +41,19 @@ internal struct SkipLocale : RawRepresentable, Hashable {
         #endif
     }
 
-    public static var current: SkipLocale {
+    public static var current: Locale {
         #if !SKIP
-        return SkipLocale(PlatformLocale.current)
+        return Locale(PlatformLocale.current)
         #else
-        return SkipLocale(PlatformLocale.getDefault())
+        return Locale(PlatformLocale.getDefault())
         #endif
     }
 
-    public static var system: SkipLocale {
+    public static var system: Locale {
         #if !SKIP
-        return SkipLocale(NSLocale.system)
+        return Locale(NSLocale.system)
         #else
-        return SkipLocale(PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
+        return Locale(PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
         #endif
     }
 
