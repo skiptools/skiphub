@@ -195,7 +195,7 @@ public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
         #if !SKIP
         return rawValue.date(byAdding: component, value: value, to: date.rawValue, wrappingComponents: wrappingComponents).flatMap(Date.init(rawValue:))
         #else
-        fatalError("TODO: SkipCalendar.date(byAdding:Calendar.Component)")
+        fatalError("TODO: Skip Calendar.date(byAdding:Calendar.Component)")
         #endif
     }
 
@@ -212,7 +212,7 @@ public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
         #if !SKIP
         return rawValue.isDate(date1.rawValue, inSameDayAs: date2.rawValue)
         #else
-        fatalError("TODO: SkipCalendar.isDate(:inSameDayAs:)")
+        fatalError("TODO: Skip Calendar.isDate(:inSameDayAs:)")
         #endif
     }
 

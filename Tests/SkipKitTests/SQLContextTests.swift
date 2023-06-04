@@ -8,6 +8,8 @@ import XCTest
 import Foundation
 #if !SKIP
 import struct Foundation.Data // for disambiguation
+import struct Foundation.Date // for disambiguation
+import struct Foundation.URL // for disambiguation
 #endif
 
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)

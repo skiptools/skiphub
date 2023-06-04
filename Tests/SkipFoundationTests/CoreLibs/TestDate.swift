@@ -100,7 +100,7 @@ class TestDate : XCTestCase {
     
     func test_DateByAddingTimeInterval() {
         #if SKIP
-        throw XCTSkip("TODO: SkipDate operator overloads")
+        throw XCTSkip("TODO: Skip Date operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -111,7 +111,7 @@ class TestDate : XCTestCase {
     
     func test_EarlierDate() {
         #if SKIP
-        throw XCTSkip("TODO: SkipDate operator overloads")
+        throw XCTSkip("TODO: Skip Date operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -122,7 +122,7 @@ class TestDate : XCTestCase {
     
     func test_LaterDate() {
         #if SKIP
-        throw XCTSkip("TODO: SkipDate operator overloads")
+        throw XCTSkip("TODO: Skip Date operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -133,7 +133,7 @@ class TestDate : XCTestCase {
     
     func test_Compare() {
         #if SKIP
-        throw XCTSkip("TODO: SkipDate operator overloads")
+        throw XCTSkip("TODO: Skip Date operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -144,7 +144,7 @@ class TestDate : XCTestCase {
     
     func test_IsEqualToDate() {
         #if SKIP
-        throw XCTSkip("TODO: SkipDate operator overloads")
+        throw XCTSkip("TODO: Skip Date operator overloads")
         #else
         let ti: TimeInterval = 1
         let d1 = Date()
@@ -174,7 +174,7 @@ class TestDate : XCTestCase {
                                         second: 11,
                                         nanosecond: 40)
         #if SKIP
-        throw XCTSkip("TODO: Calendar.date(from: components)")
+        throw XCTSkip("TODO: Skip Calendar.date(from: components)")
         #endif
         guard let date = Calendar(identifier: Calendar.Identifier.gregorian).date(from: components) else {
             XCTFail()

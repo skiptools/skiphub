@@ -148,7 +148,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         if components?.contains(.era) != false {
             if let endDate = endDate {
                 // TODO: if components.contains(.year) { dc.year = Int(ucal_getFieldDifference(ucalendar, goal, UCAL_YEAR, &status)) }
-                fatalError("TODO: SkipDateComponents field differences")
+                fatalError("TODO: Skip DateComponents field differences")
             } else {
                 self.era = platformCal.get(PlatformCalendar.ERA)
             }
@@ -225,18 +225,18 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
         if let nanosecond = self.nanosecond {
             //cal.set(PlatformCalendar.NANOSECOND, nanosecond)
-            fatalError("DateComponents.nanosecond unsupported in Skip")
+            fatalError("Skip Date Components.nanosecond unsupported in Skip")
         }
         if let weekday = self.weekday {
             cal.set(PlatformCalendar.DAY_OF_WEEK, weekday)
         }
         if let weekdayOrdinal = self.weekdayOrdinal {
             //cal.set(PlatformCalendar.WEEKDAYORDINAL, weekdayOrdinal)
-            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+            fatalError("Skip Date Components.weekdayOrdinal unsupported in Skip")
         }
         if let quarter = self.quarter {
             //cal.set(PlatformCalendar.QUARTER, quarter)
-            fatalError("DateComponents.quarter unsupported in Skip")
+            fatalError("Skip Date Components.quarter unsupported in Skip")
         }
         if let weekOfMonth = self.weekOfMonth {
             cal.set(PlatformCalendar.WEEK_OF_MONTH, weekOfMonth)
@@ -246,7 +246,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
         if let yearForWeekOfYear = self.yearForWeekOfYear {
             //cal.set(PlatformCalendar.YEARFORWEEKOFYEAR, yearForWeekOfYear)
-            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+            fatalError("Skip Date Components.yearForWeekOfYear unsupported in Skip")
         }
 
         return cal
@@ -284,7 +284,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
     /// Adds one set of components to this date
     public mutating func add(components: DateComponents) {
         #if !SKIP
-        fatalError("SkipDateComponents: add not implemented for Swift")
+        fatalError("Skip DateComponents: add not implemented for Swift")
         #else
         let cal = createCalendarComponents()
 
@@ -296,7 +296,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
         if let value = components.quarter {
             //cal.roll(PlatformCalendar.QUARTER, value)
-            fatalError("DateComponents.quarter unsupported in Skip")
+            fatalError("Skip DateComponents.quarter unsupported in Skip")
         }
         if let value = components.month {
             cal.roll(PlatformCalendar.MONTH, value)
@@ -306,7 +306,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
         if let value = components.weekdayOrdinal {
             //cal.roll(PlatformCalendar.WEEKDAYORDINAL, value)
-            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+            fatalError("Skip DateComponents.weekdayOrdinal unsupported in Skip")
         }
         if let value = components.weekOfMonth {
             cal.roll(PlatformCalendar.WEEK_OF_MONTH, value)
@@ -316,7 +316,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
         }
         if let value = components.yearForWeekOfYear {
             //cal.roll(PlatformCalendar.YEARFORWEEKOFYEAR, value)
-            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+            fatalError("Skip DateComponents.yearForWeekOfYear unsupported in Skip")
         }
         if let value = components.day {
             cal.roll(PlatformCalendar.DATE, value) // i.e., DAY_OF_MONTH
@@ -331,7 +331,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
             cal.roll(PlatformCalendar.SECOND, value)
         }
         if let value = components.nanosecond {
-            fatalError("DateComponents.nanosecond unsupported in Skip")
+            fatalError("Skip DateComponents.nanosecond unsupported in Skip")
         }
 
         // update our fields from the rolled java.util.Calendar fields
@@ -344,7 +344,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
     /// The calendar and timeZone and isLeapMonth properties cannot be set by this method.
     public mutating func addValue(_ value: Int, for component: Calendar.Component) {
         #if !SKIP
-        fatalError("SkipDateComponents: addValue not implemented for Swift")
+        fatalError("Skip DateComponents: addValue not implemented for Swift")
         #else
         let cal = createCalendarComponents()
 
@@ -367,17 +367,17 @@ public struct DateComponents : Hashable, CustomStringConvertible {
             cal.roll(PlatformCalendar.DAY_OF_WEEK, value)
         case .weekdayOrdinal:
             //cal.roll(PlatformCalendar.WEEKDAYORDINAL, value)
-            fatalError("DateComponents.weekdayOrdinal unsupported in Skip")
+            fatalError("Skip DateComponents.weekdayOrdinal unsupported in Skip")
         case .quarter:
             //cal.roll(PlatformCalendar.QUARTER, value)
-            fatalError("DateComponents.quarter unsupported in Skip")
+            fatalError("Skip DateComponents.quarter unsupported in Skip")
         case .weekOfMonth:
             cal.roll(PlatformCalendar.WEEK_OF_MONTH, value)
         case .weekOfYear:
             cal.roll(PlatformCalendar.WEEK_OF_YEAR, value)
         case .yearForWeekOfYear:
             //cal.roll(PlatformCalendar.YEARFORWEEKOFYEAR, value)
-            fatalError("DateComponents.yearForWeekOfYear unsupported in Skip")
+            fatalError("Skip DateComponents.yearForWeekOfYear unsupported in Skip")
         case .nanosecond:
             break // unsupported
         case .calendar, .timeZone: // , .isLeapMonth:
