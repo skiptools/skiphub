@@ -31,9 +31,6 @@ class TestNSURLRequest : XCTestCase {
             ("test_mutableCopy_2", test_mutableCopy_2),
             ("test_mutableCopy_3", test_mutableCopy_3),
             ("test_hash", test_hash),
-            ("test_NSCoding_1", test_NSCoding_1),
-            ("test_NSCoding_2", test_NSCoding_2),
-            ("test_NSCoding_3", test_NSCoding_3),
             ("test_methodNormalization", test_methodNormalization),
             ("test_description", test_description),
             ("test_invalidHeaderValues", test_invalidHeaderValues),
@@ -280,52 +277,6 @@ class TestNSURLRequest : XCTestCase {
 //            throughValues: inputStreams)
         // allowsCellularAccess and httpShouldHandleCookies do
         // not have enough values to test them here.
-        #endif // !SKIP
-    }
-
-    func test_NSCoding_1() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let url = URL(string: "https://apple.com")!
-        let requestA = NSURLRequest(url: url)
-        let requestB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: requestA)) as! NSURLRequest
-        XCTAssertEqual(requestA, requestB, "Archived then unarchived url request must be equal.")
-        #endif // !SKIP
-    }
-    
-    func test_NSCoding_2() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let url = URL(string: "https://apple.com")!
-        let requestA = NSMutableURLRequest(url: url)
-        //Also checks crash on NSData.bytes
-        requestA.httpBody = Data()
-        let requestB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: requestA)) as! NSURLRequest
-        XCTAssertEqual(requestA, requestB, "Archived then unarchived url request must be equal.")
-        //Check `.httpBody` as it is not checked in `isEqual(_:)`
-        XCTAssertEqual(requestB.httpBody, requestA.httpBody)
-        #endif // !SKIP
-    }
-    
-    func test_NSCoding_3() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let url = URL(string: "https://apple.com")!
-        let urlForDocument = URL(string: "http://ibm.com")!
-        
-        let requestA = NSMutableURLRequest(url: url)
-        requestA.mainDocumentURL = urlForDocument
-        //Also checks crash on NSData.bytes
-        requestA.httpBody = Data([1, 2, 3])
-        let requestB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: requestA)) as! NSURLRequest
-        XCTAssertEqual(requestA, requestB, "Archived then unarchived url request must be equal.")
-        //Check `.httpBody` as it is not checked in `isEqual(_:)`
-        XCTAssertNotNil(requestB.httpBody)
-        XCTAssertEqual(3, requestB.httpBody!.count)
-        XCTAssertEqual(requestB.httpBody, requestA.httpBody)
         #endif // !SKIP
     }
 

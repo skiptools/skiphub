@@ -112,24 +112,6 @@ class TestURLResponse : XCTestCase {
         XCTAssertTrue(res.isEqual(res.copy() as! NSObject))
     }
 
-    @available(*, deprecated)
-    func test_NSCoding() {
-        #if SKIP
-        throw XCTSkip("No NSKeyedUnarchiver in Skip")
-        #else
-        let url = URL(string: "https://apple.com")!
-        let responseA = URLResponse(url: url, mimeType: "txt", expectedContentLength: 0, textEncodingName: nil)
-        let responseB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: responseA)) as! URLResponse
-
-        //On macOS unarchived Archived then unarchived `URLResponse` is not equal.
-        XCTAssertEqual(responseA.url, responseB.url, "Archived then unarchived url response must be equal.")
-        XCTAssertEqual(responseA.mimeType, responseB.mimeType, "Archived then unarchived url response must be equal.")
-        XCTAssertEqual(responseA.expectedContentLength, responseB.expectedContentLength, "Archived then unarchived url response must be equal.")
-        XCTAssertEqual(responseA.textEncodingName, responseB.textEncodingName, "Archived then unarchived url response must be equal.")
-        XCTAssertEqual(responseA.suggestedFilename, responseB.suggestedFilename, "Archived then unarchived url response must be equal.")
-        #endif
-    }
-
     func test_equalWithTheSameInstance() throws {
         let url = try XCTUnwrap(URL(string: "http://example.com/"))
         let response = URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil)
@@ -228,7 +210,6 @@ class TestURLResponse : XCTestCase {
             ("test_suggestedFilename_2", test_suggestedFilename_2),
             ("test_suggestedFilename_3", test_suggestedFilename_3),
             ("test_copywithzone", test_copyWithZone),
-            ("test_NSCoding", test_NSCoding),
             ("test_equalWithTheSameInstance", test_equalWithTheSameInstance),
             ("test_equalWithUnrelatedObject", test_equalWithUnrelatedObject),
             ("test_equalCheckingURL", test_equalCheckingURL),

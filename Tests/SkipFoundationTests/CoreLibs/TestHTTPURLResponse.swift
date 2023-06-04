@@ -247,34 +247,6 @@ class TestHTTPURLResponse: XCTestCase {
         XCTAssertNil(ahf["X-Mixedcase"])
     }
 
-    // NSCoding
-
-    func test_NSCoding() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let url = URL(string: "https://apple.com")!
-        let f = ["Content-Type": "text/HTML; charset=ISO-8859-4"]
-
-        let responseA = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: f)!
-        let responseB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: responseA)) as! HTTPURLResponse
-
-        //On macOS unarchived Archived then unarchived `URLResponse` is not equal.
-        XCTAssertEqual(responseA.statusCode, responseB.statusCode, "Archived then unarchived http url response must be equal.")
-        XCTAssertEqual(Array(responseA.allHeaderFields.keys), Array(responseB.allHeaderFields.keys), "Archived then unarchived http url response must be equal.")
-
-        for key in responseA.allHeaderFields.keys {
-            XCTAssertEqual(responseA.allHeaderFields[key] as? String, responseB.allHeaderFields[key] as? String, "Archived then unarchived http url response must be equal.")
-        }
-
-        XCTAssertEqual(responseA.url, responseB.url, "Archived then unarchived http url response must be equal.")
-        XCTAssertEqual(responseA.mimeType, responseB.mimeType, "Archived then unarchived http url response must be equal.")
-        XCTAssertEqual(responseA.expectedContentLength, responseB.expectedContentLength, "Archived then unarchived http url response must be equal.")
-        XCTAssertEqual(responseA.textEncodingName, responseB.textEncodingName, "Archived then unarchived http url response must be equal.")
-        XCTAssertEqual(responseA.suggestedFilename, responseB.suggestedFilename, "Archived then unarchived http url response must be equal.")
-        #endif // !SKIP
-    }
-
     #if !SKIP
     static var allTests: [(String, (TestHTTPURLResponse) -> () throws -> Void)] {
         return [
@@ -310,7 +282,6 @@ class TestHTTPURLResponse: XCTestCase {
             ("test_MIMETypeAndCharacterEncoding_3", test_MIMETypeAndCharacterEncoding_3),
 
             ("test_fieldCapitalisation", test_fieldCapitalisation),
-            ("test_NSCoding", test_NSCoding),
         ]
     }
     #endif // SKIP

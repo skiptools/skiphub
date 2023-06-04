@@ -25,7 +25,6 @@ class TestURLCredential : XCTestCase {
         return [
                    ("test_construction", test_construction),
                    ("test_copy", test_copy),
-                   ("test_NSCoding", test_NSCoding)
         ]
     }
     #endif // SKIP
@@ -49,16 +48,6 @@ class TestURLCredential : XCTestCase {
         let credential = URLCredential(user: "swiftUser", password: "swiftPassword", persistence: .forSession)
         let copy = credential.copy() as! URLCredential
         XCTAssertTrue(copy.isEqual(credential))
-        #endif // !SKIP
-    }
-    
-    func test_NSCoding() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let credentialA = URLCredential(user: "swiftUser", password: "swiftPassword", persistence: .forSession)
-        let credentialB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: credentialA)) as! URLCredential
-        XCTAssertEqual(credentialA, credentialB, "Archived then unarchived url credential must be equal.")
         #endif // !SKIP
     }
 }

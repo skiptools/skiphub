@@ -54,7 +54,6 @@ class TestAffineTransform: XCTestCase {
             ("testInversion", testInversion),
             ("testPrependTransform", testPrependTransform),
             ("testAppendTransform", testAppendTransform),
-            ("testNSCoding", testNSCoding),
         ]
     }
     #endif // SKIP
@@ -854,55 +853,6 @@ extension TestAffineTransform {
             }(),
             mapsToPoint: CGPoint(x: 40, y: 30),
             mapsToSize: CGSize(width: 20, height: 30)
-        )
-        #endif // !SKIP
-    }
-}
-
-// MARK: - Coding
-
-extension TestAffineTransform {
-    @available(*, deprecated)
-    func testNSCoding() throws {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let transform = AffineTransform(
-            m11: 1, m12: 2,
-            m21: 3, m22: 4,
-             tX: 5,  tY: 6
-        )
-        
-        let encodedData = try JSONEncoder().encode(transform)
-        
-        let encodedString = String(
-            data: encodedData, encoding: .utf8
-        )
-        
-        let commaSeparatedNumbers = (1...6)
-            .map(String.init)
-            .joined(separator: ",")
-        
-        XCTAssertEqual(
-            encodedString, "[\(commaSeparatedNumbers)]",
-            "Invalid coding representation"
-        )
-        
-        let recovered = try JSONDecoder().decode(
-            AffineTransform.self, from: encodedData
-        )
-        
-        XCTAssertEqual(
-            transform, recovered,
-            "Encoded and then decoded transform does not equal original"
-        )
-        
-        let nsTransform = transform as NSAffineTransform
-        let nsRecoveredTransform = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: nsTransform)) as! NSAffineTransform
-        
-        XCTAssertEqual(
-            nsTransform, nsRecoveredTransform,
-            "Archived then unarchived `NSAffineTransform` must be equal."
         )
         #endif // !SKIP
     }

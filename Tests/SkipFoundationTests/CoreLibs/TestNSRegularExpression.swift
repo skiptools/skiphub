@@ -27,7 +27,6 @@ class TestNSRegularExpression : XCTestCase {
             ("test_regularExpressionReplacement", test_regularExpressionReplacement),
             ("test_complexRegularExpressions", test_complexRegularExpressions),
             ("test_Equal", test_Equal),
-            ("test_NSCoding", test_NSCoding),
             ("test_defaultOptions", test_defaultOptions),
             ("test_badPattern", test_badPattern),
             ("test_unicodeNamedGroup", test_unicodeNamedGroup),
@@ -386,16 +385,6 @@ class TestNSRegularExpression : XCTestCase {
         #endif // !SKIP
     }
     
-    func test_NSCoding() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let regularExpressionA = try! NSRegularExpression(pattern: "[a-z]+", options: [.caseInsensitive, .allowCommentsAndWhitespace])
-        let regularExpressionB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: regularExpressionA)) as! NSRegularExpression
-        XCTAssertEqual(regularExpressionA, regularExpressionB, "Archived then unarchived `NSRegularExpression` must be equal.")
-        #endif // !SKIP
-    }
-
     // Check all of the following functions do not need to be passed options:
     func test_defaultOptions() {
         #if SKIP

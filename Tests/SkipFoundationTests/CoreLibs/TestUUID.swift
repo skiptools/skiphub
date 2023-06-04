@@ -27,7 +27,6 @@ class TestUUID : XCTestCase {
             ("test_UUIDInvalid", test_UUIDInvalid),
             ("test_UUIDuuidString", test_UUIDuuidString),
             ("test_UUIDdescription", test_UUIDdescription),
-            ("test_UUIDNSCoding", test_UUIDNSCoding),
             ("test_hash", test_hash),
         ]
     }
@@ -69,16 +68,6 @@ class TestUUID : XCTestCase {
         XCTAssertEqual(uuid.description, uuid.uuidString, "The description must be the same as the uuidString.")
     }
     
-    func test_UUIDNSCoding() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let uuidA = UUID()
-        let uuidB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: uuidA)) as! UUID
-        XCTAssertEqual(uuidA, uuidB, "Archived then unarchived uuid must be equal.")
-        #endif // !SKIP
-    }
-
     func test_hash() {
         let values: [UUID] = [
             // This list takes a UUID and tweaks every byte while

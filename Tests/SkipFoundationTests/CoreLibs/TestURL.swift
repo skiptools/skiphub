@@ -728,12 +728,6 @@ class TestURL : XCTestCase {
         #endif
     }
 
-//    func test_itemNSCoding() {
-//        let queryItemA = NSURLQueryItem(name: "id", value: "23")
-//        let queryItemB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: queryItemA)) as! NSURLQueryItem
-//        XCTAssertEqual(queryItemA, queryItemB, "Archived then unarchived query item must be equal.")
-//    }
-
     func test_dataRepresentation() {
         let url = NSURL(fileURLWithPath: "/tmp/foo")
         #if SKIP

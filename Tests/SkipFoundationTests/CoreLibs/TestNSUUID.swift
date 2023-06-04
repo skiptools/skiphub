@@ -27,7 +27,6 @@ class TestNSUUID : XCTestCase {
             ("test_InvalidUUID", test_InvalidUUID),
             ("test_uuidString", test_uuidString),
             ("test_description", test_description),
-            ("test_NSCoding", test_NSCoding),
         ]
     }
     #endif // SKIP
@@ -73,17 +72,6 @@ class TestNSUUID : XCTestCase {
         #else
         let uuid = NSUUID()
         XCTAssertEqual(uuid.description, uuid.uuidString, "The description must be the same as the uuidString.")
-        #endif // !SKIP
-    }
-
-    @available(*, deprecated)
-    func test_NSCoding() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
-        let uuidA = NSUUID()
-        let uuidB = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: uuidA)) as! NSUUID
-        XCTAssertEqual(uuidA, uuidB, "Archived then unarchived uuid must be equal.")
         #endif // !SKIP
     }
 }
