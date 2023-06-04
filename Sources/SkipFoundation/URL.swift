@@ -484,6 +484,22 @@ public func URL(string: String, relativeTo baseURL: URL? = nil) -> URL? {
 //    }
 //}
 
+extension String {
+    public var deletingLastPathComponent: String {
+        let lastSeparatorIndex = lastIndexOf("/")
+        if lastSeparatorIndex == -1 || (lastSeparatorIndex == 0 && self.length == 1) {
+            return self
+        }
+        let newPath = substring(0, lastSeparatorIndex)
+        let newLastSeparatorIndex = newPath.lastIndexOf("/")
+        if newLastSeparatorIndex == -1 {
+            return newPath
+        } else {
+            return newPath.substring(0, newLastSeparatorIndex + 1)
+        }
+    }
+}
+
 #else
 
 // MARK: Foundation.URL compatibility

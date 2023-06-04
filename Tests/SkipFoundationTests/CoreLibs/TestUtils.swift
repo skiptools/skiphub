@@ -19,9 +19,6 @@ import XCTest
 //
 
 func ensureFiles(_ fileNames: [String]) -> Bool {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
     var result = true
     let fm = FileManager.default
     for name in fileNames {
@@ -38,7 +35,7 @@ func ensureFiles(_ fileNames: [String]) -> Bool {
             }
         } else {
         
-            var isDir: ObjCBool = false
+            var isDir: ObjCBool = ObjCBool(false)
             let dir = NSString(string: name).deletingLastPathComponent
             if !fm.fileExists(atPath: dir, isDirectory: &isDir) {
                 do {
@@ -55,7 +52,6 @@ func ensureFiles(_ fileNames: [String]) -> Bool {
         }
     }
     return result
-        #endif // !SKIP
 }
 
 
