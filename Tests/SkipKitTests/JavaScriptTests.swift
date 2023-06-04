@@ -6,10 +6,13 @@
 #if !SKIP
 @testable import SkipKit
 import WebKit
+import struct Foundation.Data // for disambiguation
+import struct Foundation.Date // for disambiguation
+import struct Foundation.URL // for disambiguation
 #endif
 import Foundation
 import XCTest
-
+\
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(sdk = [33])
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
