@@ -4,12 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import class Foundation.FileManager
-/* @_implementationOnly */import struct Foundation.FileAttributeKey
-/* @_implementationOnly */import struct Foundation.URLResourceKey
-/* @_implementationOnly */import struct Foundation.ObjCBool
-/* @_implementationOnly */import func Foundation.NSTemporaryDirectory
-public typealias PlatformFileManager = Foundation.FileManager
+@_implementationOnly import class Foundation.FileManager
+/* SKIP: @_implementationOnly */import struct Foundation.FileAttributeKey
+@_implementationOnly import struct Foundation.URLResourceKey
+@_implementationOnly import struct Foundation.ObjCBool
+@_implementationOnly import func Foundation.NSTemporaryDirectory
+internal typealias PlatformFileManager = Foundation.FileManager
 #else
 #endif
 
@@ -41,7 +41,7 @@ private func _path(_ path: String) -> java.nio.file.Path {
 #endif
 
 public extension String {
-    func write(to url: URL, atomically: Bool, encoding: String.Encoding) throws {
+    func write(to url: URL, atomically: Bool, encoding: PlatformStringEncoding) throws {
         #if SKIP
         var opts: [java.nio.file.StandardOpenOption] = []
         opts.append(java.nio.file.StandardOpenOption.CREATE)

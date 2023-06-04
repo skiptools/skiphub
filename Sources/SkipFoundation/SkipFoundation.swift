@@ -3,9 +3,6 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-/* @_implementationOnly */import Foundation
-#endif
 /// A runtime check for whether we are running in a JVM, which is based on whether Ints are 32 or 64 bit
 public let isJVM = Int.max == Int32.max
 
@@ -32,7 +29,13 @@ public protocol NSObjectProtocol {
 #endif
 
 #if !SKIP
-/* @_implementationOnly */import class Foundation.NSNumber
+public typealias PlatformStringEncoding = String.Encoding
+#else
+internal typealias PlatformStringEncoding = String.Encoding
+#endif
+
+#if !SKIP
+/* SKIP: @_implementationOnly */import class Foundation.NSNumber
 public typealias NSNumber = Foundation.NSNumber
 #else
 public typealias NSNumber = java.lang.Number
@@ -40,8 +43,8 @@ public typealias NSNumber = java.lang.Number
 
 
 #if !SKIP
-/* @_implementationOnly */import class Foundation.NSNull
-public typealias NSNull = Foundation.NSNull
+/* SKIP: @_implementationOnly */import class Foundation.NSNull
+internal typealias NSNull = Foundation.NSNull
 #else
 public class NSNull {
     public static let null = NSNull()

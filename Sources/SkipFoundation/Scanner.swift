@@ -4,7 +4,7 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import class Foundation.Scanner
+@_implementationOnly import class Foundation.Scanner
 typealias PlatformScanner = Foundation.Scanner
 #else
 typealias PlatformScanner = java.util.Scanner

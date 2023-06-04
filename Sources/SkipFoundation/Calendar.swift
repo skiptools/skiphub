@@ -4,10 +4,10 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.Calendar
+/* SKIP: @_implementationOnly */import struct Foundation.Calendar
 public typealias PlatformCalendar = Foundation.Calendar
 public typealias PlatformCalendarComponent = Foundation.Calendar.Component
-public typealias PlatformCalendarIdentifier = Foundation.Calendar.Identifier
+internal typealias PlatformCalendarIdentifier = Foundation.Calendar.Identifier
 #else
 // SKIP INSERT: import skip.lib.Set
 public typealias PlatformCalendar = java.util.Calendar
@@ -19,8 +19,8 @@ public typealias PlatformCalendarIdentifier = Calendar.Identifier
 // SKIP INSERT: fun PlatformCalendar.clone(): PlatformCalendar { return this.clone() as PlatformCalendar }
 
 /// A definition of the relationships between calendar units and absolute points in time, providing features for calculation and comparison of dates.
-public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
-    public var rawValue: PlatformCalendar
+public struct Calendar : Hashable, CustomStringConvertible {
+    internal var rawValue: PlatformCalendar
     #if SKIP
     public var locale: Locale
     #endif
@@ -33,21 +33,21 @@ public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
         #endif
     }
 
-    public init(rawValue: PlatformCalendar) {
+    internal init(rawValue: PlatformCalendar) {
         self.rawValue = rawValue
         #if SKIP
         self.locale = Locale.current
         #endif
     }
 
-    public init(_ rawValue: PlatformCalendar) {
+    internal init(_ rawValue: PlatformCalendar) {
         self.rawValue = rawValue
         #if SKIP
         self.locale = Locale.current
         #endif
     }
 
-    public init(identifier: PlatformCalendarIdentifier) {
+    internal init(identifier: PlatformCalendarIdentifier) {
         #if !SKIP
         self.rawValue = PlatformCalendar(identifier: identifier)
         #else
@@ -62,7 +62,7 @@ public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
         #endif
     }
 
-    public var identifier: PlatformCalendarIdentifier {
+    internal var identifier: PlatformCalendarIdentifier {
         #if !SKIP
         return rawValue.identifier
         #else
@@ -251,7 +251,7 @@ public struct Calendar : RawRepresentable, Hashable, CustomStringConvertible {
     public var timeZone: TimeZone {
         get {
             #if !SKIP
-            return TimeZone(rawValue.timeZone)
+            return TimeZone(rawValue: rawValue.timeZone)
             #else
             return TimeZone(rawValue.getTimeZone())
             #endif

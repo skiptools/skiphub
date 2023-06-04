@@ -6,7 +6,7 @@
 
 #if !SKIP
 import CryptoKit
-/* @_implementationOnly */import struct Foundation.Data
+@_implementationOnly import struct Foundation.Data
 
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias SymmetricKey = CryptoKit.SymmetricKey
@@ -150,7 +150,7 @@ public struct SHA256 : NamedHashFunction {
     }
 
     public func update(_ data: DataProtocol) {
-        digest.update(data.rawValue)
+        digest.update(data.platformData)
     }
 
     public func finalize() -> SHA256Digest {
@@ -176,7 +176,7 @@ public struct SHA384 : NamedHashFunction {
     }
 
     public func update(_ data: DataProtocol) {
-        digest.update(data.rawValue)
+        digest.update(data.platformData)
     }
 
     public func finalize() -> SHA384Digest {
@@ -202,7 +202,7 @@ public struct SHA512 : NamedHashFunction {
     }
 
     public func update(_ data: DataProtocol) {
-        digest.update(data.rawValue)
+        digest.update(data.platformData)
     }
 
     public func finalize() -> SHA512Digest {
@@ -229,7 +229,7 @@ public struct Insecure {
         }
 
         public func update(_ data: DataProtocol) {
-            digest.update(data.rawValue)
+            digest.update(data.platformData)
         }
 
         public func finalize() -> MD5Digest {
@@ -255,7 +255,7 @@ public struct Insecure {
         }
 
         public func update(_ data: DataProtocol) {
-            digest.update(data.rawValue)
+            digest.update(data.platformData)
         }
 
         public func finalize() -> SHA1Digest {

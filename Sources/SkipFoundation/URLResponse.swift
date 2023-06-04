@@ -5,15 +5,15 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* @_implementationOnly */import class Foundation.URLResponse
-public typealias PlatformURLResponse = Foundation.URLResponse
+@_implementationOnly import class Foundation.URLResponse
+internal typealias PlatformURLResponse = Foundation.URLResponse
 #else
 #endif
 
 /// The metadata associated with the response to a URL load request, independent of protocol and URL scheme.
 public class URLResponse : CustomStringConvertible {
     #if !SKIP
-    public var rawValue: PlatformURLResponse
+    internal var rawValue: PlatformURLResponse
     public var url: URL? { rawValue.url.flatMap(URL.init(rawValue:)) }
     public var mimeType: String? { rawValue.mimeType }
     public var expectedContentLength: Int64 { rawValue.expectedContentLength }
@@ -44,11 +44,11 @@ public class URLResponse : CustomStringConvertible {
     }
 
     #if !SKIP
-    public init(rawValue: PlatformURLResponse) {
+    internal init(rawValue: PlatformURLResponse) {
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: PlatformURLResponse) {
+    internal init(_ rawValue: PlatformURLResponse) {
         self.rawValue = rawValue
     }
 

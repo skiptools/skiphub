@@ -5,21 +5,17 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.DateInterval
-public typealias PlatformDateInterval = Foundation.DateInterval
+@_implementationOnly import struct Foundation.DateInterval
+internal typealias PlatformDateInterval = Foundation.DateInterval
 #else
 public typealias PlatformDateInterval = java.time.Duration
 #endif
 
 /// The span of time between a specific start date and end date.
-public struct DateInterval : RawRepresentable, Hashable, CustomStringConvertible {
-    public var rawValue: PlatformDateInterval
+public struct DateInterval : Hashable, CustomStringConvertible {
+    internal var rawValue: PlatformDateInterval
 
-    public init(rawValue: PlatformDateInterval) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformDateInterval) {
+    internal init(rawValue: PlatformDateInterval) {
         self.rawValue = rawValue
     }
 

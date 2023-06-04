@@ -4,12 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.Date
-/* @_implementationOnly */import typealias Foundation.TimeInterval
-/* @_implementationOnly */import func Foundation.CFAbsoluteTimeGetCurrent
-/* @_implementationOnly */import class Foundation.NSDate
-public typealias PlatformDate = Foundation.Date
-public typealias NSDate = Foundation.NSDate
+/* SKIP: @_implementationOnly */import struct Foundation.Date
+@_implementationOnly import typealias Foundation.TimeInterval
+@_implementationOnly import func Foundation.CFAbsoluteTimeGetCurrent
+@_implementationOnly import class Foundation.NSDate
+internal typealias PlatformDate = Foundation.Date
+internal typealias NSDate = Foundation.NSDate
 @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
 public typealias PlatformISO8601FormatStyle = Foundation.Date.ISO8601FormatStyle
 #else
@@ -19,8 +19,13 @@ public typealias NSDate = Date
 #endif
 
 #if !SKIP
-public let CFAbsoluteTimeGetCurrent = Foundation.CFAbsoluteTimeGetCurrent
-public typealias TimeInterval = Foundation.TimeInterval
+public typealias TimeInterval = Double
+public typealias CFAbsoluteTime = Double
+
+public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
+    Foundation.CFAbsoluteTimeGetCurrent()
+}
+
 #else
 
 public typealias TimeInterval = Double
@@ -43,8 +48,8 @@ public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
 #endif
 
 /// A specific point in time, independent of any calendar or time zone.
-public struct Date : RawRepresentable, Hashable, CustomStringConvertible, Comparable {
-    public var rawValue: PlatformDate
+public struct Date : Hashable, CustomStringConvertible, Comparable {
+    internal var rawValue: PlatformDate
 
     public static let timeIntervalBetween1970AndReferenceDate: TimeInterval = 978307200.0
 
@@ -64,11 +69,7 @@ public struct Date : RawRepresentable, Hashable, CustomStringConvertible, Compar
         self.rawValue = PlatformDate()
     }
 
-    public init(rawValue: PlatformDate) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformDate = PlatformDate()) {
+    internal init(rawValue: PlatformDate) {
         self.rawValue = rawValue
     }
 
@@ -164,7 +165,7 @@ public struct Date : RawRepresentable, Hashable, CustomStringConvertible, Compar
 
     public func addingTimeInterval(_ timeInterval: TimeInterval) -> Date {
         #if !SKIP
-        return Date(rawValue.addingTimeInterval(timeInterval))
+        return Date(rawValue: rawValue.addingTimeInterval(timeInterval))
         #else
         return Date(timeInterval: timeInterval, since: self)
         #endif

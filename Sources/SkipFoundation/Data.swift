@@ -4,27 +4,30 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.Data
-public typealias PlatformData = Foundation.Data
+/* SKIP: @_implementationOnly */import struct Foundation.Data
+/* SKIP: @_implementationOnly */import protocol Foundation.DataProtocol
+internal typealias PlatformData = Foundation.Data
+public typealias PlatformDataProtocol = Foundation.DataProtocol
 public typealias StringProtocol = Swift.StringProtocol
 #else
 public typealias PlatformData = kotlin.ByteArray
 public typealias StringProtocol = kotlin.CharSequence
+public typealias PlatformDataProtocol = kotlin.ByteArray
 #endif
 
 public protocol DataProtocol {
-    var rawValue: PlatformData { get }
+    var platformData: any PlatformDataProtocol { get }
 }
 
 /// A byte buffer in memory.
-public struct Data : RawRepresentable, Hashable, DataProtocol, CustomStringConvertible {
-    public var rawValue: PlatformData
+public struct Data : Hashable, DataProtocol, CustomStringConvertible {
+    internal var rawValue: PlatformData
 
-    public init(rawValue: PlatformData) {
-        self.rawValue = rawValue
+    public var platformData: any PlatformDataProtocol {
+        return rawValue
     }
 
-    public init(_ rawValue: PlatformData) {
+    internal init(rawValue: PlatformData) {
         self.rawValue = rawValue
     }
 
@@ -128,7 +131,7 @@ public func String(data: Data, encoding: String.Encoding) -> String? {
 
 extension String {
     /// The UTF8-encoded data for this string
-    @inlinable public var utf8Data: Data {
+    public var utf8Data: Data {
         #if !SKIP
         Data(rawValue: data(using: String.Encoding.utf8) ?? PlatformData())
         #else

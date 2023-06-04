@@ -5,8 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.IndexPath
-public typealias PlatformIndexPath = Foundation.IndexPath
+@_implementationOnly import struct Foundation.IndexPath
+internal typealias PlatformIndexPath = Foundation.IndexPath
 #else
 public typealias PlatformIndexPath = skip.lib.Array<Int>
 #endif
@@ -14,16 +14,12 @@ public typealias PlatformIndexPath = skip.lib.Array<Int>
 public typealias PlatformIndexPathElement = Int
 
 /// A list of indexes that together represent the path to a specific location in a tree of nested arrays.
-public struct IndexPath : RawRepresentable, Hashable, CustomStringConvertible {
+public struct IndexPath : Hashable, CustomStringConvertible {
     //public typealias Element = Int // "Kotlin does not support typealias declarations within functions and types. Consider moving this to a top level declaration"
 
-    public var rawValue: PlatformIndexPath
+    internal var rawValue: PlatformIndexPath
 
-    public init(rawValue: PlatformIndexPath) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformIndexPath = PlatformIndexPath()) {
+    internal init(rawValue: PlatformIndexPath) {
         self.rawValue = rawValue
     }
 

@@ -5,22 +5,22 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.IndexSet
-public typealias PlatformIndexSet = Foundation.IndexSet
+@_implementationOnly import struct Foundation.IndexSet
+internal typealias PlatformIndexSet = Foundation.IndexSet
 #else
-public typealias PlatformIndexSet = skip.lib.Set<Int>
+internal typealias PlatformIndexSet = skip.lib.Set<Int>
 #endif
 
 /// A collection of unique integer values that represent the indexes of elements in another collection.
-public struct IndexSet : RawRepresentable, Hashable, CustomStringConvertible {
-    public var rawValue: PlatformIndexSet
+public struct IndexSet : Hashable, CustomStringConvertible {
+    internal var rawValue: PlatformIndexSet
 
-    public init(rawValue: PlatformIndexSet) {
+    internal init(rawValue: PlatformIndexSet) {
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: PlatformIndexSet = PlatformIndexSet()) {
-        self.rawValue = rawValue
+    public init() {
+        self.rawValue = PlatformIndexSet()
     }
 
     public var description: String {

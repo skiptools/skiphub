@@ -5,8 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* @_implementationOnly */import class Foundation.HTTPURLResponse
-public typealias PlatformHTTPURLResponse = Foundation.HTTPURLResponse
+@_implementationOnly import class Foundation.HTTPURLResponse
+internal typealias PlatformHTTPURLResponse = Foundation.HTTPURLResponse
 #else
 #endif
 

@@ -4,13 +4,13 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.URL
-/* @_implementationOnly */import struct Foundation.URLResourceKey
-/* @_implementationOnly */import struct Foundation.URLResourceValues
-/* @_implementationOnly */import class Foundation.NSURL
+@_implementationOnly import struct Foundation.URL
+/* SKIP: @_implementationOnly */import struct Foundation.URLResourceKey
+@_implementationOnly import struct Foundation.URLResourceValues
+@_implementationOnly import class Foundation.NSURL
 /// The wrapped type for Swift URL is only included in Swift debug builds
-public typealias PlatformURL = Foundation.URL
-public typealias NSURL = Foundation.NSURL
+internal typealias PlatformURL = Foundation.URL
+internal typealias NSURL = Foundation.NSURL
 #else
 /// The wrapped type for Kotlin's URL equivalent
 public typealias PlatformURL = java.net.URL
@@ -18,9 +18,9 @@ public typealias NSURL = URL
 #endif
 
 /// A value that identifies the location of a resource, such as an item on a remote server or the path to a local file.
-public struct URL : RawRepresentable, Hashable, CustomStringConvertible {
+public struct URL : Hashable, CustomStringConvertible {
     /// `URL` wraps either a `Foundation.URL` in Swift or `java.net.URL` in Kotlin.
-    public var rawValue: PlatformURL
+    internal var rawValue: PlatformURL
     #if SKIP
     private let isDirectoryFlag: Bool?
     public let baseURL: URL?
@@ -37,11 +37,11 @@ public struct URL : RawRepresentable, Hashable, CustomStringConvertible {
         self.baseURL = url.baseURL
     }
     #else
-    public init(_ rawValue: PlatformURL) {
+    internal init(_ rawValue: PlatformURL) {
         self.rawValue = rawValue
     }
 
-    public init(rawValue: PlatformURL) {
+    internal init(rawValue: PlatformURL) {
         self.rawValue = rawValue
     }
     #endif

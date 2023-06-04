@@ -4,8 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import class Foundation.Bundle
-public typealias PlatformBundle = Foundation.Bundle
+/* SKIP: @_implementationOnly */import class Foundation.Bundle
+internal typealias PlatformBundle = Foundation.Bundle
 #else
 public typealias PlatformBundle = AnyClass
 #endif
@@ -22,9 +22,9 @@ public class Bundle {
     #endif
 
     #if !SKIP
-    private let rawValue: PlatformBundle
+    internal let rawValue: PlatformBundle
 
-    public init(rawValue: PlatformBundle) {
+    internal init(rawValue: PlatformBundle) {
         self.rawValue = rawValue
     }
     #else

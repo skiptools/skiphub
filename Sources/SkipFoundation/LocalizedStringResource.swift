@@ -4,9 +4,9 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.LocalizedStringResource
+@_implementationOnly import struct Foundation.LocalizedStringResource
 @available(macOS 13, iOS 16, tvOS 16, watchOS 8, *)
-public typealias LocalizedStringResource = Foundation.LocalizedStringResource
+internal typealias LocalizedStringResource = Foundation.LocalizedStringResource
 #else
 public typealias LocalizedStringResource = SkipLocalizedStringResource
 #endif

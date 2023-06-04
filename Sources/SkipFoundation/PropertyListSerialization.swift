@@ -4,14 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import class Foundation.PropertyListSerialization
-public typealias PropertyListSerialization = Foundation.PropertyListSerialization
-#else
-public typealias PropertyListSerialization = SkipPropertyListSerialization
+@_implementationOnly import class Foundation.PropertyListSerialization
+internal typealias PlatformPropertyListSerialization = Foundation.PropertyListSerialization
 #endif
 
-// SKIP DECLARE: open class SkipPropertyListSerialization
-public class SkipPropertyListSerialization {
+/// An object that converts between a property list and one of several serialized representations.
+public class PropertyListSerialization {
     public enum PropertyListFormat {
         case openStep
         case xml

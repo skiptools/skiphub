@@ -5,10 +5,10 @@
 // as published by the Free Software Foundation https://fsf.org
 
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.URLRequest
-public typealias PlatformURLRequest = Foundation.URLRequest
+/* SKIP: @_implementationOnly */import struct Foundation.URLRequest
+internal typealias PlatformURLRequest = Foundation.URLRequest
 public typealias PlatformURLRequestCachePolicy = Foundation.URLRequest.CachePolicy
-public typealias NSURLRequest = Foundation.URLRequest.ReferenceType // i.e., NSURLRequest
+internal typealias NSURLRequest = Foundation.URLRequest.ReferenceType // i.e., NSURLRequest
 #else
 public typealias PlatformURLRequest = java.net.HttpURLConnection
 public typealias PlatformURLRequestCachePolicy = URLRequest.CachePolicy
@@ -18,7 +18,7 @@ public typealias NSURLRequest = URLRequest
 /// A URL load request that is independent of protocol or URL scheme.
 public struct URLRequest : Hashable, CustomStringConvertible {
     #if !SKIP
-    public var rawValue: PlatformURLRequest
+    internal var rawValue: PlatformURLRequest
     #else
     public var url: URL?
     public var httpMethod: String? = "GET" {
@@ -50,11 +50,11 @@ public struct URLRequest : Hashable, CustomStringConvertible {
     #endif
 
     #if !SKIP
-    public init(rawValue: PlatformURLRequest) {
+    internal init(rawValue: PlatformURLRequest) {
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: PlatformURLRequest) {
+    internal init(_ rawValue: PlatformURLRequest) {
         self.rawValue = rawValue
     }
     #endif

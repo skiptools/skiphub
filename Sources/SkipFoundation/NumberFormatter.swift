@@ -4,22 +4,18 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import class Foundation.NumberFormatter
-public typealias PlatformNumberFormatter = Foundation.NumberFormatter
+/* SKIP: @_implementationOnly */import class Foundation.NumberFormatter
+internal typealias PlatformNumberFormatter = Foundation.NumberFormatter
 public typealias PlatformNumberFormatterStyle = Foundation.NumberFormatter.Style
 #else
 public typealias PlatformNumberFormatter = java.text.DecimalFormat
 public typealias PlatformNumberFormatterStyle = NumberFormatter.Style
 #endif
 
-public class NumberFormatter : RawRepresentable, Hashable {
-    public var rawValue: PlatformNumberFormatter
+public class NumberFormatter {
+    internal var rawValue: PlatformNumberFormatter
 
-    public required init(rawValue: PlatformNumberFormatter) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformNumberFormatter) {
+    internal init(rawValue: PlatformNumberFormatter) {
         self.rawValue = rawValue
     }
 

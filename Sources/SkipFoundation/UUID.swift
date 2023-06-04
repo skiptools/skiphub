@@ -4,17 +4,17 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.UUID
-public typealias PlatformUUID = Foundation.UUID
-public typealias NSUUID = Foundation.UUID
+@_implementationOnly import struct Foundation.UUID
+internal typealias PlatformUUID = Foundation.UUID
+internal typealias NSUUID = Foundation.UUID
 #else
 public typealias PlatformUUID = java.util.UUID
 public typealias NSUUID = UUID
 #endif
 
 /// Represents UUID strings, which can be used to uniquely identify types, interfaces, and other items.
-public struct UUID : RawRepresentable, Hashable, CustomStringConvertible {
-    public var rawValue: PlatformUUID
+public struct UUID : Hashable, CustomStringConvertible {
+    internal var rawValue: PlatformUUID
 
     public init?(uuidString: String) {
         #if !SKIP
@@ -32,12 +32,12 @@ public struct UUID : RawRepresentable, Hashable, CustomStringConvertible {
     }
 
 
-    public init(_ rawValue: PlatformUUID) {
+    internal init(_ rawValue: PlatformUUID) {
         self.rawValue = rawValue
     }
 
     #if !SKIP
-    public init(rawValue: PlatformUUID) {
+    internal init(rawValue: PlatformUUID) {
         self.rawValue = rawValue
     }
     #endif
@@ -81,7 +81,7 @@ public struct UUID : RawRepresentable, Hashable, CustomStringConvertible {
 
 extension UUID {
     /// Creates this UUID using the given most signifant bits and least significant bits.
-    @inlinable public init(mostSigBits: Int64, leastSigBits: Int64) {
+    public init(mostSigBits: Int64, leastSigBits: Int64) {
         var mostSigBits = mostSigBits
         var leastSigBits = leastSigBits
         self.rawValue = withUnsafeBytes(of: &mostSigBits) { a in

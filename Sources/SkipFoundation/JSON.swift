@@ -41,7 +41,7 @@ struct UnknownEncodingError : Error {
 
 extension JSON {
     /// Parses this JSON from a String.
-    public static func parse(_ json: any StringProtocol) throws -> JSON {
+    public static func parse(_ json: String) throws -> JSON {
         try PlatformJSONSerialization.json(from: json)
     }
 }
@@ -411,17 +411,17 @@ func JSONNumber(_ value: Double) -> JSONNumber { value }
 // MARK: Foundation type imports constructors
 
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.Date
-/* @_implementationOnly */import struct Foundation.Data
-/* @_implementationOnly */import struct Foundation.URL
-/* @_implementationOnly */import struct Foundation.Decimal
-/* @_implementationOnly */import class Foundation.NSDate
-/* @_implementationOnly */import class Foundation.NSData
-/* @_implementationOnly */import class Foundation.NSURL
-/* @_implementationOnly */import class Foundation.NSDecimalNumber
-/* @_implementationOnly */import class Foundation.JSONDecoder
-/* @_implementationOnly */import class Foundation.JSONEncoder
-/* @_implementationOnly */import class Foundation.ISO8601DateFormatter
+@_implementationOnly import struct Foundation.Date
+/* SKIP: @_implementationOnly */import struct Foundation.Data
+@_implementationOnly import struct Foundation.URL
+@_implementationOnly import struct Foundation.Decimal
+@_implementationOnly import class Foundation.NSDate
+@_implementationOnly import class Foundation.NSData
+@_implementationOnly import class Foundation.NSURL
+@_implementationOnly import class Foundation.NSDecimalNumber
+@_implementationOnly import class Foundation.JSONDecoder
+@_implementationOnly import class Foundation.JSONEncoder
+@_implementationOnly import class Foundation.ISO8601DateFormatter
 #endif
 
 

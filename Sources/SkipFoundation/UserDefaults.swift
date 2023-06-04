@@ -4,32 +4,30 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import class Foundation.UserDefaults
-public typealias UserDefaults = Foundation.UserDefaults
+@_implementationOnly import class Foundation.UserDefaults
+internal typealias PlatformUserDefaults = Foundation.UserDefaults
 #else
-public typealias UserDefaults = SkipUserDefaults
+internal typealias PlatformUserDefaults = android.content.SharedPreferences
 #endif
 
-// let prefs: android.content.SharedPreferences = androidContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+/// An interface to the user’s defaults database, where you store key-value pairs persistently across launches of your app.
+public class UserDefaults {
+    let rawValue: PlatformUserDefaults
 
-#if SKIP
-
-public struct SkipUserDefaults : RawRepresentable, Hashable {
-    public let rawValue: android.content.SharedPreferences
-
-    public init(rawValue: android.content.SharedPreferences) {
+    init(rawValue: PlatformUserDefaults) {
         self.rawValue = rawValue
     }
 
-    public init(_ rawValue: android.content.SharedPreferences) {
+    init(_ rawValue: PlatformUserDefaults) {
         self.rawValue = rawValue
     }
 }
 
-extension SkipUserDefaults {
-    public static var standard: SkipUserDefaults {
+#if SKIP
+extension UserDefaults {
+    public static var standard: UserDefaults {
         // FIXME: uses androidx.test and
-        SkipUserDefaults(ProcessInfo.processInfo.androidContext.getSharedPreferences("defaults", android.content.Context.MODE_PRIVATE))
+        UserDefaults(ProcessInfo.processInfo.androidContext.getSharedPreferences("defaults", android.content.Context.MODE_PRIVATE))
     }
 
     public func `set`(_ value: Int, forKey keyName: String) {
@@ -74,4 +72,3 @@ extension SkipUserDefaults {
 
 }
 #endif
-

@@ -4,8 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.DateComponents
-public typealias PlatformDateComponents = Foundation.DateComponents
+@_implementationOnly import struct Foundation.DateComponents
+internal typealias PlatformDateComponents = Foundation.DateComponents
 #else
 // SKIP INSERT: import skip.lib.Set
 private typealias BogusTypealiasForComment = Int // SKIP FIXME: need something here or SKIP INSERT above won't get inserted
@@ -14,9 +14,9 @@ private typealias BogusTypealiasForComment = Int // SKIP FIXME: need something h
 /// A date or time specified in terms of units (such as year, month, day, hour, and minute) to be evaluated in a calendar system and time zone.
 public struct DateComponents : Hashable, CustomStringConvertible {
     #if !SKIP
-    public var components: PlatformDateComponents
+    internal var components: PlatformDateComponents
 
-    public var rawValue: PlatformDateComponents {
+    internal var rawValue: PlatformDateComponents {
         components
     }
 

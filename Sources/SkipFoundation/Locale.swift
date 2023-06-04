@@ -4,23 +4,19 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.Locale
-public typealias PlatformLocale = Foundation.Locale
-public typealias NSLocale = Foundation.Locale.ReferenceType
+@_implementationOnly import struct Foundation.Locale
+internal typealias PlatformLocale = Foundation.Locale
+internal typealias NSLocale = Foundation.Locale.ReferenceType
 #else
-public typealias PlatformLocale = java.util.Locale
-public typealias NSLocale = Locale
+internal typealias PlatformLocale = java.util.Locale
+internal typealias NSLocale = Locale
 #endif
 
 /// Information about linguistic, cultural, and technological conventions for use in formatting data for presentation.
-public struct Locale : RawRepresentable, Hashable {
-    public let rawValue: PlatformLocale
+public struct Locale : Hashable {
+    internal let rawValue: PlatformLocale
 
-    public init(rawValue: PlatformLocale) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformLocale) {
+    internal init(rawValue: PlatformLocale) {
         self.rawValue = rawValue
     }
 
@@ -43,17 +39,17 @@ public struct Locale : RawRepresentable, Hashable {
 
     public static var current: Locale {
         #if !SKIP
-        return Locale(PlatformLocale.current)
+        return Locale(rawValue: PlatformLocale.current)
         #else
-        return Locale(PlatformLocale.getDefault())
+        return Locale(rawValue: PlatformLocale.getDefault())
         #endif
     }
 
     public static var system: Locale {
         #if !SKIP
-        return Locale(NSLocale.system)
+        return Locale(rawValue: NSLocale.system)
         #else
-        return Locale(PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
+        return Locale(rawValue: PlatformLocale.getDefault()) // FIXME: not the same as .system: “Use the system locale when you don’t want any localizations”
         #endif
     }
 

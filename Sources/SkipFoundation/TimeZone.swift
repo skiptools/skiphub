@@ -4,8 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* @_implementationOnly */import struct Foundation.TimeZone
-/* @_implementationOnly */import class Foundation.NSTimeZone
+/* SKIP: @_implementationOnly */import struct Foundation.TimeZone
+/* SKIP: @_implementationOnly */import class Foundation.NSTimeZone
 public typealias PlatformTimeZone = Foundation.TimeZone
 public typealias PlatformTimeZoneNameStyle = NSTimeZone.NameStyle
 #else
@@ -14,8 +14,8 @@ public typealias PlatformTimeZone = java.util.TimeZone
 public typealias PlatformTimeZoneNameStyle = TimeZone.NameStyle
 #endif
 
-public struct TimeZone : RawRepresentable, Hashable, CustomStringConvertible {
-    public var rawValue: PlatformTimeZone
+public struct TimeZone : Hashable, CustomStringConvertible {
+    internal var rawValue: PlatformTimeZone
 
     public static var current: TimeZone {
         #if !SKIP
@@ -61,7 +61,7 @@ public struct TimeZone : RawRepresentable, Hashable, CustomStringConvertible {
 
     public static var autoupdatingCurrent: TimeZone {
         #if !SKIP
-        return TimeZone(.autoupdatingCurrent)
+        return TimeZone(rawValue: .autoupdatingCurrent)
         #else
         return TimeZone(rawValue: PlatformTimeZone.getDefault())
         #endif
@@ -76,11 +76,7 @@ public struct TimeZone : RawRepresentable, Hashable, CustomStringConvertible {
         #endif
     }
 
-    public init(rawValue: PlatformTimeZone) {
-        self.rawValue = rawValue
-    }
-
-    public init(_ rawValue: PlatformTimeZone) {
+    internal init(rawValue: PlatformTimeZone) {
         self.rawValue = rawValue
     }
 
