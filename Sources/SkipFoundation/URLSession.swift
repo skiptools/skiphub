@@ -403,6 +403,7 @@ public struct DownloadUnsupportedWithRobolectric : Error {
 #endif
 
 #if !SKIP
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public typealias PlatformAsyncStream<Element> = AsyncStream<Element>
 #else
 public typealias PlatformAsyncStream<Element> = kotlinx.coroutines.flow.Flow<Element>
@@ -417,6 +418,7 @@ public protocol SkipAsyncSequence {
     var stream: PlatformAsyncStream<Element> { get }
 }
 
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public extension SkipAsyncSequence {
 
     // Skip FIXME: Cannot declare both forms of `reduce` due to JVM signature clash:
