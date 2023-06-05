@@ -9,7 +9,7 @@ import XCTest
 /// This test is a minimal example of `OSLog.Logger` being transpiled to use `skip.foundation.SkipLogger` on the Kotlin side.
 @available(macOS 14, iOS 16, watchOS 9, tvOS 16, *)
 final class LoggerTests: XCTestCase {
-    let logger = Logger(subsystem: "test", category: "LoggerTests")
+    let logger: Logger = Logger(subsystem: "test", category: "LoggerTests")
 
     public func testLogDebug() {
         logger.debug("logger debug test")

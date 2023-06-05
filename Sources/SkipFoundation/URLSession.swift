@@ -308,7 +308,7 @@ public final class URLSession {
 
     public func bytes(from url: URL) async throws -> (URLSessionAsyncBytes, URLResponse) {
         #if !SKIP
-        let (bytes, response) = try await platformValue.bytes(from: url.platformValue)
+        //let (bytes, response) = try await platformValue.bytes(from: url.platformValue)
         fatalError("TODO: non-Skip bytes(from:")
         //let result = (URLSessionAsyncBytes(stream: bytes), URLResponse(platformValue: response))
         //return result
