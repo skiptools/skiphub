@@ -23,7 +23,7 @@ import struct Foundation.URL
 /// A context for evaluating SQL Statements against a SQLite database.
 @available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
 public final class SQLContext {
-    private static let logger = Logger(subsystem: "skip.kit", category: "SQL")
+    internal static let logger: Logger = Logger(subsystem: "skip.kit", category: "SQL")
 
     #if SKIP
     public let db: android.database.sqlite.SQLiteDatabase
