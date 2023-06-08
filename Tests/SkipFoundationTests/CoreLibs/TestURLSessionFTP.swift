@@ -19,44 +19,6 @@
 //// See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 ////
 //
-//#if !os(Windows)
-//
-//class TestURLSessionFTP : LoopbackFTPServerTest {
-//
-//    static var allTests: [(String, (TestURLSessionFTP) -> () throws -> Void)] {
-//        return [
-//            /* ⚠️ */ ("test_ftpDataTask", testExpectedToFail(test_ftpDataTask,
-//            /* ⚠️ */     "<https://bugs.swift.org/browse/SR-10922>  non-deterministic SEGFAULT in TestURLSessionFTP.test_ftpDataTask")),
-//            /* ⚠️ */ ("test_ftpDataTaskDelegate", testExpectedToFail(test_ftpDataTaskDelegate,
-//            /* ⚠️ */     "<https://bugs.swift.org/browse/SR-10922>  non-deterministic SEGFAULT in TestURLSessionFTP.test_ftpDataTask")),
-//        ]
-//    }
-//
-//    let saveString = """
-//                     FTP implementation to test FTP
-//                     upload, download and data tasks. Instead of sending a file,
-//                     we are sending the hardcoded data.We are going to test FTP
-//                     data, download and upload tasks with delegates & completion handlers.
-//                     Creating the data here as we need to pass the count
-//                     as part of the header.\r\n
-//                     """
-//
-//    func test_ftpDataTask() {
-//#if !DARWIN_COMPATIBILITY_TESTS
-//            let ftpURL = "ftp://127.0.0.1:\(TestURLSessionFTP.serverPort)/test.txt"
-//            let req = URLRequest(url: URL(string: ftpURL)!)
-//            let configuration = URLSessionConfiguration.default
-//            let expect = expectation(description: "URL test with custom protocol")
-//            let sesh = URLSession(configuration: configuration)
-//            let dataTask1 = sesh.dataTask(with: req, completionHandler: { data, res, error in
-//                defer { expect.fulfill() }
-//                XCTAssertNil(error)
-//                XCTAssertEqual(self.saveString, String(data: data!, encoding: String.Encoding.utf8))
-//
-//            })
-//            dataTask1.resume()
-//            waitForExpectations(timeout: 60)
-//#endif
 //    }
 //
 //    func test_ftpDataTaskDelegate() {

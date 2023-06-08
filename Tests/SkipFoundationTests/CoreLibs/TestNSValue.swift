@@ -19,22 +19,6 @@ import XCTest
 //
 
 class TestNSValue : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestNSValue) -> () throws -> Void)] {
-        return [
-            ( "test_valueWithLong", test_valueWithLong ),
-            ( "test_valueWithCGPoint", test_valueWithCGPoint ),
-            ( "test_valueWithCGSize", test_valueWithCGSize ),
-            ( "test_valueWithCGRect", test_valueWithCGRect ),
-            ( "test_valueWithNSEdgeInsets", test_valueWithNSEdgeInsets ),
-            ( "test_valueWithNSRange", test_valueWithNSRange ),
-            ( "test_valueWithShortArray", test_valueWithShortArray ),
-            ( "test_valueWithULongLongArray", test_valueWithULongLongArray ),
-            ( "test_valueWithCharPtr", test_valueWithULongLongArray ),
-            ( "test_isEqual", test_isEqual ),
-        ]
-    }
-    #endif // SKIP
     
     func test_valueWithCGPoint() {
         #if SKIP

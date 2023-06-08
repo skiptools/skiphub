@@ -20,20 +20,6 @@ import XCTest
 
 class TestNSRegularExpression : XCTestCase {
     
-    #if !SKIP
-    static var allTests : [(String, (TestNSRegularExpression) -> () throws -> Void)] {
-        return [
-            ("test_simpleRegularExpressions", test_simpleRegularExpressions),
-            ("test_regularExpressionReplacement", test_regularExpressionReplacement),
-            ("test_complexRegularExpressions", test_complexRegularExpressions),
-            ("test_Equal", test_Equal),
-            ("test_defaultOptions", test_defaultOptions),
-            ("test_badPattern", test_badPattern),
-            ("test_unicodeNamedGroup", test_unicodeNamedGroup),
-            ("test_conflictingNamedGroups", test_conflictingNamedGroups),
-        ]
-    }
-    #endif // SKIP
 
     #if !SKIP
     func simpleRegularExpressionTestWithPattern(_ patternString: String, target searchString: String, looking: Bool, match: Bool, file: StaticString = #file, line: UInt = #line) {

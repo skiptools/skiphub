@@ -336,25 +336,6 @@ class TestNSDictionary : XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSDictionary) -> () throws -> Void)] {
-        return [
-            ("test_BasicConstruction", test_BasicConstruction),
-            ("test_ArrayConstruction", test_ArrayConstruction),
-            ("test_description", test_description),
-            ("test_enumeration", test_enumeration),
-            ("test_equality", test_equality),
-            ("test_copying", test_copying),
-            ("test_mutableCopying", test_mutableCopying),
-            ("test_writeToFile", test_writeToFile),
-            ("test_initWithContentsOfFile", test_initWithContentsOfFile),
-            ("test_settingWithStringKey", test_settingWithStringKey),
-            ("test_valueForKey", test_valueForKey),
-            ("test_valueForKeyWithNestedDict", test_valueForKeyWithNestedDict),
-            ("test_sharedKeySets", test_sharedKeySets),
-        ]
-    }
-    #endif // SKIP
 }
 
 

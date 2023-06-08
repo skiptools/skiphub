@@ -240,22 +240,6 @@ class TestCachedURLResponse : XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestCachedURLResponse) -> () throws -> Void)] {
-        return [
-            ("test_copy", test_copy),
-            ("test_initDefaultUserInfoAndStoragePolicy", test_initDefaultUserInfoAndStoragePolicy),
-            ("test_initDefaultUserInfo", test_initDefaultUserInfo),
-            ("test_initWithoutDefaults", test_initWithoutDefaults),
-            ("test_equalWithTheSameInstance", test_equalWithTheSameInstance),
-            ("test_equalWithUnrelatedObject", test_equalWithUnrelatedObject),
-            ("test_equalCheckingResponse", test_equalCheckingResponse),
-            ("test_equalCheckingData", test_equalCheckingData),
-            ("test_equalCheckingStoragePolicy", test_equalCheckingStoragePolicy),
-            ("test_hash", test_hash),
-        ]
-    }
-    #endif // SKIP
 }
 
 

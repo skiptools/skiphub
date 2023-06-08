@@ -22,28 +22,6 @@ class TestDateFormatter: XCTestCase {
     let DEFAULT_LOCALE = "en_US_POSIX"
     let DEFAULT_TIMEZONE = "GMT"
     
-    #if !SKIP
-    static var allTests : [(String, (TestDateFormatter) -> () throws -> Void)] {
-        return [
-            ("test_BasicConstruction", test_BasicConstruction),
-            ("test_dateStyleShort",    test_dateStyleShort),
-            //("test_dateStyleMedium",   test_dateStyleMedium),
-            ("test_dateStyleLong",     test_dateStyleLong),
-            ("test_dateStyleFull",     test_dateStyleFull),
-            ("test_customDateFormat", test_customDateFormat),
-            ("test_setLocalizedDateFormatFromTemplate", test_setLocalizedDateFormatFromTemplate),
-            ("test_dateFormatString", test_dateFormatString),
-            ("test_setLocaleToNil", test_setLocaleToNil),
-            ("test_setTimeZoneToNil", test_setTimeZoneToNil),
-            ("test_setTimeZone", test_setTimeZone),
-            ("test_expectedTimeZone", test_expectedTimeZone),
-            ("test_dateFrom", test_dateFrom),
-            ("test_dateParseAndFormatWithJapaneseCalendar", test_dateParseAndFormatWithJapaneseCalendar),
-            ("test_orderOfPropertySetters", test_orderOfPropertySetters),
-            ("test_copy_sr14108", test_copy_sr14108),
-        ]
-    }
-    #endif // SKIP
     
     func test_BasicConstruction() {
         #if SKIP

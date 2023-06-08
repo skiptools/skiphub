@@ -271,17 +271,6 @@ class TestNSSortDescriptor: XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSSortDescriptor) -> () throws -> Void)] {
-        return [
-            ("testComparable", testComparable),
-            ("testBuiltinComparableObject", testBuiltinComparableObject),
-            ("testBuiltinComparableBridgeable", testBuiltinComparableBridgeable),
-            ("testComparatorSorting", testComparatorSorting),
-            ("testSortingContainers", testSortingContainers),
-        ]
-    }
-    #endif // SKIP
 }
 #endif
 

@@ -20,16 +20,6 @@ import XCTest
 
 class TestNSUUID : XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSUUID) -> () throws -> Void)] {
-        return [
-            ("test_Equality", test_Equality),
-            ("test_InvalidUUID", test_InvalidUUID),
-            ("test_uuidString", test_uuidString),
-            ("test_description", test_description),
-        ]
-    }
-    #endif // SKIP
     
     func test_Equality() {
         #if SKIP

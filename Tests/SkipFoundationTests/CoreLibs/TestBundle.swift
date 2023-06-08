@@ -652,32 +652,5 @@ class TestBundle : XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestBundle) -> () throws -> Void)] {
-        var tests: [(String, (TestBundle) -> () throws -> Void)] = [
-            ("test_paths", test_paths),
-            ("test_resources", test_resources),
-            ("test_infoPlist", test_infoPlist),
-            ("test_localizations", test_localizations),
-            ("test_URLsForResourcesWithExtension", test_URLsForResourcesWithExtension),
-            ("test_bundleLoad", test_bundleLoad),
-            ("test_bundleLoadWithError", test_bundleLoadWithError),
-            ("test_bundleWithInvalidPath", test_bundleWithInvalidPath),
-            ("test_bundlePreflight", testExpectedToFailOnWindows(test_bundlePreflight, "Preflight checks aren't supported for DLLs")),
-            ("test_bundleFindExecutable", test_bundleFindExecutable),
-            ("test_bundleFindAuxiliaryExecutables", test_bundleFindAuxiliaryExecutables),
-            ("test_bundleForClass", testExpectedToFailOnWindows(test_bundleForClass, "Functionality not yet implemented on Windows. SR-XXXX")),
-        ]
-        
-        #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && !os(Windows)
-        tests.append(contentsOf: [
-            ("test_mainBundleExecutableURL", test_mainBundleExecutableURL),
-            ("test_bundleReverseBundleLookup", test_bundleReverseBundleLookup),
-            ])
-        #endif
-        
-        return tests
-    }
-    #endif // SKIP
 }
 

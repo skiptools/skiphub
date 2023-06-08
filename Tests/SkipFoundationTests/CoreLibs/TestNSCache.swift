@@ -20,19 +20,6 @@ import XCTest
 
 class TestNSCache : XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSCache) -> () throws -> Void)] {
-        return [
-            ("test_setWithUnmutableKeys", test_setWithUnmutableKeys),
-            ("test_setWithMutableKeys", test_setWithMutableKeys),
-            ("test_costLimit", test_costLimit),
-            ("test_countLimit", test_countLimit),
-            ("test_hashableKey", test_hashableKey),
-            ("test_nonHashableKey", test_nonHashableKey),
-            ("test_objectCorrectlyReleased", test_objectCorrectlyReleased)
-        ]
-    }
-    #endif // SKIP
     
     func test_setWithUnmutableKeys() {
         #if SKIP

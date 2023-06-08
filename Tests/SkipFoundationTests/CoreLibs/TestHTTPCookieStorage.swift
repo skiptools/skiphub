@@ -477,22 +477,6 @@ class TestHTTPCookieStorage: XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestHTTPCookieStorage) -> () throws -> Void)] {
-        return [
-            ("test_sharedCookieStorageAccessedFromMultipleThreads", test_sharedCookieStorageAccessedFromMultipleThreads),
-            ("test_BasicStorageAndRetrieval", test_BasicStorageAndRetrieval),
-            ("test_deleteCookie", test_deleteCookie),
-            ("test_removeCookies", test_removeCookies),
-            ("test_cookiesForURL", test_cookiesForURL),
-            ("test_cookiesForURLWithMainDocumentURL", test_cookiesForURLWithMainDocumentURL),
-            ("test_cookieInXDGSpecPath", test_cookieInXDGSpecPath),
-            ("test_descriptionCookie", test_descriptionCookie),
-            ("test_cookieDomainMatching", test_cookieDomainMatching),
-            ("test_sorting", test_sorting),
-        ]
-    }
-    #endif // SKIP
 
 }
 

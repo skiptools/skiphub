@@ -56,14 +56,6 @@ private func assert(equal: Bool,
 
 class TestPersonNameComponents : XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestPersonNameComponents) -> () throws -> Void)] {
-        return [
-            ("testCopy", testCopy),
-            ("testEquality", testEquality),
-        ]
-    }
-    #endif // SKIP
     
     func testCopy() {
         #if SKIP

@@ -174,20 +174,6 @@ class TestRunLoop : XCTestCase {
         XCTAssertTrue(timerFired, "Time should fire already")
     }
 
-    #if !SKIP
-    static var allTests : [(String, (TestRunLoop) -> () throws -> Void)] {
-        return [
-            ("test_constants", test_constants),
-            ("test_runLoopInit", test_runLoopInit),
-            ("test_commonModes", test_commonModes),
-            ("test_runLoopRunMode", test_runLoopRunMode),
-            ("test_runLoopLimitDate", test_runLoopLimitDate),
-            ("test_runLoopPoll", test_runLoopPoll),
-            ("test_addingRemovingPorts", test_addingRemovingPorts),
-            ("test_mainDispatchQueueCallout", test_mainDispatchQueueCallout)
-        ]
-    }
-    #endif // SKIP
 }
 
 class TestPort: Port {

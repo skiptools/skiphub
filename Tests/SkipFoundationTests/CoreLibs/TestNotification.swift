@@ -20,14 +20,6 @@ import XCTest
 
 class TestNotification : XCTestCase {
 
-    #if !SKIP
-    static var allTests: [(String, (TestNotification) -> () throws -> Void)] {
-        return [
-            ("test_customReflection", test_customReflection),
-            ("test_NotificationNameInit", test_NotificationNameInit),
-        ]
-    }
-    #endif // SKIP
 
     func test_customReflection() {
         #if SKIP

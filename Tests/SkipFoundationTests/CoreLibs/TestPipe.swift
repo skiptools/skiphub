@@ -22,20 +22,6 @@ import XCTest
 @available(macOS 10.15, iOS 13.4, watchOS 6.0, tvOS 13.0, *)
 class TestPipe: XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestPipe) -> () throws -> Void)] {
-        var tests: [(String, (TestPipe) -> () throws -> Void)] = [
-            ("test_Pipe", test_Pipe),
-        ]
-
-#if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
-        tests.append(contentsOf: [
-            ("test_MaxPipes", test_MaxPipes),
-        ])
-#endif
-        return tests
-    }
-    #endif // SKIP
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func test_MaxPipes() {

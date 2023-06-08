@@ -300,17 +300,6 @@ class TestNSDateComponents: XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestNSDateComponents) -> () throws -> Void)] {
-        return [
-            ("test_hash", test_hash),
-            ("test_copyNSDateComponents", test_copyNSDateComponents),
-            ("test_dateDifferenceComponents", test_dateDifferenceComponents),
-            ("test_nanoseconds", test_nanoseconds),
-            ("test_currentCalendar", test_currentCalendar),
-        ]
-    }
-    #endif // SKIP
 }
 
 

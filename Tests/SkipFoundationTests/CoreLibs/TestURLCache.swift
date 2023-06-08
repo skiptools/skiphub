@@ -296,22 +296,6 @@ class TestURLCache : XCTestCase {
     
     // -----
     
-    #if !SKIP
-    static var allTests: [(String, (TestURLCache) -> () throws -> Void)] {
-        return [
-            ("testStorageRoundtrip", testStorageRoundtrip),
-            ("testStoragePolicy", testStoragePolicy),
-            ("testNoDiskUsageIfDisabled", testNoDiskUsageIfDisabled),
-            ("testShrinkingDiskCapacityEvictsItems", testShrinkingDiskCapacityEvictsItems),
-            ("testNoMemoryUsageIfDisabled", testNoMemoryUsageIfDisabled),
-            ("testShrinkingMemoryCapacityEvictsItems", testShrinkingMemoryCapacityEvictsItems),
-            ("testRemovingOne", testRemovingOne),
-            ("testRemovingAll", testRemovingAll),
-            ("testRemovingSince", testRemovingSince),
-            ("testStoringTwiceOnlyHasOneEntry", testStoringTwiceOnlyHasOneEntry),
-        ]
-    }
-    #endif // SKIP
     
     // -----
     

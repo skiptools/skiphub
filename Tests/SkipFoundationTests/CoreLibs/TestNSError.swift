@@ -28,33 +28,6 @@ struct SwiftCustomNSError: Error, CustomNSError {
 
 class TestNSError : XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSError) -> () throws -> Void)] {
-        var tests: [(String, (TestNSError) -> () throws -> Void)] = [
-            ("test_LocalizedError_errorDescription", test_LocalizedError_errorDescription),
-            ("test_NSErrorAsError_localizedDescription", test_NSErrorAsError_localizedDescription),
-            ("test_NSError_inDictionary", test_NSError_inDictionary),
-            ("test_CustomNSError_domain", test_CustomNSError_domain),
-            ("test_CustomNSError_userInfo", test_CustomNSError_userInfo),
-            ("test_CustomNSError_errorCode", test_CustomNSError_errorCode),
-            ("test_CustomNSError_errorCodeRawInt", test_CustomNSError_errorCodeRawInt),
-            ("test_CustomNSError_errorCodeRawUInt", test_CustomNSError_errorCodeRawUInt),
-            ("test_errorConvenience", test_errorConvenience),
-        ]
-        
-        #if !canImport(ObjectiveC) || DARWIN_COMPATIBILITY_TESTS
-        tests.append(contentsOf: [
-            ("test_ConvertErrorToNSError_domain", test_ConvertErrorToNSError_domain),
-            ("test_ConvertErrorToNSError_errorCode", test_ConvertErrorToNSError_errorCode),
-            ("test_ConvertErrorToNSError_errorCodeRawInt", test_ConvertErrorToNSError_errorCodeRawInt),
-            ("test_ConvertErrorToNSError_errorCodeRawUInt", test_ConvertErrorToNSError_errorCodeRawUInt),
-            ("test_ConvertErrorToNSError_errorCodeWithAssosiatedValue", test_ConvertErrorToNSError_errorCodeWithAssosiatedValue),
-        ])
-        #endif
-        
-        return tests
-    }
-    #endif // SKIP
     
     func test_LocalizedError_errorDescription() {
         #if SKIP

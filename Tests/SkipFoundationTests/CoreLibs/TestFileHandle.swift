@@ -754,48 +754,6 @@ class TestFileHandle : XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests : [(String, (TestFileHandle) -> () throws -> ())] {
-        var tests: [(String, (TestFileHandle) -> () throws -> ())] = [
-            ("testReadUpToCount", testReadUpToCount),
-            ("testReadToEnd", testReadToEnd),
-            ("testWritingWithData", testWritingWithData),
-            ("testWritingWithBuffer", testWritingWithBuffer),
-            ("testWritingWithMultiregionData", testWritingWithMultiregionData),
-            ("test_constants", test_constants),
-            ("test_truncateFile", test_truncateFile),
-            ("test_truncate", test_truncate),
-            ("test_readabilityHandlerCloseFileRace", test_readabilityHandlerCloseFileRace),
-            ("test_readabilityHandlerCloseFileRaceWithError", test_readabilityHandlerCloseFileRaceWithError),
-            ("test_availableData", test_availableData),
-            ("test_readToEndOfFileInBackgroundAndNotify", test_readToEndOfFileInBackgroundAndNotify),
-            ("test_readToEndOfFileAndNotify", test_readToEndOfFileAndNotify),
-            ("test_readToEndOfFileAndNotify_readError", test_readToEndOfFileAndNotify_readError),
-            ("test_waitForDataInBackgroundAndNotify", test_waitForDataInBackgroundAndNotify),
-            /* ⚠️ */ ("test_readWriteHandlers", testExpectedToFail(test_readWriteHandlers,
-            /* ⚠️ */     "<rdar://problem/50860781> sporadically times out")),
-            ("testSynchronizeOnSpecialFile", testSynchronizeOnSpecialFile),
-        ]
-
-#if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
-        tests.append(contentsOf: [
-            ("test_fileDescriptor", test_fileDescriptor),
-            ("test_nullDevice", test_nullDevice),
-            ("testHandleCreationAndCleanup", testHandleCreationAndCleanup),
-            ("testOffset", testOffset),
-        ])
-
-    #if !os(Windows)
-        tests.append(contentsOf: [
-            /* ⚠️  SR-13822 - closeOnDealloc doesnt work on Windows and so this test is disabled there. */
-            ("test_closeOnDealloc", test_closeOnDealloc),
-        ])
-    #endif
-#endif
-
-        return tests
-    }
-    #endif // SKIP
 }
 
 

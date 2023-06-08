@@ -21,15 +21,6 @@ import XCTest
 class TestHost: XCTestCase {
     
 #if !os(iOS)
-    #if !SKIP
-    static var allTests: [(String, (TestHost) -> () throws -> Void)] {
-        return [
-            ("test_addressesDoNotGrow", test_addressesDoNotGrow),
-            ("test_isEqual", test_isEqual),
-            ("test_localNamesNonEmpty", test_localNamesNonEmpty),
-        ]
-    }
-    #endif // SKIP
     
     // SR-6391
     func test_addressesDoNotGrow() {

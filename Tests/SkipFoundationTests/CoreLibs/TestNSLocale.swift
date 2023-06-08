@@ -19,18 +19,6 @@ import XCTest
 //
 
 class TestNSLocale : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestNSLocale) -> () throws -> Void)] {
-        return [
-            ("test_constants", test_constants),
-            ("test_Identifier", test_Identifier),
-            ("test_copy", test_copy),
-            ("test_hash", test_hash),
-            ("test_staticProperties", test_staticProperties),
-            ("test_localeProperties", test_localeProperties),
-        ]
-    }
-    #endif // SKIP
 
     func test_Identifier() {
         #if SKIP

@@ -28,30 +28,6 @@ func dateWithString(_ str: String) -> Date {
 
 class TestDate : XCTestCase {
     
-    #if !SKIP
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    static var allTests: [(String, (TestDate) -> () throws -> Void)] {
-        return [
-            ("test_BasicConstruction", test_BasicConstruction),
-            ("test_InitTimeIntervalSince1970", test_InitTimeIntervalSince1970),
-            ("test_InitTimeIntervalSinceSinceDate", test_InitTimeIntervalSinceSinceDate),
-            ("test_TimeIntervalSinceSinceDate", test_TimeIntervalSinceSinceDate),
-            ("test_descriptionWithLocale", test_descriptionWithLocale),
-            ("test_DistantFuture", test_DistantFuture),
-            ("test_DistantPast", test_DistantPast),
-            ("test_DateByAddingTimeInterval", test_DateByAddingTimeInterval),
-            ("test_EarlierDate", test_EarlierDate),
-            ("test_LaterDate", test_LaterDate),
-            ("test_Compare", test_Compare),
-            ("test_IsEqualToDate", test_IsEqualToDate),
-            ("test_timeIntervalSinceReferenceDate", test_timeIntervalSinceReferenceDate),
-            ("test_recreateDateComponentsFromDate", test_recreateDateComponentsFromDate),
-            ("test_Hashing", test_Hashing),
-            ("test_advancedBy", test_advancedBy),
-            ("test_distanceTo", test_distanceTo),
-        ]
-    }
-    #endif // SKIP
     
     func test_BasicConstruction() {
         let d: Date = Date()

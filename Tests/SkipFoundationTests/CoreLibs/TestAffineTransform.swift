@@ -32,32 +32,7 @@ public struct Vector {
 class TestAffineTransform: XCTestCase {
     private let accuracyThreshold: CGFloat = 0.001
 
-    #if !SKIP
-    @available(*, deprecated)
-    static var allTests: [(String, (TestAffineTransform) -> () throws -> Void)] {
-        return [
-            ("testConstruction", testConstruction),
-            ("testBridging", testBridging),
-            ("testEqualityHashing", testEqualityHashing),
-            ("testVectorTransformations", testVectorTransformations),
-            ("testIdentityConstruction", testIdentityConstruction),
-            ("testIdentity", testIdentity),
-            ("testTranslationConstruction", testTranslationConstruction),
-            ("testTranslation", testTranslation),
-            ("testScalingConstruction", testScalingConstruction),
-            ("testScaling", testScaling),
-            ("testRotationConstruction", testRotationConstruction),
-            ("testRotation", testRotation),
-            ("testTranslationScaling", testTranslationScaling),
-            ("testTranslationRotation", testTranslationRotation),
-            ("testScalingRotation", testScalingRotation),
-            ("testInversion", testInversion),
-            ("testPrependTransform", testPrependTransform),
-            ("testAppendTransform", testAppendTransform),
-        ]
     }
-    #endif // SKIP
-}
  
 // MARK: - Helper
 

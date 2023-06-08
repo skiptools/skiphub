@@ -18,34 +18,6 @@ import XCTest
 //
 
 class TestUserDefaults : XCTestCase {
-    #if !SKIP
-    static var allTests : [(String, (TestUserDefaults) -> () throws -> ())] {
-		return [
-			("test_createUserDefaults", test_createUserDefaults ),
-			("test_getRegisteredDefaultItem", test_getRegisteredDefaultItem ),
-			("test_getRegisteredDefaultItem_NSString", test_getRegisteredDefaultItem_NSString ),
-			("test_getRegisteredDefaultItem_String", test_getRegisteredDefaultItem_String ),
-			("test_getRegisteredDefaultItem_NSURL", test_getRegisteredDefaultItem_NSURL ),
-			("test_getRegisteredDefaultItem_URL", test_getRegisteredDefaultItem_URL ),
-			("test_getRegisteredDefaultItem_NSData", test_getRegisteredDefaultItem_NSData ),
-			("test_getRegisteredDefaultItem_Data)", test_getRegisteredDefaultItem_Data ),
-			("test_getRegisteredDefaultItem_BoolFromString", test_getRegisteredDefaultItem_BoolFromString ),
-			("test_getRegisteredDefaultItem_IntFromString", test_getRegisteredDefaultItem_IntFromString ),
-			("test_getRegisteredDefaultItem_DoubleFromString", test_getRegisteredDefaultItem_DoubleFromString ),
-			("test_setValue_NSString", test_setValue_NSString ),
-			("test_setValue_String", test_setValue_String ),
-			("test_setValue_NSURL", test_setValue_NSURL ),
-			("test_setValue_URL", test_setValue_URL ),
-			("test_setValue_NSData", test_setValue_NSData ),
-			("test_setValue_Data", test_setValue_Data ),
-			("test_setValue_BoolFromString", test_setValue_BoolFromString ),
-			("test_setValue_IntFromString", test_setValue_IntFromString ),
-			("test_setValue_DoubleFromString", test_setValue_DoubleFromString ),
-			("test_volatileDomains", test_volatileDomains),
-			("test_persistentDomain", test_persistentDomain ),
-		]
-	}
-        #endif // SKIP
 
 	func test_createUserDefaults() {
         #if SKIP

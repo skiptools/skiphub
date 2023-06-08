@@ -21,18 +21,6 @@ import XCTest
 class TestEnergyFormatter: XCTestCase {
     let formatter: EnergyFormatter = EnergyFormatter()
     
-    #if !SKIP
-    static var allTests: [(String, (TestEnergyFormatter) -> () throws -> Void)] {
-        return [
-            ("test_stringFromJoulesJoulesRegion", test_stringFromJoulesJoulesRegion),
-            ("test_stringFromJoulesCaloriesRegion", test_stringFromJoulesCaloriesRegion),
-            ("test_stringFromJoulesCaloriesRegionFoodEnergyUse", test_stringFromJoulesCaloriesRegionFoodEnergyUse),
-            ("test_stringFromValue", test_stringFromValue),
-            ("test_unitStringFromValue", test_unitStringFromValue),
-            ("test_unitStringFromJoules", test_unitStringFromJoules)
-        ]
-    }
-    #endif // SKIP
     
     override func setUp() {
         #if SKIP

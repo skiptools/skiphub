@@ -504,32 +504,6 @@ final class TestAttributedStringPerformance: XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestAttributedStringPerformance) -> () throws -> Void)] {
-        return [
-            ("testInsertIntoLongString", testInsertIntoLongString),
-            ("testReplaceSubrangeOfLongString", testReplaceSubrangeOfLongString),
-            ("testSetAttribute", testSetAttribute),
-            ("testGetAttribute", testGetAttribute),
-            ("testSetAttributeSubrange", testSetAttributeSubrange),
-            ("testGetAttributeSubrange", testGetAttributeSubrange),
-            ("testModifyAttributes", testModifyAttributes),
-            ("testReplaceAttributes", testReplaceAttributes),
-            ("testMergeMultipleAttributes", testMergeMultipleAttributes),
-            ("testSetMultipleAttributes", testSetMultipleAttributes),
-            ("testEnumerateAttributes", testEnumerateAttributes),
-            ("testEnumerateAttributesSlice", testEnumerateAttributesSlice),
-            ("testConvertToNSAS", testConvertToNSAS),
-            ("testConvertFromNSAS", testConvertFromNSAS),
-            ("testEncode", testEncode),
-            ("testDecode", testDecode),
-            ("testCreateLongString", testCreateLongString),
-            ("testCreateManyAttributesString", testCreateManyAttributesString),
-            ("testEquality", testEquality),
-            ("testSubstringEquality", testSubstringEquality)
-        ]
-    }
-    #endif
 }
 
 

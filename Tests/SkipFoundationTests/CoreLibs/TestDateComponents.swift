@@ -134,14 +134,6 @@ class TestDateComponents: XCTestCase {
         XCTAssertTrue(dc.isValidDate)
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestDateComponents) -> () throws -> Void)] {
-        return [
-            ("test_hash", test_hash),
-            ("test_isValidDate", test_isValidDate),
-        ]
-    }
-    #endif // SKIP
 }
 
 

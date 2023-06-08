@@ -20,14 +20,6 @@ import XCTest
 
 class TestNSNull : XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSNull) -> () throws -> Void)] {
-        return [
-            ("test_alwaysEqual", test_alwaysEqual),
-            ("test_description", test_description),
-        ]
-    }
-    #endif // SKIP
     
     func test_alwaysEqual() {
         #if SKIP

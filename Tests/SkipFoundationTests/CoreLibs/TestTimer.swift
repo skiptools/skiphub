@@ -19,16 +19,6 @@ import XCTest
 //
 
 class TestTimer : XCTestCase {
-    #if !SKIP
-    static var allTests : [(String, (TestTimer) -> () throws -> Void)] {
-        return [
-            ("test_timerInit", test_timerInit),
-            ("test_timerTickOnce", test_timerTickOnce),
-//            ("test_timerRepeats", test_timerRepeats),
-            ("test_timerInvalidate", test_timerInvalidate),
-        ]
-    }
-    #endif // SKIP
     
     func test_timerInit() {
         #if SKIP

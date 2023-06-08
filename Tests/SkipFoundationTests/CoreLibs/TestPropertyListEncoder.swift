@@ -19,14 +19,6 @@ import XCTest
 //
 
 class TestPropertyListEncoder : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestPropertyListEncoder) -> () throws -> Void)] {
-        return [
-            ("test_basicEncodeDecode", test_basicEncodeDecode),
-            ("test_xmlDecoder", test_xmlDecoder),
-        ]
-    }
-    #endif // SKIP
 }
 
 extension TestPropertyListEncoder {

@@ -20,21 +20,6 @@ import XCTest
 
 class TestNSPredicate: XCTestCase {
 
-    #if !SKIP
-    static var allTests : [(String, (TestNSPredicate) -> () throws -> Void)] {
-        return [
-            ("test_BooleanPredicate", test_BooleanPredicate),
-            ("test_BlockPredicateWithoutVariableBindings", test_BlockPredicateWithoutVariableBindings),
-            ("test_filterNSArray", test_filterNSArray),
-            ("test_filterNSMutableArray", test_filterNSMutableArray),
-            ("test_filterNSSet", test_filterNSSet),
-            ("test_filterNSMutableSet", test_filterNSMutableSet),
-            ("test_filterNSOrderedSet", test_filterNSOrderedSet),
-            ("test_filterNSMutableOrderedSet", test_filterNSMutableOrderedSet),
-            ("test_copy", test_copy),
-        ]
-    }
-    #endif // SKIP
 
     func test_BooleanPredicate() {
         #if SKIP

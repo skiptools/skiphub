@@ -133,15 +133,6 @@ class TestSocketPort : XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestSocketPort) -> () throws -> Void)] {
-        return [
-            ("testRemoteSocketPortsAreUniqued", testRemoteSocketPortsAreUniqued),
-            ("testInitPicksATCPPort", testInitPicksATCPPort),
-            ("testSendingOneMessageRemoteToLocal", testSendingOneMessageRemoteToLocal),
-        ]
-    }
-    #endif // SKIP
 }
 
 

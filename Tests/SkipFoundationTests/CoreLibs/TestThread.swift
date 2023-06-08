@@ -186,32 +186,6 @@ class TestThread : XCTestCase {
 //        XCTAssertTrue(allowedOversleepRange.contains(oversleep3), "Oversleep \(oversleep3) is not in expected range \(allowedOversleepRange)")
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestThread) -> () throws -> Void)] {
-        let tests: [(String, (TestThread) -> () throws -> Void)] = [
-            ("test_currentThread", test_currentThread),
-            ("test_threadStart", test_threadStart),
-            ("test_mainThread", test_mainThread),
-            ("test_callStackSymbols", testExpectedToFailOnOpenBSD(
-		    testExpectedToFailOnAndroid(
-		        test_callStackSymbols,
-		    "Android doesn't support backtraces at the moment."),
-		"And not currently on OpenBSD.")),
-            ("test_callStackReturnAddresses", testExpectedToFailOnOpenBSD(
-                    testExpectedToFailOnAndroid(
-			test_callStackReturnAddresses,
-                    "Android doesn't support backtraces at the moment."),
-		"And not currently on OpenBSD.")),
-            ("test_sleepForTimeInterval",
-                testExpectedToFail(test_sleepForTimeInterval, "https://bugs.swift.org/browse/SR-15817")),
-            ("test_sleepUntilDate",
-                testExpectedToFail(test_sleepUntilDate, "https://bugs.swift.org/browse/SR-15489")),
-            ("test_threadName", test_threadName),
-        ]
-
-        return tests
-    }
-    #endif // SKIP
 }
 
 

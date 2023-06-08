@@ -308,38 +308,6 @@ class TestTimeZone: XCTestCase {
         XCTAssertTrue(eukv.isDaylightSavingTime(for: dateDST))
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestTimeZone) -> () throws -> Void)] {
-        var tests: [(String, (TestTimeZone) -> () throws -> Void)] = [
-            ("test_abbreviation", test_abbreviation),
-            
-            // Disabled because `CFTimeZoneSetAbbreviationDictionary()` attempts
-            // to release non-CF objects while removing values from
-            // `__CFTimeZoneCache`
-            // ("test_abbreviationDictionary", test_abbreviationDictionary),
-            
-            ("test_changingDefaultTimeZone", test_changingDefaultTimeZone),
-            ("test_computedPropertiesMatchMethodReturnValues", test_computedPropertiesMatchMethodReturnValues),
-            ("test_initializingTimeZoneWithOffset", test_initializingTimeZoneWithOffset),
-            ("test_initializingTimeZoneWithAbbreviation", test_initializingTimeZoneWithAbbreviation),
-            ("test_localizedName", test_localizedName),
-            ("test_customMirror", test_tz_customMirror),
-            ("test_knownTimeZones", test_knownTimeZones),
-            ("test_systemTimeZoneName", test_systemTimeZoneName),
-            ("test_autoupdatingTimeZone", test_autoupdatingTimeZone),
-            ("test_nextDaylightSavingTimeTransition", test_nextDaylightSavingTimeTransition),
-            ("test_isDaylightSavingTime", test_isDaylightSavingTime),
-        ]
-        
-        #if !os(Windows)
-        tests.append(contentsOf: [
-            ("test_systemTimeZoneUsesSystemTime", test_systemTimeZoneUsesSystemTime),
-            ])
-        #endif
-        
-        return tests
-    }
-    #endif // SKIP
 }
 
 

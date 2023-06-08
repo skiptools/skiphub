@@ -202,15 +202,6 @@ class TestDataURLProtocol: XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestDataURLProtocol) -> () throws -> Void)] {
-        let tests = [
-            ("test_validURIs", test_validURIs),
-            ("test_invalidURIs", test_invalidURIs),
-        ]
-        return tests
-    }
-    #endif // SKIP
 }
 
 

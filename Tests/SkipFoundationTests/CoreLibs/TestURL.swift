@@ -838,41 +838,5 @@ class TestURL : XCTestCase {
         super.tearDown()
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestURL) -> () throws -> Void)] {
-        var tests: [(String, (TestURL) -> () throws -> Void)] = [
-            ("test_URLStrings", test_URLStrings),
-            ("test_fileURLWithPath_relativeTo", test_fileURLWithPath_relativeTo ),
-            ("test_relativeFilePath", test_relativeFilePath),
-            // TODO: these tests fail on linux, more investigation is needed
-            ("test_fileURLWithPath", test_fileURLWithPath),
-            ("test_fileURLWithPath_isDirectory", test_fileURLWithPath_isDirectory),
-            ("test_URLByResolvingSymlinksInPathShouldRemoveDuplicatedPathSeparators", test_URLByResolvingSymlinksInPathShouldRemoveDuplicatedPathSeparators),
-            ("test_URLByResolvingSymlinksInPathShouldRemoveSingleDotsBetweenSeparators", test_URLByResolvingSymlinksInPathShouldRemoveSingleDotsBetweenSeparators),
-            ("test_URLByResolvingSymlinksInPathShouldCompressDoubleDotsBetweenSeparators", test_URLByResolvingSymlinksInPathShouldCompressDoubleDotsBetweenSeparators),
-            ("test_URLByResolvingSymlinksInPathShouldUseTheCurrentDirectory", test_URLByResolvingSymlinksInPathShouldUseTheCurrentDirectory),
-            ("test_resolvingSymlinksInPathShouldAppendTrailingSlashWhenExistingDirectory", test_resolvingSymlinksInPathShouldAppendTrailingSlashWhenExistingDirectory),
-            ("test_resolvingSymlinksInPathShouldResolveSymlinks", test_resolvingSymlinksInPathShouldResolveSymlinks),
-            ("test_resolvingSymlinksInPathShouldNotChangeNonFileURLs", test_resolvingSymlinksInPathShouldNotChangeNonFileURLs),
-            ("test_resolvingSymlinksInPathShouldNotChangePathlessURLs", test_resolvingSymlinksInPathShouldNotChangePathlessURLs),
-            ("test_reachable", test_reachable),
-            ("test_copy", test_copy),
-//            ("test_itemNSCoding", test_itemNSCoding),
-            ("test_dataRepresentation", test_dataRepresentation),
-            ("test_description", test_description),
-            ("test_URLResourceValues", testExpectedToFail(test_URLResourceValues,
-                "test_URLResourceValues: Except for .nameKey, we have no testable attributes that work in the environment Swift CI uses, for now. SR-XXXX")),
-        ]
-
-#if canImport(Darwin)
-        tests += [
-            ("test_resolvingSymlinksInPathShouldRemovePrivatePrefix", test_resolvingSymlinksInPathShouldRemovePrivatePrefix),
-            ("test_resolvingSymlinksInPathShouldNotRemovePrivatePrefixIfOnlyComponent", test_resolvingSymlinksInPathShouldNotRemovePrivatePrefixIfOnlyComponent),
-        ]
-#endif
-
-        return tests
-    }
-    #endif
 }
 

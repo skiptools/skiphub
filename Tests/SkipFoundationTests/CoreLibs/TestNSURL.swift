@@ -101,19 +101,6 @@ class TestNSURL: XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestNSURL) -> () throws -> Void)] {
-        let tests: [(String, (TestNSURL) -> () throws -> Void)] = [
-            ("test_absoluteString", test_absoluteString),
-            ("test_pathComponents", test_pathComponents),
-            ("test_standardized", test_standardized),
-            ("test_standardizingPath", test_standardizingPath),
-            ("test_resolvingSymlinksInPath", test_resolvingSymlinksInPath),
-        ]
-
-        return tests
-    }
-    #endif // SKIP
 }
 
 

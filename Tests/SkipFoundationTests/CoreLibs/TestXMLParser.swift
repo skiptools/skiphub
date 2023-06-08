@@ -101,17 +101,6 @@ class XMLParserDelegateEventStream: NSObject, XMLParserDelegate {
 
 class TestXMLParser : XCTestCase {
 
-    #if !SKIP
-    static var allTests: [(String, (TestXMLParser) -> () throws -> Void)] {
-        return [
-            ("test_withData", test_withData),
-            ("test_withDataEncodings", test_withDataEncodings),
-            ("test_withDataOptions", test_withDataOptions),
-            ("test_sr9758_abortParsing", test_sr9758_abortParsing),
-            ("test_sr10157_swappedElementNames", test_sr10157_swappedElementNames),
-        ]
-    }
-    #endif // SKIP
 
     // Helper method to embed the correct encoding in the XML header
     static func xmlUnderTest(encoding: String.Encoding? = nil) -> String {

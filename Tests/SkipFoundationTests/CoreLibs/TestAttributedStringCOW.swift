@@ -211,16 +211,5 @@ final class TestAttributedStringCOW: XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestAttributedStringCOW) -> () throws -> Void)] {
-        return [
-            ("testTopLevelType", testTopLevelType),
-            ("testSubstring", testSubstring),
-            ("testCharacters", testCharacters),
-            ("testUnicodeScalars", testUnicodeScalars),
-            ("testGenericProtocol", testGenericProtocol)
-        ]
-    }
-    #endif // SKIP
 }
 

@@ -20,14 +20,6 @@ import XCTest
 
 class TestURLCredential : XCTestCase {
     
-    #if !SKIP
-    static var allTests: [(String, (TestURLCredential) -> () throws -> Void)] {
-        return [
-                   ("test_construction", test_construction),
-                   ("test_copy", test_copy),
-        ]
-    }
-    #endif // SKIP
     
     func test_construction() {
         #if SKIP

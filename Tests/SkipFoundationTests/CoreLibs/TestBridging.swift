@@ -29,15 +29,6 @@ struct StructWithDescriptionAndDebugDescription:
 #endif
 
 class TestBridging : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestBridging) -> () throws -> Void)] {
-        return [
-            ("testBridgedDescription", testBridgedDescription),
-            ("testDynamicCast", testDynamicCast),
-            ("testConstantsImmortal", testConstantsImmortal),
-        ]
-    }
-    #endif // SKIP
 
     func testBridgedDescription() throws {
         #if SKIP

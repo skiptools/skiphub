@@ -21,18 +21,6 @@ import XCTest
 class TestMassFormatter: XCTestCase {
     let formatter: MassFormatter = MassFormatter()
     
-    #if !SKIP
-    static var allTests: [(String, (TestMassFormatter) -> () throws -> Void)] {
-        return [
-            ("test_stringFromKilogramsImperialRegion", test_stringFromKilogramsImperialRegion),
-            ("test_stringFromKilogramsMetricRegion", test_stringFromKilogramsMetricRegion),
-            ("test_stringFromKilogramsMetricRegionPersonMassUse", test_stringFromKilogramsMetricRegionPersonMassUse),
-            ("test_stringFromValue", test_stringFromValue),
-            ("test_unitStringFromKilograms", test_unitStringFromKilograms),
-            ("test_unitStringFromValue", test_unitStringFromValue),
-        ]
-    }
-    #endif // SKIP
     
     override func setUp() {
         #if SKIP

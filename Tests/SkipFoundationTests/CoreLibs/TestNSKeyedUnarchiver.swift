@@ -19,22 +19,6 @@ import XCTest
 //
 
 class TestNSKeyedUnarchiver : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestNSKeyedUnarchiver) -> () throws -> Void)] {
-        return [
-            ("test_unarchive_array", test_unarchive_array),
-            ("test_unarchive_complex", test_unarchive_complex),
-            ("test_unarchive_concrete_value", test_unarchive_concrete_value),
-            // ("test_unarchive_notification", test_unarchive_notification), // does not yet support isEqual()
-            ("test_unarchive_nsedgeinsets_value", test_unarchive_nsedgeinsets_value),
-            ("test_unarchive_nsrange_value", test_unarchive_nsrange_value),
-            ("test_unarchive_nsrect", test_unarchive_nsrect_value),
-            ("test_unarchive_ordered_set", test_unarchive_ordered_set),
-            ("test_unarchive_url", test_unarchive_url),
-            ("test_unarchive_uuid", test_unarchive_uuid),
-        ]
-    }
-    #endif // SKIP
     
     private enum SecureTest {
         case skip

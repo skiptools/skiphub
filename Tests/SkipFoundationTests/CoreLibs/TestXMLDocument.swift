@@ -855,45 +855,6 @@ class TestXMLDocument : XCTestCase { // : LoopbackServerTest {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestXMLDocument) -> () throws -> Void)] {
-        return [
-            ("test_basicCreation", test_basicCreation),
-            ("test_nextPreviousNode", test_nextPreviousNode),
-            // Disabled because of https://bugs.swift.org/browse/SR-10098
-            // ("test_xpath", test_xpath),
-            ("test_elementCreation", test_elementCreation),
-            ("test_elementChildren", test_elementChildren),
-            ("test_stringValue", test_stringValue),
-            ("test_objectValue", test_objectValue),
-            ("test_attributes", test_attributes),
-            ("test_attributesWithNamespace", test_attributesWithNamespace),
-            ("test_comments", test_comments),
-            ("test_processingInstruction", test_processingInstruction),
-            ("test_parseXMLString", test_parseXMLString),
-            ("test_prefixes", test_prefixes),
-            /* ⚠️ */ ("test_validation_success", testExpectedToFail(test_validation_success,
-            /* ⚠️ */     #"<https://bugs.swift.org/browse/SR-10643> Could not build URI for external subset "http://127.0.0.1:-2/DTDs/PropertyList-1.0.dtd""#)),
-            /* ⚠️ */ ("test_validation_failure", testExpectedToFail(test_validation_failure,
-            /* ⚠️ */     "<https://bugs.swift.org/browse/SR-10643> XCTAssert in last catch block fails")),
-            ("test_dtd", test_dtd),
-            ("test_documentWithDTD", test_documentWithDTD),
-            ("test_dtd_attributes", test_dtd_attributes),
-            ("test_documentWithEncodingSetDoesntCrash", test_documentWithEncodingSetDoesntCrash),
-            ("test_nodeFindingWithNamespaces", test_nodeFindingWithNamespaces),
-            ("test_createElement", test_createElement),
-            ("test_addNamespace", test_addNamespace),
-            ("test_removeNamespace", test_removeNamespace),
-            ("test_optionPreserveAll", test_optionPreserveAll),
-            ("test_rootElementRetainsDocument", test_rootElementRetainsDocument),
-            ("test_nodeKinds", test_nodeKinds),
-            ("test_nodeNames", test_nodeNames),
-            ("test_creatingAnEmptyDocumentAndNode", test_creatingAnEmptyDocumentAndNode),
-            ("test_creatingAnEmptyDTD", test_creatingAnEmptyDTD),
-            ("test_parsingCDataSections", test_parsingCDataSections),
-        ]
-    }
-    #endif // SKIP
 }
 
 fileprivate extension XMLNode {

@@ -1447,59 +1447,6 @@ class TestIndexSet : XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestIndexSet) -> () throws -> Void)] {
-        return [
-            ("test_BasicConstruction", test_BasicConstruction),
-            ("test_enumeration", test_enumeration),
-            ("test_sequenceType", test_sequenceType),
-            ("test_removal", test_removal),
-            ("test_addition", test_addition),
-            ("test_setAlgebra", test_setAlgebra),
-            ("test_copy", test_copy),
-            ("test_BasicConstruction", test_BasicConstruction),
-            ("test_copy", test_copy),
-            ("test_enumeration", test_enumeration),
-            ("test_sequenceType", test_sequenceType),
-            ("test_removal", test_removal),
-            ("test_addition", test_addition),
-            ("test_setAlgebra", test_setAlgebra),
-            ("testEnumeration", testEnumeration),
-            ("testSubsequence", testSubsequence),
-            ("testIndexRange", testIndexRange),
-            ("testMutation", testMutation),
-            ("testContainsAndIntersects", testContainsAndIntersects),
-            ("testContainsIndexSet", testContainsIndexSet),
-            ("testIteration", testIteration),
-            ("testRangeIteration", testRangeIteration),
-            ("testSubrangeIteration", testSubrangeIteration),
-            ("testSlicing", testSlicing),
-            ("testEmptyIteration", testEmptyIteration),
-            ("testSubsequences", testSubsequences),
-            ("testFiltering", testFiltering),
-            ("testFilteringRanges", testFilteringRanges),
-            ("testShift", testShift),
-            ("testSymmetricDifference", testSymmetricDifference),
-            ("testIntersection", testIntersection),
-            ("testUnion", testUnion),
-            ("test_findIndex", test_findIndex),
-            ("testIndexingPerformance", testIndexingPerformance),
-            ("test_AnyHashableContainingIndexSet", test_AnyHashableContainingIndexSet),
-            ("test_AnyHashableCreatedFromNSIndexSet", test_AnyHashableCreatedFromNSIndexSet),
-            ("test_unconditionallyBridgeFromObjectiveC", test_unconditionallyBridgeFromObjectiveC),
-            ("testInsertNonOverlapping", testInsertNonOverlapping),
-            ("testInsertOverlapping", testInsertOverlapping),
-            ("testInsertOverlappingExtend", testInsertOverlappingExtend),
-            ("testInsertOverlappingMultiple", testInsertOverlappingMultiple),
-            ("testRemoveNonOverlapping", testRemoveNonOverlapping),
-            ("testRemoveOverlapping", testRemoveOverlapping),
-            ("testRemoveSplitting", testRemoveSplitting),
-            ("testCodingRoundtrip", testCodingRoundtrip),
-            ("testLoadedValuesMatch", testLoadedValuesMatch),
-            ("testHashValue", testHashValue),
-        ]
-    }
-    #endif // SKIP
     
 }
 

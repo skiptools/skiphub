@@ -2119,68 +2119,6 @@ VIDEOS=StopgapVideos
         super.tearDown()
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestFileManager) -> () throws -> Void)] {
-        var tests: [(String, (TestFileManager) -> () throws -> Void)] = [
-            ("test_createDirectory", test_createDirectory ),
-            ("test_createFile", test_createFile ),
-            ("test_moveFile", test_moveFile),
-            ("test_fileSystemRepresentation", test_fileSystemRepresentation),
-            ("test_fileExists", test_fileExists),
-            ("test_isReadableFile", test_isReadableFile),
-            ("test_isWritableFile", test_isWritableFile),
-            ("test_isExecutableFile", test_isExecutableFile),
-            ("test_isDeletableFile", test_isDeletableFile),
-            ("test_fileAttributes", test_fileAttributes),
-            ("test_fileSystemAttributes", test_fileSystemAttributes),
-            ("test_setFileAttributes", test_setFileAttributes),
-            ("test_directoryEnumerator", test_directoryEnumerator),
-            ("test_pathEnumerator",test_pathEnumerator),
-            ("test_contentsOfDirectoryAtPath", test_contentsOfDirectoryAtPath),
-            ("test_subpathsOfDirectoryAtPath", test_subpathsOfDirectoryAtPath),
-            ("test_copyItemAtPathToPath", test_copyItemAtPathToPath),
-            ("test_linkItemAtPathToPath", testExpectedToFailOnAndroid(test_linkItemAtPathToPath, "Android doesn't allow hard links")),
-            ("test_resolvingSymlinksInPath", test_resolvingSymlinksInPath),
-            ("test_homedirectoryForUser", test_homedirectoryForUser),
-            ("test_temporaryDirectoryForUser", test_temporaryDirectoryForUser),
-            ("test_creatingDirectoryWithShortIntermediatePath", test_creatingDirectoryWithShortIntermediatePath),
-            ("test_mountedVolumeURLs", test_mountedVolumeURLs),
-            ("test_copyItemsPermissions", test_copyItemsPermissions),
-            ("test_emptyFilename", test_emptyFilename),
-            ("test_getRelationship", test_getRelationship),
-            ("test_displayNames", test_displayNames),
-            ("test_getItemReplacementDirectory", test_getItemReplacementDirectory),
-            ("test_contentsEqual", test_contentsEqual),
-            ("test_setInvalidFileAttributes", test_setInvalidFileAttributes),
-            /* ⚠️  */ ("test_replacement", testExpectedToFail(test_replacement,
-            /* ⚠️  */     "<https://bugs.swift.org/browse/SR-10819> Re-enable Foundation test TestFileManager.test_replacement")),
-            /* ⚠️  */("test_concurrentGetItemReplacementDirectory", testExpectedToFail(test_concurrentGetItemReplacementDirectory, "Intermittent SEGFAULT: rdar://84519512")),
-            ("test_NSTemporaryDirectory", test_NSTemporaryDirectory),
-        ]
-        
-        #if XXX && !DEPLOYMENT_RUNTIME_OBJC && NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT && !os(Android)
-        tests.append(contentsOf: [
-            ("test_xdgStopgapsCoverAllConstants", test_xdgStopgapsCoverAllConstants),
-            ("test_parseXDGConfiguration", test_parseXDGConfiguration),
-            ("test_xdgURLSelection", test_xdgURLSelection),
-            ])
-        #endif
-        
-        #if XXX && !DEPLOYMENT_RUNTIME_OBJC && !os(Android) && !os(Windows)
-        tests.append(contentsOf: [
-            ("test_fetchXDGPathsFromHelper", test_fetchXDGPathsFromHelper),
-            ])
-        #endif
-
-        #if os(Windows)
-        tests.append(contentsOf: [
-            ("test_windowsPaths", test_windowsPaths),
-            ])
-        #endif
-
-        return tests
-    }
-    #endif // SKIP
 }
 
 

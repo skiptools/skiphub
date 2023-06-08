@@ -372,24 +372,6 @@ class TestNSAttributedString : XCTestCase {
         #endif // !SKIP
     }
     
-    #if !SKIP
-    static var allTests: [(String, (TestNSAttributedString) -> () throws -> Void)] {
-        return [
-            ("test_initWithString", test_initWithString),
-            ("test_initWithStringAndAttributes", test_initWithStringAndAttributes),
-            ("test_initWithAttributedString", test_initWithAttributedString),
-            ("test_attributedSubstring", test_attributedSubstring),
-            ("test_longestEffectiveRange", test_longestEffectiveRange),
-            ("test_enumerateAttributeWithName", test_enumerateAttributeWithName),
-            ("test_enumerateAttributes", test_enumerateAttributes),
-            ("test_copy", test_copy),
-            ("test_mutableCopy", test_mutableCopy),
-            ("test_isEqual", test_isEqual),
-            ("test_archivingRoundtrip", test_archivingRoundtrip),
-            ("test_unarchivingFixtures", test_unarchivingFixtures),
-        ]
-    }
-    #endif // SKIP
     
 }
 

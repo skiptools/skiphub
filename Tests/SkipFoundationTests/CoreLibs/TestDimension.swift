@@ -28,13 +28,6 @@ class TestDimension: XCTestCase {
         #endif // !SKIP
     }
 
-    #if !SKIP
-    static var allTests: [(String, (TestDimension) -> () throws -> Void)] {
-        return [
-            ("test_encodeDecode", test_encodeDecode),
-        ]
-    }
-    #endif // SKIP
 }
 
 

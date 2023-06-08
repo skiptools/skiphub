@@ -20,22 +20,6 @@ import XCTest
 //
 
 class TestNotificationCenter : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestNotificationCenter) -> () throws -> Void)] {
-        return [
-            ("test_defaultCenter", test_defaultCenter),
-            ("test_postNotification", test_postNotification),
-            ("test_postNotificationForObject", test_postNotificationForObject),
-            ("test_postMultipleNotifications", test_postMultipleNotifications),
-            ("test_addObserverForNilName", test_addObserverForNilName),
-            ("test_removeObserver", test_removeObserver),
-            ("test_observeOnPostingQueue", test_observeOnPostingQueue),
-            ("test_observeOnSpecificQueuePostFromMainQueue", test_observeOnSpecificQueuePostFromMainQueue),
-            ("test_observeOnSpecificQueuePostFromObservedQueue", test_observeOnSpecificQueuePostFromObservedQueue),
-            ("test_observeOnSpecificQueuePostFromUnrelatedQueue", test_observeOnSpecificQueuePostFromUnrelatedQueue),
-        ]
-    }
-    #endif // SKIP
     
     func test_defaultCenter() {
         #if SKIP

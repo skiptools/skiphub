@@ -23,43 +23,6 @@ import XCTest
 import Dispatch
 
 class TestOperationQueue : XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestOperationQueue) -> () throws -> Void)] {
-        return [
-            ("test_OperationPriorities", test_OperationPriorities),
-            ("test_OperationCount", test_OperationCount),
-            ("test_AsyncOperation", test_AsyncOperation),
-            ("test_SyncOperationWithoutAQueue", test_SyncOperationWithoutAQueue),
-            ("test_isExecutingWorks", test_isExecutingWorks),
-            ("test_MainQueueGetter", test_MainQueueGetter),
-            ("test_CancelOneOperation", test_CancelOneOperation),
-            ("test_CancelOperationsOfSpecificQueuePriority", test_CancelOperationsOfSpecificQueuePriority),
-            ("test_CurrentQueueOnMainQueue", test_CurrentQueueOnMainQueue),
-            ("test_CurrentQueueOnBackgroundQueue", test_CurrentQueueOnBackgroundQueue),
-            ("test_CurrentQueueOnBackgroundQueueWithSelfCancel", test_CurrentQueueOnBackgroundQueueWithSelfCancel),
-            ("test_CurrentQueueWithCustomUnderlyingQueue", test_CurrentQueueWithCustomUnderlyingQueue),
-            ("test_CurrentQueueWithUnderlyingQueueResetToNil", test_CurrentQueueWithUnderlyingQueueResetToNil),
-            ("test_isSuspended", test_isSuspended),
-            ("test_OperationDependencyCount", test_OperationDependencyCount),
-            ("test_CancelDependency", test_CancelDependency),
-            ("test_Deadlock", test_Deadlock),
-            ("test_CancelOutOfQueue", test_CancelOutOfQueue),
-            ("test_CrossQueueDependency", test_CrossQueueDependency),
-            ("test_CancelWhileSuspended", test_CancelWhileSuspended),
-            ("test_OperationOrder", test_OperationOrder),
-            ("test_OperationOrder2", test_OperationOrder2),
-            ("test_ExecutionOrder", test_ExecutionOrder),
-            ("test_WaitUntilFinished", test_WaitUntilFinished),
-            ("test_OperationWaitUntilFinished", test_OperationWaitUntilFinished),
-            /* ⚠️ */ ("test_CustomOperationReady", testExpectedToFail(test_CustomOperationReady, "Flaky test: https://bugs.swift.org/browse/SR-14657")),
-            ("test_DependencyCycleBreak", test_DependencyCycleBreak),
-            ("test_Lifecycle", test_Lifecycle),
-            ("test_ConcurrentOperations", test_ConcurrentOperations),
-            ("test_ConcurrentOperationsWithDependenciesAndCompletions", test_ConcurrentOperationsWithDependenciesAndCompletions),
-            ("test_BlockOperationAddExecutionBlock", test_BlockOperationAddExecutionBlock),
-        ]
-    }
-    #endif // SKIP
     
     func test_OperationCount() {
         #if SKIP

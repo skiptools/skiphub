@@ -21,17 +21,6 @@ import XCTest
 //
 
 class TestNSLock: XCTestCase {
-    #if !SKIP
-    static var allTests: [(String, (TestNSLock) -> () throws -> Void)] {
-        return [
-
-            ("test_lockWait", test_lockWait),
-            ("test_threadsAndLocks", test_threadsAndLocks),
-            ("test_recursiveLock", test_recursiveLock),
-            
-        ]
-    }
-    #endif // SKIP
 
 
     func test_lockWait() {
