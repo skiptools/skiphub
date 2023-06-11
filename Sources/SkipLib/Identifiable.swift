@@ -4,11 +4,11 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-// SKIP SYMBOLFILE
-
 #if SKIP
 
-public protocol OptionSet: RawRepresentable, SetAlgebra where Element == Self {
+public protocol Identifiable {
+    associatedtype ID : Hashable
+    var id: ID { get }
 }
 
 #endif

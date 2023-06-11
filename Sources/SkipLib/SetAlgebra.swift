@@ -4,12 +4,12 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-// THIS TRANSPILATION IS NOT USED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
+// SKIP SYMBOLFILE
 
 #if SKIP
+
+// - We move the majority of the API into extensions so that we don't have to repeat it in the
+//   symbols of our implementing types
 
 public protocol SetAlgebra<Element> {
     associatedtype Element
@@ -33,11 +33,9 @@ extension SetAlgebra {
     }
 
     public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
-        fatalError()
     }
 
     public mutating func remove(_ member: Element) -> Element? {
-        fatalError()
     }
 
     public mutating func update(with newMember: Element) -> Element? {
@@ -45,15 +43,12 @@ extension SetAlgebra {
     }
 
     public mutating func formUnion(_ other: Self) {
-        fatalError()
     }
 
     public mutating func formIntersection(_ other: Self) {
-        fatalError()
     }
 
     public mutating func formSymmetricDifference(_ other: Self) {
-        fatalError()
     }
 
     public func subtracting(_ other: Self) -> Self {
@@ -77,7 +72,6 @@ extension SetAlgebra {
     }
 
     public mutating func subtract(_ other: Self) {
-        fatalError()
     }
 
     public func isStrictSubset(of other: Self) -> Bool {

@@ -5,54 +5,39 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-// THIS TRANSPILATION IS NOT USED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
+// SKIP SYMBOLFILE
 
 #if SKIP
 
 public struct Dictionary<Key, Value>: Collection {
-    // SKIP NOWARN
     public typealias Element = (key: Key, value: Value)
 
     public init() {
-        fatalError()
     }
 
     public init(minimumCapacity: Int) {
-        fatalError()
     }
 
     public init(uniqueKeysWithValues keysAndValues: any Sequence<(Key, Value)>) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public init(_ keysAndValues: any Sequence<(Key, Value)>, uniquingKeysWith combine: (Value, Value) throws -> Value) rethrows {
-        fatalError()
     }
 
     @available(*, unavailable)
     public init(grouping values: any Sequence<Value>, by keyForValue: (Value) throws -> Key) rethrows {
-        fatalError()
     }
 
     public func filter(_ isIncluded: ((Key, Value)) throws -> Bool) rethrows -> Dictionary<Key, Value> {
         fatalError()
     }
 
-    // SKIP NOWARN
     public subscript(key: Key) -> Value? {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
+        get { fatalError() }
+        set {}
     }
 
-    // SKIP NOWARN
     public subscript(key: Key, default defaultValue: /* @autoclosure () -> Value */ Value) -> Value {
         fatalError()
     }
@@ -71,12 +56,10 @@ public struct Dictionary<Key, Value>: Collection {
 
     @available(*, unavailable)
     public mutating func merge(_ other: any Sequence<(Key, Value)>, uniquingKeysWith combine: (Value, Value) throws -> Value) rethrows {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func merge(_ other: Dictionary<Key, Value>, uniquingKeysWith combine: (Value, Value) throws -> Value) rethrows {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -108,11 +91,9 @@ public struct Dictionary<Key, Value>: Collection {
 
     @available(*, unavailable)
     public mutating func reserveCapacity(_ minimumCapacity: Int) {
-        fatalError()
     }
 
     public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
-        fatalError()
     }
 }
 

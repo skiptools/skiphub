@@ -3,9 +3,11 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
+
 public protocol Encodable {
     func encode(to encoder: Encoder) throws
 }
+
 public protocol Decodable {
 
     #if SKIP // Kotlin does not support constructors in protocols
@@ -14,15 +16,6 @@ public protocol Decodable {
     #else
     init(from decoder: Decoder) throws
     #endif
-}
-
-public protocol Identifiable {
-    /// A type representing the stable identity of the entity associated with
-    /// an instance.
-    associatedtype ID : Hashable
-
-    /// The stable identity of the entity associated with this instance.
-    var id: ID { get }
 }
 
 #if !SKIP // Kotlin has no composite protocols

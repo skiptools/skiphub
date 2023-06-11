@@ -4,25 +4,19 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-// THIS TRANSPILATION IS NOT USED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
+// SKIP SYMBOLFILE
 
 #if SKIP
 
 public struct Set<Element>: Collection, SetAlgebra {
     public init() {
-        fatalError()
     }
 
     public init<S: Sequence<Element>>(_ sequence: S) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public init(minimumCapacity: Int) {
-        fatalError()
     }
 
     public func filter(_ isIncluded: (Element) throws -> Bool) rethrows -> Set<Element> {
@@ -36,11 +30,9 @@ public struct Set<Element>: Collection, SetAlgebra {
 
     @available(*, unavailable)
     public mutating func reserveCapacity(_ minimumCapacity: Int) {
-        fatalError()
     }
 
     public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
-        fatalError()
     }
 }
 

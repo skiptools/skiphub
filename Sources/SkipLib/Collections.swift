@@ -4,17 +4,15 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-// THIS TRANSPILATION IS NOT USED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
+// SKIP SYMBOLFILE
 
 #if SKIP
 
-// We move the majority of the API into extensions to facilitate Kotlin implementation and allow
-// ourselves to communicate e.g. default function parameter values to the type inference engine.
-// We're also overly non-specific with some parameter types and overly specific with some return
-// types to simplify type inference - we can rely on the Swift compiler to prevent any type mismatches
+// - We move the majority of the API into extensions so that we don't have to repeat it in the
+//   symbols of our implementing types
+// - We're overly non-specific with some parameter types and overly specific with some return types
+// - to simplify type inference - we can rely on the Swift compiler to prevent any type mismatches
+// - We use Int for all Index types to match Kotlin
 
 public protocol Sequence<Element> {
     associatedtype Element
@@ -57,7 +55,6 @@ extension Sequence {
     }
 
     public func forEach(_ body: (Element) throws -> Void) rethrows {
-        fatalError()
     }
 
     public func first(where predicate: (Element) throws -> Bool) rethrows -> Element? {
@@ -215,14 +212,10 @@ extension Sequence {
 }
 
 public protocol Collection : Sequence {
-    // SKIP NOWARN
     typealias Index = Int
 }
 
 extension Collection {
-
-    // NOTE: All index functions used type Self.Index rather than the Int we use here
-
     public var startIndex: Int {
         fatalError()
     }
@@ -231,7 +224,6 @@ extension Collection {
         fatalError()
     }
 
-    // SKIP NOWARN
     public subscript(position: Int) -> Element {
         fatalError()
     }
@@ -268,12 +260,10 @@ extension Collection {
 
     @available(*, unavailable)
     public func formIndex(after i: inout Int) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public func formIndex(_ i: inout Int, offsetBy distance: Int) {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -320,7 +310,6 @@ extension Collection {
 
     @available(*, unavailable)
     public mutating func removeFirst(_ k: Int) {
-        fatalError()
     }
 
     public func firstIndex(of element: Element) -> Int? {
@@ -334,12 +323,10 @@ extension Collection {
 
     @available(*, unavailable)
     public mutating func shuffle() {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func sort() {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -349,7 +336,6 @@ extension Collection {
 
     @available(*, unavailable)
     public mutating func shuffle<T: RandomNumberGenerator>(using generator: inout T) {
-        fatalError()
     }
 
     // SKIP NOWARN
@@ -364,7 +350,6 @@ extension Collection {
 
     @available(*, unavailable)
     public mutating func trimPrefix(while predicate: (Element) throws -> Bool) throws {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -389,7 +374,6 @@ extension Collection {
 
     @available(*, unavailable)
     public mutating func trimPrefix(_ prefix: any Sequence<Element>) {
-        fatalError()
     }
 }
 
@@ -397,9 +381,6 @@ public protocol BidirectionalCollection : Collection {
 }
 
 extension BidirectionalCollection {
-
-    // NOTE: All index functions used type Self.Index rather than the Int we use here
-
     @available(*, unavailable)
     public func index(before i: Int) -> Int {
         fatalError()
@@ -407,7 +388,6 @@ extension BidirectionalCollection {
 
     @available(*, unavailable)
     public func formIndex(before i: inout Int) {
-        fatalError()
     }
 
     public var last: Element? {
@@ -443,7 +423,6 @@ extension BidirectionalCollection {
     }
 
     public mutating func removeLast(_ k: Int = 1) {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -506,29 +485,23 @@ public protocol RangeReplaceableCollection : Collection {
 extension RangeReplaceableCollection {
     @available(*, unavailable)
     public mutating func replaceSubrange(_ subrange: any RangeExpression<Int>, with newElements: any Collection<Element>) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func reserveCapacity(_ n: Int) {
-        fatalError()
     }
 
     public mutating func append(_ newElement: Element) {
-        fatalError()
     }
 
     public mutating func append(contentsOf newElements: any Sequence<Element>) {
-        fatalError()
     }
 
     public mutating func insert(_ newElement: Element, at i: Int) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func insert(contentsOf newElements: any Sequence<Element>, at i: Int) {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -538,16 +511,13 @@ extension RangeReplaceableCollection {
 
     @available(*, unavailable)
     public mutating func removeSubrange(_ bounds: any RangeExpression<Int>) {
-        fatalError()
     }
 
     public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func removeAll(where shouldBeRemoved: (Element) throws -> Bool) rethrows {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -567,7 +537,6 @@ extension RangeReplaceableCollection {
 
     @available(*, unavailable)
     public mutating func replace(_ other: any Collection<Element>, with replacement: any Collection<Element>, maxReplacements: Int = Int.max) {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -587,7 +556,6 @@ extension RangeReplaceableCollection {
 
     @available(*, unavailable)
     public func replacing(_ regex: some RegexComponent, maxReplacements: Int = Int.max, with replacement: (Any) throws -> any Collection<Character>) rethrows {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -597,12 +565,10 @@ extension RangeReplaceableCollection {
 
     @available(*, unavailable)
     public mutating func replace(_ regex: some RegexComponent, maxReplacements: Int = Int.max, with replacement: (Any) throws -> any Collection<Character>) rethrows {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func trimPrefix(_ regex: some RegexComponent) {
-        fatalError()
     }
 }
 
@@ -610,34 +576,22 @@ public protocol MutableCollection : Collection {
 }
 
 extension MutableCollection {
-    // SKIP NOWARN
     subscript(position: Int) -> Element {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
+        get { fatalError() }
+        set {}
     }
 
-    // SKIP NOWARN
     subscript(bounds: Range<Int>) -> any Collection<Element> {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
+        get { fatalError() }
+        set {}
     }
 
     @available(*, unavailable)
     mutating func swapAt(_ i: Int, _ j: Int) {
-        fatalError()
     }
 
     @available(*, unavailable)
     public mutating func reverse() {
-        fatalError()
     }
 }
 

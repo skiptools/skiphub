@@ -4,33 +4,23 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-// THIS TRANSPILATION IS NOT USED
-//
-// This file only exists to provide symbols for implemented API to the transpiler.
-//
+// SKIP SYMBOLFILE
 
 #if SKIP
 
 public struct Task<Success, Failure> where Failure: Error {
     // Note: This is special cased in the transpiler to suspend function value()
-    // SKIP NOWARN
     public var value: Success {
-        get async throws {
-            fatalError()
-        }
+        get async throws { fatalError() }
     }
 
-    // SKIP NOWARN
     @available(*, unavailable)
     public var result: Result<Success, Failure> {
-        get async {
-            fatalError()
-        }
+        get async { fatalError() }
     }
 
     @available(*, unavailable)
     public func cancel() {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -44,17 +34,14 @@ public struct Task<Success, Failure> where Failure: Error {
     }
 
     public init(priority: TaskPriority? = nil, operation: @escaping () async throws -> Success) {
-        fatalError()
     }
 
-    // SKIP NOWARN
     public static func detached(priority: TaskPriority? = nil, operation: @escaping () async -> Success) -> Task<Success, Failure> {
         fatalError()
     }
 
     @available(*, unavailable)
     public static func yield() async {
-        fatalError()
     }
 
     @available(*, unavailable)
@@ -69,23 +56,19 @@ public struct Task<Success, Failure> where Failure: Error {
 
     @available(*, unavailable)
     public static func checkCancellation() throws {
-        fatalError()
     }
 
     @available(*, unavailable)
     public static func sleep(nanoseconds duration: UInt64) async throws {
-        fatalError()
     }
 
     // public static func sleep<C>(until deadline: C.Instant, tolerance: C.Instant.Duration? = nil, clock: C) async throws where C : Clock
     @available(*, unavailable)
     public static func sleep(until deadline: Any, tolerance: Any? = nil, clock: Any) async throws {
-        fatalError()
     }
 
     @available(*, unavailable)
     public static func sleep(for duration: /* Duration */ Double) async throws {
-        fatalError()
     }
 }
 
@@ -99,7 +82,6 @@ public struct TaskPriority : RawRepresentable {
     }
 
     public init(rawValue: /* UInt8 */ Int) {
-        fatalError()
     }
 
     public static var high: TaskPriority {
@@ -125,7 +107,6 @@ public struct TaskPriority : RawRepresentable {
 @available(*, unavailable)
 public struct ThrowingTaskGroup<ChildTaskResult, Failure> where Failure : Error {
 }
-
 
 @available(*, unavailable)
 public struct UnownedJob {
