@@ -14,9 +14,12 @@ fun <Element> setOf(vararg elements: Element): Set<Element> {
     return Set(storage, nocopy = true)
 }
 
+// Transpiler converts Set.Index to SetIndex
 typealias SetIndex = Int
 
 class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, MutableStruct {
+    // We attempt to avoid copying when possible. This may involve sharing storage. When storage is
+    // shared, we copy on write and rely on our sharing partners to do the same
     private var isStorageShared = false
     private var storage: LinkedHashSet<Element>
     private val mutableStorage: LinkedHashSet<Element>
@@ -28,9 +31,9 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
             return storage
         }
 
-    override val collectionStorage: kotlin.collections.Collection<Element>
+    override val collection: kotlin.collections.Collection<Element>
         get() = storage
-    override val mutableCollectionStorage: kotlin.collections.MutableCollection<Element>
+    override val mutableCollection: kotlin.collections.MutableCollection<Element>
         get() = mutableStorage
 
     override fun willSliceStorage() {
@@ -77,12 +80,12 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
         get() = count == 0
 
     fun union(other: Sequence<Element>): Set<Element> {
-        val union = storage.union(other.iterableStorage)
+        val union = storage.union(other.iterable)
         return Set(union, nocopy = true)
     }
 
     fun intersection(other: Sequence<Element>): Set<Element> {
-        val intersection = storage.intersect(other.iterableStorage)
+        val intersection = storage.intersect(other.iterable)
         return Set(intersection, nocopy = true)
     }
 
@@ -98,19 +101,19 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     fun formUnion(other: Sequence<Element>) {
         willmutate()
-        other.iterableStorage.forEach { mutableStorage.add(it.sref()) }
+        other.iterable.forEach { mutableStorage.add(it.sref()) }
         didmutate()
     }
 
     fun formIntersection(other: Sequence<Element>) {
         willmutate()
-        other.iterableStorage.forEach { mutableStorage.remove(it) }
+        other.iterable.forEach { mutableStorage.remove(it) }
         didmutate()
     }
 
     fun formSymmetricDifference(other: Sequence<Element>) {
         willmutate()
-        for (element in other.iterableStorage) {
+        for (element in other.iterable) {
             if (!mutableStorage.remove(element)) {
                 mutableStorage.add(element.sref())
             }
@@ -119,7 +122,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
     }
 
     fun subtracting(other: Sequence<Element>): Set<Element> {
-        val subtraction = storage.subtract(other.iterableStorage)
+        val subtraction = storage.subtract(other.iterable)
         return Set(subtraction, nocopy = true)
     }
 
@@ -133,7 +136,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
     }
 
     fun isDisjoint(with: Sequence<Element>): Boolean {
-        for (element in with.iterableStorage) {
+        for (element in with.iterable) {
             if (contains(element)) {
                 return false
             }
@@ -142,7 +145,7 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
     }
 
     fun isSuperset(of: Sequence<Element>): Boolean {
-        for (element in of.iterableStorage) {
+        for (element in of.iterable) {
             if (!storage.contains(element)) {
                 return false
             }
@@ -152,16 +155,16 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
 
     fun subtract(other: Sequence<Element>) {
         willmutate()
-        mutableStorage.removeAll(other.iterableStorage)
+        mutableStorage.removeAll(other.iterable)
         didmutate()
     }
 
     fun isStrictSubset(of: Sequence<Element>): Boolean {
-        return count < of.iterableStorage.count() && isSubset(of)
+        return count < of.iterable.count() && isSubset(of)
     }
 
     fun isStrictSuperset(of: Sequence<Element>): Boolean {
-        return count > of.iterableStorage.count() && isSuperset(of)
+        return count > of.iterable.count() && isSuperset(of)
     }
 
     // MARK: - SetAlgebra
@@ -235,8 +238,6 @@ class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, Muta
     override fun hashCode(): Int {
         return storage.hashCode()
     }
-
-    // MutableStruct
 
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0

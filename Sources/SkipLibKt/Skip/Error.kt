@@ -8,6 +8,7 @@ package skip.lib
 interface Error {
 }
 
+// Used by the transpiler to give Errors to Swift code expecting them
 fun Throwable.aserror(): Error {
     if (this is Error) {
         return this

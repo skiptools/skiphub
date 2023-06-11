@@ -6,6 +6,7 @@
 package skip.lib
 
 interface OptionSet<T, R>: RawRepresentable<R>, SetAlgebra<T, T> where T: OptionSet<T, R> {
+    // The transpiler adds implentations of these requirements to OptionSet types
     val rawvaluelong: Long
     fun makeoptionset(rawvaluelong: Long): T
     fun assignoptionset(target: T)

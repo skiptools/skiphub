@@ -16,9 +16,13 @@ fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     return dictionary
 }
 
+// Transpiler converts Dictionary.Index to DictionaryIndex
 typealias DictionaryIndex = Int
 
 class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
+    // We attempt to avoid copying when possible. This may involve sharing storage. When storage is
+    // shared, we copy on write and rely on our sharing partners to do the same. We may also maintain
+    // an entry collection view of ourselves for serving Collection API
     private var isStorageShared = false
     private var storage: LinkedHashMap<K, V>
     private val mutableStorage: LinkedHashMap<K, V>
@@ -29,14 +33,14 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
             }
             return storage
         }
-    private val _collectionStorage: EntryCollection<K, V>
+    private val _entryCollection: EntryCollection<K, V>
 
-    override val collectionStorage: kotlin.collections.Collection<Tuple2<K, V>>
-        get() = _collectionStorage
-    override val mutableCollectionStorage: kotlin.collections.MutableCollection<Tuple2<K, V>>
+    override val collection: kotlin.collections.Collection<Tuple2<K, V>>
+        get() = _entryCollection
+    override val mutableCollection: kotlin.collections.MutableCollection<Tuple2<K, V>>
         get() {
             mutableStorage // Accessing will copy storage if needed
-            return _collectionStorage
+            return _entryCollection
         }
 
     override fun willSliceStorage() {
@@ -47,7 +51,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
 
     constructor(minimumCapacity: Int = 0) {
         storage = LinkedHashMap()
-        _collectionStorage = EntryCollection(this)
+        _entryCollection = EntryCollection(this)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -59,7 +63,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
             isStorageShared = true
         } else {
             storage = LinkedHashMap()
-            for (entry in uniqueKeysWithValues.iterableStorage) {
+            for (entry in uniqueKeysWithValues.iterable) {
                 if (nocopy) {
                     storage[entry._e0] = entry._e1
                 } else {
@@ -67,7 +71,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
                 }
             }
         }
-        _collectionStorage = EntryCollection(this)
+        _entryCollection = EntryCollection(this)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -85,7 +89,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
                 }
             }
         }
-        _collectionStorage = EntryCollection(this)
+        _entryCollection = EntryCollection(this)
     }
 
     fun filter(isIncluded: (Tuple2<K, V>) -> Boolean): Dictionary<K, V> {
@@ -93,6 +97,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     }
 
     operator fun get(key: K): V? {
+        // Re-set this key if the returned MutableStruct reference is mutated
         return storage[key]?.sref({
             set(key, it)
         })
@@ -145,16 +150,16 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     val keys: Collection<K>
         get() {
             return object: Collection<K> {
-                override val collectionStorage = KeyCollection(this@Dictionary)
-                override val mutableCollectionStorage: kotlin.collections.MutableCollection<K>
+                override val collection = KeyCollection(this@Dictionary)
+                override val mutableCollection: kotlin.collections.MutableCollection<K>
                     get() = throw UnsupportedOperationException()
             }
         }
     val values: Collection<V>
         get() {
             return object: Collection<V> {
-                override val collectionStorage = ValueCollection(this@Dictionary)
-                override val mutableCollectionStorage: kotlin.collections.MutableCollection<V>
+                override val collection = ValueCollection(this@Dictionary)
+                override val mutableCollection: kotlin.collections.MutableCollection<V>
                     get() = throw UnsupportedOperationException()
             }
         }
@@ -173,8 +178,6 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
         return storage.hashCode()
     }
 
-    // MutableStruct
-
     override var supdate: ((Any) -> Unit)? = null
     override var smutatingcount = 0
     override fun scopy(): MutableStruct = Dictionary(this, nocopy = true)
@@ -184,6 +187,7 @@ class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
             get() = dictionary.storage.size
 
         override fun add(element: Tuple2<K, V>): Boolean {
+            // No need to sref because Tuple does on the way out
             dictionary.storage[element.key] = element.value
             return true
         }

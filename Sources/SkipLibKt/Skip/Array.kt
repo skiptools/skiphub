@@ -14,27 +14,31 @@ fun <Element> arrayOf(vararg elements: Element): Array<Element> {
     return Array(storage, nocopy = true)
 }
 
+// Transpiler converts Array.Index to ArrayIndex
 typealias ArrayIndex = Int
 
 class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollection<Element>, MutableCollection<Element>, MutableStruct {
+    // We attempt to avoid copying when possible. This may involve sharing storage. When storage is
+    // shared, we copy on write and rely on our sharing partners to do the same. We may also maintain
+    // a given read-only collection until write. One of _mutableList or _collection will always be non-nil
     private var isStorageShared = false
-    private var _mutableListStorage: MutableList<Element>? = null
-    private var _collectionStorage: List<Element>? = null
+    private var _mutableList: MutableList<Element>? = null
+    private var _collection: List<Element>? = null
 
-    override val collectionStorage: kotlin.collections.Collection<Element>
-        get() = _mutableListStorage ?: _collectionStorage!!
-    override val mutableListStorage: MutableList<Element>
+    override val collection: kotlin.collections.Collection<Element>
+        get() = _mutableList ?: _collection!!
+    override val mutableList: MutableList<Element>
         get() {
             if (!isStorageShared) {
-                val storage = _mutableListStorage
+                val storage = _mutableList
                 if (storage != null) {
                     return storage
                 }
             }
-            val storage = ArrayList(collectionStorage)
+            val storage = ArrayList(collection)
             isStorageShared = false
-            _mutableListStorage = storage
-            _collectionStorage = null
+            _mutableList = storage
+            _collection = null
             return storage
         }
 
@@ -45,7 +49,7 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
     override fun didMutateStorage() = didmutate()
 
     constructor() {
-        _mutableListStorage = ArrayList()
+        _mutableList = ArrayList()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -53,46 +57,48 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         if (nocopy) {
             if (collection is Array<Element>) {
                 // Share storage with the given array, marking it as shared in both
-                val storage = collection._mutableListStorage
+                val storage = collection._mutableList
                 if (storage != null) {
                     if (shared) {
                         collection.isStorageShared = true
                         isStorageShared = true
                     }
-                    _mutableListStorage = storage
+                    _mutableList = storage
                 } else {
-                    _collectionStorage= collection._collectionStorage
+                    // No need to mark as shared because will be copied on write regardless
+                    _collection= collection._collection
                 }
             } else if (collection is MutableListStorage<*> && collection.storageStartIndex == 0 && collection.storageEndIndex == null) {
-                _mutableListStorage = collection.mutableListStorage as MutableList<Element>
+                _mutableList = collection.mutableList as MutableList<Element>
                 isStorageShared = shared
             } else if (collection is CollectionStorage<*> && collection.storageStartIndex == 0 && collection.storageEndIndex == null) {
-                val collectionStorage = collection.collectionStorage
-                if (collectionStorage is List<*>) {
-                    _collectionStorage = collectionStorage as List<Element>
+                val collectionStorage = collection.collection
+                if (collectionStorage is List<*>) { // Do not use e.g. Sets as array internals
+                    _collection = collectionStorage as List<Element>
                 }
             }
         }
-        if (_mutableListStorage == null && _collectionStorage == null) {
+        if (_mutableList == null && _collection == null) {
             val storage = ArrayList<Element>()
             storage.addAll(collection)
-            _mutableListStorage = storage
+            _mutableList = storage
         }
     }
 
     constructor(collection: Iterable<Element>, nocopy: Boolean = false, shared: Boolean = false) {
         if (nocopy) {
             if (collection is MutableList<Element>) {
-                _mutableListStorage = collection
+                _mutableList = collection
                 isStorageShared = shared
-            } else if (collection is List<Element>) {
-                _collectionStorage = collection
+            } else if (collection is List<Element>) { // Do not use e.g. Sets as array internals
+                _collection = collection
+                // No need to mark as shared because will be copied on write regardless
             }
         }
-        if (_mutableListStorage == null && _collectionStorage == null) {
+        if (_mutableList == null && _collection == null) {
             val storage = ArrayList<Element>()
             collection.forEach { storage.add(it.sref()) }
-            _mutableListStorage = storage
+            _mutableList = storage
         }
     }
 
@@ -105,7 +111,8 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
     }
 
     operator fun get(position: Int): Element {
-        return collectionStorage.elementAt(position).sref({
+        // Re-set this index if the returned MutableStruct reference is mutated
+        return collection.elementAt(position).sref({
             set(position, it)
         })
     }
@@ -117,15 +124,15 @@ class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollectio
         if (other as? Array<*> == null) {
             return false
         }
-        return other.collectionStorage == collectionStorage
+        return other.collection == collection
     }
 
     override fun hashCode(): Int {
-        return collectionStorage.hashCode()
+        return collection.hashCode()
     }
 
 	override fun toString(): String {
-		return collectionStorage.joinToString()
+		return collection.joinToString()
 	}
 
     override var supdate: ((Any) -> Unit)? = null

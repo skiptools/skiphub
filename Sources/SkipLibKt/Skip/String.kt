@@ -5,11 +5,19 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// Transpiler converts String.Index to StringIndex
 typealias StringIndex = Int
+
+// Allow Swift code to reference Substring type. We duplicate most String API for Substring below
 class Substring(val stringValue: String, val startIndex: Int) {
     override fun toString(): String = stringValue
 }
 
+// We attempt to adapt Kotlin's native String type to Swift.String. This has limitations, but it is
+// more efficient, provides better interoperability with other Kotlin code, and produces cleaner
+// code than creating a custom wrapper
+
+// Mimic Swift.String constructors
 fun String(string: String): String = string
 fun String(character: Char): String = character.toString()
 fun String(substring: Substring): String = substring.stringValue
@@ -29,6 +37,7 @@ fun String(repeating: String, count: Int): String {
     }.toString()
 }
 
+// Swift.String API
 fun String.lowercased(): String = lowercase()
 fun String.uppercased(): String = uppercase()
 fun Substring.lowercased(): Substring = Substring(stringValue.lowercased(), startIndex)
@@ -99,7 +108,7 @@ fun Substring.dropLast(k: Int = 1): String = stringValue.dropLast(k)
 
 fun String.enumerated(): Sequence<Tuple2<Int, Char>> {
     val stringIterator = { iterator() }
-    val iterable = object: Iterable<Tuple2<Int, Char>> {
+    val enumeratedIterable = object: Iterable<Tuple2<Int, Char>> {
         override fun iterator(): Iterator<Tuple2<Int, Char>> {
             var offset = 0
             val iter = stringIterator()
@@ -110,8 +119,8 @@ fun String.enumerated(): Sequence<Tuple2<Int, Char>> {
         }
     }
     return object: Sequence<Tuple2<Int, Char>> {
-        override val iterableStorage: Iterable<Tuple2<Int, Char>>
-            get() = iterable
+        override val iterable: Iterable<Tuple2<Int, Char>>
+            get() = enumeratedIterable
     }
 }
 fun Substring.enumerated(): Sequence<Tuple2<Int, Char>> = stringValue.enumerated()

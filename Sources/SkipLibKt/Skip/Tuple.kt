@@ -5,6 +5,8 @@
 // as published by the Free Software Foundation https://fsf.org
 package skip.lib
 
+// Supported tuple arities. The transpiler translates Swift tuples into these types
+
 // These types are not themselves mutable, but their members might be, and a destructuring assignment can
 // access members without calling sref() on them. So support sref() on the tuples themselves. Note that
 // because the tuples aren't mutable, we can ignore the onUpdate closures
