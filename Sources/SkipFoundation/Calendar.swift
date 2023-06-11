@@ -4,9 +4,9 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
-/* SKIP: @_implementationOnly */import struct Foundation.Calendar
-public typealias PlatformCalendar = Foundation.Calendar
-public typealias PlatformCalendarComponent = Foundation.Calendar.Component
+@_implementationOnly import struct Foundation.Calendar
+internal typealias PlatformCalendar = Foundation.Calendar
+internal typealias PlatformCalendarComponent = Foundation.Calendar.Component
 internal typealias PlatformCalendarIdentifier = Foundation.Calendar.Identifier
 #else
 // SKIP INSERT: import skip.lib.Set
@@ -165,17 +165,17 @@ public struct Calendar : Hashable, CustomStringConvertible {
         #endif
     }
 
-    public func dateComponents(_ components: Set<PlatformCalendarComponent>, from start: Date, to end: Date) -> DateComponents {
+    public func dateComponents(_ components: Set<Calendar.Component>, from start: Date, to end: Date) -> DateComponents {
         #if !SKIP
-        return DateComponents(components: platformValue.dateComponents(components, from: start.platformValue, to: end.platformValue))
+        return DateComponents(components: platformValue.dateComponents(Set(components.map(\.platformCalendarComponent)), from: start.platformValue, to: end.platformValue))
         #else
         return DateComponents(fromCalendar: self, in: nil, from: start, to: end)
         #endif
     }
 
-    public func dateComponents(_ components: Set<PlatformCalendarComponent>, from date: Date) -> DateComponents {
+    public func dateComponents(_ components: Set<Calendar.Component>, from date: Date) -> DateComponents {
         #if !SKIP
-        return DateComponents(components: platformValue.dateComponents(components, from: date.platformValue))
+        return DateComponents(components: platformValue.dateComponents(Set(components.map(\.platformCalendarComponent)), from: date.platformValue))
         #else
         return DateComponents(fromCalendar: self, in: nil, from: date, with: components)
         #endif
@@ -191,9 +191,9 @@ public struct Calendar : Hashable, CustomStringConvertible {
         #endif
     }
 
-    public func date(byAdding component: PlatformCalendarComponent, value: Int, to date: Date, wrappingComponents: Bool = false) -> Date? {
+    public func date(byAdding component: Calendar.Component, value: Int, to date: Date, wrappingComponents: Bool = false) -> Date? {
         #if !SKIP
-        return platformValue.date(byAdding: component, value: value, to: date.platformValue, wrappingComponents: wrappingComponents).flatMap(Date.init(platformValue:))
+        return platformValue.date(byAdding: component.platformCalendarComponent, value: value, to: date.platformValue, wrappingComponents: wrappingComponents).flatMap(Date.init(platformValue:))
         #else
         fatalError("TODO: Skip Calendar.date(byAdding:Calendar.Component)")
         #endif
@@ -287,6 +287,29 @@ public struct Calendar : Hashable, CustomStringConvertible {
         case nanosecond
         case calendar
         case timeZone
+
+        #if !SKIP
+        internal var platformCalendarComponent: PlatformCalendarComponent {
+            switch self {
+            case .era: return .era
+            case .year: return .year
+            case .month: return .month
+            case .day: return .day
+            case .hour: return .hour
+            case .minute: return .minute
+            case .second: return .second
+            case .weekday: return .weekday
+            case .weekdayOrdinal: return .weekdayOrdinal
+            case .quarter: return .quarter
+            case .weekOfMonth: return .weekOfMonth
+            case .weekOfYear: return .weekOfYear
+            case .yearForWeekOfYear: return .yearForWeekOfYear
+            case .nanosecond: return .nanosecond
+            case .calendar: return .calendar
+            case .timeZone: return .timeZone
+            }
+        }
+        #endif
     }
 
     /// Calendar supports many different kinds of calendars. Each is identified by an identifier here.

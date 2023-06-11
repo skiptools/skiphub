@@ -90,7 +90,7 @@ public struct DateComponents : Hashable, CustomStringConvertible {
     }
     #else
 
-    // the is no direct analogue to DateComponents in Java (other then java.util.Calendar), so we store the properties individually
+    // the is no direct analogue to DateComponents in Java (other then java.util.Calendar), so we store the individual properties here
 
     public var calendar: Calendar? = nil
     public var timeZone: TimeZone? = nil

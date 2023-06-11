@@ -53,7 +53,10 @@ final class DateTests: XCTestCase {
 
     func testDateComponentsLeapYears() {
         XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 1928, month: 2, day: 29).isValidDate)
-        #if !SKIP // validation not yet correct
+        #if SKIP // validation not yet correct
+        throw XCTSkip("TODO")
+        #endif
+
         XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 1928 + 1, month: 2, day: 29).isValidDate)
 
         XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 1956, month: 2, day: 29).isValidDate)
@@ -70,7 +73,6 @@ final class DateTests: XCTestCase {
 
         XCTAssertTrue(DateComponents(calendar: Calendar.current, year: 8, month: 2, day: 29).isValidDate)
         XCTAssertFalse(DateComponents(calendar: Calendar.current, year: 8 + 1, month: 2, day: 29).isValidDate)
-        #endif
     }
 
     func testUSCalendarSymbols() {

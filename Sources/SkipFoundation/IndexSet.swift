@@ -7,8 +7,12 @@
 #if !SKIP
 @_implementationOnly import struct Foundation.IndexSet
 internal typealias PlatformIndexSet = Foundation.IndexSet
+internal typealias IndexSetElement = Int
+internal typealias IndexSetIndex = Foundation.IndexSet.Index
 #else
-internal typealias PlatformIndexSet = skip.lib.Set<Int>
+internal typealias PlatformIndexSet = skip.lib.Set<IndexSetElement>
+internal typealias IndexSetElement = Int
+internal typealias IndexSetIndex = Int
 #endif
 
 /// A collection of unique integer values that represent the indexes of elements in another collection.
@@ -23,64 +27,264 @@ public struct IndexSet : Hashable, CustomStringConvertible {
         self.platformValue = PlatformIndexSet()
     }
 
+    @available(*, unavailable)
+    public var count: Int {
+        fatalError()
+    }
+
     public var description: String {
         return platformValue.description
     }
 
-//    public typealias Element = Int
-//    public init(integersIn range: Range<IndexSet.Element>)
-//    public init<R>(integersIn range: R) where R : RangeExpression, R.Bound == Int
-//    public init(integer: IndexSet.Element)
-//    public init()
-//    public var count: Int { get }
-//    public func makeIterator() -> IndexingIterator<IndexSet>
-//    public var rangeView: IndexSet.RangeView { get }
-//    public func rangeView(of range: Range<IndexSet.Element>) -> IndexSet.RangeView
-//    public func rangeView<R>(of range: R) -> IndexSet.RangeView where R : RangeExpression, R.Bound == Int
-//    public var startIndex: IndexSet.Index { get }
-//    public var endIndex: IndexSet.Index { get }
-//    public subscript(index: IndexSet.Index) -> IndexSet.Element { get }
-//    public subscript(bounds: Range<IndexSet.Index>) -> Slice<IndexSet> { get }
-//    public func integerGreaterThan(_ integer: IndexSet.Element) -> IndexSet.Element?
-//    public func integerGreaterThanOrEqualTo(_ integer: IndexSet.Element) -> IndexSet.Element?
-//    public func integerLessThanOrEqualTo(_ integer: IndexSet.Element) -> IndexSet.Element?
-//    public func indexRange(in range: Range<IndexSet.Element>) -> Range<IndexSet.Index>
-//    public func indexRange<R>(in range: R) -> Range<IndexSet.Index> where R : RangeExpression, R.Bound == Int
-//    public func count<R>(in range: R) -> Int where R : RangeExpression, R.Bound == Int
-//    public func contains(_ integer: IndexSet.Element) -> Bool
-//    public func contains(integersIn range: Range<IndexSet.Element>) -> Bool
-//    public func contains<R>(integersIn range: R) -> Bool where R : RangeExpression, R.Bound == Int
-//    public func contains(integersIn indexSet: IndexSet) -> Bool
-//    public func intersects(integersIn range: Range<IndexSet.Element>) -> Bool
-//    public func intersects<R>(integersIn range: R) -> Bool where R : RangeExpression, R.Bound == Int
-//    public func index(after i: IndexSet.Index) -> IndexSet.Index
-//    public func formIndex(after i: inout IndexSet.Index)
-//    public func index(before i: IndexSet.Index) -> IndexSet.Index
-//    public func formIndex(before i: inout IndexSet.Index)
-//    public mutating func formUnion(_ other: IndexSet)
-//    public func union(_ other: IndexSet) -> IndexSet
-//    public func symmetricDifference(_ other: IndexSet) -> IndexSet
-//    public mutating func formSymmetricDifference(_ other: IndexSet)
-//    public func intersection(_ other: IndexSet) -> IndexSet
-//    public mutating func formIntersection(_ other: IndexSet)
-//    public mutating func insert(_ integer: IndexSet.Element) -> (inserted: Bool, memberAfterInsert: IndexSet.Element)
-//    public mutating func update(with integer: IndexSet.Element) -> IndexSet.Element?
-//    public mutating func remove(_ integer: IndexSet.Element) -> IndexSet.Element?
-//    public mutating func removeAll()
-//    public mutating func insert(integersIn range: Range<IndexSet.Element>)
-//    public mutating func insert<R>(integersIn range: R) where R : RangeExpression, R.Bound == Int
-//    public mutating func remove(integersIn range: Range<IndexSet.Element>)
-//    public mutating func remove(integersIn range: ClosedRange<IndexSet.Element>)
-//    public var isEmpty: Bool { get }
-//    public func filteredIndexSet(in range: Range<IndexSet.Element>, includeInteger: (IndexSet.Element) throws -> Bool) rethrows -> IndexSet
-//    public func filteredIndexSet(in range: ClosedRange<IndexSet.Element>, includeInteger: (IndexSet.Element) throws -> Bool) rethrows -> IndexSet
-//    public func filteredIndexSet(includeInteger: (IndexSet.Element) throws -> Bool) rethrows -> IndexSet
-//    public mutating func shift(startingAt integer: IndexSet.Element, by delta: Int)
-//    public typealias ArrayLiteralElement = IndexSet.Element
-//    public typealias Indices = DefaultIndices<IndexSet>
-//    public typealias Iterator = IndexingIterator<IndexSet>
-//    public typealias SubSequence = Slice<IndexSet>
-//    public var hashValue: Int { get }
+    // SKIP TODO: fill in IndexSet stub methods
+    #if false
+
+    // SKIP WARN: Kotlin does not support typealias declarations within functions and types. Consider moving this to a top level declaration
+    #if !SKIP
+    public typealias Element = Int
+    public typealias ArrayLiteralElement = IndexSetElement
+    //public typealias Indices = DefaultIndices<IndexSet>
+    //public typealias Iterator = IndexingIterator<IndexSet>
+    //public typealias SubSequence = Slice<IndexSet>
+    #endif
+
+    @available(*, unavailable)
+    public init(integersIn range: Range<IndexSetElement>) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public init<R>(integersIn range: R) where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public init(integer: IndexSetElement) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func makeIterator() -> IndexingIterator<IndexSet> {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public var rangeView: IndexSet.RangeView {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func rangeView(of range: Range<IndexSetElement>) -> IndexSet.RangeView {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func rangeView<R>(of range: R) -> IndexSet.RangeView where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public var startIndex: IndexSetIndex  {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public var endIndex: IndexSetIndex  {
+        fatalError()
+    }
+
+    #if !SKIP
+    @available(*, unavailable)
+    public subscript(index: IndexSetIndex) -> IndexSetElement  {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public subscript(bounds: Range<IndexSetIndex>) -> Slice<IndexSet>  {
+        fatalError()
+    }
+    #endif
+
+    @available(*, unavailable)
+    public func integerGreaterThan(_ integer: IndexSetElement) -> IndexSetElement? {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func integerGreaterThanOrEqualTo(_ integer: IndexSetElement) -> IndexSetElement? {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func integerLessThanOrEqualTo(_ integer: IndexSetElement) -> IndexSetElement? {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func indexRange(in range: Range<IndexSetElement>) -> Range<IndexSetIndex> {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func indexRange<R>(in range: R) -> Range<IndexSetIndex> where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func count<R>(in range: R) -> Int where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func contains(_ integer: IndexSetElement) -> Bool {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func contains(integersIn range: Range<IndexSetElement>) -> Bool {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func contains<R>(integersIn range: R) -> Bool where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func contains(integersIn indexSet: IndexSet) -> Bool {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func intersects(integersIn range: Range<IndexSetElement>) -> Bool {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func intersects<R>(integersIn range: R) -> Bool where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func index(after i: IndexSetIndex) -> IndexSetIndex {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func formIndex(after i: inout IndexSetIndex) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func index(before i: IndexSetIndex) -> IndexSetIndex {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func formIndex(before i: inout IndexSetIndex) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func formUnion(_ other: IndexSet) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func union(_ other: IndexSet) -> IndexSet {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func symmetricDifference(_ other: IndexSet) -> IndexSet {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func formSymmetricDifference(_ other: IndexSet) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func intersection(_ other: IndexSet) -> IndexSet {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func formIntersection(_ other: IndexSet) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func insert(_ integer: IndexSetElement) -> (inserted: Bool, memberAfterInsert: IndexSetElement) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func update(with integer: IndexSetElement) -> IndexSetElement? {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func remove(_ integer: IndexSetElement) -> IndexSetElement? {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func removeAll() {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func insert(integersIn range: Range<IndexSetElement>) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func insert<R>(integersIn range: R) where R : RangeExpression, R.Bound == Int {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func remove(integersIn range: Range<IndexSetElement>) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func remove(integersIn range: ClosedRange<IndexSetElement>) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public var isEmpty: Bool  {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func filteredIndexSet(in range: Range<IndexSetElement>, includeInteger: (IndexSetElement) throws -> Bool) rethrows -> IndexSet {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func filteredIndexSet(in range: ClosedRange<IndexSetElement>, includeInteger: (IndexSetElement) throws -> Bool) rethrows -> IndexSet {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public func filteredIndexSet(includeInteger: (IndexSetElement) throws -> Bool) rethrows -> IndexSet {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public mutating func shift(startingAt integer: IndexSetElement, by delta: Int) {
+        fatalError()
+    }
+
+    @available(*, unavailable)
+    public var hashValue: Int  {
+        fatalError()
+    }
+    #endif
 }
 
 #if !SKIP

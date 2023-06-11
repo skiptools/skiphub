@@ -52,7 +52,7 @@ let package = Package(
         .testTarget(name: "SkipLibKtTests", dependencies: ["SkipLibKt", "SkipUnitKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
 
         // Foundation types: URL, Data, Date, DateFormatter, Bundle, FileManager, etc.
-        .target(name: "SkipFoundation", dependencies: ["SkipLib"], resources: [.process("Resources")], plugins: [.plugin(name: "preflight", package: "skip")]),
+        .target(name: "SkipFoundation", dependencies: ["SkipLib"], resources: [], plugins: [.plugin(name: "preflight", package: "skip")]),
         .target(name: "SkipFoundationKt", dependencies: ["SkipFoundation", "SkipLibKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipFoundationTests", dependencies: ["SkipFoundation"], resources: [.process("Resources")], plugins: [.plugin(name: "preflight", package: "skip")]),
         .testTarget(name: "SkipFoundationKtTests", dependencies: ["SkipFoundationKt", "SkipUnitKt"], resources: [.copy("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
