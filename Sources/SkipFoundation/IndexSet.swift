@@ -93,7 +93,7 @@ public struct IndexSet : Hashable, CustomStringConvertible {
         fatalError()
     }
 
-    #if !SKIP
+    #if !SKIP // no custom subscripts in Skip
     @available(*, unavailable)
     public subscript(index: IndexSetIndex) -> IndexSetElement  {
         fatalError()
@@ -286,11 +286,3 @@ public struct IndexSet : Hashable, CustomStringConvertible {
     }
     #endif
 }
-
-#if !SKIP
-extension IndexSet {
-}
-#else
-extension IndexSet {
-}
-#endif

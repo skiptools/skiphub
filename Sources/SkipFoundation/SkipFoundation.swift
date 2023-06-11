@@ -53,6 +53,14 @@ public class NSNull {
 }
 #endif
 
+/// The Objective-C BOOL type.
+public struct ObjCBool {
+    public var boolValue: Bool
+    public init(_ value: Bool) { self.boolValue = value }
+    public init(booleanLiteral value: Bool) { self.boolValue = value }
+}
+
+
 #if SKIP
 
 //public extension NSObjectProtocol {
@@ -89,26 +97,6 @@ public func sqrt(_ number: Double) -> Double { Math.sqrt(number) }
 public func sin(_ number: Double) -> Double { Math.sin(number) }
 public func cos(_ number: Double) -> Double { Math.cos(number) }
 public func atan(_ number: Double) -> Double { Math.atan(number) }
-
-public struct ObjCBool : RawRepresentable {
-    public var rawValue: Bool
-
-    init(rawValue: Bool) {
-        self.rawValue = rawValue
-    }
-
-    init(_ rawValue: Bool) {
-        self.rawValue = rawValue
-    }
-
-    init(booleanLiteral: Bool) {
-        self.rawValue = booleanLiteral
-    }
-
-    public var boolValue: Bool {
-        return rawValue
-    }
-}
 
 // MARK: Foundation Stubs
 

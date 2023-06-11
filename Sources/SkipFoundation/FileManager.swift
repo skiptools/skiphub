@@ -5,7 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 @_implementationOnly import class Foundation.FileManager
-/* SKIP: @_implementationOnly */import struct Foundation.FileAttributeKey
+@_implementationOnly import struct Foundation.FileAttributeKey
 @_implementationOnly import struct Foundation.URLResourceKey
 @_implementationOnly import struct Foundation.ObjCBool
 @_implementationOnly import func Foundation.NSTemporaryDirectory
@@ -112,7 +112,7 @@ extension FileManager {
 
     public func createDirectory(at url: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         #if !SKIP
-        try platformValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
+        try platformValue.createDirectory(at: url.foundationURL, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes?.rekey())
         #else
         let p = _path(url)
         if withIntermediateDirectories == true {
@@ -128,7 +128,7 @@ extension FileManager {
 
     public func createDirectory(atPath path: String, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         #if !SKIP
-        return try platformValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
+        return try platformValue.createDirectory(atPath: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes?.rekey())
         #else
         if withIntermediateDirectories == true {
             java.nio.file.Files.createDirectories(_path(path))
@@ -151,7 +151,7 @@ extension FileManager {
 
     public func attributesOfItem(atPath path: String) throws -> [FileAttributeKey: Any] {
         #if !SKIP
-        return try platformValue.attributesOfItem(atPath: path)
+        return try platformValue.attributesOfItem(atPath: path).rekey()
         #else
         // As a convenience, NSDictionary provides a set of methods (declared as a category on NSDictionary) for quickly and efficiently obtaining attribute information from the returned dictionary: fileGroupOwnerAccountName(), fileModificationDate(), fileOwnerAccountName(), filePosixPermissions(), fileSize(), fileSystemFileNumber(), fileSystemNumber(), and fileType().
 
@@ -238,7 +238,7 @@ extension FileManager {
 
     public func setAttributes(_ attributes: [FileAttributeKey : Any], ofItemAtPath path: String) throws {
         #if !SKIP
-        try platformValue.setAttributes(attributes, ofItemAtPath: path)
+        try platformValue.setAttributes(attributes.rekey(), ofItemAtPath: path)
         #else
         for (key, value) in attributes {
             switch key {
@@ -289,7 +289,7 @@ extension FileManager {
 
     public func createFile(atPath path: String, contents: Data? = nil, attributes: [FileAttributeKey : Any]? = nil) -> Bool {
         #if !SKIP
-        return platformValue.createFile(atPath: path, contents: contents?.platformValue, attributes: attributes)
+        return platformValue.createFile(atPath: path, contents: contents?.platformValue, attributes: attributes?.rekey())
         #else
         do {
             java.nio.file.Files.write(_path(path), (contents ?? Data(platformValue: PlatformData(size: 0))).platformValue)
@@ -474,7 +474,10 @@ extension FileManager {
 
     public func fileExists(atPath path: String, isDirectory: inout ObjCBool) -> Bool {
         #if !SKIP
-        return platformValue.fileExists(atPath: path, isDirectory: &isDirectory)
+        var isDir: Foundation.ObjCBool = false
+        let exists = platformValue.fileExists(atPath: path, isDirectory: &isDir)
+        isDirectory.boolValue = isDir.boolValue
+        return exists
         #else
         let p = _path(path)
         if java.nio.file.Files.isDirectory(p) {
@@ -553,32 +556,10 @@ extension FileManager {
     }
 }
 
-#if SKIP
-/// The system temporary folder
-public func NSTemporaryDirectory() -> String {
-    return java.lang.System.getProperty("java.io.tmpdir")
-}
-
-/// The user's home directory.
-public func NSHomeDirectory() -> String {
-    return java.lang.System.getProperty("user.home")
-}
-
-/// The current user name.
-public func NSUserName() -> String {
-    return java.lang.System.getProperty("user.name")
-}
-
-public struct FileProtectionType : RawRepresentable, Hashable {
-    public let rawValue: String
-    init(rawValue: String) {
-        self.rawValue = rawValue
-    }
-}
 
 public struct FileAttributeType : RawRepresentable, Hashable {
     public let rawValue: String
-    init(rawValue: String) {
+    public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
@@ -593,7 +574,7 @@ public struct FileAttributeType : RawRepresentable, Hashable {
 
 public struct FileAttributeKey : RawRepresentable, Hashable {
     public let rawValue: String
-    init(rawValue: String) {
+    public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
@@ -623,6 +604,41 @@ public struct FileAttributeKey : RawRepresentable, Hashable {
     public static let busy: FileAttributeKey = FileAttributeKey(rawValue: "NSFileBusy")
 }
 
+#if !SKIP
+private extension Dictionary where Key : RawRepresentable {
+    /// Remaps a dictionary to another key type with a compatible raw value
+    func rekey<NewKey : Hashable & RawRepresentable>() -> [NewKey: Value] where NewKey.RawValue == Key.RawValue {
+        Dictionary<NewKey, Value>(uniqueKeysWithValues: map {
+            (NewKey(rawValue: $0.rawValue)!, $1)
+        })
+    }
+}
+#endif
+
+
+#if SKIP
+/// The system temporary folder
+public func NSTemporaryDirectory() -> String {
+    return java.lang.System.getProperty("java.io.tmpdir")
+}
+
+/// The user's home directory.
+public func NSHomeDirectory() -> String {
+    return java.lang.System.getProperty("user.home")
+}
+
+/// The current user name.
+public func NSUserName() -> String {
+    return java.lang.System.getProperty("user.name")
+}
+
+public struct FileProtectionType : RawRepresentable, Hashable {
+    public let rawValue: String
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
+
 struct UnableToDeleteFileError : java.io.IOException {
     let path: String
 }
@@ -630,5 +646,4 @@ struct UnableToDeleteFileError : java.io.IOException {
 struct UnableToCreateDirectory : java.io.IOException {
     let path: String
 }
-
 #endif
