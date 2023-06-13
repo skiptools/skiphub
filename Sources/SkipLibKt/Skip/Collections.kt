@@ -409,9 +409,3 @@ private fun stride(from: Double, to: Double, inclusive: Boolean, by: Double): Se
     }
     return strideSequence(strideHasNext, strideNext)
 }
-
-//~~~
-
-// Forward Swift's `lazy` property Kotlin's `asSequence()` function
-val <T> Iterable<T>.lazy: kotlin.sequences.Sequence<T>
-    get() = this.asSequence()
