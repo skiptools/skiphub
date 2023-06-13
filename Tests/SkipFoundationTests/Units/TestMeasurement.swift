@@ -113,14 +113,6 @@ class TestMeasurement: XCTestCase {
         }
         #endif // !SKIP
     }
-
-    #if !SKIP
-    static let allTests = [
-        ("testHashing", testHashing),
-        ("testCodingRoundtrip", testCodingRoundtrip),
-        ("testLoadedValuesMatch", testLoadedValuesMatch),
-    ]
-    #endif
 }
 
 

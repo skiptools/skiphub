@@ -48,7 +48,7 @@ public func CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime {
 #endif
 
 /// A specific point in time, independent of any calendar or time zone.
-public struct Date : Hashable, CustomStringConvertible, Comparable {
+public struct Date : Hashable, CustomStringConvertible, Comparable, Encodable {
     internal var platformValue: PlatformDate
 
     public static let timeIntervalBetween1970AndReferenceDate: TimeInterval = 978307200.0
@@ -71,6 +71,22 @@ public struct Date : Hashable, CustomStringConvertible, Comparable {
 
     internal init(platformValue: PlatformDate) {
         self.platformValue = platformValue
+    }
+
+    public init(from decoder: Decoder) throws {
+        #if !SKIP
+        self.platformValue = try PlatformDate(from: decoder)
+        #else
+        self.platformValue = SkipCrash("TODO: Decoder")
+        #endif
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        #if !SKIP
+        try platformValue.encode(to: encoder)
+        #else
+        fatalError("SKIP TODO")
+        #endif
     }
 
     #if SKIP

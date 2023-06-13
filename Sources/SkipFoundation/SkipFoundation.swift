@@ -3,6 +3,7 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
+
 /// A runtime check for whether we are running in a JVM, which is based on whether Ints are 32 or 64 bit
 public let isJVM = Int.max == Int32.max
 
@@ -14,19 +15,68 @@ public func SkipFoundationPublicModuleName() -> String {
     return "SkipFoundation"
 }
 
+/// A shim that pretends to return any `T`, but just crashes with a fatal error.
+func SkipCrash<T>(_ reason: String) -> T {
+    fatalError("skipme: \(reason)")
+}
+
 // MARK: Foundation Adapter Types
 
 #if SKIP
 public typealias AnyClass = kotlin.reflect.KClass<Any>
 public typealias NSObject = java.lang.Object
-public typealias NSError = java.lang.Exception
 public typealias NSString = kotlin.String
 #endif
 
 #if SKIP
 public protocol NSObjectProtocol {
 }
+
+// SKIP TODO: synthesize DecodableCompanion
+public class DecodableCompanion {
+    init(from: Decoder) {
+        fatalError("SKIP TODO: Decoder")
+    }
+}
 #endif
+
+#if !SKIP
+
+internal extension RawRepresentable {
+    /// Creates a `RawRepresentable` with another `RawRepresentable` that has the same underlying type
+    func rekey<NewKey : RawRepresentable>() -> NewKey? where NewKey.RawValue == RawValue {
+        NewKey(rawValue: rawValue)
+    }
+}
+
+internal extension Dictionary where Key : RawRepresentable {
+    /// Remaps a dictionary to another key type with a compatible raw value
+    func rekey<NewKey : Hashable & RawRepresentable>() -> [NewKey: Value] where NewKey.RawValue == Key.RawValue {
+        Dictionary<NewKey, Value>(uniqueKeysWithValues: map {
+            (NewKey(rawValue: $0.rawValue)!, $1)
+        })
+    }
+}
+#endif
+
+
+#if !SKIP
+public typealias Decimal = Double
+public typealias NSDecimalNumber = Double
+#else
+public typealias Decimal = java.math.BigDecimal
+public typealias NSDecimalNumber = java.math.BigDecimal
+#endif
+
+extension Decimal {
+    init?(string: String) {
+        if let decimal = Decimal(string) {
+            self = decimal
+        } else {
+            return nil
+        }
+    }
+}
 
 #if !SKIP
 public typealias PlatformStringEncoding = String.Encoding
@@ -58,6 +108,12 @@ public struct ObjCBool {
     public var boolValue: Bool
     public init(_ value: Bool) { self.boolValue = value }
     public init(booleanLiteral value: Bool) { self.boolValue = value }
+}
+
+public enum ComparisonResult : Int {
+    case ascending = -1
+    case same = 0
+    case descending = 1
 }
 
 
@@ -151,29 +207,6 @@ internal func NSLog(_ message: String) {
 public class NSCoder : NSObject {
 }
 
-
-// Cannot extend `NSObject`: An Error type cannot extend another class because it will be translated to extend Exception in Kotlin
-//public class NSError : Error {
-//}
-
-public protocol CustomNSError : Error {
-    /// The domain of the error.
-    //static var errorDomain: String { get }
-
-    /// The error code within the given domain.
-    //var errorCode: Int { get }
-
-    /// The user-info dictionary.
-    //var errorUserInfo: [String : Any] { get }
-}
-
-//internal class NSString : NSObject {
-//}
-//
-//internal class NSMutableString : NSString {
-//}
-
-
 internal protocol NSRange {
 }
 
@@ -228,9 +261,6 @@ internal protocol NSKeyedUnarchiver {
 }
 
 // MARK: Foundation Placeholders
-
-internal protocol ComparisonResult {
-}
 
 internal protocol DateIntervalFormatter {
 }

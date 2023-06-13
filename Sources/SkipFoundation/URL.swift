@@ -18,7 +18,7 @@ public typealias NSURL = URL
 #endif
 
 /// A value that identifies the location of a resource, such as an item on a remote server or the path to a local file.
-public struct URL : Hashable, CustomStringConvertible {
+public struct URL : Hashable, CustomStringConvertible, Encodable {
     /// `URL` wraps either a `Foundation.URL` in Swift or `java.net.URL` in Kotlin.
     internal var platformValue: PlatformURL
     #if SKIP
@@ -66,6 +66,24 @@ public struct URL : Hashable, CustomStringConvertible {
                 self.platformValue = Foundation.URL(fileURLWithPath: path)
             }
         }
+        #endif
+    }
+
+    public init(from decoder: Decoder) throws {
+        #if !SKIP
+        self.platformValue = try PlatformURL(from: decoder)
+        #else
+        self.platformValue = SkipCrash("TODO: Decoder")
+        self.isDirectoryFlag = SkipCrash("TODO: Decoder")
+        self.baseURL = SkipCrash("TODO: Decoder")
+        #endif
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        #if !SKIP
+        try platformValue.encode(to: encoder)
+        #else
+        fatalError("SKIP TODO")
         #endif
     }
 
@@ -397,12 +415,7 @@ public struct URL : Hashable, CustomStringConvertible {
 
     #if !SKIP
     /// Return a collection of resource values identified by the given resource keys.
-    ///
-    /// This method first checks if the URL object already caches the resource value. If so, it returns the cached resource value to the caller. If not, then this method synchronously obtains the resource value from the backing store, adds the resource value to the URL object's cache, and returns the resource value to the caller. The type of the resource value varies by resource property (see resource key definitions). If this method does not throw and the resulting value in the `URLResourceValues` is populated with nil, it means the resource property is not available for the specified resource and no errors occurred when determining the resource property was not available. This method is currently applicable only to URLs for file system resources.
-    ///
-    /// When this function is used from the main thread, resource values cached by the URL (except those added as temporary properties) are removed the next time the main thread's run loop runs. `func removeCachedResourceValue(forKey:)` and `func removeAllCachedResourceValues()` also may be used to remove cached resource values.
-    ///
-    /// Only the values for the keys specified in `keys` will be populated.
+    @available(*, unavailable)
     public func resourceValues(forKeys keys: Set<URLResourceKey>) throws -> URLResourceValues {
         #if SKIP
         fatalError("TODO: implement resourceValues")
@@ -414,10 +427,7 @@ public struct URL : Hashable, CustomStringConvertible {
     }
 
     /// Sets the resource value identified by a given resource key.
-    ///
-    /// This method writes the new resource values out to the backing store. Attempts to set a read-only resource property or to set a resource property not supported by the resource are ignored and are not considered errors. This method is currently applicable only to URLs for file system resources.
-    ///
-    /// `URLResourceValues` keeps track of which of its properties have been set. Those values are the ones used by this function to determine which properties to write.
+    @available(*, unavailable)
     public mutating func setResourceValues(_ values: URLResourceValues) throws -> Void {
         #if SKIP
         fatalError("TODO: implement setResourceValues")

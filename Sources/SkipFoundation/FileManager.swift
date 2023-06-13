@@ -604,18 +604,6 @@ public struct FileAttributeKey : RawRepresentable, Hashable {
     public static let busy: FileAttributeKey = FileAttributeKey(rawValue: "NSFileBusy")
 }
 
-#if !SKIP
-private extension Dictionary where Key : RawRepresentable {
-    /// Remaps a dictionary to another key type with a compatible raw value
-    func rekey<NewKey : Hashable & RawRepresentable>() -> [NewKey: Value] where NewKey.RawValue == Key.RawValue {
-        Dictionary<NewKey, Value>(uniqueKeysWithValues: map {
-            (NewKey(rawValue: $0.rawValue)!, $1)
-        })
-    }
-}
-#endif
-
-
 #if SKIP
 /// The system temporary folder
 public func NSTemporaryDirectory() -> String {

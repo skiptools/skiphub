@@ -22,7 +22,7 @@ public protocol DataProtocol {
 }
 
 /// A byte buffer in memory.
-public struct Data : DataProtocol, Hashable, CustomStringConvertible {
+public struct Data : DataProtocol, Hashable, CustomStringConvertible, Encodable {
     internal var platformValue: PlatformData
 
     internal var platformData: any PlatformDataProtocol {
@@ -50,6 +50,42 @@ public struct Data : DataProtocol, Hashable, CustomStringConvertible {
         self.platformValue = PlatformData(size: bytes.count, init: {
             bytes[$0].toByte()
         })
+        #endif
+    }
+
+    #if !SKIP
+    public init(_ bytes: Array<UInt8>.SubSequence) {
+        self.platformValue = PlatformData(bytes)
+    }
+    #endif
+
+    public init?(base64Encoded: String) {
+        #if !SKIP
+        guard let data = PlatformData(base64Encoded: base64Encoded) else {
+            return nil
+        }
+        self.init(platformValue: data)
+        #else
+        guard let data = try? java.util.Base64.getDecoder().decode(base64Encoded) else {
+            return nil
+        }
+        self.platformValue = data
+        #endif
+    }
+
+    public init(from decoder: Decoder) throws {
+        #if !SKIP
+        self.platformValue = try PlatformData(from: decoder)
+        #else
+        self.platformValue = SkipCrash("TODO: Decoder")
+        #endif
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        #if !SKIP
+        try platformValue.encode(to: encoder)
+        #else
+        fatalError("SKIP TODO")
         #endif
     }
 

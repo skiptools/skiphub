@@ -227,16 +227,6 @@ class TestNSError : XCTestCase {
 
 class TestURLError: XCTestCase {
 
-    #if !SKIP
-    static var allTests: [(String, (TestURLError) -> () throws -> Void)] {
-        return [
-          ("test_errorCode", TestURLError.test_errorCode),
-          ("test_failingURL", TestURLError.test_failingURL),
-          ("test_failingURLString", TestURLError.test_failingURLString),
-        ]
-    }
-    #endif
-
     static let testURL = URL(string: "https://swift.org")!
     #if !SKIP
     let userInfo: [String: Any] =  [
@@ -276,18 +266,6 @@ class TestURLError: XCTestCase {
 }
 
 class TestCocoaError: XCTestCase {
-
-    #if !SKIP
-    static var allTests: [(String, (TestCocoaError) -> () throws -> Void)] {
-        return [
-            ("test_errorCode", TestCocoaError.test_errorCode),
-            ("test_filePath", TestCocoaError.test_filePath),
-            ("test_url", TestCocoaError.test_url),
-            ("test_stringEncoding", TestCocoaError.test_stringEncoding),
-            ("test_underlying", TestCocoaError.test_underlying),
-        ]
-    }
-    #endif
 
     static let testURL = URL(string: "file:///")!
     #if !SKIP

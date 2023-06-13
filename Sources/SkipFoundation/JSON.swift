@@ -4,6 +4,8 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
+#if JSON_NOSKIP // disable for alternate codable prototype
+
 /// A unit of JSON
 public enum JSON : Hashable, CustomStringConvertible {
     case null
@@ -800,7 +802,7 @@ extension Decodable {
         let decoder = decoder()
         #if !os(Linux) && !os(Android) && !os(Windows)
         if #available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
-            decoder.allowsJSON5 = allowsJSON5
+            //decoder.allowsJSON5 = allowsJSON5
         }
         #endif
 
@@ -2959,3 +2961,6 @@ extension Decodable where Self : Encodable {
     }
     #endif
 }
+
+#endif
+

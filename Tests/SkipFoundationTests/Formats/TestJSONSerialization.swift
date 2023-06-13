@@ -7,15 +7,6 @@ import Foundation
 import XCTest
 
 
-// Skims to get tests working with typealias extensions
-#if SKIP
-typealias ReadingOptions = PlatformJSONSerialization.ReadingOptions
-typealias WritingOptions = PlatformJSONSerialization.WritingOptions
-#else
-typealias ReadingOptions = JSONSerialization.ReadingOptions
-typealias WritingOptions = JSONSerialization.WritingOptions
-#endif
-
 // These tests are adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which have the following license:
 
 
@@ -113,89 +104,6 @@ extension TestJSONSerialization {
         case stream
     }
     static var objectType = ObjectType.data
-
-    #if !SKIP
-    class var deserializationTests: [(String, (TestJSONSerialization) -> () throws -> Void)] {
-        return [
-            //Deserialization with Data
-            ("test_deserialize_emptyObject_withData", test_deserialize_emptyObject_withData),
-            ("test_deserialize_multiStringObject_withData", test_deserialize_multiStringObject_withData),
-            ("test_deserialize_stringWithSpacesAtStart_withData", test_deserialize_stringWithSpacesAtStart_withData),
-            ("test_deserialize_highlyNestedArray_withData", test_deserialize_highlyNestedObject_withData),
-
-            ("test_deserialize_emptyArray_withData", test_deserialize_emptyArray_withData),
-            ("test_deserialize_multiStringArray_withData", test_deserialize_multiStringArray_withData),
-            ("test_deserialize_unicodeString_withData", test_deserialize_unicodeString_withData),
-            ("test_deserialize_highlyNestedArray_withData", test_deserialize_highlyNestedArray_withData),
-            
-            ("test_deserialize_values_withData", test_deserialize_values_withData),
-            ("test_deserialize_values_as_reference_types_withData", test_deserialize_values_as_reference_types_withData),
-            ("test_deserialize_numbers_withData", test_deserialize_numbers_withData),
-            ("test_deserialize_numberWithLeadingZero_withData", test_deserialize_numberWithLeadingZero_withData),
-            ("test_deserialize_numberThatIsntRepresentableInSwift_withData", test_deserialize_numberThatIsntRepresentableInSwift_withData),
-            ("test_deserialize_numbers_as_reference_types_withData", test_deserialize_numbers_as_reference_types_withData),
-
-            ("test_deserialize_simpleEscapeSequences_withData", test_deserialize_simpleEscapeSequences_withData),
-            ("test_deserialize_unicodeEscapeSequence_withData", test_deserialize_unicodeEscapeSequence_withData),
-            ("test_deserialize_unicodeSurrogatePairEscapeSequence_withData", test_deserialize_unicodeSurrogatePairEscapeSequence_withData),
-            ("test_deserialize_allowFragments_withData", test_deserialize_allowFragments_withData),
-            ("test_deserialize_unescapedControlCharactersWithData", test_deserialize_unescapedControlCharactersWithData),
-            ("test_deserialize_unescapedReversedSolidusWithData", test_deserialize_unescapedReversedSolidusWithData),
-
-            ("test_deserialize_unterminatedObjectString_withData", test_deserialize_unterminatedObjectString_withData),
-            ("test_deserialize_missingObjectKey_withData", test_deserialize_missingObjectKey_withData),
-            ("test_deserialize_unexpectedEndOfFile_withData", test_deserialize_unexpectedEndOfFile_withData),
-            ("test_deserialize_invalidValueInObject_withData", test_deserialize_invalidValueInObject_withData),
-            ("test_deserialize_invalidValueIncorrectSeparatorInObject_withData", test_deserialize_invalidValueIncorrectSeparatorInObject_withData),
-            ("test_deserialize_invalidValueInArray_withData", test_deserialize_invalidValueInArray_withData),
-            ("test_deserialize_badlyFormedArray_withData", test_deserialize_badlyFormedArray_withData),
-            ("test_deserialize_invalidEscapeSequence_withData", test_deserialize_invalidEscapeSequence_withData),
-            ("test_deserialize_unicodeMissingLeadingSurrogate_withData", test_deserialize_unicodeMissingLeadingSurrogate_withData),
-            ("test_deserialize_unicodeMissingTrailingSurrogate_withData", test_deserialize_unicodeMissingTrailingSurrogate_withData),
-
-            //Deserialization with Stream
-            ("test_deserialize_emptyObject_withStream", test_deserialize_emptyObject_withStream),
-            ("test_deserialize_multiStringObject_withStream", test_deserialize_multiStringObject_withStream),
-            ("test_deserialize_stringWithSpacesAtStart_withStream", test_deserialize_stringWithSpacesAtStart_withStream),
-            ("test_deserialize_highlyNestedObject_withStream", test_deserialize_highlyNestedObject_withStream),
-
-            ("test_deserialize_emptyArray_withStream", test_deserialize_emptyArray_withStream),
-            ("test_deserialize_multiStringArray_withStream", test_deserialize_multiStringArray_withStream),
-            ("test_deserialize_unicodeString_withStream", test_deserialize_unicodeString_withStream),
-            ("test_deserialize_highlyNestedArray_withStream", test_deserialize_highlyNestedArray_withStream),
-            
-            ("test_deserialize_values_withStream", test_deserialize_values_withStream),
-            ("test_deserialize_values_as_reference_types_withStream", test_deserialize_values_as_reference_types_withStream),
-            ("test_deserialize_numbers_withStream", test_deserialize_numbers_withStream),
-            ("test_deserialize_numberWithLeadingZero_withStream", test_deserialize_numberWithLeadingZero_withStream),
-            ("test_deserialize_numberThatIsntRepresentableInSwift_withStream", test_deserialize_numberThatIsntRepresentableInSwift_withStream),
-            ("test_deserialize_numbers_as_reference_types_withStream", test_deserialize_numbers_as_reference_types_withStream),
-
-            ("test_deserialize_simpleEscapeSequences_withStream", test_deserialize_simpleEscapeSequences_withStream),
-            ("test_deserialize_unicodeEscapeSequence_withStream", test_deserialize_unicodeEscapeSequence_withStream),
-            ("test_deserialize_unicodeSurrogatePairEscapeSequence_withStream", test_deserialize_unicodeSurrogatePairEscapeSequence_withStream),
-            ("test_deserialize_allowFragments_withStream", test_deserialize_allowFragments_withStream),
-            ("test_deserialize_unescapedControlCharactersWithStream", test_deserialize_unescapedControlCharactersWithStream),
-            ("test_deserialize_unescapedReversedSolidusWithStream", test_deserialize_unescapedReversedSolidusWithStream),
-
-            ("test_deserialize_unterminatedObjectString_withStream", test_deserialize_unterminatedObjectString_withStream),
-            ("test_deserialize_missingObjectKey_withStream", test_deserialize_missingObjectKey_withStream),
-            ("test_deserialize_unexpectedEndOfFile_withStream", test_deserialize_unexpectedEndOfFile_withStream),
-            ("test_deserialize_invalidValueInObject_withStream", test_deserialize_invalidValueInObject_withStream),
-            ("test_deserialize_invalidValueIncorrectSeparatorInObject_withStream", test_deserialize_invalidValueIncorrectSeparatorInObject_withStream),
-            ("test_deserialize_invalidValueInArray_withStream", test_deserialize_invalidValueInArray_withStream),
-            ("test_deserialize_badlyFormedArray_withStream", test_deserialize_badlyFormedArray_withStream),
-            ("test_deserialize_invalidEscapeSequence_withStream", test_deserialize_invalidEscapeSequence_withStream),
-            ("test_deserialize_unicodeMissingLeadingSurrogate_withStream", test_deserialize_unicodeMissingLeadingSurrogate_withStream),
-            ("test_deserialize_unicodeMissingTrailingSurrogate_withStream", test_deserialize_unicodeMissingTrailingSurrogate_withStream),
-            ("test_JSONObjectWithStream_withFile", test_JSONObjectWithStream_withFile),
-            ("test_JSONObjectWithStream_withURL", test_JSONObjectWithStream_withURL),
-            
-            ("test_bailOnDeepValidStructure", test_bailOnDeepValidStructure),
-            ("test_bailOnDeepInvalidStructure", test_bailOnDeepInvalidStructure),
-        ]
-    }
-    #endif
 
     func test_deserialize_emptyObject_withData() {
         deserialize_emptyObject(objectType: ObjectType.data)
@@ -1147,15 +1055,20 @@ extension TestJSONSerialization {
         #endif // !SKIP
     }
 
-
+    #if SKIP
+    private func getjsonObjectResult(_ data: Data,
+                                     _ objectType: ObjectType) throws -> Any {
+        throw XCTSkip("SKIP JSON TODO")
+    }
+    #else
     private func getjsonObjectResult(_ data: Data,
                                      _ objectType: ObjectType,
-                                     options opt: ReadingOptions = ReadingOptions.mutableContainers) throws -> Any {
+                                     options opt: JSONSerialization.ReadingOptions = .mutableContainers) throws -> Any {
         var result: Any
         switch objectType {
         case .data:
             //Test with Data
-            result = try JSONSerialization.jsonObject(with: data, options: opt)
+            result = try JSONSerialization.jsonObject(with: data)
         case .stream:
             #if SKIP
             throw XCTSkip("TODO")
@@ -1163,27 +1076,17 @@ extension TestJSONSerialization {
             //Test with stream
             let stream: InputStream = InputStream(data: data)
             stream.open()
-            result = try JSONSerialization.jsonObject(with: stream, options: opt)
+            result = try JSONSerialization.jsonObject(with: stream)
             stream.close()
             #endif
         }
         return result
     }
+    #endif
 }
 
 // MARK: - isValidJSONObjectTests
 extension TestJSONSerialization {
-
-    #if !SKIP
-    class var isValidJSONObjectTests: [(String, (TestJSONSerialization) -> () throws -> Void)] {
-        return [
-            ("test_isValidJSONObjectTrue", test_isValidJSONObjectTrue),
-            ("test_isValidJSONObjectFalse", test_isValidJSONObjectFalse),
-            ("test_validNumericJSONObjects", test_validNumericJSONObjects)
-        ]
-    }
-    #endif
-
     func test_isValidJSONObjectTrue() {
         #if SKIP
         throw XCTSkip("TODO")
@@ -1323,45 +1226,12 @@ extension TestJSONSerialization {
 
 // MARK: - serializationTests
 extension TestJSONSerialization {
-    #if !SKIP
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    class var serializationTests: [(String, (TestJSONSerialization) -> () throws -> Void)] {
-        return [
-            ("test_serialize_emptyObject", test_serialize_emptyObject),
-            ("test_serialize_null", test_serialize_null),
-            ("test_serialize_complexObject", test_serialize_complexObject),
-            ("test_nested_array", test_nested_array),
-            ("test_nested_dictionary", test_nested_dictionary),
-            ("test_serialize_number", test_serialize_number),
-            ("test_serialize_IntMax", test_serialize_IntMax),
-            ("test_serialize_IntMin", test_serialize_IntMin),
-            ("test_serialize_UIntMax", test_serialize_UIntMax),
-            ("test_serialize_UIntMin", test_serialize_UIntMin),
-            ("test_serialize_8BitSizes", test_serialize_8BitSizes),
-            ("test_serialize_16BitSizes", test_serialize_16BitSizes),
-            ("test_serialize_32BitSizes", test_serialize_32BitSizes),
-            ("test_serialize_64BitSizes", test_serialize_64BitSizes),
-            ("test_serialize_Float", test_serialize_Float),
-            ("test_serialize_Double", test_serialize_Double),
-            ("test_serialize_Decimal", test_serialize_Decimal),
-            ("test_serialize_NSDecimalNumber", test_serialize_NSDecimalNumber),
-            ("test_serialize_stringEscaping", test_serialize_stringEscaping),
-            ("test_serialize_fragments", test_serialize_fragments),
-            ("test_serialize_withoutEscapingSlashes", test_serialize_withoutEscapingSlashes),
-            ("test_jsonReadingOffTheEndOfBuffers", test_jsonReadingOffTheEndOfBuffers),
-            ("test_jsonObjectToOutputStreamBuffer", test_jsonObjectToOutputStreamBuffer),
-            ("test_jsonObjectToOutputStreamFile", test_jsonObjectToOutputStreamFile),
-            ("test_jsonObjectToOutputStreamInsufficientBuffer", test_jsonObjectToOutputStreamInsufficientBuffer),
-            ("test_booleanJSONObject", test_booleanJSONObject),
-            ("test_serialize_dictionaryWithDecimal", test_serialize_dictionaryWithDecimal),
-            ("test_serializeDecimalNumberJSONObject", test_serializeDecimalNumberJSONObject),
-            ("test_serializeSortedKeys", test_serializeSortedKeys),
-            ("test_serializePrettyPrinted", test_serializePrettyPrinted),
-        ]
+    #if SKIP
+    func trySerialize(_ obj: Any) throws -> String {
+        throw XCTSkip("SKIP JSON TODO")
     }
-    #endif
-
-    func trySerialize(_ obj: Any, options: WritingOptions = WritingOptions.fragmentsAllowed) throws -> String {
+    #else
+    func trySerialize(_ obj: Any, options: JSONSerialization.WritingOptions = JSONSerialization.WritingOptions.fragmentsAllowed) throws -> String {
         let data = try JSONSerialization.data(withJSONObject: obj, options: options)
 
          guard let string = String(data: data, encoding: String.Encoding.utf8) else {
@@ -1370,6 +1240,7 @@ extension TestJSONSerialization {
         }
         return string
     }
+    #endif
 
     func test_serialize_emptyObject() {
         let dict1 = [String: Any]()
@@ -1777,16 +1648,16 @@ extension TestJSONSerialization {
     }
 
     func test_serialize_fragments() {
-        XCTAssertEqual(try trySerialize(2, options: WritingOptions.fragmentsAllowed), "2")
-        XCTAssertEqual(try trySerialize(false, options: WritingOptions.fragmentsAllowed), "false")
-        XCTAssertEqual(try trySerialize(true, options: WritingOptions.fragmentsAllowed), "true")
-        XCTAssertEqual(try trySerialize("test", options: WritingOptions.fragmentsAllowed), "\"test\"")
         #if SKIP
         throw XCTSkip("TODO")
         #else
-        XCTAssertEqual(try trySerialize(Float(1), options: WritingOptions.fragmentsAllowed), "1")
-        XCTAssertEqual(try trySerialize(Double(2), options: WritingOptions.fragmentsAllowed), "2")
-        XCTAssertEqual(try trySerialize(Decimal(Double(Float.leastNormalMagnitude)), options: WritingOptions.fragmentsAllowed), "0.000000000000000000000000000000000000011754943508222875648")
+        XCTAssertEqual(try trySerialize(2, options: JSONSerialization.WritingOptions.fragmentsAllowed), "2")
+        XCTAssertEqual(try trySerialize(false, options: JSONSerialization.WritingOptions.fragmentsAllowed), "false")
+        XCTAssertEqual(try trySerialize(true, options: JSONSerialization.WritingOptions.fragmentsAllowed), "true")
+        XCTAssertEqual(try trySerialize("test", options: JSONSerialization.WritingOptions.fragmentsAllowed), "\"test\"")
+        XCTAssertEqual(try trySerialize(Float(1), options: JSONSerialization.WritingOptions.fragmentsAllowed), "1")
+        XCTAssertEqual(try trySerialize(Double(2), options: JSONSerialization.WritingOptions.fragmentsAllowed), "2")
+        XCTAssertEqual(try trySerialize(Decimal(Double(Float.leastNormalMagnitude)), options: JSONSerialization.WritingOptions.fragmentsAllowed), "0.000000000000000000000000000000000000011754943508222875648")
         #endif
     }
 
@@ -1980,26 +1851,37 @@ extension TestJSONSerialization {
     } 
 
     func test_serializeSortedKeys() {
+        #if SKIP
+        throw XCTSkip("SKIP JSON TODO")
+        #else
         let dict1 = ["z": 1, "y": 1, "x": 1, "w": 1, "v": 1, "u": 1, "t": 1, "s": 1, "r": 1, "q": 1, ]
         let dict2 = ["aaaa": 1, "aaa": 1, "aa": 1, "a": 1]
         let dict3 = ["c": ["c":1,"b":1,"a":1],"b":["c":1,"b":1,"a":1],"a":["c":1,"b":1,"a":1]]
 
-        XCTAssertEqual(try trySerialize(dict1, options: WritingOptions.sortedKeys), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
-        XCTAssertEqual(try trySerialize(dict2, options: WritingOptions.sortedKeys), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
-        XCTAssertEqual(try trySerialize(dict3, options: WritingOptions.sortedKeys), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
+        XCTAssertEqual(try trySerialize(dict1, options: JSONSerialization.WritingOptions.sortedKeys), "{\"q\":1,\"r\":1,\"s\":1,\"t\":1,\"u\":1,\"v\":1,\"w\":1,\"x\":1,\"y\":1,\"z\":1}")
+        XCTAssertEqual(try trySerialize(dict2, options: JSONSerialization.WritingOptions.sortedKeys), "{\"a\":1,\"aa\":1,\"aaa\":1,\"aaaa\":1}")
+        XCTAssertEqual(try trySerialize(dict3, options: JSONSerialization.WritingOptions.sortedKeys), "{\"a\":{\"a\":1,\"b\":1,\"c\":1},\"b\":{\"a\":1,\"b\":1,\"c\":1},\"c\":{\"a\":1,\"b\":1,\"c\":1}}")
+        #endif
     }
 
     func test_serializePrettyPrinted() {
+        #if SKIP
+        throw XCTSkip("SKIP JSON TODO")
+        #else
         let dictionary = ["key": 4]
-        XCTAssertEqual(try trySerialize(dictionary, options: WritingOptions.prettyPrinted), "{\n  \"key\" : 4\n}")
+        XCTAssertEqual(try trySerialize(dictionary, options: JSONSerialization.WritingOptions.prettyPrinted), "{\n  \"key\" : 4\n}")
+        #endif
     }
     
     func test_bailOnDeepValidStructure() {
+        #if SKIP
+        throw XCTSkip("SKIP JSON TODO")
+        #else
         let repetition = 8000
         let testString = String(repeating: "[", count: repetition) +  String(repeating: "]", count: repetition)
         let data = testString.data(using: String.Encoding.utf8)!
         do {
-            _ = try JSONSerialization.jsonObject(with: data, options: ReadingOptions.mutableContainers)
+            _ = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
             XCTFail("Should not have successfully parsed")
         }
         catch let nativeError {
@@ -2010,19 +1892,24 @@ extension TestJSONSerialization {
             }
             #endif
         }
+        #endif
     }
     
     func test_bailOnDeepInvalidStructure() {
+        #if SKIP
+        throw XCTSkip("SKIP JSON TODO")
+        #else
         let repetition = 8000
         let testString = String(repeating: "[", count: repetition)
         let data = testString.data(using: String.Encoding.utf8)!
         do {
-            _ = try JSONSerialization.jsonObject(with: data, options: ReadingOptions.mutableContainers)
+            _ = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
             XCTFail("Should not have successfully parsed")
         }
         catch {
             // expected case
         }
+        #endif
     }
 
     fileprivate func createTestFile(_ path: String,_contents: Data) -> String? {

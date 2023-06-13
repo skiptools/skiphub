@@ -3,492 +3,808 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-#if !SKIP
-@_implementationOnly import class Foundation.JSONSerialization
-@_implementationOnly import struct Foundation.Data
-public typealias PlatformJSONObject = [String: Any]
-public typealias PlatformJSONArray = [Any]
-let PlatformJSONNull = NSNull()
-#else
-public typealias PlatformJSONObject = org.json.JSONObject
-public typealias PlatformJSONArray = org.json.JSONArray
-let PlatformJSONNull: Any = org.json.JSONObject.NULL
-#endif
 
-// A general constraint for a numeric type
-#if SKIP
-typealias PlatformNumeric = kotlin.Number
-#else
-typealias PlatformNumeric = Swift.Numeric
-#endif
+#if !SKIP // TODO: Skipify JSON
+
+// This code is adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which has the following license:
 
 
-#if SKIP
-public typealias JSONSerialization = PlatformJSONSerialization
-#endif
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2014 - 2021 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+//===----------------------------------------------------------------------===//
 
+//@_implementationOnly import CoreFoundation
 
-struct CannotConvertString: Error { }
-
-// SKIP REPLACE: internal typealias AnyArrayType = skip.lib.Array<*>
-typealias AnyArrayType = Array<Any>
-// SKIP REPLACE: internal typealias AnyMapType = skip.lib.Dictionary<*, *>
-typealias AnyMapType = [String: Any]
-
-// SKIP DECLARE: open class PlatformJSONSerialization
-internal class PlatformJSONSerialization {
-    public struct WritingOptions : OptionSet {
-        public let rawValue: Int
-
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
-
-        /// Specifies that the output uses white space and indentation to make the resulting data more readable.
-        public static let prettyPrinted: WritingOptions = WritingOptions(rawValue: 1 << 0)
-        /// Specifies that the output sorts keys in lexicographic order.
-        public static let sortedKeys: WritingOptions = WritingOptions(rawValue: 1 << 1)
-        /// Specifies that the parser should allow top-level objects that aren’t arrays or dictionaries.
-        public static let fragmentsAllowed: WritingOptions = WritingOptions(rawValue: 1 << 2)
-        /// Specifies that the output doesn’t prefix slash characters with escape characters.
-        public static let withoutEscapingSlashes: WritingOptions = WritingOptions(rawValue: 1 << 3)
-
-        //public static let none: WritingOptions = []
-    }
-
+extension JSONSerialization {
     public struct ReadingOptions : OptionSet {
-        public let rawValue: Int
+        public let rawValue: UInt
+        public init(rawValue: UInt) { self.rawValue = rawValue }
 
-        public static var mutableContainers: ReadingOptions = ReadingOptions(rawValue: 1 << 0)
-        public static var mutableLeaves: ReadingOptions = ReadingOptions(rawValue: 1 << 1)
-        public static var fragmentsAllowed: ReadingOptions = ReadingOptions(rawValue: 1 << 2)
-        public static var json5Allowed: ReadingOptions = ReadingOptions(rawValue: 1 << 3)
-        public static var topLevelDictionaryAssumed: ReadingOptions = ReadingOptions(rawValue: 1 << 4)
-        public static var allowFragments: ReadingOptions = ReadingOptions(rawValue: 1 << 5)
+        public static let mutableContainers = ReadingOptions(rawValue: 1 << 0)
+        public static let mutableLeaves = ReadingOptions(rawValue: 1 << 1)
 
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
+        public static let fragmentsAllowed = ReadingOptions(rawValue: 1 << 2)
+        @available(swift, deprecated: 100000, renamed: "JSONSerialization.ReadingOptions.fragmentsAllowed")
+        public static let allowFragments = ReadingOptions(rawValue: 1 << 2)
     }
 
-    /// Attempt to create a String from the data using one of the 5 supported JSON encodings: `[.utf8, .utf16, .utf16BigEndian, .utf32, .utf32BigEndian]`
-    private static func createString(from jsonData: Data) throws -> String {
-        var string: String? = nil
+    public struct WritingOptions : OptionSet {
+        public let rawValue: UInt
+        public init(rawValue: UInt) { self.rawValue = rawValue }
 
-        // check for each of the 5 supported encodings
-        // FIXME: very inefficient; use optimized heuristics
-        for encoding: String.Encoding in [.utf8, .utf16, .utf16BigEndian, .utf32LittleEndian, .utf32BigEndian] {
-            //string = String(data: jsonData, encoding: encoding)
-            //print("### DATA", jsonData.count, "IN ENCODING:", encoding, string != nil)
-            //if jsonData == string?.data(using: encoding) {
-            //    break
-            //}
+        public static let prettyPrinted = WritingOptions(rawValue: 1 << 0)
+        public static let sortedKeys = WritingOptions(rawValue: 1 << 1)
+        public static let fragmentsAllowed = WritingOptions(rawValue: 1 << 2)
+        public static let withoutEscapingSlashes = WritingOptions(rawValue: 1 << 3)
+    }
+}
 
-            do {
-#if SKIP
-                string = jsonData.platformValue.toString(encoding.rawValue)
-                //print("### DATA", jsonData.count, " IN ENCODING:", encoding, string.count)
-                break
-#endif
-            } catch {
-                // invalid encoding
-                //print("### DATA", jsonData.count, " NOT IN ENCODING:", encoding, error)
+extension JSONSerialization {
+    // Structures with container nesting deeper than this limit are not valid if passed in in-memory for validation, nor if they are read during deserialization.
+    // This matches Darwin Foundation's validation behavior.
+    fileprivate static let maximumRecursionDepth = 512
+}
 
+
+/* A class for converting JSON to Foundation/Swift objects and converting Foundation/Swift objects to JSON.
+
+   An object that may be converted to JSON must have the following properties:
+    - Top level object is a `Swift.Array` or `Swift.Dictionary`
+    - All objects are `Swift.String`, `Foundation.NSNumber`, `Swift.Array`, `Swift.Dictionary`,
+      or `Foundation.NSNull`
+    - All dictionary keys are `Swift.String`s
+    - `NSNumber`s are not NaN or infinity
+*/
+
+
+//open class JSONSerialization : NSObject { // SKIP TODO: should this be an NSObject subclass?
+open class JSONSerialization {
+
+    /* Determines whether the given object can be converted to JSON.
+       Other rules may apply. Calling this method or attempting a conversion are the definitive ways
+       to tell if a given object can be converted to JSON data.
+       - parameter obj: The object to test.
+       - returns: `true` if `obj` can be converted to JSON, otherwise `false`.
+     */
+    open class func isValidJSONObject(_ obj: Any) -> Bool {
+        var recursionDepth = 0
+
+        // TODO: - revisit this once bridging story gets fully figured out
+        func isValidJSONObjectInternal(_ obj: Any?) -> Bool {
+            // Match Darwin Foundation in not considering a deep object valid.
+            guard recursionDepth < JSONSerialization.maximumRecursionDepth else { return false }
+            recursionDepth += 1
+            defer { recursionDepth -= 1 }
+
+            // Emulate the SE-0140 behavior bridging behavior for nils
+            guard let obj = obj else {
+                return true
             }
+
+            #if JSON_NOSKIP
+            if !(obj is _NSNumberCastingWithoutBridging) {
+              if obj is String || obj is NSNull || obj is Int || obj is Bool || obj is UInt ||
+                  obj is Int8 || obj is Int16 || obj is Int32 || obj is Int64 ||
+                  obj is UInt8 || obj is UInt16 || obj is UInt32 || obj is UInt64 {
+                  return true
+              }
+            }
+            #endif
+
+            // object is a Double and is not NaN or infinity
+            if let number = obj as? Double  {
+                return number.isFinite
+            }
+            // object is a Float and is not NaN or infinity
+            if let number = obj as? Float  {
+                return number.isFinite
+            }
+
+            #if JSON_NOSKIP
+            if let number = obj as? Decimal {
+                return number.isFinite
+            }
+            #endif
+
+            // object is Swift.Array
+            if let array = obj as? [Any?] {
+                for element in array {
+                    guard isValidJSONObjectInternal(element) else {
+                        return false
+                    }
+                }
+                return true
+            }
+
+            // object is Swift.Dictionary
+            if let dictionary = obj as? [String: Any?] {
+                for (_, value) in dictionary {
+                    guard isValidJSONObjectInternal(value) else {
+                        return false
+                    }
+                }
+                return true
+            }
+
+            #if JSON_NOSKIP
+            // object is NSNumber and is not NaN or infinity
+            // For better performance, this (most expensive) test should be last.
+            if let number = __SwiftValue.store(obj) as? NSNumber {
+                if CFNumberIsFloatType(number._cfObject) {
+                    let dv = number.doubleValue
+                    let invalid = dv.isInfinite || dv.isNaN
+                    return !invalid
+                } else {
+                    return true
+                }
+            }
+            #endif
+
+            // invalid object
+            return false
         }
 
-        guard let string = string else {
-            throw CannotConvertString()
+        // top level object must be an Swift.Array or Swift.Dictionary
+        guard obj is [Any?] || obj is [String: Any?] else {
+            return false
         }
-        return string
+
+        return isValidJSONObjectInternal(obj)
     }
 
-    // MARK: Conversion of JSONObject/JSONArray to Any
+    /* Generate JSON data from a Foundation object. If the object will not produce valid JSON then an exception will be thrown. Setting the NSJSONWritingPrettyPrinted option will generate JSON with whitespace designed to make the output more readable. If that option is not set, the most compact possible JSON will be generated. If an error occurs, the error parameter will be set and the return value will be nil. The resulting data is a encoded in UTF-8.
+     */
+    internal class func _data(withJSONObject value: Any, options opt: WritingOptions, stream: Bool) throws -> Data {
+        var jsonStr = [UInt8]()
 
-    public static func jsonObject(with jsonData: Data, options: ReadingOptions) throws -> Any {
-        let string = try createString(from: jsonData)
+        var writer = JSONWriter(
+            options: opt,
+            writer: { (str: String?) in
+                if let str = str {
+                    jsonStr.append(contentsOf: str.utf8)
+                }
+            }
+        )
 
-        // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
+//        #if JSON_NOSKIP
+//        if let container = value as? NSArray {
+//            try writer.serializeJSON(container._bridgeToSwift())
+//        } else if let container = value as? NSDictionary {
+//            try writer.serializeJSON(container._bridgeToSwift())
+//        }
+//        #endif
+        if let container = value as? Array<Any> {
+            try writer.serializeJSON(container)
+        } else if let container = value as? Dictionary<AnyHashable, Any> {
+            try writer.serializeJSON(container)
+        } else {
+            guard opt.contains(WritingOptions.fragmentsAllowed) else {
+                fatalError("Top-level object was not NSArray or NSDictionary") // This is a fatal error in objective-c too (it is an NSInvalidArgumentException)
+            }
+            try writer.serializeJSON(value)
+        }
+
+        let count = jsonStr.count
+        //return Data(bytes: &jsonStr, count: count) // SKIP TODO
+        return Data(jsonStr)
+    }
+
+    open class func data(withJSONObject value: Any, options opt: WritingOptions = []) throws -> Data {
+        return try _data(withJSONObject: value, options: opt, stream: false)
+    }
+
+    /* Create a Foundation object from JSON data. Set the NSJSONReadingAllowFragments option if the parser should allow top-level objects that are not an NSArray or NSDictionary. Setting the NSJSONReadingMutableContainers option will make the parser generate mutable NSArrays and NSDictionaries. Setting the NSJSONReadingMutableLeaves option will make the parser generate mutable NSString objects. If an error occurs during the parse, then the error parameter will be set and the result will be nil.
+       The data must be in one of the 5 supported encodings listed in the JSON specification: UTF-8, UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE. The data may or may not have a BOM. The most efficient encoding to use for parsing is UTF-8, so if you have a choice in encoding the data passed to this method, use UTF-8.
+     */
+    open class func jsonObject(with data: Data, options opt: ReadingOptions = []) throws -> Any {
         do {
-            let arr = try JSONArrayAny(json: string)
-            return convertToAny(fromJSONArray: arr) as Any
-        } catch {
-            let obj = try JSONObjectAny(json: string)
-            return convertToAny(fromJSONObject: obj) as Any
-        }
-    }
+            #if JSON_NOSKIP // SKIP TODO: no withUnsafeBytes
+            let jsonValue = try data.withUnsafeBytes { (ptr) -> JSONValue in
+                let (encoding, advanceBy) = JSONSerialization.detectEncoding(ptr)
 
-    private static func convertToAny(fromJSONObject obj: JSONObjectAny) -> Any? {
-        var result: [String: Any] = [:]
-        for key in obj.keys() {
-            if obj.isNull(key: key) {
-                result[key] = nil
-            } else if let value = obj.get(key: key) {
-                result[key] = convertToAny(fromJSONValue: value)
+                if encoding == .utf8 {
+                    // we got utf8... happy path
+                    var parser = JSONParser(bytes: Array(ptr[advanceBy..<ptr.count]))
+                    return try parser.parse()
+                }
+
+                guard let utf8String = String(bytes: ptr[advanceBy..<ptr.count], encoding: encoding) else {
+                    throw JSONError.cannotConvertInputDataToUTF8
+                }
+
+                var parser = JSONParser(bytes: Array(utf8String.utf8))
+                return try parser.parse()
             }
-        }
-        let resultValue: [String: Any]? = result
-        return resultValue
-    }
 
-    private static func convertToAny(fromJSONArray arr: JSONArrayAny) -> Any? {
-        var result: [Any?] = []
-        for index in 0..<arr.count {
-            result.append(convertToAny(fromJSONValue: arr.get(index)))
-        }
-        return result
-    }
+            if jsonValue.isValue, !opt.contains(WritingOptions.fragmentsAllowed) {
+                throw JSONError.singleFragmentFoundButNotAllowed
+            }
 
-
-    private static func convertToAny(fromJSONValue value: Any) -> Any? {
-#if SKIP
-        if value === PlatformJSONNull {
-            return nil
-        }
-#else
-        if value is NSNull {
-            return nil
-        }
-#endif
-        if let number = (value as? NSNumber) {
-            return number.doubleValue
-        } else if let obj = (value as? PlatformJSONObject) {
-            return convertToAny(fromJSONObject: JSONObjectAny(obj))
-        } else if let array = (value as? PlatformJSONArray) {
-            #if !SKIP
-            return Array(array.map(convertToAny(fromJSONValue:)))
+            return try jsonValue.toObjcRepresentation(options: opt)
             #else
-            var array = Array<Any?>()
-            for element in array.iterator() {
-                let value = convertToAny(fromJSONValue: element as Any)
-                array.append(value)
-            }
-            return array
+            fatalError("SKIP TODO: .utf8 parsing")
             #endif
-        } else {
-            return value
+        } catch let error as JSONError {
+            switch error {
+            case .cannotConvertInputDataToUTF8:
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Cannot convert input string to valid utf8 input."
+                ])
+            case .unexpectedEndOfFile:
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Unexpected end of file during JSON parse."
+                ])
+            case .unexpectedCharacter(_, let characterIndex):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Invalid value around character \(characterIndex)."
+                ])
+            case .expectedLowSurrogateUTF8SequenceAfterHighSurrogate:
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Unexpected end of file during string parse (expected low-surrogate code point but did not find one)."
+                ])
+            case .couldNotCreateUnicodeScalarFromUInt32:
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Unable to convert hex escape sequence (no high character) to UTF8-encoded character."
+                ])
+            case .unexpectedEscapedCharacter(_, _, let index):
+                // we lower the failure index by one to match the darwin implementations counting
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Invalid escape sequence around character \(index - 1)."
+                ])
+            case .singleFragmentFoundButNotAllowed:
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "JSON text did not start with array or object and option to allow fragments not set."
+                ])
+            case .tooManyNestedArraysOrDictionaries(characterIndex: let characterIndex):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "Too many nested arrays or dictionaries around character \(characterIndex + 1)."
+                ])
+            case .invalidHexDigitSequence(let string, index: let index):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : #"Invalid hex encoded sequence in "\#(string)" at \#(index)."#
+                ])
+            //case .unescapedControlCharacterInString(ascii: let ascii, in: _, index: let index): where ascii == UInt8(ascii: "\\"): // SKIP TODO: Kotlin does not support where conditions in case and catch matches. Consider using an if statement within the case or catch body
+                //throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                //    NSDebugDescriptionErrorKey : #"Invalid escape sequence around character \#(index)."#
+                //])
+            case .unescapedControlCharacterInString(ascii: _, in: _, index: let index):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : #"Unescaped control character around character \#(index)."#
+                ])
+            case .numberWithLeadingZero(index: let index):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : #"Number with leading zero around character \#(index)."#
+                ])
+            case .numberIsNotRepresentableInSwift(parsed: let parsed):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : #"Number \#(parsed) is not representable in Swift."#
+                ])
+            case .invalidUTF8Sequence(let data, characterIndex: let index):
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : #"Invalid UTF-8 sequence \#(data) starting from character \#(index)."#
+                ])
+            }
+        } catch {
+            preconditionFailure("Only `JSONError` expected")
+        }
+
+    }
+
+#if JSON_NOSKIP
+#if !os(WASI)
+    /* Write JSON data into a stream. The stream should be opened and configured. The return value is the number of bytes written to the stream, or 0 on error. All other behavior of this method is the same as the dataWithJSONObject:options:error: method.
+     */
+    open class func writeJSONObject(_ obj: Any, toStream stream: OutputStream, options opt: WritingOptions) throws -> Int {
+        let jsonData = try _data(withJSONObject: obj, options: opt, stream: true)
+        return jsonData.withUnsafeBytes { (rawBuffer: UnsafeRawBufferPointer) -> Int in
+            let ptr = rawBuffer.baseAddress!.assumingMemoryBound(to: UInt8.self)
+            let res: Int = stream.write(ptr, maxLength: rawBuffer.count)
+            /// TODO: If the result here is negative the error should be obtained from the stream to propagate as a throw
+            return res
         }
     }
+
+    /* Create a JSON object from JSON data stream. The stream should be opened and configured. All other behavior of this method is the same as the JSONObjectWithData:options:error: method.
+     */
+    open class func jsonObject(with stream: InputStream, options opt: ReadingOptions = []) throws -> Any {
+        var data = Data()
+        guard stream.streamStatus == .open || stream.streamStatus == .reading else {
+            fatalError("Stream is not available for reading")
+        }
+        repeat {
+            let buffer = try [UInt8](unsafeUninitializedCapacity: 1024) { buf, initializedCount in
+                let bytesRead = stream.read(buf.baseAddress!, maxLength: buf.count)
+                initializedCount = bytesRead
+                guard bytesRead >= 0 else {
+                    throw stream.streamError!
+                }
+            }
+            data.append(buffer, count: buffer.count)
+        } while stream.hasBytesAvailable
+        return try jsonObject(with: data, options: opt)
+    }
+#endif
+#endif
 }
 
-extension PlatformJSONSerialization {
-    /// Create a JSON instance from to given String.
-    public static func json(from jsonString: any StringProtocol) throws -> JSON {
-        // org.json expects that you will know which type of JSON container is being parsed, but `jsonObject` permits either object or array values, so we try both
-        #if SKIP
-        let trimmedText = jsonString.trimStart()
-        #else
-        let trimmedText = jsonString.trimmingCharacters(in: .whitespacesAndNewlines)
-        #endif
+//MARK: - Encoding Detection
 
-        #if SKIP
-        let startsWithCurlyBrace = trimmedText.startsWith("{")
-        let startsWithSquareBrace = trimmedText.startsWith("[")
-        #else
-        let startsWithCurlyBrace = trimmedText.hasPrefix("{")
-        let startsWithSquareBrace = trimmedText.hasPrefix("[")
-        #endif
+private extension JSONSerialization {
+    /// Detect the encoding format of the NSData contents
+    static func detectEncoding(_ bytes: UnsafeRawBufferPointer) -> (String.Encoding, Int) {
+        // According to RFC8259, the text encoding in JSON must be UTF8 in nonclosed systems
+        // https://tools.ietf.org/html/rfc8259#section-8.1
+        // However, since Darwin Foundation supports utf16 and utf32, so should Swift Foundation.
 
-        if startsWithCurlyBrace {
-            let obj = try JSONObjectAny(json: jsonString.description)
-            return convertToJSON(fromJSONObject: obj)
-        } else if startsWithSquareBrace {
-            let arr = try JSONArrayAny(json: jsonString.description)
-            return convertToJSON(fromJSONArray: arr)
-        } else {
-            // neither array nor object, so
-            // parse as an Array, then return the initial instance
-            let arr = try JSONArrayAny(json: "[" + jsonString + "]")
-            return convertToJSON(fromJSONArray: arr).array![0]
-        }
-    }
-
-    private static func convertToJSON(fromJSONObject obj: JSONObjectAny) -> JSON {
-        var result: JSONObject = [:]
-        for key in obj.keys() {
-            if obj.isNull(key: key) {
-                result[key] = JSON.null
-            } else if let value = obj.get(key: key) {
-                result[key] = convertToJSON(fromJSONValue: value)
+        // First let's check if we can determine the encoding based on a leading Byte Ordering Mark
+        // (BOM).
+        if bytes.count >= 4 {
+            if bytes.starts(with: Self.utf8BOM) {
+                return (.utf8, 3)
+            }
+            if bytes.starts(with: Self.utf32BigEndianBOM) {
+                return (.utf32BigEndian, 4)
+            }
+            if bytes.starts(with: Self.utf32LittleEndianBOM) {
+                return (.utf32LittleEndian, 4)
+            }
+            if bytes.starts(with: [0xFF, 0xFE]) {
+                return (.utf16LittleEndian, 2)
+            }
+            if bytes.starts(with: [0xFE, 0xFF]) {
+                return (.utf16BigEndian, 2)
             }
         }
-        return JSON.obj(result)
-    }
 
-    private static func convertToJSON(fromJSONArray arr: JSONArrayAny) -> JSON {
-        var result: JSONArray = []
-        for index in 0..<arr.count {
-            result.append(convertToJSON(fromJSONValue: arr.get(index)))
+        #if !SKIP // Kotlin does not support partial bindings in case matches. Match against a concrete value or bind all values
+        // If there is no BOM present, we might be able to determine the encoding based on
+        // occurences of null bytes.
+        if bytes.count >= 4 {
+            switch (bytes[0], bytes[1], bytes[2], bytes[3]) {
+            case (0, 0, 0, _):
+                return (.utf32BigEndian, 0)
+            case (_, 0, 0, 0):
+                return (.utf32LittleEndian, 0)
+            case (0, _, 0, _):
+                return (.utf16BigEndian, 0)
+            case (_, 0, _, 0):
+                return (.utf16LittleEndian, 0)
+            default:
+                break
+            }
         }
-        return JSON.array(result)
-    }
-
-
-    private static func convertToJSON(fromJSONValue value: Any) -> JSON {
-        #if SKIP
-        if value === PlatformJSONNull {
-            return JSON.null
-        }
-        #else
-        if value is NSNull {
-            return JSON.null
+        else if bytes.count >= 2 {
+            switch (bytes[0], bytes[1]) {
+            case (0, _):
+                return (.utf16BigEndian, 0)
+            case (_, 0):
+                return (.utf16LittleEndian, 0)
+            default:
+                break
+            }
         }
         #endif
-        if let number = (value as? NSNumber) {
-            #if !SKIP
-            // when parsing into Any instances, JSONSerialization treats booleans as NSNumbers with a value of 1, so we need to check for this and correctly return a boolean
-            let booleanType = String(cString: NSNumber(value: true).objCType)
-            if String(cString: number.objCType) == booleanType {
-                return JSON.bool(number.boolValue)
-            }
-            #endif
-            return JSON.number(number.doubleValue)
-        } else if let boolean = (value as? Bool) {
-            return JSON.bool(boolean)
-        } else if let str = (value as? JSONString) {
-            return JSON.string(str)
-        } else if let obj = (value as? PlatformJSONObject) {
-            return convertToJSON(fromJSONObject: JSONObjectAny(obj))
-        } else if let array = (value as? PlatformJSONArray) {
-            return convertToJSON(fromJSONArray: JSONArrayAny(array))
-        } else {
-            return JSON.null
-        }
+        return (.utf8, 0)
     }
+
+    static func parseBOM(_ bytes: UnsafeRawBufferPointer) -> (encoding: String.Encoding, skipLength: Int)? {
+
+        return nil
+    }
+
+    // These static properties don't look very nice, but we need them to
+    // workaround: https://bugs.swift.org/browse/SR-14102
+    private static let utf8BOM: [UInt8] = [0xEF, 0xBB, 0xBF]
+    private static let utf32BigEndianBOM: [UInt8] = [0x00, 0x00, 0xFE, 0xFF]
+    private static let utf32LittleEndianBOM: [UInt8] = [0xFF, 0xFE, 0x00, 0x00]
+    private static let utf16BigEndianBOM: [UInt8] = [0xFF, 0xFE]
+    private static let utf16LittleEndianBOM: [UInt8] = [0xFE, 0xFF]
 }
 
-// MARK: Conversion of Any to a JSON String
+//MARK: - JSONSerializer
+private struct JSONWriter {
 
-extension PlatformJSONSerialization {
+    var indent = 0
+    let pretty: Bool
+    let sortedKeys: Bool
+    let withoutEscapingSlashes: Bool
+    let writer: (String?) -> Void
 
-    public static func data(withJSONObject obj: Any, options opt: WritingOptions) throws -> Data {
-        // "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch"
-        // SKIP REPLACE: val pretty = opt.rawValue == WritingOptions.prettyPrinted.rawValue
-        let pretty = opt.contains(WritingOptions.prettyPrinted)
-
-        let string = convertToJsonString(obj, indent: pretty ? 0 : nil)
-        return string.utf8Data
+    init(options: JSONSerialization.WritingOptions, writer: @escaping (String?) -> Void) {
+        pretty = options.contains(.prettyPrinted)
+        sortedKeys = options.contains(.sortedKeys)
+        withoutEscapingSlashes = options.contains(.withoutEscapingSlashes)
+        self.writer = writer
     }
 
-    private static func convertToJsonString(_ value: Any?, indent: Int?) -> String {
-        let nextIndent = indent == nil ? nil : indent! + 2
+    mutating func serializeJSON(_ object: Any?) throws {
 
-        switch value {
-        case let value as any PlatformNumeric:
-            return "\(value)"
-        case let value as Bool:
-            return value ? "true" : "false"
-        case let value as String:
-            return serializeString(value)
-        case let value as AnyArrayType:
-            return toJsonString(array: value, indent: nextIndent)
-        case let value as AnyMapType:
-            return toJsonString(dictionary: value, indent: nextIndent)
+        var toSerialize = object
+
+        #if JSON_NOSKIP
+        if let number = toSerialize as? _NSNumberCastingWithoutBridging {
+            toSerialize = number._swiftValueOfOptimalType
+        }
+        #endif
+
+        guard let obj = toSerialize else {
+            try serializeNull()
+            return
+        }
+
+        // For better performance, the most expensive conditions to evaluate should be last.
+        switch (obj) {
+        case let str as String:
+            try serializeString(str)
+        case let boolValue as Bool:
+            writer(boolValue.description)
+        case let num as Int:
+            writer(num.description)
+        case let num as Int8:
+            writer(num.description)
+        case let num as Int16:
+            writer(num.description)
+        case let num as Int32:
+            writer(num.description)
+        case let num as Int64:
+            writer(num.description)
+        case let num as UInt:
+            writer(num.description)
+        case let num as UInt8:
+            writer(num.description)
+        case let num as UInt16:
+            writer(num.description)
+        case let num as UInt32:
+            writer(num.description)
+        case let num as UInt64:
+            writer(num.description)
+        case let array as Array<Any?>:
+            try serializeArray(array)
+        case let dict as Dictionary<AnyHashable, Any?>:
+            try serializeDictionary(dict)
+        case let num as Float:
+            try serializeFloat(num)
+        case let num as Double:
+            try serializeFloat(num)
+        #if JSON_NOSKIP
+        case let num as Decimal:
+            writer(num.description)
+        case let num as NSDecimalNumber:
+            writer(num.description)
+        case is NSNull:
+            try serializeNull()
+        case _ where __SwiftValue.store(obj) is NSNumber:
+            let num = __SwiftValue.store(obj) as! NSNumber
+            writer(num.description)
+        #endif
         default:
+            throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [NSDebugDescriptionErrorKey : "Invalid object cannot be serialized"])
+        }
+    }
+
+    func serializeString(_ str: String) throws {
+        writer("\"")
+        for scalar in str.unicodeScalars {
+            switch scalar {
+                case "\"":
+                    writer("\\\"") // U+0022 quotation mark
+                case "\\":
+                    writer("\\\\") // U+005C reverse solidus
+                case "/":
+                    if !withoutEscapingSlashes { writer("\\") }
+                    writer("/") // U+002F solidus
+                case "\u{8}":
+                    writer("\\b") // U+0008 backspace
+                case "\u{c}":
+                    writer("\\f") // U+000C form feed
+                case "\n":
+                    writer("\\n") // U+000A line feed
+                case "\r":
+                    writer("\\r") // U+000D carriage return
+                case "\t":
+                    writer("\\t") // U+0009 tab
+                case "\u{0}"..."\u{f}":
+                    writer("\\u000\(String(scalar.value, radix: 16))") // U+0000 to U+000F
+                case "\u{10}"..."\u{1f}":
+                    writer("\\u00\(String(scalar.value, radix: 16))") // U+0010 to U+001F
+                default:
+                    writer(String(scalar))
+            }
+        }
+        writer("\"")
+    }
+
+    private func serializeFloat<T: FloatingPoint & LosslessStringConvertible>(_ num: T) throws {
+        #if JSON_NOSKIP
+        guard num.isFinite else {
+             throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [NSDebugDescriptionErrorKey : "Invalid number value (\(num)) in JSON write"])
+        }
+        var str = num.description
+        if str.hasSuffix(".0") {
+            str.removeLast(2)
+        }
+        writer(str)
+        #endif
+    }
+
+    #if JSON_NOSKIP
+    mutating func serializeNumber(_ num: NSNumber) throws {
+        if CFNumberIsFloatType(num._cfObject) {
+            try serializeFloat(num.doubleValue)
+        } else {
+            switch num._cfTypeID {
+            case CFBooleanGetTypeID():
+                writer(num.boolValue.description)
+            default:
+                writer(num.stringValue)
+            }
+        }
+    }
+    #endif
+
+    mutating func serializeArray(_ array: [Any?]) throws {
+        writer("[")
+        if pretty {
+            writer("\n")
+            incIndent()
+        }
+
+        var first = true
+        for elem in array {
+            if first {
+                first = false
+            } else if pretty {
+                writer(",\n")
+            } else {
+                writer(",")
+            }
+            if pretty {
+                writeIndent()
+            }
+            try serializeJSON(elem)
+        }
+        if pretty {
+            writer("\n")
+            decAndWriteIndent()
+        }
+        writer("]")
+    }
+
+    mutating func serializeDictionary(_ dict: Dictionary<AnyHashable, Any?>) throws {
+        writer("{")
+        if pretty {
+            writer("\n")
+            incIndent()
+            if dict.count > 0 {
+                writeIndent()
+            }
+        }
+
+        var first = true
+
+        func serializeDictionaryElement(key: AnyHashable, value: Any?) throws {
+            if first {
+                first = false
+            } else if pretty {
+                writer(",\n")
+                writeIndent()
+            } else {
+                writer(",")
+            }
+
+            if let key = key as? String {
+                try serializeString(key)
+            } else {
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [NSDebugDescriptionErrorKey : "NSDictionary key must be NSString"])
+            }
+            pretty ? writer(" : ") : writer(":")
+            try serializeJSON(value)
+        }
+
+        if sortedKeys {
+            #if !SKIP
+            let elems = try dict.sorted(by: { a, b in
+                guard let a = a.key as? String,
+                    let b = b.key as? String else {
+                        throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [NSDebugDescriptionErrorKey : "NSDictionary key must be NSString"])
+                }
+                #if JSON_NOSKIP
+                let options: NSString.CompareOptions = [.numeric, .caseInsensitive, .forcedOrdering]
+                let range: Range<String.Index>  = a.startIndex..<a.endIndex
+                let locale = NSLocale.system
+
+                return a.compare(b, options: options, range: range, locale: locale) == .orderedAscending
+                #else
+                return a < b
+                #endif
+            })
+            for elem in elems {
+                try serializeDictionaryElement(key: elem.key, value: elem.value)
+            }
+            #else // SKIP TODO: dictionary sorting and string comparison
+            for (key, value) in dict {
+                try serializeDictionaryElement(key: key, value: value)
+            }
+            #endif
+        } else {
+            for (key, value) in dict {
+                try serializeDictionaryElement(key: key, value: value)
+            }
+        }
+
+        if pretty {
+            writer("\n")
+            decAndWriteIndent()
+        }
+        writer("}")
+    }
+
+    func serializeNull() throws {
+        writer("null")
+    }
+
+    let indentAmount = 2
+
+    mutating func incIndent() {
+        indent += indentAmount
+    }
+
+    mutating func incAndWriteIndent() {
+        indent += indentAmount
+        writeIndent()
+    }
+
+    mutating func decAndWriteIndent() {
+        indent -= indentAmount
+        writeIndent()
+    }
+
+    func writeIndent() {
+        for _ in 0..<indent {
+            writer(" ")
+        }
+    }
+
+}
+
+enum JSONValue: Equatable {
+    case string(String)
+    case number(String)
+    case bool(Bool)
+    case null
+
+    case array([JSONValue])
+    case object([String: JSONValue])
+}
+
+extension JSONValue {
+    var isValue: Bool {
+        switch self {
+        case .array, .object:
+            return false
+        case .null, .number, .string, .bool:
+            return true
+        }
+    }
+
+    var isContainer: Bool {
+        switch self {
+        case .array, .object:
+            return true
+        case .null, .number, .string, .bool:
+            return false
+        }
+    }
+}
+
+extension JSONValue {
+    var debugDataTypeDescription: String {
+        switch self {
+        case .array:
+            return "an array"
+        case .bool:
+            return "bool"
+        case .number:
+            return "a number"
+        case .string:
+            return "a string"
+        case .object:
+            return "a dictionary"
+        case .null:
             return "null"
         }
     }
+}
 
-    private static func toJsonString(dictionary: AnyMapType, indent: Int?) -> String {
-        let nextIndent = indent == nil ? nil : indent! + 2
-
-        var reifiedMap: [String: Any?] = [:]
-        let keyList = dictionary.keys.map({ "\($0)" })
-        let valueList = Array(dictionary.values)
-        for (index, key) in keyList.enumerated() {
-            let value: Any? = valueList[index]
-            reifiedMap[key] = value
+#if JSON_NOSKIP
+private extension JSONValue {
+    func toObjcRepresentation(options: JSONSerialization.ReadingOptions) throws -> Any {
+        switch self {
+        case .array(let values):
+            let array = try values.map { try $0.toObjcRepresentation(options: options) }
+            if !options.contains(.mutableContainers) {
+                return array
+            }
+            return NSMutableArray(array: array, copyItems: false)
+        case .object(let object):
+            let dictionary = try object.mapValues { try $0.toObjcRepresentation(options: options) }
+            if !options.contains(.mutableContainers) {
+                return dictionary
+            }
+            return NSMutableDictionary(dictionary: dictionary, copyItems: false)
+        case .bool(let bool):
+            return NSNumber(value: bool)
+        case .number(let string):
+            guard let number = NSNumber.fromJSONNumber(string) else {
+                throw JSONError.numberIsNotRepresentableInSwift(parsed: string)
+            }
+            return number
+        case .null:
+            return NSNull()
+        case .string(let string):
+            if options.contains(.mutableLeaves) {
+                return NSMutableString(string: string)
+            }
+            return string
         }
+    }
+}
+#endif
 
-        var json = "{"
-        if indent != nil { json += "\n" }
+extension NSNumber {
+    static func fromJSONNumber(_ string: String) -> NSNumber? {
+        let decIndex = string.firstIndex(of: ".")
+        let expIndex = string.firstIndex(of: "e")
+        let isInteger = decIndex == nil && expIndex == nil
+        let isNegative = string.utf8[string.utf8.startIndex] == UInt8(ascii: "-")
+        let digitCount = string[string.startIndex..<(expIndex ?? string.endIndex)].count
 
-        let sortedKeys = keyList.sorted()
-        let keyCount = sortedKeys.count
-        for (index, key) in sortedKeys.enumerated() {
-            let value = reifiedMap[key] as Any?
-            let jsonString = convertToJsonString(value, indent: nextIndent)
-            if let indent = indent {
-                for _ in 1...indent {
-                    json += " "
+        // Try Int64() or UInt64() first
+        if isInteger {
+            if isNegative {
+                if digitCount <= 19, let intValue = Int64(string) {
+                    return NSNumber(value: intValue)
+                }
+            } else {
+                if digitCount <= 20, let uintValue = UInt64(string) {
+                    return NSNumber(value: uintValue)
                 }
             }
-            json += "\""
-            json += key
-            json += "\""
-            if indent != nil { json += " " }
-            json += ":"
-            if indent != nil { json += " " }
-            json += jsonString
-
-            if index < keyCount - 1 {
-                json += ","
-            }
-            if indent != nil { json += "\n" }
         }
 
-        json += "}"
-        return json
-    }
+        var exp = 0
 
-    private static func toJsonString(array: AnyArrayType, indent: Int?) -> String {
-        let nextIndent = indent == nil ? nil : indent! + 2
-        var json = "["
-        if indent != nil { json += "\n" }
-        for (index, value) in array.enumerated() {
-            if let indent = indent {
-                for _ in 1...indent {
-                    json += " "
-                }
-            }
-            json += convertToJsonString(value, indent: nextIndent)
-            if index < array.count - 1 {
-                json += ","
-            }
-            if indent != nil { json += "\n" }
-        }
-        json += "]"
-        return json
-    }
-
-    private static func serializeString(_ str: String, withoutEscapingSlashes: Bool = false) -> String {
-        var json = ""
-        json += "\""
-
-        for c in str {
-            switch "\(c)" {
-            case "\"":
-                json += "\\\""
-            case "\\":
-                json += "\\\\"
-            case "/":
-                if withoutEscapingSlashes {
-                    json += "/"
-                } else {
-                    json += "\\/"
-                }
-            //case 0x8:
-            //    json += "\\b"
-            //case 0xc:
-            //    json += "\\f"
-            case "\n":
-                json += "\\n"
-            case "\r":
-                json += "\\r"
-            case "\t":
-                json += "\\t"
-            // case 0x0...0xf:
-            //     json += "\\u000\(String(cursor.pointee, radix: 16))"
-            // case 0x10...0x1f:
-            //     json += "\\u00\(String(cursor.pointee, radix: 16))"
-            default:
-                json += "\(c)"
+        if let expIndex = expIndex {
+            let expStartIndex = string.index(after: expIndex)
+            if let parsed = Int(string[expStartIndex...]) {
+                exp = parsed
             }
         }
 
-        json += "\""
-        return json
-    }
-}
-
-/// A Swift JSON parsing API to match the `org.json.JSONObject` Java API.
-final class JSONObjectAny {
-    /// The internal JSON object, which will be a `org.json.JSONObject` in Kotlin and an `NSMutableDictionary` in Swift
-    var json: PlatformJSONObject
-
-    init(_ json: PlatformJSONObject = PlatformJSONObject()) {
-        self.json = json
-    }
-
-    /// Parse the JSON using the system parser.
-    init(json: String) throws {
-        #if SKIP
-        self.json = try PlatformJSONObject(json)
-        #else
-        self.json = (try JSONSerialization.jsonObject(with: Foundation.Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONObject) ?? [:]
-        #endif
-    }
-
-    func keys() -> [String] {
-        #if SKIP
-        //Array(json.keys())
-        //json.keys().map({ $0 })
-        var keys = [String]()
-        for key in json.keys() {
-            keys.append(key)
-        }
-        return keys
-        #else
-        json.keys.map({ $0 })
-        #endif
-    }
-
-    func get(key: String) -> Any? {
-        #if SKIP
-        json.get(key)
-        #else
-        json[key]
-        #endif
-    }
-
-    func isNull(key: String) -> Bool {
-        #if SKIP
-        json.isNull(key)
-        #else
-        json[key] == nil
-        #endif
-    }
-}
-
-/// A Swift JSON parsing API to match the `org.json.JSONArray` Java API.
-final class JSONArrayAny {
-    /// The internal JSON object, which will be a `org.json.JSONArray` in Kotlin and an `NSMutableDictionary` in Swift
-    var json: PlatformJSONArray
-
-    init(_ json: PlatformJSONArray = PlatformJSONArray()) {
-        self.json = json
-    }
-
-    /// Parse the JSON using the system parser.
-    init(json: String) throws {
-        #if SKIP
-        self.json = try PlatformJSONArray(json)
-        #else
-        self.json = (try JSONSerialization.jsonObject(with: Foundation.Data(json.utf8), options: [.mutableLeaves, .mutableContainers]) as? PlatformJSONArray) ?? []
-        #endif
-    }
-
-    var count: Int {
-        #if SKIP
-        return self.json.length()
-        #else
-        return self.json.count
-        #endif
-    }
-
-    func get(_ index: Int) -> Any {
-        #if SKIP
-        return self.json[index]
-        #else
-        return self.json[index]
-        #endif
-    }
-}
-
-@available(macOS 11, iOS 14, watchOS 7, tvOS 14, *)
-extension JSONObjectAny {
-    /// Returns the JSON string representing this Object.
-    func stringify(pretty: Bool = false, sorted: Bool = false) throws -> String {
-        #if !SKIP
-        return String(data: try JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions([.withoutEscapingSlashes] + (pretty ? [.prettyPrinted] : []) + (sorted ? [.sortedKeys] : []))), encoding: .utf8) ?? ""
-        #else
-        // TODO: there isn't any simple way to output sorted keys, but we want to be able to support it for consistent output
-        // one way to support this would be to make a recursive copy of the tree with clones of any JSONObject instances with their keys in sorted order; this would be expensive for large trees
-        if pretty {
-            return json.toString(2)
-        } else {
-            return json.toString()
+        #if JSON_NOSKIP
+        // Decimal holds more digits of precision but a smaller exponent than Double
+        // so try that if the exponent fits and there are more digits than Double can hold
+        if digitCount > 17, exp >= -128, exp <= 127, let decimal = Decimal(string: string), decimal.isFinite {
+            return NSDecimalNumber(decimal: decimal)
         }
         #endif
+
+        // Fall back to Double() for everything else
+        if let doubleValue = Double(string), doubleValue.isFinite {
+            return NSNumber(value: doubleValue)
+        }
+
+        return nil
     }
 }
+
+#endif
+
