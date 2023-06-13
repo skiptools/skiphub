@@ -675,6 +675,9 @@ private struct JSONWriter {
 
 }
 
+#endif // SKIP
+
+
 enum JSONValue: Equatable {
     case string(String)
     case number(String)
@@ -684,6 +687,10 @@ enum JSONValue: Equatable {
     case array([JSONValue])
     case object([String: JSONValue])
 }
+
+
+// SKIP TODO: fix case alias for Null and Object
+#if !SKIP
 
 extension JSONValue {
     var isValue: Bool {
@@ -724,7 +731,11 @@ extension JSONValue {
     }
 }
 
+#endif
+
+
 #if JSON_NOSKIP
+
 private extension JSONValue {
     func toObjcRepresentation(options: JSONSerialization.ReadingOptions) throws -> Any {
         switch self {
@@ -805,6 +816,4 @@ extension NSNumber {
         return nil
     }
 }
-
-#endif
 

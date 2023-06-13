@@ -78,6 +78,9 @@ extension Decimal {
     }
 }
 
+#if SKIP
+#endif
+
 #if !SKIP
 public typealias PlatformStringEncoding = String.Encoding
 #else

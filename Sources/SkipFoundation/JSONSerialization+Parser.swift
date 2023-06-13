@@ -689,32 +689,45 @@ extension Array where Element == UInt8 {
     internal static let _null = [UInt8(ascii: "n"), UInt8(ascii: "u"), UInt8(ascii: "l"), UInt8(ascii: "l")]
 
 }
-#else
-
-internal let UInt8_space: UInt8 = UInt8(ascii: " ")
-internal let UInt8_return: UInt8 = UInt8(ascii: "\r")
-internal let UInt8_newline: UInt8 = UInt8(ascii: "\n")
-internal let UInt8_tab: UInt8 = UInt8(ascii: "\t")
-
-internal let UInt8_colon: UInt8 = UInt8(ascii: ":")
-internal let UInt8_comma: UInt8 = UInt8(ascii: ",")
-
-internal let UInt8_openbrace: UInt8 = UInt8(ascii: "{")
-internal let UInt8_closebrace: UInt8 = UInt8(ascii: "}")
-
-internal let UInt8_openbracket: UInt8 = UInt8(ascii: "[")
-internal let UInt8_closebracket: UInt8 = UInt8(ascii: "]")
-
-internal let UInt8_quote: UInt8 = UInt8(ascii: "\"")
-internal let UInt8_backslash: UInt8 = UInt8(ascii: "\\")
-
-internal let UInt8Array_true: Array<UInt8> = [UInt8(ascii: "t"), UInt8(ascii: "r"), UInt8(ascii: "u"), UInt8(ascii: "e")]
-internal let UInt8Array_false: Array<UInt8> = [UInt8(ascii: "f"), UInt8(ascii: "a"), UInt8(ascii: "l"), UInt8(ascii: "s"), UInt8(ascii: "e")]
-internal let UInt8Array_null: Array<UInt8> = [UInt8(ascii: "n"), UInt8(ascii: "u"), UInt8(ascii: "l"), UInt8(ascii: "l")]
 
 #endif
 
-enum JSONError: Swift.Error, Equatable {
+#endif // !SKIP
+
+#if SKIP
+/// Mimics the constructor `UInt8(ascii:)`
+private func UInt8FromAscii(ascii: String) -> UInt8 {
+    ascii.first().toByte().toUByte()
+}
+#else
+private func UInt8FromAscii(ascii: Swift.Unicode.Scalar) -> UInt8 {
+    UInt8(ascii: ascii)
+}
+#endif
+
+internal let UInt8_space: UInt8 = UInt8FromAscii(ascii: " ")
+internal let UInt8_return: UInt8 = UInt8FromAscii(ascii: "\r")
+internal let UInt8_newline: UInt8 = UInt8FromAscii(ascii: "\n")
+internal let UInt8_tab: UInt8 = UInt8FromAscii(ascii: "\t")
+
+internal let UInt8_colon: UInt8 = UInt8FromAscii(ascii: ":")
+internal let UInt8_comma: UInt8 = UInt8FromAscii(ascii: ",")
+
+internal let UInt8_openbrace: UInt8 = UInt8FromAscii(ascii: "{")
+internal let UInt8_closebrace: UInt8 = UInt8FromAscii(ascii: "}")
+
+internal let UInt8_openbracket: UInt8 = UInt8FromAscii(ascii: "[")
+internal let UInt8_closebracket: UInt8 = UInt8FromAscii(ascii: "]")
+
+internal let UInt8_quote: UInt8 = UInt8FromAscii(ascii: "\"")
+internal let UInt8_backslash: UInt8 = UInt8FromAscii(ascii: "\\")
+
+internal let UInt8Array_true: Array<UInt8> = [UInt8FromAscii(ascii: "t"), UInt8FromAscii(ascii: "r"), UInt8FromAscii(ascii: "u"), UInt8FromAscii(ascii: "e")]
+internal let UInt8Array_false: Array<UInt8> = [UInt8FromAscii(ascii: "f"), UInt8FromAscii(ascii: "a"), UInt8FromAscii(ascii: "l"), UInt8FromAscii(ascii: "s"), UInt8FromAscii(ascii: "e")]
+internal let UInt8Array_null: Array<UInt8> = [UInt8FromAscii(ascii: "n"), UInt8FromAscii(ascii: "u"), UInt8FromAscii(ascii: "l"), UInt8FromAscii(ascii: "l")]
+
+#if !SKIP
+enum JSONError: Error, Equatable {
     case cannotConvertInputDataToUTF8
     case unexpectedCharacter(ascii: UInt8, characterIndex: Int)
     case unexpectedEndOfFile
@@ -729,5 +742,4 @@ enum JSONError: Swift.Error, Equatable {
     case singleFragmentFoundButNotAllowed
     case invalidUTF8Sequence(Data, characterIndex: Int)
 }
-
-#endif // !SKIP
+#endif

@@ -298,11 +298,6 @@ public final class SQLContext {
             })
         }
 
-        /// Returns a JSON array by converting the current row into JSON values
-        public func getJSON() throws -> JSON {
-            try JSON.array(getRow().map({ $0.toJSON() }))
-        }
-
         /// Returns a textual description of the row's values in a format suitable for printing to a console
         public func rowText(header: Bool = false, values: Bool = false, width: Int = 80) throws -> String {
             var str = ""
@@ -533,22 +528,6 @@ public enum SQLValue {
             return int.description.data(using: String.Encoding.utf8)
         case .text(let str):
             return str.data(using: String.Encoding.utf8)
-        }
-    }
-
-    /// Convert this SQLValue into a JSON for serialization
-    public func toJSON() -> JSON {
-        switch self {
-        case SQLValue.nul:
-            return JSON.null
-        case let SQLValue.text(str):
-            return JSON.string(str)
-        case let SQLValue.integer(num):
-            return JSON.number(Double(num))
-        case let SQLValue.float(dbl):
-            return JSON.number(dbl)
-        case let SQLValue.blob(bytes):
-            return JSON.string(bytes.base64EncodedString())
         }
     }
 

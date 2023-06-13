@@ -1305,5 +1305,4 @@ extension EncodingError {
         return .invalidValue(value, EncodingError.Context(codingPath: codingPath, debugDescription: debugDescription))
     }
 }
-
-#endif // !SKIP
+#endif
