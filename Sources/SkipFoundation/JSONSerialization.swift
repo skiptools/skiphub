@@ -4,8 +4,6 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-#if !SKIP // TODO: Skipify JSON
-
 // This code is adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which has the following license:
 
 
@@ -25,8 +23,9 @@
 
 extension JSONSerialization {
     public struct ReadingOptions : OptionSet {
-        public let rawValue: UInt
-        public init(rawValue: UInt) { self.rawValue = rawValue }
+        // SKIP TODO: should be UInt, but error: “Conversion of signed constants to unsigned ones is prohibited”
+        public let rawValue: Int
+        public init(rawValue: Int) { self.rawValue = rawValue }
 
         public static let mutableContainers = ReadingOptions(rawValue: 1 << 0)
         public static let mutableLeaves = ReadingOptions(rawValue: 1 << 1)
@@ -37,8 +36,9 @@ extension JSONSerialization {
     }
 
     public struct WritingOptions : OptionSet {
-        public let rawValue: UInt
-        public init(rawValue: UInt) { self.rawValue = rawValue }
+        // SKIP TODO: should be UInt, but error: “Conversion of signed constants to unsigned ones is prohibited”
+        public let rawValue: Int
+        public init(rawValue: Int) { self.rawValue = rawValue }
 
         public static let prettyPrinted = WritingOptions(rawValue: 1 << 0)
         public static let sortedKeys = WritingOptions(rawValue: 1 << 1)
@@ -90,22 +90,34 @@ open class JSONSerialization {
             }
 
             #if JSON_NOSKIP
-            if !(obj is _NSNumberCastingWithoutBridging) {
+            let isCastingWithoutBridging = (obj is _NSNumberCastingWithoutBridging)
+            #else
+            let isCastingWithoutBridging = false
+            #endif
+            
+            if !isCastingWithoutBridging {
               if obj is String || obj is NSNull || obj is Int || obj is Bool || obj is UInt ||
                   obj is Int8 || obj is Int16 || obj is Int32 || obj is Int64 ||
                   obj is UInt8 || obj is UInt16 || obj is UInt32 || obj is UInt64 {
                   return true
               }
             }
-            #endif
 
             // object is a Double and is not NaN or infinity
             if let number = obj as? Double  {
+                #if SKIP
+                return number.isFinite()
+                #else
                 return number.isFinite
+                #endif
             }
             // object is a Float and is not NaN or infinity
             if let number = obj as? Float  {
+                #if SKIP
+                return number.isFinite()
+                #else
                 return number.isFinite
+                #endif
             }
 
             #if JSON_NOSKIP
@@ -152,11 +164,13 @@ open class JSONSerialization {
             return false
         }
 
+        #if JSON_NOSKIP // testSkipModule(): 156:25 Cannot check for instance of erased type: Array<Any?>
         // top level object must be an Swift.Array or Swift.Dictionary
         guard obj is [Any?] || obj is [String: Any?] else {
             return false
         }
-
+        #endif
+        
         return isValidJSONObjectInternal(obj)
     }
 
@@ -169,18 +183,23 @@ open class JSONSerialization {
             options: opt,
             writer: { (str: String?) in
                 if let str = str {
+                    #if !SKIP
+                    // SKIP TODO: testSkipModule(): 170:49 Type mismatch: inferred type is Data but Sequence<UByte> was expected
                     jsonStr.append(contentsOf: str.utf8)
+                    #endif
                 }
             }
         )
 
-//        #if JSON_NOSKIP
-//        if let container = value as? NSArray {
-//            try writer.serializeJSON(container._bridgeToSwift())
-//        } else if let container = value as? NSDictionary {
-//            try writer.serializeJSON(container._bridgeToSwift())
-//        }
-//        #endif
+        #if JSON_NOSKIP
+        #if !SKIP
+        if let container = value as? NSArray {
+            try writer.serializeJSON(container._bridgeToSwift())
+        } else if let container = value as? NSDictionary {
+            try writer.serializeJSON(container._bridgeToSwift())
+        }
+        #endif
+        #endif
         if let container = value as? Array<Any> {
             try writer.serializeJSON(container)
         } else if let container = value as? Dictionary<AnyHashable, Any> {
@@ -197,16 +216,17 @@ open class JSONSerialization {
         return Data(jsonStr)
     }
 
-    open class func data(withJSONObject value: Any, options opt: WritingOptions = []) throws -> Data {
+    open class func data(withJSONObject value: Any, options opt: WritingOptions = WritingOptions(rawValue: 0)) throws -> Data { // SKIP TODO: testOptionSetInitFromEmptyArrayLiteral
         return try _data(withJSONObject: value, options: opt, stream: false)
     }
 
     /* Create a Foundation object from JSON data. Set the NSJSONReadingAllowFragments option if the parser should allow top-level objects that are not an NSArray or NSDictionary. Setting the NSJSONReadingMutableContainers option will make the parser generate mutable NSArrays and NSDictionaries. Setting the NSJSONReadingMutableLeaves option will make the parser generate mutable NSString objects. If an error occurs during the parse, then the error parameter will be set and the result will be nil.
        The data must be in one of the 5 supported encodings listed in the JSON specification: UTF-8, UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE. The data may or may not have a BOM. The most efficient encoding to use for parsing is UTF-8, so if you have a choice in encoding the data passed to this method, use UTF-8.
      */
-    open class func jsonObject(with data: Data, options opt: ReadingOptions = []) throws -> Any {
+    open class func jsonObject(with data: Data, options opt: ReadingOptions = ReadingOptions(rawValue: 0)) throws -> Any { // SKIP TODO: testOptionSetInitFromEmptyArrayLiteral
         do {
-            #if JSON_NOSKIP // SKIP TODO: no withUnsafeBytes
+            #if JSON_NOSKIP
+            // SKIP TODO: no withUnsafeBytes
             let jsonValue = try data.withUnsafeBytes { (ptr) -> JSONValue in
                 let (encoding, advanceBy) = JSONSerialization.detectEncoding(ptr)
 
@@ -234,6 +254,7 @@ open class JSONSerialization {
             #endif
         } catch let error as JSONError {
             switch error {
+            #if !SKIP // multiple named parameters error
             case .cannotConvertInputDataToUTF8:
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "Cannot convert input string to valid utf8 input."
@@ -271,10 +292,10 @@ open class JSONSerialization {
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Invalid hex encoded sequence in "\#(string)" at \#(index)."#
                 ])
-            //case .unescapedControlCharacterInString(ascii: let ascii, in: _, index: let index): where ascii == UInt8(ascii: "\\"): // SKIP TODO: Kotlin does not support where conditions in case and catch matches. Consider using an if statement within the case or catch body
-                //throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
-                //    NSDebugDescriptionErrorKey : #"Invalid escape sequence around character \#(index)."#
-                //])
+            case .unescapedControlCharacterInString(ascii: let ascii, in: _, index: let index): // where ascii == UInt8(ascii: "\\"): // SKIP TODO: Kotlin does not support where conditions in case and catch matches. Consider using an if statement within the case or catch body
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : #"Invalid escape sequence around character \#(index)."#
+                ])
             case .unescapedControlCharacterInString(ascii: _, in: _, index: let index):
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Unescaped control character around character \#(index)."#
@@ -290,6 +311,11 @@ open class JSONSerialization {
             case .invalidUTF8Sequence(let data, characterIndex: let index):
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Invalid UTF-8 sequence \#(data) starting from character \#(index)."#
+                ])
+            #endif
+            default:
+                throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
+                    NSDebugDescriptionErrorKey : "."
                 ])
             }
         } catch {
@@ -338,6 +364,9 @@ open class JSONSerialization {
 //MARK: - Encoding Detection
 
 private extension JSONSerialization {
+    #if !SKIP
+    // SKIP TODO: UnsafeRawBufferPointer
+
     /// Detect the encoding format of the NSData contents
     static func detectEncoding(_ bytes: UnsafeRawBufferPointer) -> (String.Encoding, Int) {
         // According to RFC8259, the text encoding in JSON must be UTF8 in nonclosed systems
@@ -399,14 +428,15 @@ private extension JSONSerialization {
 
         return nil
     }
+    #endif // !SKIP
 
     // These static properties don't look very nice, but we need them to
     // workaround: https://bugs.swift.org/browse/SR-14102
-    private static let utf8BOM: [UInt8] = [0xEF, 0xBB, 0xBF]
-    private static let utf32BigEndianBOM: [UInt8] = [0x00, 0x00, 0xFE, 0xFF]
-    private static let utf32LittleEndianBOM: [UInt8] = [0xFF, 0xFE, 0x00, 0x00]
-    private static let utf16BigEndianBOM: [UInt8] = [0xFF, 0xFE]
-    private static let utf16LittleEndianBOM: [UInt8] = [0xFE, 0xFF]
+    private static let utf8BOM: [UInt8] = [0xEF as UInt8, 0xBB as UInt8, 0xBF as UInt8]
+    private static let utf32BigEndianBOM: [UInt8] = [0x00 as UInt8, 0x00 as UInt8, 0xFE as UInt8, 0xFF as UInt8]
+    private static let utf32LittleEndianBOM: [UInt8] = [0xFF as UInt8, 0xFE as UInt8, 0x00 as UInt8, 0x00 as UInt8]
+    private static let utf16BigEndianBOM: [UInt8] = [0xFF as UInt8, 0xFE as UInt8]
+    private static let utf16LittleEndianBOM: [UInt8] = [0xFE as UInt8, 0xFF as UInt8]
 }
 
 //MARK: - JSONSerializer
@@ -440,8 +470,11 @@ private struct JSONWriter {
             return
         }
 
+        // SKIP FIXME: needed or else the "obj" name is used
+        let obj2 = obj
+
         // For better performance, the most expensive conditions to evaluate should be last.
-        switch (obj) {
+        switch (obj2) {
         case let str as String:
             try serializeString(str)
         case let boolValue as Bool:
@@ -466,10 +499,12 @@ private struct JSONWriter {
             writer(num.description)
         case let num as UInt64:
             writer(num.description)
+        #if !SKIP // SKIP TODO: Cannot check for instance of erased type: Array<Any?>
         case let array as Array<Any?>:
             try serializeArray(array)
         case let dict as Dictionary<AnyHashable, Any?>:
             try serializeDictionary(dict)
+        #endif
         case let num as Float:
             try serializeFloat(num)
         case let num as Double:
@@ -492,12 +527,16 @@ private struct JSONWriter {
 
     func serializeString(_ str: String) throws {
         writer("\"")
+        #if !SKIP
+        // SKIP TODO: unicodeScalars
         for scalar in str.unicodeScalars {
             switch scalar {
                 case "\"":
                     writer("\\\"") // U+0022 quotation mark
                 case "\\":
                     writer("\\\\") // U+005C reverse solidus
+                #if !SKIP
+                // SKIP TODO: unicode escaping
                 case "/":
                     if !withoutEscapingSlashes { writer("\\") }
                     writer("/") // U+002F solidus
@@ -515,10 +554,12 @@ private struct JSONWriter {
                     writer("\\u000\(String(scalar.value, radix: 16))") // U+0000 to U+000F
                 case "\u{10}"..."\u{1f}":
                     writer("\\u00\(String(scalar.value, radix: 16))") // U+0010 to U+001F
+                #endif
                 default:
                     writer(String(scalar))
             }
         }
+        #endif
         writer("\"")
     }
 
@@ -675,10 +716,8 @@ private struct JSONWriter {
 
 }
 
-#endif // SKIP
 
-
-enum JSONValue: Equatable {
+public enum JSONValue: Equatable {
     case string(String)
     case number(String)
     case bool(Bool)
@@ -689,11 +728,8 @@ enum JSONValue: Equatable {
 }
 
 
-// SKIP TODO: fix case alias for Null and Object
-#if !SKIP
-
 extension JSONValue {
-    var isValue: Bool {
+    public var isValue: Bool {
         switch self {
         case .array, .object:
             return false
@@ -702,7 +738,7 @@ extension JSONValue {
         }
     }
 
-    var isContainer: Bool {
+    public var isContainer: Bool {
         switch self {
         case .array, .object:
             return true
@@ -713,7 +749,7 @@ extension JSONValue {
 }
 
 extension JSONValue {
-    var debugDataTypeDescription: String {
+    public var debugDataTypeDescription: String {
         switch self {
         case .array:
             return "an array"
@@ -730,8 +766,6 @@ extension JSONValue {
         }
     }
 }
-
-#endif
 
 
 #if JSON_NOSKIP

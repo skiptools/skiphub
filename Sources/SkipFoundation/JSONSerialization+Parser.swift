@@ -232,7 +232,8 @@ extension JSONParser {
             self.array = array
         }
 
-        #if !SKIP // Skip does not support custom subscripts. Consider using standard functions
+        #if !SKIP
+        // SKIP TODO: Skip does not support custom subscripts. Consider using standard functions
         subscript<R: RangeExpression<Int>>(bounds: R) -> ArraySlice<UInt8> {
             self.array[bounds]
         }
@@ -726,20 +727,21 @@ internal let UInt8Array_true: Array<UInt8> = [UInt8FromAscii(ascii: "t"), UInt8F
 internal let UInt8Array_false: Array<UInt8> = [UInt8FromAscii(ascii: "f"), UInt8FromAscii(ascii: "a"), UInt8FromAscii(ascii: "l"), UInt8FromAscii(ascii: "s"), UInt8FromAscii(ascii: "e")]
 internal let UInt8Array_null: Array<UInt8> = [UInt8FromAscii(ascii: "n"), UInt8FromAscii(ascii: "u"), UInt8FromAscii(ascii: "l"), UInt8FromAscii(ascii: "l")]
 
-#if !SKIP
 enum JSONError: Error, Equatable {
     case cannotConvertInputDataToUTF8
     case unexpectedCharacter(ascii: UInt8, characterIndex: Int)
     case unexpectedEndOfFile
     case tooManyNestedArraysOrDictionaries(characterIndex: Int)
     case invalidHexDigitSequence(String, index: Int)
+    #if !SKIP // multiple named parameters error
     case unexpectedEscapedCharacter(ascii: UInt8, in: String, index: Int)
     case unescapedControlCharacterInString(ascii: UInt8, in: String, index: Int)
     case expectedLowSurrogateUTF8SequenceAfterHighSurrogate(in: String, index: Int)
     case couldNotCreateUnicodeScalarFromUInt32(in: String, index: Int, unicodeScalarValue: UInt32)
+    #endif
     case numberWithLeadingZero(index: Int)
     case numberIsNotRepresentableInSwift(parsed: String)
     case singleFragmentFoundButNotAllowed
     case invalidUTF8Sequence(Data, characterIndex: Int)
 }
-#endif
+
