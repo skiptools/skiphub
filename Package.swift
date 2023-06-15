@@ -87,6 +87,6 @@ import class Foundation.ProcessInfo
 // For Skip library development in peer directories, run: SKIPLOCAL=.. xed Package.swift
 if let localPath = ProcessInfo.processInfo.environment["SKIPLOCAL"] {
     // locally linking SwiftSyntax requires explicit min platform targets
-    package.platforms = package.platforms ?? [.iOS(.v15), .macOS(.v12), .tvOS(.v15), .watchOS(.v8), .macCatalyst(.v15)]
+    package.platforms = package.platforms ?? [.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .macCatalyst(.v16)]
     package.dependencies[0] = .package(path: localPath + "/skip")
 }
