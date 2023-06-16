@@ -802,7 +802,7 @@ extension JSONDecoderImpl {
         }
 
         func superDecoder() throws -> Decoder {
-            return decoderForKeyNoThrow(_JSONKey.super)
+            return decoderForKeyNoThrow(_JSONKey._super)
         }
 
         func superDecoder(forKey key: K) throws -> Decoder {

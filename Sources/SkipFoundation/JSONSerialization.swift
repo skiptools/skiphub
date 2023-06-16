@@ -23,27 +23,25 @@
 
 extension JSONSerialization {
     public struct ReadingOptions : OptionSet {
-        // SKIP TODO: should be UInt, but error: “Conversion of signed constants to unsigned ones is prohibited”
-        public let rawValue: Int
-        public init(rawValue: Int) { self.rawValue = rawValue }
+        public let rawValue: UInt
+        public init(rawValue: UInt) { self.rawValue = rawValue }
 
-        public static let mutableContainers = ReadingOptions(rawValue: 1 << 0)
-        public static let mutableLeaves = ReadingOptions(rawValue: 1 << 1)
+        public static let mutableContainers = ReadingOptions(rawValue: UInt(1) << 0)
+        public static let mutableLeaves = ReadingOptions(rawValue: UInt(1) << 1)
 
-        public static let fragmentsAllowed = ReadingOptions(rawValue: 1 << 2)
+        public static let fragmentsAllowed = ReadingOptions(rawValue: UInt(1) << 2)
         @available(swift, deprecated: 100000, renamed: "JSONSerialization.ReadingOptions.fragmentsAllowed")
-        public static let allowFragments = ReadingOptions(rawValue: 1 << 2)
+        public static let allowFragments = ReadingOptions(rawValue: UInt(1) << 2)
     }
 
     public struct WritingOptions : OptionSet {
-        // SKIP TODO: should be UInt, but error: “Conversion of signed constants to unsigned ones is prohibited”
-        public let rawValue: Int
-        public init(rawValue: Int) { self.rawValue = rawValue }
+        public let rawValue: UInt
+        public init(rawValue: UInt) { self.rawValue = rawValue }
 
-        public static let prettyPrinted = WritingOptions(rawValue: 1 << 0)
-        public static let sortedKeys = WritingOptions(rawValue: 1 << 1)
-        public static let fragmentsAllowed = WritingOptions(rawValue: 1 << 2)
-        public static let withoutEscapingSlashes = WritingOptions(rawValue: 1 << 3)
+        public static let prettyPrinted = WritingOptions(rawValue: UInt(1) << 0)
+        public static let sortedKeys = WritingOptions(rawValue: UInt(1) << 1)
+        public static let fragmentsAllowed = WritingOptions(rawValue: UInt(1) << 2)
+        public static let withoutEscapingSlashes = WritingOptions(rawValue: UInt(1) << 3)
     }
 }
 
@@ -94,7 +92,7 @@ open class JSONSerialization {
             #else
             let isCastingWithoutBridging = false
             #endif
-            
+
             if !isCastingWithoutBridging {
               if obj is String || obj is NSNull || obj is Int || obj is Bool || obj is UInt ||
                   obj is Int8 || obj is Int16 || obj is Int32 || obj is Int64 ||
@@ -216,14 +214,14 @@ open class JSONSerialization {
         return Data(jsonStr)
     }
 
-    open class func data(withJSONObject value: Any, options opt: WritingOptions = WritingOptions(rawValue: 0)) throws -> Data { // SKIP TODO: testOptionSetInitFromEmptyArrayLiteral
+    open class func data(withJSONObject value: Any, options opt: WritingOptions = WritingOptions(rawValue: UInt(0))) throws -> Data { // SKIP TODO: testOptionSetInitFromEmptyArrayLiteral
         return try _data(withJSONObject: value, options: opt, stream: false)
     }
 
     /* Create a Foundation object from JSON data. Set the NSJSONReadingAllowFragments option if the parser should allow top-level objects that are not an NSArray or NSDictionary. Setting the NSJSONReadingMutableContainers option will make the parser generate mutable NSArrays and NSDictionaries. Setting the NSJSONReadingMutableLeaves option will make the parser generate mutable NSString objects. If an error occurs during the parse, then the error parameter will be set and the result will be nil.
        The data must be in one of the 5 supported encodings listed in the JSON specification: UTF-8, UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE. The data may or may not have a BOM. The most efficient encoding to use for parsing is UTF-8, so if you have a choice in encoding the data passed to this method, use UTF-8.
      */
-    open class func jsonObject(with data: Data, options opt: ReadingOptions = ReadingOptions(rawValue: 0)) throws -> Any { // SKIP TODO: testOptionSetInitFromEmptyArrayLiteral
+    open class func jsonObject(with data: Data, options opt: ReadingOptions = ReadingOptions(rawValue: UInt(0))) throws -> Any { // SKIP TODO: testOptionSetInitFromEmptyArrayLiteral
         do {
             #if JSON_NOSKIP
             // SKIP TODO: no withUnsafeBytes
@@ -254,7 +252,6 @@ open class JSONSerialization {
             #endif
         } catch let error as JSONError {
             switch error {
-            #if !SKIP // multiple named parameters error
             case .cannotConvertInputDataToUTF8:
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "Cannot convert input string to valid utf8 input."
@@ -267,6 +264,8 @@ open class JSONSerialization {
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "Invalid value around character \(characterIndex)."
                 ])
+            #if !SKIP
+            // SKIP FIXME: testSkipModule(): 227:34 Unresolved reference: ExpectedLowSurrogateUTF8SequenceAfterHighSurrogateCase
             case .expectedLowSurrogateUTF8SequenceAfterHighSurrogate:
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "Unexpected end of file during string parse (expected low-surrogate code point but did not find one)."
@@ -280,6 +279,7 @@ open class JSONSerialization {
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "Invalid escape sequence around character \(index - 1)."
                 ])
+            #endif
             case .singleFragmentFoundButNotAllowed:
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "JSON text did not start with array or object and option to allow fragments not set."
@@ -292,6 +292,8 @@ open class JSONSerialization {
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Invalid hex encoded sequence in "\#(string)" at \#(index)."#
                 ])
+            #if !SKIP
+            // SKIP FIXME: Unresolved reference: UnescapedControlCharacterInStringCase
             case .unescapedControlCharacterInString(ascii: let ascii, in: _, index: let index): // where ascii == UInt8(ascii: "\\"): // SKIP TODO: Kotlin does not support where conditions in case and catch matches. Consider using an if statement within the case or catch body
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Invalid escape sequence around character \#(index)."#
@@ -300,6 +302,7 @@ open class JSONSerialization {
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Unescaped control character around character \#(index)."#
                 ])
+            #endif
             case .numberWithLeadingZero(index: let index):
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Number with leading zero around character \#(index)."#
@@ -312,7 +315,6 @@ open class JSONSerialization {
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : #"Invalid UTF-8 sequence \#(data) starting from character \#(index)."#
                 ])
-            #endif
             default:
                 throw NSError(domain: NSCocoaErrorDomain, code: CocoaError.propertyListReadCorrupt.rawValue, userInfo: [
                     NSDebugDescriptionErrorKey : "."
@@ -470,11 +472,8 @@ private struct JSONWriter {
             return
         }
 
-        // SKIP FIXME: needed or else the "obj" name is used
-        let obj2 = obj
-
         // For better performance, the most expensive conditions to evaluate should be last.
-        switch (obj2) {
+        switch (obj) {
         case let str as String:
             try serializeString(str)
         case let boolValue as Bool:

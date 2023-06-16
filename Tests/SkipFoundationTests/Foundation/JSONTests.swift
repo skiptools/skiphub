@@ -27,10 +27,10 @@ class TestJSON : XCTestCase {
     }
 
     func testJSONCodable() throws {
-        #if !SKIP
         let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [JSONEncoder.OutputFormatting.sortedKeys]
+    #if !SKIP
         let jsonData = try encoder.encode(person)
         XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, jsonData.utf8String)
 
