@@ -17,6 +17,27 @@ import XCTest
 class TestJSON : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
+
+    struct StringField : Equatable, Encodable {
+        var stringField: String
+    }
+
+    struct IntField : Equatable, Encodable {
+        var intField: Int
+    }
+
+    struct BoolField : Equatable, Encodable {
+        var boolField: Bool
+    }
+
+    struct FloatField : Equatable, Encodable {
+        var floatField: Float
+    }
+
+    struct DoubleField : Equatable, Encodable {
+        var doubleField: Double
+    }
+
     struct EntityDefaultKeys : Equatable, Encodable {
         var firstName: String
         var lastName: String
@@ -27,10 +48,16 @@ class TestJSON : XCTestCase {
     }
 
     func testJSONCodable() throws {
+        XCTAssertEqual(#"{"intField":1}"#, try JSONEncoder().encode(IntField(intField: Int(1))).utf8String)
+        XCTAssertEqual(#"{"floatField":1.1}"#, try JSONEncoder().encode(FloatField(floatField: Float(1.1))).utf8String)
+        XCTAssertEqual(#"{"stringField":"ABC"}"#, try JSONEncoder().encode(StringField(stringField: "ABC")).utf8String)
+        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try JSONEncoder().encode(StringField(stringField: "ABC/XYZ")).utf8String)
+
+        #if !SKIP
+
         let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [JSONEncoder.OutputFormatting.sortedKeys]
-    #if !SKIP
         let jsonData = try encoder.encode(person)
         XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, jsonData.utf8String)
 

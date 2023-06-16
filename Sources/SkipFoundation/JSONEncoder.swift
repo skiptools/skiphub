@@ -369,17 +369,16 @@ private enum JSONFuture {
         }
 
         var values: [String: JSONValue] {
-            // SKIP REPLACE: fatalError("SKIP TODO: RefObject.values")
-            self.dict.mapValues { (future) -> JSONValue in
+            self.dict.mapValues { future in
                 switch future {
                 case .value(let value):
                     return value
                 case .nestedArray(let array):
-                    return .array(array.values)
-                case .nestedObject(let object):
-                    return .object(object.values)
+                    return JSONValue.array(array.values)
+                case .nestedObject(let obj):
+                    return JSONValue.object(obj.values)
                 case .encoder(let encoder):
-                    return encoder.value ?? .object([:])
+                    return encoder.value ?? JSONValue.object([:])
                 }
             }
         }
@@ -488,9 +487,14 @@ private protocol _SpecialTreatmentEncoder {
 }
 
 extension _SpecialTreatmentEncoder {
-    // SKIP REPLACE: // SKIP TODO: wrapFloat
     @inline(__always) fileprivate func wrapFloat<F: FloatingPoint & CustomStringConvertible>(_ float: F, for additionalKey: CodingKey?) throws -> JSONValue {
-        guard !float.isNaN, !float.isInfinite else {
+        // SKIP REPLACE: val isNaN = (float as? Double)?.isNaN() == true || (float as? Float)?.isNaN() == true
+        let isNaN = float.isNaN
+        // SKIP REPLACE: val isInfinite = (float as? Double)?.isInfinite() == true || (float as? Float)?.isInfinite() == true
+        let isInfinite = float.isInfinite
+
+        guard !isNaN, !isInfinite else {
+            // SKIP REPLACE: fatalError("SKIP TODO: wrapFloat NaN/isInfinite")
             if case JSONEncoder.NonConformingFloatEncodingStrategy.convertToString(let posInfString, let negInfString, let nanString) = self.options.nonConformingFloatEncodingStrategy {
                 switch float {
                 case F.infinity:
@@ -510,13 +514,17 @@ extension _SpecialTreatmentEncoder {
 
             throw EncodingError.invalidValue(float, EncodingError.Context(
                 codingPath: path,
-                debugDescription: "Unable to encode \(F.self).\(float) directly in JSON."
+                debugDescription: "Unable to encode \(float) directly in JSON."
             ))
         }
 
         var string = float.description
         if string.hasSuffix(".0") {
+            #if !SKIP
             string.removeLast(2)
+            #else
+            string = string.dropLast(2)
+            #endif
         }
         return .number(string)
     }
@@ -775,26 +783,14 @@ private struct JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContaine
 }
 
 extension JSONKeyedEncodingContainer {
-    #if !SKIP
     @inline(__always) private mutating func encodeFloatingPoint<F: FloatingPoint & CustomStringConvertible>(_ float: F, key: CodingKey) throws {
         let value = try self.wrapFloat(float, for: key)
         self.object.set(value, for: key.stringValue)
     }
-    #else
-    private mutating func encodeFloatingPoint(_ float: Any, key: CodingKey) throws {
-        fatalError("SKIP TODO")
-    }
-    #endif
 
-    #if !SKIP
-    @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger>(_ value: N, key: CodingKey) throws {
+    @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger & CustomStringConvertible>(_ value: N, key: CodingKey) throws {
         self.object.set(JSONValue.number(value.description), for: key.stringValue)
     }
-    #else
-    private mutating func encodeFixedWidthInteger(_ value: Any, key: CodingKey) throws {
-        fatalError("SKIP TODO")
-    }
-    #endif
 }
 
 private struct JSONUnkeyedEncodingContainer: UnkeyedEncodingContainer, _SpecialTreatmentEncoder {
@@ -1038,10 +1034,10 @@ private struct JSONSingleValueEncodingContainer: SingleValueEncodingContainer, _
     }
 }
 
-#if !SKIP
 extension JSONSingleValueEncodingContainer {
-    @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger>(_ value: N) throws {
+    @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger & CustomStringConvertible>(_ value: N) throws {
         self.preconditionCanEncodeNewValue()
+        // SKIP REPLACE: fatalError("SKIP TODO: encodeFixedWidthInteger")
         self.impl.singleValue = JSONValue.number(value.description)
     }
 
@@ -1051,17 +1047,6 @@ extension JSONSingleValueEncodingContainer {
         self.impl.singleValue = value
     }
 }
-#else // SKIP: Kotlin doesn't have FixedWidthInteger or FloatingPoint
-extension JSONSingleValueEncodingContainer {
-    @inline(__always) private mutating func encodeFixedWidthInteger(_ value: Any) throws {
-        fatalError("SKIP TODO: JSONSingleValueEncodingContainer")
-    }
-
-    @inline(__always) private mutating func encodeFloatingPoint(_ float: Any) throws {
-        fatalError("SKIP TODO: JSONSingleValueEncodingContainer")
-    }
-}
-#endif
 
 extension JSONValue {
     // SKIP REPLACE: // SKIP TODO: _null
@@ -1085,26 +1070,27 @@ extension JSONValue {
                 self.writeValuePretty(value, into: &bytes)
             }
             else {
-                // SKIP REPLACE: // SKIP TODO: writeValue
                 self.writeValue(value, into: &bytes)
             }
             return bytes
         }
 
-        // SKIP REPLACE: // SKIP TODO: writeValue
         private func writeValue(_ value: JSONValue, into bytes: inout [UInt8]) {
             switch value {
-            case .null:
+            case JSONValue.null:
                 bytes.append(contentsOf: UInt8Array_null)
-            case .bool(true):
-                bytes.append(contentsOf: UInt8Array_true)
-            case .bool(false):
-                bytes.append(contentsOf: UInt8Array_false)
-            case .string(let string):
+            case JSONValue.bool(let b):
+                if b {
+                    bytes.append(contentsOf: UInt8Array_true)
+                } else {
+                    bytes.append(contentsOf: UInt8Array_false)
+                }
+            case JSONValue.string(let string):
                 self.encodeString(string, to: &bytes)
-            case .number(let string):
+            case JSONValue.number(let string):
                 bytes.append(contentsOf: string.utf8)
-            case .array(let array):
+            // SKIP REPLACE: // SKIP TODO: writeValue
+            case JSONValue.array(let array):
                 var iterator = array.makeIterator()
                 bytes.append(UInt8_openbracket)
                 // we don't like branching, this is why we have this extra
@@ -1117,20 +1103,22 @@ extension JSONValue {
                     self.writeValue(item, into:&bytes)
                 } else { break } }
                 bytes.append(UInt8_closebracket)
-            case .object(let dict):
+            // SKIP REPLACE: // SKIP TODO: writeValue
+            case JSONValue.object(let dict):
                 if #available(macOS 10.13, *), options.contains(JSONEncoder.OutputFormatting.sortedKeys) {
-                    let sorted = dict.sorted { $0.key < $1.key }
+                    // SKIP TODO: implement key sorting
+                    //let sorted = dict.sorted { $0.key < $1.key }
+                    let sorted = Array(dict)
                     self.writeObject(sorted, into: &bytes)
                 } else {
-                    self.writeObject(dict, into: &bytes)
+                    self.writeObject(Array(dict), into: &bytes)
                 }
+            default:
+                fatalError("SKIP TODO")
             }
         }
 
-        #if !SKIP
-        private func writeObject<Object: Sequence>(_ object: Object, into bytes: inout [UInt8], depth: Int = 0)
-            where Object.Element == (key: String, value: JSONValue)
-        {
+        private func writeObject(_ object: [(key: String, value: JSONValue)], into bytes: inout [UInt8], depth: Int = 0) {
             var iterator = object.makeIterator()
             bytes.append(UInt8_openbrace)
             if let (key, value) = iterator.next() {
@@ -1138,21 +1126,18 @@ extension JSONValue {
                 bytes.append(UInt8_colon)
                 self.writeValue(value, into: &bytes)
             }
-            while let (key, value) = iterator.next() {
+
+            // while let (key, value) = iterator.next() { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
+            while true { if  let (key, value) = iterator.next() {
                 bytes.append(UInt8_comma)
                 // key
                 self.encodeString(key, to: &bytes)
                 bytes.append(UInt8_colon)
 
                 self.writeValue(value, into: &bytes)
-            }
+            } else { break } }
             bytes.append(UInt8_closebrace)
         }
-        #else
-        private func writeObject(_ object: Any, into bytes: inout [UInt8], depth: Int = 0) {
-            fatalError("SKIP TODO: writeObject unsupported where Object.Element == (key: String, value: JSONValue)")
-        }
-        #endif
 
         private func addInset(to bytes: inout [UInt8], depth: Int) {
             // SKIP REPLACE: fatalError("SKIP TODO: addInset")
@@ -1232,18 +1217,14 @@ extension JSONValue {
         #endif
 
         private func encodeString(_ string: String, to bytes: inout [UInt8]) {
-            // SKIP REPLACE: fatalError("SKIP TODO: encodeString")
             bytes.append(UInt8(ascii: "\""))
             let stringBytes = string.utf8
-            // SKIP REPLACE: fatalError("SKIP TODO: encodeString")
             var startCopyIndex = stringBytes.startIndex
-            // SKIP REPLACE: fatalError("SKIP TODO: encodeString")
             var nextIndex = startCopyIndex
 
-            // SKIP REPLACE: fatalError("SKIP TODO: encodeString")
             while nextIndex != stringBytes.endIndex {
                 switch stringBytes[nextIndex] {
-                case 0 ..< 32, UInt8(ascii: "\""), UInt8(ascii: "\\"):
+                case UInt8(0) ..< UInt8(32), UInt8(ascii: "\""), UInt8(ascii: "\\"):
                     // All Unicode characters may be placed within the
                     // quotation marks, except for the characters that MUST be escaped:
                     // quotation mark, reverse solidus, and the control characters (U+0000
@@ -1257,23 +1238,23 @@ extension JSONValue {
                         bytes.append(contentsOf: [UInt8_backslash, UInt8_quote])
                     case UInt8(ascii: "\\"): // reverse solidus
                         bytes.append(contentsOf: [UInt8_backslash, UInt8_backslash])
-                    case 0x08: // backspace
-                        bytes.append(contentsOf: [UInt8_backslash, UInt8(ascii: "b")])
-                    case 0x0C: // form feed
+                    case UInt8(0x08): // backspace
+                        bytes.append(contentsOf: [UInt8_backslash, UInt8(ascii: "b")] as [UInt8])
+                    case UInt8(0x0C): // form feed
                         bytes.append(contentsOf: [UInt8_backslash, UInt8(ascii: "f")])
-                    case 0x0A: // line feed
+                    case UInt8(0x0A): // line feed
                         bytes.append(contentsOf: [UInt8_backslash, UInt8(ascii: "n")])
-                    case 0x0D: // carriage return
+                    case UInt8(0x0D): // carriage return
                         bytes.append(contentsOf: [UInt8_backslash, UInt8(ascii: "r")])
-                    case 0x09: // tab
+                    case UInt8(0x09): // tab
                         bytes.append(contentsOf: [UInt8_backslash, UInt8(ascii: "t")])
                     default:
                         func valueToAscii(_ value: UInt8) -> UInt8 {
                             switch value {
-                            case 0 ... 9:
-                                return value + UInt8(ascii: "0")
-                            case 10 ... 15:
-                                return value - 10 + UInt8(ascii: "a")
+                            case UInt8(0) ... UInt8(9):
+                                return UInt8(value + UInt8(ascii: "0"))
+                            case UInt8(10) ... UInt8(15):
+                                return UInt8(value - UInt8(10) + UInt8(ascii: "a"))
                             default:
                                 preconditionFailure()
                             }
@@ -1282,10 +1263,10 @@ extension JSONValue {
                         bytes.append(UInt8(ascii: "u"))
                         bytes.append(UInt8(ascii: "0"))
                         bytes.append(UInt8(ascii: "0"))
-                        let first = stringBytes[nextIndex] / 16
-                        let remaining = stringBytes[nextIndex] % 16
-                        bytes.append(valueToAscii(first))
-                        bytes.append(valueToAscii(remaining))
+                        let first = stringBytes[nextIndex] / UInt8(16)
+                        let remaining = stringBytes[nextIndex] % UInt8(16)
+                        bytes.append(valueToAscii(UInt8(first)))
+                        bytes.append(valueToAscii(UInt8(remaining)))
                     }
 
                     nextIndex = stringBytes.index(after: nextIndex)
@@ -1311,9 +1292,7 @@ extension JSONValue {
             }
 
             // copy everything, that hasn't been copied yet
-            // SKIP REPLACE: fatalError("SKIP TODO: bytes.append(contentsOf:)")
             bytes.append(contentsOf: stringBytes[startCopyIndex ..< nextIndex])
-            // SKIP REPLACE: fatalError("SKIP TODO: bytes.append(UInt8(ascii:))")
             bytes.append(UInt8(ascii: "\""))
         }
     }
@@ -1370,7 +1349,8 @@ internal var _iso8601Formatter: DateFormatter = {
     formatter.formatOptions = ISO8601DateFormatter.Options.withInternetDateTime
     return formatter
     #else
-    fatalError("SKIP TODO: _iso8601Formatter")
+    // SKIP TODO: implement ISO8601DateFormatter
+    return DateFormatter()
     #endif
 }()
 

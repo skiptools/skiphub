@@ -10,13 +10,17 @@ extension String {
         return try? Data(platformValue: toByteArray(using.rawValue))
     }
 
-    public var utf8: Data {
-        // note: this differs from Swift in that it is a Data, but both Data and String.UTF8View conform to Sequence where Element == UInt8
-        return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_8))
+    public var utf8: [UInt8] {
+        // SKIP TODO: there should be a faster way to convert a string to a UInt8 array
+        return Array(toByteArray(java.nio.charset.StandardCharsets.UTF_8).map { it.toUByte() })
     }
 
-    public var utf16: Data {
-        return Data(toByteArray(java.nio.charset.StandardCharsets.UTF_16))
+    public var utf16: [UInt8] {
+        return Array(toByteArray(java.nio.charset.StandardCharsets.UTF_16).map { it.toUByte() })
+    }
+
+    public var unicodeScalars: [UInt8] {
+        return Array(toByteArray(java.nio.charset.StandardCharsets.UTF_8).map { it.toUByte() })
     }
 
     public func replacingOccurrences(of search: String, with replacement: String) -> String {

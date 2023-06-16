@@ -142,6 +142,14 @@ public struct Data : DataProtocol, Hashable, CustomStringConvertible, Encodable 
         #endif
     }
 
+    public mutating func append(contentsOf data: Data) {
+        #if !SKIP
+        self.platformValue.append(contentsOf: data.platformValue)
+        #else
+        self.platformValue += data.platformValue
+        #endif
+    }
+
     public static func ==(lhs: Data, rhs: Data) -> Bool {
         #if !SKIP
         return lhs.platformValue == rhs.platformValue
