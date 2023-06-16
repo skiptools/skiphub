@@ -15,6 +15,16 @@ private struct TestOptionSet: OptionSet {
     static let all: TestOptionSet = [.s1, .s2, .s3]
 }
 
+struct TestUnsignedOptionSet: OptionSet {
+    let rawValue: UInt
+
+    static let s1 = TestUnsignedOptionSet(rawValue: UInt(1 << 0))
+    static let s2 = TestUnsignedOptionSet(rawValue: UInt(1 << 1))
+    static let s3 = TestUnsignedOptionSet(rawValue: UInt(1 << 2))
+
+    static let all: TestUnsignedOptionSet = [.s1, .s2, .s3]
+}
+
 final class OptionSetTests: XCTestCase {
     func testContains() {
         let set: TestOptionSet = [.s1, .s3]

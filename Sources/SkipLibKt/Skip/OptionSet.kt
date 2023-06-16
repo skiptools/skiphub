@@ -7,8 +7,8 @@ package skip.lib
 
 interface OptionSet<T, R>: RawRepresentable<R>, SetAlgebra<T, T> where T: OptionSet<T, R> {
     // The transpiler adds implentations of these requirements to OptionSet types
-    val rawvaluelong: Long
-    fun makeoptionset(rawvaluelong: Long): T
+    val rawvaluelong: ULong
+    fun makeoptionset(rawvaluelong: ULong): T
     fun assignoptionset(target: T)
 
     // MARK: - SetAlgebra
@@ -26,7 +26,7 @@ interface OptionSet<T, R>: RawRepresentable<R>, SetAlgebra<T, T> where T: Option
     }
 
     override fun symmetricDifference(other: T): T {
-        return makeoptionset(rawvaluelong xor  other.rawvaluelong)
+        return makeoptionset(rawvaluelong xor other.rawvaluelong)
     }
 
     override fun insert(element: T): Tuple2<Boolean, T> {
@@ -76,7 +76,7 @@ interface OptionSet<T, R>: RawRepresentable<R>, SetAlgebra<T, T> where T: Option
     }
 
     override fun isDisjoint(with: T): Boolean {
-        return (rawvaluelong and with.rawvaluelong) == 0L
+        return (rawvaluelong and with.rawvaluelong) == 0UL
     }
 
     override fun isSuperset(of: T): Boolean {
@@ -84,7 +84,7 @@ interface OptionSet<T, R>: RawRepresentable<R>, SetAlgebra<T, T> where T: Option
     }
 
     override val isEmpty: Boolean
-        get() = rawvaluelong == 0L
+        get() = rawvaluelong == 0UL
 
     override fun subtract(other: T) {
         assignoptionset(subtracting(other))
