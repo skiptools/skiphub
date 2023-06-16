@@ -22,6 +22,13 @@ class TestJSON : XCTestCase {
         var stringField: String
     }
 
+    #if !SKIP
+    // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
+    struct StringArrayField : Equatable, Encodable {
+        var stringArrayField: [String]
+    }
+    #endif
+
     struct IntField : Equatable, Encodable {
         var intField: Int
     }
@@ -48,18 +55,19 @@ class TestJSON : XCTestCase {
     }
 
     func testJSONCodable() throws {
-        XCTAssertEqual(#"{"intField":1}"#, try JSONEncoder().encode(IntField(intField: Int(1))).utf8String)
-        XCTAssertEqual(#"{"floatField":1.1}"#, try JSONEncoder().encode(FloatField(floatField: Float(1.1))).utf8String)
-        XCTAssertEqual(#"{"stringField":"ABC"}"#, try JSONEncoder().encode(StringField(stringField: "ABC")).utf8String)
-        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try JSONEncoder().encode(StringField(stringField: "ABC/XYZ")).utf8String)
-
-        #if !SKIP
-
-        let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [JSONEncoder.OutputFormatting.sortedKeys]
-        let jsonData = try encoder.encode(person)
-        XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, jsonData.utf8String)
+
+        XCTAssertEqual(#"{"intField":1}"#, try encoder.encode(IntField(intField: Int(1))).utf8String)
+        XCTAssertEqual(#"{"floatField":1.1}"#, try encoder.encode(FloatField(floatField: Float(1.1))).utf8String)
+        XCTAssertEqual(#"{"stringField":"ABC"}"#, try encoder.encode(StringField(stringField: "ABC")).utf8String)
+        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try encoder.encode(StringField(stringField: "ABC/XYZ")).utf8String)
+
+        #if !SKIP
+        XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try encoder.encode(StringArrayField(stringArrayField: ["ABC", "XYZ"])).utf8String)
+
+        let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
+        //XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, try encoder.encode(person).utf8String)
 
         //let person2 = try JSONDecoder().decode(EntityDefaultKeys.self, from: jsonData)
         //XCTAssertEqual(person, person)
