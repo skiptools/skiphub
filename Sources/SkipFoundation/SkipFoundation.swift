@@ -280,9 +280,6 @@ internal struct MassFormatter {
 internal protocol HTTPCookieStorage {
 }
 
-internal protocol ISO8601DateFormatter {
-}
-
 internal protocol FileHandle {
 }
 

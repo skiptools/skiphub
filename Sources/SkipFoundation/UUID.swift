@@ -13,7 +13,7 @@ public typealias NSUUID = UUID
 #endif
 
 /// Represents UUID strings, which can be used to uniquely identify types, interfaces, and other items.
-public struct UUID : Hashable, CustomStringConvertible {
+public struct UUID : Hashable, CustomStringConvertible, Encodable {
     internal var platformValue: PlatformUUID
 
     public init?(uuidString: String) {
@@ -31,7 +31,6 @@ public struct UUID : Hashable, CustomStringConvertible {
         #endif
     }
 
-
     internal init(_ platformValue: PlatformUUID) {
         self.platformValue = platformValue
     }
@@ -47,6 +46,22 @@ public struct UUID : Hashable, CustomStringConvertible {
         self.platformValue = java.util.UUID.randomUUID()
     }
     #endif
+
+    public init(from decoder: Decoder) throws {
+        #if !SKIP
+        self.platformValue = try PlatformUUID(from: decoder)
+        #else
+        self.platformValue = SkipCrash("TODO: Decoder")
+        #endif
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        #if !SKIP
+        try platformValue.encode(to: encoder)
+        #else
+        fatalError("SKIP TODO")
+        #endif
+    }
 
     #if SKIP
     public static func fromString(uuidString: String) -> UUID? {

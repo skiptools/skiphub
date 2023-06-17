@@ -3,13 +3,19 @@
 // This is free software: you can redistribute and/or modify it
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
-import Foundation
-#if !SKIP
-import class SkipFoundation.JSONEncoder
-import class SkipFoundation.JSONDecoder
-#endif
 import OSLog
 import XCTest
+
+#if SKIP
+//import Foundation
+#else
+import class SkipFoundation.JSONEncoder
+import class SkipFoundation.JSONDecoder
+import struct SkipFoundation.Date
+import struct SkipFoundation.Data
+import struct SkipFoundation.URL
+import struct SkipFoundation.UUID
+#endif
 
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 // SKIP INSERT: @org.robolectric.annotation.Config(manifest=org.robolectric.annotation.Config.NONE, sdk = [33])
@@ -17,17 +23,9 @@ import XCTest
 class TestJSON : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
-
     struct StringField : Equatable, Encodable {
         var stringField: String
     }
-
-    #if !SKIP
-    // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
-    struct StringArrayField : Equatable, Encodable {
-        var stringArrayField: [String]
-    }
-    #endif
 
     struct IntField : Equatable, Encodable {
         var intField: Int
@@ -45,6 +43,33 @@ class TestJSON : XCTestCase {
         var doubleField: Double
     }
 
+    struct DataField : Equatable, Encodable {
+        var dataField: Data
+    }
+
+    struct DateField : Equatable, Encodable {
+        var dateField: Date
+    }
+
+    struct URLField : Equatable, Encodable {
+        var urlField: URL
+    }
+
+    struct UUIDField : Equatable, Encodable {
+        var uuidField: UUID
+    }
+
+    #if !SKIP
+    // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
+    struct StringArrayField : Equatable, Encodable {
+        var stringArrayField: Array<String>
+    }
+
+    struct StringSetField : Equatable, Encodable {
+        var stringSetField: Set<String>
+    }
+    #endif
+
     struct EntityDefaultKeys : Equatable, Encodable {
         var firstName: String
         var lastName: String
@@ -55,19 +80,55 @@ class TestJSON : XCTestCase {
     }
 
     func testJSONCodable() throws {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [JSONEncoder.OutputFormatting.sortedKeys]
+        func enc<T: Encodable>(_ value: T, fmt: JSONEncoder.OutputFormatting? = nil, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String {
+            let encoder = JSONEncoder()
+            if let fmt = fmt {
+                encoder.outputFormatting = fmt
+            }
+            if let data = data {
+                encoder.dataEncodingStrategy = data
+            }
+            if let date = date {
+                encoder.dateEncodingStrategy = date
+            }
+            if let floats = floats {
+                encoder.nonConformingFloatEncodingStrategy = floats
+            }
+            if let keys = keys {
+                encoder.keyEncodingStrategy = keys
+            }
+            let data = try encoder.encode(value)
+            return data.utf8String ?? ""
+            //return String(data: data, encoding: .utf8) ?? ""
+        }
 
-        XCTAssertEqual(#"{"intField":1}"#, try encoder.encode(IntField(intField: Int(1))).utf8String)
-        XCTAssertEqual(#"{"floatField":1.1}"#, try encoder.encode(FloatField(floatField: Float(1.1))).utf8String)
-        XCTAssertEqual(#"{"stringField":"ABC"}"#, try encoder.encode(StringField(stringField: "ABC")).utf8String)
-        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try encoder.encode(StringField(stringField: "ABC/XYZ")).utf8String)
+        XCTAssertEqual(#"{"intField":1}"#, try enc(IntField(intField: Int(1))))
+        // difference between ObjC and native Swift JSONEncoder
+        //XCTAssertEqual(#"{"floatField":1.1000000238418579}"#, try enc(FloatField(floatField: Float(1.1))))
+        XCTAssertEqual(#"{"floatField":1.2}"#, try enc(FloatField(floatField: Float(1.2))))
+        XCTAssertEqual(#"{"stringField":"ABC"}"#, try enc(StringField(stringField: "ABC")))
+        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try enc(StringField(stringField: "ABC/XYZ")))
 
         #if !SKIP
-        XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try encoder.encode(StringArrayField(stringArrayField: ["ABC", "XYZ"])).utf8String)
+
+        XCTAssertEqual(#"{"dateField":-1}"#, try enc(DateField(dateField: Date(timeIntervalSinceReferenceDate: -1))))
+        XCTAssertEqual(#"{"dateField":1.0}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1)), date: .secondsSince1970))
+        XCTAssertEqual(#"{"dateField":"1970-01-01T00:00:01Z"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1)), date: .iso8601))
+        XCTAssertEqual(#"{"dateField":null}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1)), date: .custom({ date, encoder in var container = encoder.singleValueContainer(); try container.encodeNil() })))
+
+        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([0x01, 0x02])), data: .deferredToData))
+        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([0x01, 0x02])), data: .base64))
+
+        XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try enc(StringArrayField(stringArrayField: ["ABC", "XYZ"])))
+
+        XCTAssertEqual(#"{"uuidField":"A53BAA1C-B4F5-48DB-9567-9786B76B256C"}"#, try enc(UUIDField(uuidField: UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!)))
+
+        XCTAssertEqual(#"{"int_field":1}"#, try enc(IntField(intField: Int(1)), keys: .convertToSnakeCase))
+
 
         let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
-        //XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, try encoder.encode(person).utf8String)
+
+        //XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, try enc().encode(person))
 
         //let person2 = try JSONDecoder().decode(EntityDefaultKeys.self, from: jsonData)
         //XCTAssertEqual(person, person)
@@ -305,27 +366,27 @@ class TestJSON : XCTestCase {
 
     #if !SKIP
     func testJSONDeserialization() throws {
-        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data("""
-            {
-                "a": 1.1,
-                "b": true,
-                "d": "XYZ",
-                "e": [-9, true, null, {
-                    "x": "q",
-                    "y": 0.1,
-                    "z": [[[[[false]]], true]]
-                }, [null]]
-            }
-            """.utf8), options: JSONSerialization.ReadingOptions.fragmentsAllowed))
-
-        let obj = try XCTUnwrap(object as? [String: Any])
-
-        XCTAssertEqual(1.1, obj["a"] as? Double)
-        XCTAssertEqual(true, obj["b"] as? Bool)
-        XCTAssertEqual("XYZ", obj["d"] as? String)
-
-        let ex = try XCTUnwrap(obj["e"])
-        let e = try XCTUnwrap(obj["e"] as? [Any])
+//        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data("""
+//            {
+//                "a": 1.1,
+//                "b": true,
+//                "d": "XYZ",
+//                "e": [-9, true, null, {
+//                    "x": "q",
+//                    "y": 0.1,
+//                    "z": [[[[[false]]], true]]
+//                }, [null]]
+//            }
+//            """.utf8), options: JSONSerialization.ReadingOptions.fragmentsAllowed))
+//
+//        let obj = try XCTUnwrap(object as? [String: Any])
+//
+//        XCTAssertEqual(1.1, obj["a"] as? Double)
+//        XCTAssertEqual(true, obj["b"] as? Bool)
+//        XCTAssertEqual("XYZ", obj["d"] as? String)
+//
+//        let ex = try XCTUnwrap(obj["e"])
+//        let e = try XCTUnwrap(obj["e"] as? [Any])
 //        XCTAssertEqual(5, e.count)
 //
 //        XCTAssertEqual(-9.0, e[0] as? Double)

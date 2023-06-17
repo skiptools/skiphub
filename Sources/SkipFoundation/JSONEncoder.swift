@@ -465,6 +465,10 @@ extension JSONEncoderImpl: _SpecialTreatmentEncoder {
         switch encodable {
         case let date as Date:
             return try self.wrapDate(date, for: nil)
+//        #if !SKIP
+//        case let date as Foundation.Date:
+//            return try self.wrapDate(date, for: nil)
+//        #endif
         case let data as Data:
             return try self.wrapData(data, for: nil)
         case let url as URL:
@@ -494,7 +498,7 @@ extension _SpecialTreatmentEncoder {
         let isInfinite = float.isInfinite
 
         guard !isNaN, !isInfinite else {
-            // SKIP REPLACE: fatalError("SKIP TODO: wrapFloat NaN/isInfinite")
+            // SKIP REPLACE: // TODO: fix Skip case match issue
             if case JSONEncoder.NonConformingFloatEncodingStrategy.convertToString(let posInfString, let negInfString, let nanString) = self.options.nonConformingFloatEncodingStrategy {
                 switch float {
                 case F.infinity:
@@ -1343,15 +1347,9 @@ internal struct _JSONKey: CodingKey {
 // NOTE: This value is implicitly lazy and _must_ be lazy. We're compiled against the latest SDK (w/ ISO8601DateFormatter), but linked against whichever Foundation the user has. ISO8601DateFormatter might not exist, so we better not hit this code path on an older OS.
 @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
 internal var _iso8601Formatter: DateFormatter = {
-    #if JSON_NOSKIP
-    // SKIP TODO: ISO8601DateFormatter
     let formatter = ISO8601DateFormatter()
     formatter.formatOptions = ISO8601DateFormatter.Options.withInternetDateTime
     return formatter
-    #else
-    // SKIP TODO: implement ISO8601DateFormatter
-    return DateFormatter()
-    #endif
 }()
 
 //===----------------------------------------------------------------------===//

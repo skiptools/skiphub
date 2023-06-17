@@ -21,9 +21,6 @@ import XCTest
 class TestISO8601DateFormatter: XCTestCase {
     
     func test_stringFromDate() {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm:ss.SSSS zzz"
         let dateString = "2016/10/08 22:31:00.0713 GMT"
@@ -36,16 +33,19 @@ class TestISO8601DateFormatter: XCTestCase {
 
         //default settings check
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08T22:31:00Z")
-        
+
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
         /*
          The following tests cover various cases when changing the .formatOptions property.
          */
-        isoFormatter.formatOptions = [.withInternetDateTime]
+        isoFormatter.formatOptions = .withInternetDateTime
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08T22:31:00Z")
-        
+
         isoFormatter.formatOptions = [.withInternetDateTime, .withSpaceBetweenDateAndTime]
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08 22:31:00Z")
-        
+
         isoFormatter.formatOptions = .withFullTime
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "22:31:00Z")
         
@@ -365,18 +365,18 @@ class TestISO8601DateFormatter: XCTestCase {
     }
 
     func test_copy() throws {
+        let original = ISO8601DateFormatter()
+        original.timeZone = try XCTUnwrap(TimeZone(identifier: "GMT"))
+
         #if SKIP
         throw XCTSkip("TODO")
         #else
-        let original = ISO8601DateFormatter()
-        original.timeZone = try XCTUnwrap(TimeZone(identifier: "GMT"))
         original.formatOptions = [
             .withInternetDateTime,
             .withDashSeparatorInDate,
             .withColonSeparatorInTime,
             .withColonSeparatorInTimeZone,
         ]
-
         let copied = try XCTUnwrap(original.copy() as? ISO8601DateFormatter)
         XCTAssertEqual(copied.timeZone, original.timeZone)
         XCTAssertEqual(copied.formatOptions, original.formatOptions)

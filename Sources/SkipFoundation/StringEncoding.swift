@@ -12,15 +12,15 @@ extension String {
 
     public var utf8: [UInt8] {
         // SKIP TODO: there should be a faster way to convert a string to a UInt8 array
-        return Array(toByteArray(java.nio.charset.StandardCharsets.UTF_8).map { it.toUByte() })
+        return Array(toByteArray(StringEncoding.utf8.rawValue).map { it.toUByte() })
     }
 
     public var utf16: [UInt8] {
-        return Array(toByteArray(java.nio.charset.StandardCharsets.UTF_16).map { it.toUByte() })
+        return Array(toByteArray(StringEncoding.utf16.rawValue).map { it.toUByte() })
     }
 
     public var unicodeScalars: [UInt8] {
-        return Array(toByteArray(java.nio.charset.StandardCharsets.UTF_8).map { it.toUByte() })
+        return Array(toByteArray(StringEncoding.utf8.rawValue).map { it.toUByte() })
     }
 
     public func replacingOccurrences(of search: String, with replacement: String) -> String {
