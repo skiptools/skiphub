@@ -86,8 +86,9 @@ public struct Data : DataProtocol, Hashable, CustomStringConvertible, Encodable 
         try platformValue.encode(to: encoder)
         #else
         var container = encoder.unkeyedContainer()
-        //try container.encode(contentsOf: self.bytes)
-        fatalError("SKIP TODO: container.encode(contentsOf:)")
+        for b in self.bytes {
+            try container.encode(b)
+        }
         #endif
     }
 

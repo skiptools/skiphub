@@ -60,12 +60,12 @@ class TestJSON : XCTestCase {
         var uuidField: UUID
     }
 
-    #if !SKIP
-    // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
     struct StringArrayField : Equatable, Encodable {
         var stringArrayField: Array<String>
     }
 
+    #if !SKIP
+    // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
     struct StringSetField : Equatable, Encodable {
         var stringSetField: Set<String>
     }
@@ -113,6 +113,7 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)]))))
         XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .base64 as JSONEncoder.DataEncodingStrategy))
         XCTAssertEqual(#"{"dataField":3}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02), UInt8(0x03)])), data: .custom({ data, encoder in var container = encoder.singleValueContainer(); try container.encode(data.count) }) as JSONEncoder.DataEncodingStrategy))
+        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .deferredToData as JSONEncoder.DataEncodingStrategy))
 
         XCTAssertEqual(#"{"dateField":-1}"#, try enc(DateField(dateField: Date(timeIntervalSinceReferenceDate: -1.0))))
 
@@ -125,17 +126,11 @@ class TestJSON : XCTestCase {
 
         XCTAssertEqual(#"{"dateField":true}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .custom({ date, encoder in var container = encoder.singleValueContainer(); try container.encode(true) }) as JSONEncoder.DateEncodingStrategy))
 
-
         XCTAssertEqual(#"{"uuidField":"A53BAA1C-B4F5-48DB-9567-9786B76B256C"}"#, try enc(UUIDField(uuidField: UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!)))
-
-        #if !SKIP
-
-
-        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .deferredToData as JSONEncoder.DataEncodingStrategy))
 
         XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try enc(StringArrayField(stringArrayField: ["ABC", "XYZ"])))
 
-
+        #if !SKIP
         // TODO: convertToSnakeCase
         XCTAssertEqual(#"{"int_field":1}"#, try enc(IntField(intField: Int(1)), keys: .convertToSnakeCase as JSONEncoder.KeyEncodingStrategy))
 

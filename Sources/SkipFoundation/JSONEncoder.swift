@@ -296,15 +296,14 @@ private enum JSONFuture {
         }
 
         var values: [JSONValue] {
-            // SKIP REPLACE: fatalError("SKIP TODO: RefArray.values")
-            self.array.map { (future) -> JSONValue in
+            self.array.map { future in
                 switch future {
                 case .value(let value):
                     return value
                 case .nestedArray(let array):
-                    return .array(array.values)
-                case .nestedObject(let object):
-                    return .object(object.values)
+                    return JSONValue.array(array.values)
+                case .nestedObject(let obj):
+                    return JSONValue.object(obj.values)
                 case .encoder(let encoder):
                     return encoder.value ?? .object([:])
                 }
@@ -779,6 +778,10 @@ private struct JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContaine
         self.object.set(newEncoder, for: convertedKey.stringValue)
         return newEncoder
     }
+
+    mutating func encode(_ value: any Sequence<String>, forKey key: CodingKey) {
+        fatalError("TODO: JSONEncoder encode(seq<string>)")
+    }
 }
 
 extension JSONKeyedEncodingContainer {
@@ -918,26 +921,14 @@ private struct JSONUnkeyedEncodingContainer: UnkeyedEncodingContainer, _SpecialT
 }
 
 extension JSONUnkeyedEncodingContainer {
-    #if !SKIP
-    @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger>(_ value: N) throws {
+    @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger & CustomStringConvertible>(_ value: N) throws {
         self.array.append(JSONValue.number(value.description))
     }
-    #else
-    private mutating func encodeFixedWidthInteger(_ value: Any) throws {
-        fatalError("SKIP TODO: JSONUnkeyedEncodingContainer")
-    }
-    #endif
 
-    #if !SKIP
     @inline(__always) private mutating func encodeFloatingPoint<F: FloatingPoint & CustomStringConvertible>(_ float: F) throws {
         let value = try self.wrapFloat(float, for: _JSONKey(index: self.count))
         self.array.append(value)
     }
-    #else
-    private mutating func encodeFloatingPoint(_ float: Any) throws {
-        fatalError("SKIP TODO: JSONUnkeyedEncodingContainer")
-    }
-    #endif
 }
 
 private struct JSONSingleValueEncodingContainer: SingleValueEncodingContainer, _SpecialTreatmentEncoder {

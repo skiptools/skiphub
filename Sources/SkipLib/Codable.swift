@@ -124,6 +124,11 @@ public protocol KeyedEncodingContainerProtocol {
     mutating func nestedUnkeyedContainer(forKey key: CodingKey) -> UnkeyedEncodingContainer
     mutating func superEncoder() -> Encoder
     mutating func superEncoder(forKey key: CodingKey) -> Encoder
+
+    //mutating func encode<T: Encodable>(_ value: any Sequence<T>, forKey key: CodingKey)
+
+
+    mutating func encode(_ value: any Sequence<String>, forKey key: CodingKey) throws
 }
 
 extension KeyedEncodingContainerProtocol {
@@ -215,8 +220,8 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
         self._box = _KeyedEncodingContainerBox(container)
     }
 
-    public var codingPath: [CodingKey] {
-        fatalError("TODO: KeyedEncodingContainer.codingPath")
+    public var codingPath: [any CodingKey] {
+      return _box.codingPath
     }
 
     public mutating func encodeNil(forKey key: CodingKey) throws {
@@ -349,20 +354,32 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
         try _box.encodeIfPresent(value, forKey: key)
     }
 
+//    public mutating func encode<T: Encodable>(_ value: any Sequence<T>, forKey key: CodingKey) {
+//        fatalError("TODO: encode(seq)")
+//    }
+
+    public mutating func encode(_ value: any Sequence<String>, forKey key: CodingKey) throws {
+        var container = nestedUnkeyedContainer(forKey: key)
+        for element in value {
+            try container.encode(element as! String)
+        }
+    }
+
     public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: CodingKey) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+        //return _box.nestedContainer(keyedBy: NestedKey.self, forKey: key)
         fatalError("TODO: KeyedEncodingContainer.nestedContainer NestedKey  \(key)")
     }
 
     public mutating func nestedUnkeyedContainer(forKey key: CodingKey) -> UnkeyedEncodingContainer {
-        fatalError("TODO: KeyedEncodingContainer.nestedUnkeyedContainer  \(key)")
+        return _box.nestedUnkeyedContainer(forKey: key)
 
     }
     public mutating func superEncoder() -> Encoder {
-        fatalError("TODO: KeyedEncodingContainer.superEncoder")
+        return _box.superEncoder()
     }
 
     public mutating func superEncoder(forKey key: CodingKey) -> Encoder {
-        fatalError("TODO: KeyedEncodingContainer.superEncoder")
+        return _box.superEncoder(forKey: key)
     }
 }
 
