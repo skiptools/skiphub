@@ -465,10 +465,6 @@ extension JSONEncoderImpl: _SpecialTreatmentEncoder {
         switch encodable {
         case let date as Date:
             return try self.wrapDate(date, for: nil)
-//        #if !SKIP
-//        case let date as Foundation.Date:
-//            return try self.wrapDate(date, for: nil)
-//        #endif
         case let data as Data:
             return try self.wrapData(data, for: nil)
         case let url as URL:
@@ -553,7 +549,6 @@ extension _SpecialTreatmentEncoder {
     }
 
     func wrapDate(_ date: Date, for additionalKey: CodingKey?) throws -> JSONValue {
-        // SKIP REPLACE: fatalError("SKIP TODO: _SpecialTreatmentEncoder.wrapDate")
         switch self.options.dateEncodingStrategy {
         case JSONEncoder.DateEncodingStrategy.deferredToDate:
             let encoder = self.getEncoder(for: additionalKey)
@@ -573,6 +568,8 @@ extension _SpecialTreatmentEncoder {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
 
+        #if !SKIP
+        // SKIP TODO: case .formatted
         case JSONEncoder.DateEncodingStrategy.formatted(let formatter):
             return .string(formatter.string(from: date))
 
@@ -581,11 +578,13 @@ extension _SpecialTreatmentEncoder {
             try closure(date, encoder)
             // The closure didn't encode anything. Return the default keyed container.
             return encoder.value ?? .object([:])
+        #endif
+        default:
+            fatalError("SKIP TODO: JSONEncoder.DateEncodingStrategy.formatted and .custom")
         }
     }
 
     func wrapData(_ data: Data, for additionalKey: CodingKey?) throws -> JSONValue {
-        // SKIP REPLACE: fatalError("SKIP TODO: _SpecialTreatmentEncoder.wrapData")
         switch self.options.dataEncodingStrategy {
         case JSONEncoder.DataEncodingStrategy.deferredToData:
             let encoder = self.getEncoder(for: additionalKey)
@@ -596,11 +595,17 @@ extension _SpecialTreatmentEncoder {
             let base64 = data.base64EncodedString()
             return .string(base64)
 
+        #if !SKIP
         case JSONEncoder.DataEncodingStrategy.custom(let closure):
             let encoder = self.getEncoder(for: additionalKey)
             try closure(data, encoder)
             // The closure didn't encode anything. Return the default keyed container.
             return encoder.value ?? .object([:])
+        #endif
+
+        default:
+            fatalError("SKIP TODO: JSONEncoder.DataEncodingStrategy.custom")
+
         }
     }
 

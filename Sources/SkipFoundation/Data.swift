@@ -85,7 +85,17 @@ public struct Data : DataProtocol, Hashable, CustomStringConvertible, Encodable 
         #if !SKIP
         try platformValue.encode(to: encoder)
         #else
-        fatalError("SKIP TODO")
+        var container = encoder.unkeyedContainer()
+        //try container.encode(contentsOf: self.bytes)
+        fatalError("SKIP TODO: container.encode(contentsOf:)")
+        #endif
+    }
+
+    public var bytes: [UInt8] {
+        #if !SKIP
+        return Array(platformValue)
+        #else
+        return Array(platformValue.map { $0.toUByte() })
         #endif
     }
 

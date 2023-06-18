@@ -59,7 +59,8 @@ public struct UUID : Hashable, CustomStringConvertible, Encodable {
         #if !SKIP
         try platformValue.encode(to: encoder)
         #else
-        fatalError("SKIP TODO")
+        var container = encoder.singleValueContainer()
+        try container.encode(self.uuidString)
         #endif
     }
 

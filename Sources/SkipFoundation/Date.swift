@@ -77,7 +77,11 @@ public struct Date : Hashable, CustomStringConvertible, Comparable, Encodable {
         #if !SKIP
         self.platformValue = try PlatformDate(from: decoder)
         #else
-        self.platformValue = SkipCrash("TODO: Decoder")
+        // In Kotlin, delegating calls to 'self' or 'super' constructors can not use local variables other than the parameters passed to this constructor
+        //let container = try decoder.singleValueContainer()
+        //let timestamp = try container.decode(Double.self)
+        //self.init(timeIntervalSinceReferenceDate: timestamp)
+        self.init(timeIntervalSinceReferenceDate: try decoder.singleValueContainer().decode(Double.self))
         #endif
     }
 
@@ -85,7 +89,8 @@ public struct Date : Hashable, CustomStringConvertible, Comparable, Encodable {
         #if !SKIP
         try platformValue.encode(to: encoder)
         #else
-        fatalError("SKIP TODO")
+        var container = encoder.singleValueContainer()
+        try container.encode(self.timeIntervalSinceReferenceDate)
         #endif
     }
 

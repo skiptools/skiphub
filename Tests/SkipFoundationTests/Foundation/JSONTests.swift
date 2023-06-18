@@ -109,19 +109,23 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"stringField":"ABC"}"#, try enc(StringField(stringField: "ABC")))
         XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try enc(StringField(stringField: "ABC/XYZ")))
 
+        XCTAssertEqual(#"{"dateField":-1}"#, try enc(DateField(dateField: Date(timeIntervalSinceReferenceDate: -1.0))))
+
+
+        XCTAssertEqual(#"{"uuidField":"A53BAA1C-B4F5-48DB-9567-9786B76B256C"}"#, try enc(UUIDField(uuidField: UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!)))
+
         #if !SKIP
+        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)]))))
+        
+        XCTAssertEqual(#"{"dateField":1.0}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .secondsSince1970))
+        XCTAssertEqual(#"{"dateField":"1970-01-01T00:00:01Z"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .iso8601))
+        XCTAssertEqual(#"{"dateField":null}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .custom({ date, encoder in var container = encoder.singleValueContainer(); try container.encodeNil() })))
 
-        XCTAssertEqual(#"{"dateField":-1}"#, try enc(DateField(dateField: Date(timeIntervalSinceReferenceDate: -1))))
-        XCTAssertEqual(#"{"dateField":1.0}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1)), date: .secondsSince1970))
-        XCTAssertEqual(#"{"dateField":"1970-01-01T00:00:01Z"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1)), date: .iso8601))
-        XCTAssertEqual(#"{"dateField":null}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1)), date: .custom({ date, encoder in var container = encoder.singleValueContainer(); try container.encodeNil() })))
-
-        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([0x01, 0x02])), data: .deferredToData))
-        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([0x01, 0x02])), data: .base64))
+        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .base64))
+        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .deferredToData))
 
         XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try enc(StringArrayField(stringArrayField: ["ABC", "XYZ"])))
 
-        XCTAssertEqual(#"{"uuidField":"A53BAA1C-B4F5-48DB-9567-9786B76B256C"}"#, try enc(UUIDField(uuidField: UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!)))
 
         XCTAssertEqual(#"{"int_field":1}"#, try enc(IntField(intField: Int(1)), keys: .convertToSnakeCase))
 

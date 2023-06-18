@@ -34,31 +34,32 @@ class TestISO8601DateFormatter: XCTestCase {
         //default settings check
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08T22:31:00Z")
 
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         /*
          The following tests cover various cases when changing the .formatOptions property.
          */
-        isoFormatter.formatOptions = .withInternetDateTime
+        isoFormatter.formatOptions = ISO8601DateFormatter.Options.withInternetDateTime
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08T22:31:00Z")
 
-        isoFormatter.formatOptions = [.withInternetDateTime, .withSpaceBetweenDateAndTime]
+        #if SKIP
+        throw XCTSkip("TODO")
+        #else
+
+        isoFormatter.formatOptions = [ISO8601DateFormatter.Options.withInternetDateTime, ISO8601DateFormatter.Options.withSpaceBetweenDateAndTime]
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08 22:31:00Z")
 
-        isoFormatter.formatOptions = .withFullTime
+        isoFormatter.formatOptions = ISO8601DateFormatter.Options.withFullTime
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "22:31:00Z")
         
-        isoFormatter.formatOptions = [.withFullTime, .withFractionalSeconds]
+        isoFormatter.formatOptions = [ISO8601DateFormatter.Options.withFullTime, ISO8601DateFormatter.Options.withFractionalSeconds]
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "22:31:00.071Z")
         
-        isoFormatter.formatOptions = .withFullDate
+        isoFormatter.formatOptions = ISO8601DateFormatter.Options.withFullDate
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08")
         
-        isoFormatter.formatOptions = [.withFullTime, .withFullDate]
+        isoFormatter.formatOptions = [ISO8601DateFormatter.Options.withFullTime, ISO8601DateFormatter.Options.withFullDate]
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08T22:31:00Z")
         
-        isoFormatter.formatOptions = [.withFullTime, .withFullDate, .withSpaceBetweenDateAndTime]
+        isoFormatter.formatOptions = [ISO8601DateFormatter.Options.withFullTime, ISO8601DateFormatter.Options.withFullDate, ISO8601DateFormatter.Options.withSpaceBetweenDateAndTime]
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08 22:31:00Z")
         
         isoFormatter.formatOptions = [.withFullTime, .withFullDate, .withSpaceBetweenDateAndTime, .withFractionalSeconds]
