@@ -58,6 +58,11 @@ public struct String: RandomAccessCollection {
     public subscript(bounds: Range<Index>) -> Substring {
         fatalError()
     }
+
+    // Support in String although it is not yet supported in Collection
+    public func split(separator: String, maxSplits: Int = Int.max) -> [String] {
+        fatalError()
+    }
 }
 
 public struct Substring: RandomAccessCollection {
@@ -96,6 +101,11 @@ public struct Substring: RandomAccessCollection {
     }
 
     public subscript(bounds: Range<Index>) -> Substring {
+        fatalError()
+    }
+
+    // Support in String although it is not yet supported in Collection
+    public func split(separator: String, maxSplits: Int = Int.max) -> [String] {
         fatalError()
     }
 }

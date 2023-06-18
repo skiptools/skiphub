@@ -163,6 +163,12 @@ fun <RE> String.compactMap(transform: (Char) -> RE?): Array<RE> {
 }
 fun <RE> Substring.compactMap(transform: (Char) -> RE?): Array<RE> = stringValue.compactMap(transform)
 
+fun String.split(separator: String, maxSplits: Int = Int.max): Array<String> {
+    val limit = if (maxSplits == Int.max) 0 else maxSplits
+    return Array(split(separator, limit = limit), nocopy = true)
+}
+fun Substring.split(separator: String, maxSplits: Int = Int.max): Array<String> = stringValue.split(separator = separator, maxSplits = maxSplits)
+
 fun String.sorted(): Array<Char> {
     return Array(sorted(), nocopy = true)
 }
