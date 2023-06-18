@@ -156,14 +156,14 @@ extension Bundle {
         guard let resourceListString = String(data: resourceList, encoding: String.Encoding.utf8) else {
             return []
         }
-        let resourcePaths = resourceListString.split(separator: "\n")
+        let resourcePaths = resourceListString.components(separatedBy: "\n")
         return resourcePaths
     }
 
     public var localizations: [String] {
         get throws {
             return try loadResourcePaths()
-                .compactMap({ $0.split(separator: "/").first })
+                .compactMap({ $0.components(separatedBy: "/").first })
                 .filter({ $0.hasSuffix(".lproj") })
                 .map({ $0.dropLast(".lproj".count) })
         }

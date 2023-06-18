@@ -568,7 +568,6 @@ extension _SpecialTreatmentEncoder {
                 fatalError("ISO8601DateFormatter is unavailable on this platform.")
             }
 
-        #if !SKIP
         // SKIP TODO: case .formatted
         case JSONEncoder.DateEncodingStrategy.formatted(let formatter):
             return .string(formatter.string(from: date))
@@ -578,9 +577,6 @@ extension _SpecialTreatmentEncoder {
             try closure(date, encoder)
             // The closure didn't encode anything. Return the default keyed container.
             return encoder.value ?? .object([:])
-        #endif
-        default:
-            fatalError("SKIP TODO: JSONEncoder.DateEncodingStrategy.formatted and .custom")
         }
     }
 
@@ -595,17 +591,11 @@ extension _SpecialTreatmentEncoder {
             let base64 = data.base64EncodedString()
             return .string(base64)
 
-        #if !SKIP
         case JSONEncoder.DataEncodingStrategy.custom(let closure):
             let encoder = self.getEncoder(for: additionalKey)
             try closure(data, encoder)
             // The closure didn't encode anything. Return the default keyed container.
             return encoder.value ?? .object([:])
-        #endif
-
-        default:
-            fatalError("SKIP TODO: JSONEncoder.DataEncodingStrategy.custom")
-
         }
     }
 
@@ -1046,7 +1036,6 @@ private struct JSONSingleValueEncodingContainer: SingleValueEncodingContainer, _
 extension JSONSingleValueEncodingContainer {
     @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger & CustomStringConvertible>(_ value: N) throws {
         self.preconditionCanEncodeNewValue()
-        // SKIP REPLACE: fatalError("SKIP TODO: encodeFixedWidthInteger")
         self.impl.singleValue = JSONValue.number(value.description)
     }
 

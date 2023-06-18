@@ -91,6 +91,14 @@ public struct Data : DataProtocol, Hashable, CustomStringConvertible, Encodable 
         #endif
     }
 
+    public var count: Int {
+        #if !SKIP
+        return platformValue.count
+        #else
+        return platformValue.size
+        #endif
+    }
+
     public var bytes: [UInt8] {
         #if !SKIP
         return Array(platformValue)
@@ -221,9 +229,6 @@ extension Data {
         // this seems to work for both file URLs and network URLs
         return Data(url.platformValue.readBytes())
     }
-
-    /// Foundation uses `count`, Java uses `size`.
-    public var count: Int { return platformValue.size }
 }
 
 public extension StringProtocol {

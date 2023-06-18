@@ -15,6 +15,7 @@ import struct SkipFoundation.Date
 import struct SkipFoundation.Data
 import struct SkipFoundation.URL
 import struct SkipFoundation.UUID
+import class SkipFoundation.DateFormatter
 #endif
 
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
@@ -109,25 +110,34 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"stringField":"ABC"}"#, try enc(StringField(stringField: "ABC")))
         XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try enc(StringField(stringField: "ABC/XYZ")))
 
+        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)]))))
+        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .base64 as JSONEncoder.DataEncodingStrategy))
+        XCTAssertEqual(#"{"dataField":3}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02), UInt8(0x03)])), data: .custom({ data, encoder in var container = encoder.singleValueContainer(); try container.encode(data.count) }) as JSONEncoder.DataEncodingStrategy))
+
         XCTAssertEqual(#"{"dateField":-1}"#, try enc(DateField(dateField: Date(timeIntervalSinceReferenceDate: -1.0))))
+
+        XCTAssertEqual(#"{"dateField":1.0}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .secondsSince1970 as JSONEncoder.DateEncodingStrategy))
+        XCTAssertEqual(#"{"dateField":"1970-01-01T00:00:01Z"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .iso8601 as JSONEncoder.DateEncodingStrategy))
+
+        let df = DateFormatter()
+        df.dateFormat = "YYYY"
+        XCTAssertEqual(#"{"dateField":"1970"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .formatted(df) as JSONEncoder.DateEncodingStrategy))
+
+        XCTAssertEqual(#"{"dateField":true}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .custom({ date, encoder in var container = encoder.singleValueContainer(); try container.encode(true) }) as JSONEncoder.DateEncodingStrategy))
 
 
         XCTAssertEqual(#"{"uuidField":"A53BAA1C-B4F5-48DB-9567-9786B76B256C"}"#, try enc(UUIDField(uuidField: UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!)))
 
         #if !SKIP
-        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)]))))
-        
-        XCTAssertEqual(#"{"dateField":1.0}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .secondsSince1970))
-        XCTAssertEqual(#"{"dateField":"1970-01-01T00:00:01Z"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .iso8601))
-        XCTAssertEqual(#"{"dateField":null}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .custom({ date, encoder in var container = encoder.singleValueContainer(); try container.encodeNil() })))
 
-        XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .base64))
-        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .deferredToData))
+
+        XCTAssertEqual(#"{"dataField":[1,2]}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .deferredToData as JSONEncoder.DataEncodingStrategy))
 
         XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try enc(StringArrayField(stringArrayField: ["ABC", "XYZ"])))
 
 
-        XCTAssertEqual(#"{"int_field":1}"#, try enc(IntField(intField: Int(1)), keys: .convertToSnakeCase))
+        // TODO: convertToSnakeCase
+        XCTAssertEqual(#"{"int_field":1}"#, try enc(IntField(intField: Int(1)), keys: .convertToSnakeCase as JSONEncoder.KeyEncodingStrategy))
 
 
         let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
