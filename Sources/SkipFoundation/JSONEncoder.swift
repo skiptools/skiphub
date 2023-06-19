@@ -778,10 +778,6 @@ private struct JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContaine
         self.object.set(newEncoder, for: convertedKey.stringValue)
         return newEncoder
     }
-
-    mutating func encode(_ value: any Sequence<String>, forKey key: CodingKey) {
-        fatalError("TODO: JSONEncoder encode(seq<string>)")
-    }
 }
 
 extension JSONKeyedEncodingContainer {

@@ -60,8 +60,64 @@ class TestJSON : XCTestCase {
         var uuidField: UUID
     }
 
+    struct UUIDArrayField : Equatable, Encodable {
+        var uuidArrayField: Array<UUID>
+    }
+
     struct StringArrayField : Equatable, Encodable {
         var stringArrayField: Array<String>
+    }
+
+    struct IntArrayField : Equatable, Encodable {
+        var intArrayField: Array<Int>
+    }
+
+    struct UIntArrayField : Equatable, Encodable {
+        var uintArrayField: Array<UInt>
+    }
+
+    struct Int8ArrayField : Equatable, Encodable {
+        var int8ArrayField: Array<Int8>
+    }
+
+    struct UInt8ArrayField : Equatable, Encodable {
+        var uint8ArrayField: Array<UInt8>
+    }
+
+    struct Int16ArrayField : Equatable, Encodable {
+        var int16ArrayField: Array<Int16>
+    }
+
+    struct UInt16ArrayField : Equatable, Encodable {
+        var uint16ArrayField: Array<UInt16>
+    }
+
+    struct Int32ArrayField : Equatable, Encodable {
+        var int32ArrayField: Array<Int32>
+    }
+
+    struct UInt32ArrayField : Equatable, Encodable {
+        var uint32ArrayField: Array<UInt32>
+    }
+
+    struct Int64ArrayField : Equatable, Encodable {
+        var int64ArrayField: Array<Int64>
+    }
+
+    struct UInt64ArrayField : Equatable, Encodable {
+        var uint64ArrayField: Array<UInt64>
+    }
+
+    struct BoolArrayField : Equatable, Encodable {
+        var boolArrayField: Array<Bool>
+    }
+
+    struct FloatArrayField : Equatable, Encodable {
+        var floatArrayField: Array<Float>
+    }
+
+    struct DoubleArrayField : Equatable, Encodable {
+        var doubleArrayField: Array<Double>
     }
 
     #if !SKIP
@@ -129,6 +185,11 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"uuidField":"A53BAA1C-B4F5-48DB-9567-9786B76B256C"}"#, try enc(UUIDField(uuidField: UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!)))
 
         XCTAssertEqual(#"{"stringArrayField":["ABC","XYZ"]}"#, try enc(StringArrayField(stringArrayField: ["ABC", "XYZ"])))
+        XCTAssertEqual(#"{"intArrayField":[1,2]}"#, try enc(IntArrayField(intArrayField: [1,2])))
+        XCTAssertEqual(#"{"floatArrayField":[1,2]}"#, try enc(FloatArrayField(floatArrayField: [Float(1.0),Float(2.0)])))
+        XCTAssertEqual(#"{"int8ArrayField":[1,2]}"#, try enc(Int8ArrayField(int8ArrayField: [Int8(1),Int8(2)])))
+        XCTAssertEqual(#"{"boolArrayField":[false,true]}"#, try enc(BoolArrayField(boolArrayField: [false,true])))
+        XCTAssertEqual(#"{"uuidArrayField":["A53BAA1C-B4F5-48DB-9567-9786B76B256C"]}"#, try enc(UUIDArrayField(uuidArrayField: [UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!])))
 
         #if !SKIP
         // TODO: convertToSnakeCase

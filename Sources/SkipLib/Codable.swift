@@ -124,11 +124,6 @@ public protocol KeyedEncodingContainerProtocol {
     mutating func nestedUnkeyedContainer(forKey key: CodingKey) -> UnkeyedEncodingContainer
     mutating func superEncoder() -> Encoder
     mutating func superEncoder(forKey key: CodingKey) -> Encoder
-
-    //mutating func encode<T: Encodable>(_ value: any Sequence<T>, forKey key: CodingKey)
-
-
-    mutating func encode(_ value: any Sequence<String>, forKey key: CodingKey) throws
 }
 
 extension KeyedEncodingContainerProtocol {
@@ -354,17 +349,6 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
         try _box.encodeIfPresent(value, forKey: key)
     }
 
-//    public mutating func encode<T: Encodable>(_ value: any Sequence<T>, forKey key: CodingKey) {
-//        fatalError("TODO: encode(seq)")
-//    }
-
-    public mutating func encode(_ value: any Sequence<String>, forKey key: CodingKey) throws {
-        var container = nestedUnkeyedContainer(forKey: key)
-        for element in value {
-            try container.encode(element as! String)
-        }
-    }
-
     public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: CodingKey) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         //return _box.nestedContainer(keyedBy: NestedKey.self, forKey: key)
         fatalError("TODO: KeyedEncodingContainer.nestedContainer NestedKey  \(key)")
@@ -380,6 +364,48 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
 
     public mutating func superEncoder(forKey key: CodingKey) -> Encoder {
         return _box.superEncoder(forKey: key)
+    }
+}
+
+extension KeyedEncodingContainerProtocol {
+    public mutating func encode<T>(_ value: any Sequence<T>, forKey key: CodingKey) throws {
+        var container = nestedUnkeyedContainer(forKey: key)
+        for element in value {
+            switch (element) {
+            case let str as String:
+                try container.encode(str)
+            case let boolValue as Bool:
+                try container.encode(boolValue)
+            case let num as Int:
+                try container.encode(num)
+            case let num as Int8:
+                try container.encode(num)
+            case let num as Int16:
+                try container.encode(num)
+            case let num as Int32:
+                try container.encode(num)
+            case let num as Int64:
+                try container.encode(num)
+            case let num as UInt:
+                try container.encode(num)
+            case let num as UInt8:
+                try container.encode(num)
+            case let num as UInt16:
+                try container.encode(num)
+            case let num as UInt32:
+                try container.encode(num)
+            case let num as UInt64:
+                try container.encode(num)
+            case let num as Float:
+                try container.encode(num)
+            case let num as Double:
+                try container.encode(num)
+            case let enc as Encodable:
+                try container.encode(enc)
+            default:
+                fatalError("Cannot encode \(element)")
+            }
+        }
     }
 }
 
