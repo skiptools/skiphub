@@ -162,6 +162,11 @@ interface Sequence<Element>: IterableStorage<Element> {
         return Array(iterable.sortedWith(compareBy { it as Comparable<Element> }), nocopy = true)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun sorted(by: (Element, Element) -> Boolean): Array<Element> {
+        return Array(iterable.sortedWith({ lhs, rhs -> if (by(lhs, rhs)) -1 else 1 }), nocopy = true)
+    }
+
     fun contains(element: Element): Boolean {
         return iterable.contains(element)
     }

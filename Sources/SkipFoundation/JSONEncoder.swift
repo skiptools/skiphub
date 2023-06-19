@@ -555,10 +555,10 @@ extension _SpecialTreatmentEncoder {
             return encoder.value ?? .null
 
         case JSONEncoder.DateEncodingStrategy.secondsSince1970:
-            return .number(date.timeIntervalSince1970.description)
+            return .number(Int64(date.timeIntervalSince1970).description)
 
         case JSONEncoder.DateEncodingStrategy.millisecondsSince1970:
-            return .number((date.timeIntervalSince1970 * 1000).description)
+            return .number((Int64(date.timeIntervalSince1970) * 1000).description)
 
         case JSONEncoder.DateEncodingStrategy.iso8601:
             if #available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
@@ -1091,9 +1091,11 @@ extension JSONValue {
             // SKIP REPLACE: // SKIP TODO: writeValue
             case JSONValue.object(let dict):
                 if #available(macOS 10.13, *), options.contains(JSONEncoder.OutputFormatting.sortedKeys) {
-                    // SKIP TODO: implement key sorting
-                    //let sorted = dict.sorted { $0.key < $1.key }
-                    let sorted = Array(dict)
+                    #if !SKIP
+                    let sorted = dict.sorted { $0.key < $1.key }
+                    #else
+                    let sorted = Array(dict).sorted { $0.key < $1.key }
+                    #endif
                     self.writeObject(sorted, into: &bytes)
                 } else {
                     self.writeObject(Array(dict), into: &bytes)

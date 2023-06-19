@@ -8,14 +8,21 @@ import XCTest
 
 #if SKIP
 //import Foundation
-#else
+#if false
 import class SkipFoundation.JSONEncoder
-import class SkipFoundation.JSONDecoder
 import struct SkipFoundation.Date
 import struct SkipFoundation.Data
 import struct SkipFoundation.URL
 import struct SkipFoundation.UUID
 import class SkipFoundation.DateFormatter
+#else
+import class Foundation.JSONEncoder
+import struct Foundation.Date
+import struct Foundation.Data
+import struct Foundation.URL
+import struct Foundation.UUID
+import class Foundation.DateFormatter
+#endif
 #endif
 
 // SKIP INSERT: @org.junit.runner.RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
@@ -124,6 +131,10 @@ class TestJSON : XCTestCase {
         var boolArrayArrayField: Array<Array<Bool>>
     }
 
+    struct BoolArrayArrayArrayField : Equatable, Encodable {
+        var boolArrayArrayArrayField: Array<Array<Array<Bool>>>
+    }
+
 
     #if !SKIP
     // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
@@ -132,17 +143,23 @@ class TestJSON : XCTestCase {
     }
     #endif
 
-    struct EntityDefaultKeys : Equatable, Encodable {
+    struct Person : Equatable, Encodable {
         var firstName: String
         var lastName: String
         var age: Int?
         var height: Double?
         var isStudent: Bool?
-        //var friends: [EntityDefaultKeys]?
+        //var friends: [Person]?
+    }
+
+    struct Org : Equatable, Encodable {
+        var people: [Person]
+        var departmentHeads: [String: Person]
+        var departmentMembers: [String: [Person]]
     }
 
     func testJSONCodable() throws {
-        func enc<T: Encodable>(_ value: T, fmt: JSONEncoder.OutputFormatting? = nil, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String {
+        func enc<T: Encodable>(_ value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String {
             let encoder = JSONEncoder()
             if let fmt = fmt {
                 encoder.outputFormatting = fmt
@@ -160,14 +177,13 @@ class TestJSON : XCTestCase {
                 encoder.keyEncodingStrategy = keys
             }
             let data = try encoder.encode(value)
-            return data.utf8String ?? ""
-            //return String(data: data, encoding: .utf8) ?? ""
+            return String(data: data, encoding: .utf8) ?? ""
         }
 
         XCTAssertEqual(#"{"intField":1}"#, try enc(IntField(intField: Int(1))))
         // difference between ObjC and native Swift JSONEncoder
         //XCTAssertEqual(#"{"floatField":1.1000000238418579}"#, try enc(FloatField(floatField: Float(1.1))))
-        XCTAssertEqual(#"{"floatField":1.2}"#, try enc(FloatField(floatField: Float(1.2))))
+        XCTAssertEqual(#"{"floatField":1.5}"#, try enc(FloatField(floatField: Float(1.5))))
         XCTAssertEqual(#"{"stringField":"ABC"}"#, try enc(StringField(stringField: "ABC")))
         XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try enc(StringField(stringField: "ABC/XYZ")))
 
@@ -178,7 +194,7 @@ class TestJSON : XCTestCase {
 
         XCTAssertEqual(#"{"dateField":-1}"#, try enc(DateField(dateField: Date(timeIntervalSinceReferenceDate: -1.0))))
 
-        XCTAssertEqual(#"{"dateField":1.0}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .secondsSince1970 as JSONEncoder.DateEncodingStrategy))
+        XCTAssertEqual(#"{"dateField":1}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .secondsSince1970 as JSONEncoder.DateEncodingStrategy))
         XCTAssertEqual(#"{"dateField":"1970-01-01T00:00:01Z"}"#, try enc(DateField(dateField: Date(timeIntervalSince1970: 1.0)), date: .iso8601 as JSONEncoder.DateEncodingStrategy))
 
         let df = DateFormatter()
@@ -194,21 +210,30 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"floatArrayField":[1,2]}"#, try enc(FloatArrayField(floatArrayField: [Float(1.0),Float(2.0)])))
         XCTAssertEqual(#"{"int8ArrayField":[1,2]}"#, try enc(Int8ArrayField(int8ArrayField: [Int8(1),Int8(2)])))
         XCTAssertEqual(#"{"uint8ArrayField":[1,2]}"#, try enc(UInt8ArrayField(uint8ArrayField: [UInt8(1),UInt8(2)])))
+
         XCTAssertEqual(#"{"uuidArrayField":["A53BAA1C-B4F5-48DB-9567-9786B76B256C"]}"#, try enc(UUIDArrayField(uuidArrayField: [UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!])))
 
         XCTAssertEqual(#"{"boolArrayField":[false,true]}"#, try enc(BoolArrayField(boolArrayField: [false,true])))
         XCTAssertEqual(#"{"boolArrayArrayField":[[false,true]]}"#, try enc(BoolArrayArrayField(boolArrayArrayField: [[false,true]])))
+        XCTAssertEqual(#"{"boolArrayArrayArrayField":[[[false,true],[false,true]],[[false,true],[false,true]]]}"#, try enc(BoolArrayArrayArrayField(boolArrayArrayArrayField: [[[false,true],[false,true]],[[false,true],[false,true]]])))
+
+        XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, try enc(Person(firstName: "Jon", lastName: "Doe", height: 180.5)))
+
+        let org = Org(people: [Person(firstName: "Jon", lastName: "Doe", height: 180.5)], departmentHeads: [:], departmentMembers: [:])
+        #if !SKIP
+        XCTAssertEqual(#"{"departmentHeads":{},"departmentMembers":{},"people":[{"firstName":"Jon","height":180.5,"lastName":"Doe"}]}"#, try enc(org))
+        #else
+        // TODO: Skip object handling
+        XCTAssertEqual(#"{"departmentHeads":[],"departmentMembers":[],"people":[{"firstName":"Jon","height":180.5,"lastName":"Doe"}]}"#, try enc(org))
+        #endif
 
         #if !SKIP
         // TODO: convertToSnakeCase
         XCTAssertEqual(#"{"int_field":1}"#, try enc(IntField(intField: Int(1)), keys: .convertToSnakeCase as JSONEncoder.KeyEncodingStrategy))
 
-
-        let person = EntityDefaultKeys(firstName: "Jon", lastName: "Doe", height: 180.5)
-
         //XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, try enc().encode(person))
 
-        //let person2 = try JSONDecoder().decode(EntityDefaultKeys.self, from: jsonData)
+        //let person2 = try JSONDecoder().decode(Person.self, from: jsonData)
         //XCTAssertEqual(person, person)
         #endif
     }

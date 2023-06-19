@@ -152,7 +152,6 @@ extension Sequence {
         fatalError()
     }
 
-    @available(*, unavailable)
     public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
         fatalError()
     }
