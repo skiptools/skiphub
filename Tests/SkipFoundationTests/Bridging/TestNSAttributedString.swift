@@ -397,10 +397,8 @@ fileprivate extension TestNSAttributedString {
         #endif // !SKIP
     }
     
+    #if !SKIP
     func describe(attrs: [NSAttributedString.Key: Any]) -> String {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         if attrs.count > 0 {
             let mapped: [String] = attrs.map({ "\($0.rawValue):\($1)" })
             let sorted: [String] = mapped.sorted(by: { $0 < $1 })
@@ -409,8 +407,8 @@ fileprivate extension TestNSAttributedString {
         } else {
             return "[:]"
         }
-        #endif // !SKIP
     }
+    #endif // !SKIP
 }
 
 class TestNSMutableAttributedString : XCTestCase {

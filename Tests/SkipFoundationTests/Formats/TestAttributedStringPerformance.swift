@@ -54,30 +54,25 @@ final class TestAttributedStringPerformance: XCTestCase {
         return str
         #endif // !SKIP
     }
-    
+
+    #if !SKIP
+    // SKIP TODO: NSMutableAttributedString
     func createLongNSString() -> NSMutableAttributedString {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let str = NSMutableAttributedString(string: String(repeating: "a", count: 10000), attributes: [.testInt: NSNumber(1)])
         str.append(NSMutableAttributedString(string: String(repeating: "b", count: 10000), attributes: [.testInt: NSNumber(2)]))
         str.append(NSMutableAttributedString(string: String(repeating: "c", count: 10000), attributes: [.testInt: NSNumber(3)]))
         return str
-        #endif // !SKIP
     }
     
     func createManyAttributesNSString() -> NSMutableAttributedString {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let str = NSMutableAttributedString(string: "a")
         for i in 0..<10000 {
             str.append(NSAttributedString(string: "a", attributes: [.testInt: NSNumber(value: i)]))
         }
         return str
-        #endif // !SKIP
     }
-    
+    #endif
+
     // MARK: - String Manipulation
     
     func testInsertIntoLongString() {

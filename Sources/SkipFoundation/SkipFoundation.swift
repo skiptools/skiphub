@@ -61,12 +61,12 @@ internal extension Dictionary where Key : RawRepresentable {
 
 
 #if !SKIP
-public typealias Decimal = Double
-public typealias NSDecimalNumber = Double
+@_implementationOnly import struct Foundation.Decimal
+internal typealias Decimal = Foundation.Decimal
+internal typealias NSDecimalNumber = Decimal
 #else
 public typealias Decimal = java.math.BigDecimal
 public typealias NSDecimalNumber = java.math.BigDecimal
-#endif
 
 extension Decimal {
     init?(string: String) {
@@ -77,6 +77,8 @@ extension Decimal {
         }
     }
 }
+#endif
+
 
 #if SKIP
 #endif
@@ -213,26 +215,6 @@ public class NSCoder : NSObject {
 internal protocol NSRange {
 }
 
-internal class NSData : NSObject {
-}
-
-internal class NSMutableData : NSData {
-}
-
-internal class NSAttributedString : NSObject {
-    public struct Key {
-    }
-}
-
-internal class NSMutableAttributedString : NSAttributedString {
-}
-
-internal class NSCharacterSet : NSObject {
-}
-
-internal class NSMutableCharacterSet : NSCharacterSet {
-}
-
 internal class NSArray : NSObject {
 }
 
@@ -251,18 +233,6 @@ internal class NSTextCheckingResult : NSObject {
 internal protocol NSBinarySearchingOptions {
 }
 
-internal protocol NSCoding {
-}
-
-internal protocol NSSecureCoding {
-}
-
-internal protocol NSKeyedArchiver {
-}
-
-internal protocol NSKeyedUnarchiver {
-}
-
 // MARK: Foundation Placeholders
 
 internal protocol DateIntervalFormatter {
@@ -278,9 +248,6 @@ internal struct MassFormatter {
 }
 
 internal protocol HTTPCookieStorage {
-}
-
-internal protocol FileHandle {
 }
 
 #endif

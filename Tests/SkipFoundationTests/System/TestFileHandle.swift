@@ -27,7 +27,9 @@ import WinSDK
 
 @available(macOS 10.15, iOS 13.4, watchOS 6.0, tvOS 13.0, *)
 class TestFileHandle : XCTestCase {
+    #if !SKIP
     var allHandles: [FileHandle] = []
+    #endif
     var allTemporaryFileURLs: [URL] = []
 
     #if !SKIP
@@ -87,10 +89,8 @@ class TestFileHandle : XCTestCase {
     }
     #endif
     
+    #if !SKIP
     func createFileHandle() -> FileHandle {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let url = createTemporaryFile(containing: content)
 
         var fh: FileHandle?
@@ -98,13 +98,9 @@ class TestFileHandle : XCTestCase {
 
         allHandles.append(fh!)
         return fh!
-        #endif // !SKIP
     }
 
     func createFileHandleForUpdating() -> FileHandle {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         let url = createTemporaryFile(containing: content)
 
         var fh: FileHandle!
@@ -112,8 +108,8 @@ class TestFileHandle : XCTestCase {
 
         allHandles.append(fh)
         return fh
-        #endif // !SKIP
     }
+    #endif // !SKIP
 
 #if NS_FOUNDATION_ALLOWS_TESTABLE_IMPORT
     func createFileHandleForSeekErrors() -> FileHandle {
@@ -152,10 +148,8 @@ class TestFileHandle : XCTestCase {
     let seekError = NSError(domain: NSCocoaErrorDomain, code: NSFileReadUnknownError, userInfo: [ NSUnderlyingErrorKey: NSError(domain: NSPOSIXErrorDomain, code: Int(ESPIPE), userInfo: [:])])
     #endif
 
+    #if !SKIP
     func createFileHandleForReadErrors() -> FileHandle {
-        #if SKIP
-        throw XCTSkip("TODO")
-        #else
         // Create a file handle where calling read returns -1.
         // Accomplish this by creating one for a directory.
 #if os(Windows)
@@ -182,9 +176,9 @@ class TestFileHandle : XCTestCase {
 #endif
         allHandles.append(fh)
         return fh
-        #endif // !SKIP
     }
-    
+    #endif // !SKIP
+
 #if !SKIP
 #if os(Windows)
     let readError = NSError(domain: NSCocoaErrorDomain, code: NSFileReadUnknownError, userInfo: [ NSUnderlyingErrorKey: NSError(domain: "org.swift.Foundation.WindowsError", code: 1, userInfo: [:])])

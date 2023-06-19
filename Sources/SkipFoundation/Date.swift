@@ -81,7 +81,8 @@ public struct Date : Hashable, CustomStringConvertible, Comparable, Encodable {
         //let container = try decoder.singleValueContainer()
         //let timestamp = try container.decode(Double.self)
         //self.init(timeIntervalSinceReferenceDate: timestamp)
-        self.init(timeIntervalSinceReferenceDate: try decoder.singleValueContainer().decode(Double.self))
+        //self.init(timeIntervalSinceReferenceDate: try decoder.singleValueContainer().decode(Double.self))
+        self.platformValue = SkipCrash("TODO: Decoder")
         #endif
     }
 

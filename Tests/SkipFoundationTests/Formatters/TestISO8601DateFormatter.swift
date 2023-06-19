@@ -41,7 +41,7 @@ class TestISO8601DateFormatter: XCTestCase {
         XCTAssertEqual(isoFormatter.string(from: someDateTime), "2016-10-08T22:31:00Z")
 
         #if SKIP
-        throw XCTSkip("TODO")
+        throw XCTSkip("SKIP TODO: test_stringFromDate")
         #else
 
         isoFormatter.formatOptions = [ISO8601DateFormatter.Options.withInternetDateTime, ISO8601DateFormatter.Options.withSpaceBetweenDateAndTime]

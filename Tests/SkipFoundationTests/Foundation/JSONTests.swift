@@ -108,10 +108,6 @@ class TestJSON : XCTestCase {
         var uint64ArrayField: Array<UInt64>
     }
 
-    struct BoolArrayField : Equatable, Encodable {
-        var boolArrayField: Array<Bool>
-    }
-
     struct FloatArrayField : Equatable, Encodable {
         var floatArrayField: Array<Float>
     }
@@ -119,6 +115,15 @@ class TestJSON : XCTestCase {
     struct DoubleArrayField : Equatable, Encodable {
         var doubleArrayField: Array<Double>
     }
+
+    struct BoolArrayField : Equatable, Encodable {
+        var boolArrayField: Array<Bool>
+    }
+
+    struct BoolArrayArrayField : Equatable, Encodable {
+        var boolArrayArrayField: Array<Array<Bool>>
+    }
+
 
     #if !SKIP
     // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
@@ -188,8 +193,11 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"intArrayField":[1,2]}"#, try enc(IntArrayField(intArrayField: [1,2])))
         XCTAssertEqual(#"{"floatArrayField":[1,2]}"#, try enc(FloatArrayField(floatArrayField: [Float(1.0),Float(2.0)])))
         XCTAssertEqual(#"{"int8ArrayField":[1,2]}"#, try enc(Int8ArrayField(int8ArrayField: [Int8(1),Int8(2)])))
-        XCTAssertEqual(#"{"boolArrayField":[false,true]}"#, try enc(BoolArrayField(boolArrayField: [false,true])))
+        XCTAssertEqual(#"{"uint8ArrayField":[1,2]}"#, try enc(UInt8ArrayField(uint8ArrayField: [UInt8(1),UInt8(2)])))
         XCTAssertEqual(#"{"uuidArrayField":["A53BAA1C-B4F5-48DB-9567-9786B76B256C"]}"#, try enc(UUIDArrayField(uuidArrayField: [UUID(uuidString: "a53baa1c-b4f5-48db-9567-9786b76b256c")!])))
+
+        XCTAssertEqual(#"{"boolArrayField":[false,true]}"#, try enc(BoolArrayField(boolArrayField: [false,true])))
+        XCTAssertEqual(#"{"boolArrayArrayField":[[false,true]]}"#, try enc(BoolArrayArrayField(boolArrayArrayField: [[false,true]])))
 
         #if !SKIP
         // TODO: convertToSnakeCase
