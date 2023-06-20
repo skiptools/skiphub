@@ -351,7 +351,7 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
 
     public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: CodingKey) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         //return _box.nestedContainer(keyedBy: NestedKey.self, forKey: key)
-        fatalError("TODO: KeyedEncodingContainer.nestedContainer NestedKey  \(key)")
+        fatalError("SKIP TODO: KeyedEncodingContainer.nestedContainer NestedKey  \(key)")
     }
 
     public mutating func nestedUnkeyedContainer(forKey key: CodingKey) -> UnkeyedEncodingContainer {
@@ -368,6 +368,12 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
 }
 
 extension KeyedEncodingContainerProtocol {
+    mutating func encode<T, U>(_ value: Dictionary<T, U>, forKey key: CodingKey) throws {
+        fatalError("SKIP TODO: KeyedEncodingContainerProtocol.encode dictionary")
+        //var container = nestedContainer(keyedBy: CodingKey.self, forKey: key)
+        //try container.encode(contentsOf: value)
+    }
+
     mutating func encode<T>(_ value: any Sequence<T>, forKey key: CodingKey) throws {
         var container = nestedUnkeyedContainer(forKey: key)
         try container.encode(contentsOf: value)
@@ -540,7 +546,9 @@ extension UnkeyedEncodingContainer {
                 try self.encode(enc)
             default:
                 // SKIP TODO: testCaseStatementsIgnoreIfSkip
-                if let seq = element as? any Sequence<Any> {
+                if let seq = element as? any Dictionary<Any, Any> {
+                    fatalError("KeyedEncodingContainerProtocol: unhandled dictionary \(element)")
+                } else if let seq = element as? any Sequence<Any> {
                     var container2 = self.nestedUnkeyedContainer()
                     try container2.encode(contentsOf: seq)
                 } else {

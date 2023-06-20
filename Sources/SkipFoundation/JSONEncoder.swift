@@ -151,9 +151,7 @@ open class JSONEncoder {
             var searchRange = stringKey.index(after: wordStart)..<stringKey.endIndex
 
             // Find next uppercase character
-            //while let upperCaseRange = stringKey.rangeOfCharacter(from: .uppercaseLetters, options: [], range: searchRange) { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-            while true { if let upperCaseRange = stringKey.rangeOfCharacter(from: .uppercaseLetters, options: [], range: searchRange) {
-
+            while let upperCaseRange = stringKey.rangeOfCharacter(from: .uppercaseLetters, options: [], range: searchRange) {
                 let untilUpperCase = wordStart..<upperCaseRange.lowerBound
                 words.append(untilUpperCase)
 
@@ -180,7 +178,7 @@ open class JSONEncoder {
                     wordStart = beforeLowerIndex
                 }
                 searchRange = lowerCaseRange.upperBound..<searchRange.upperBound
-            } else { break } }
+            }
             words.append(wordStart..<searchRange.upperBound)
             let result = words.map({ (range) in
                 return stringKey[range].lowercased()
@@ -1074,7 +1072,6 @@ extension JSONValue {
                 self.encodeString(string, to: &bytes)
             case JSONValue.number(let string):
                 bytes.append(contentsOf: string.utf8)
-            // SKIP REPLACE: // SKIP TODO: writeValue
             case JSONValue.array(let array):
                 var iterator = array.makeIterator()
                 bytes.append(UInt8_openbracket)
@@ -1082,13 +1079,11 @@ extension JSONValue {
                 if let first = iterator.next() {
                     self.writeValue(first, into: &bytes)
                 }
-                // while let item = iterator.next() { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-                while true { if let item = iterator.next() {
+                while let item = iterator.next() {
                     bytes.append(UInt8_comma)
                     self.writeValue(item, into:&bytes)
-                } else { break } }
+                }
                 bytes.append(UInt8_closebracket)
-            // SKIP REPLACE: // SKIP TODO: writeValue
             case JSONValue.object(let dict):
                 if #available(macOS 10.13, *), options.contains(JSONEncoder.OutputFormatting.sortedKeys) {
                     #if !SKIP
@@ -1100,8 +1095,6 @@ extension JSONValue {
                 } else {
                     self.writeObject(Array(dict), into: &bytes)
                 }
-            default:
-                fatalError("SKIP TODO")
             }
         }
 
@@ -1151,12 +1144,11 @@ extension JSONValue {
                     self.addInset(to: &bytes, depth: depth + 1)
                     self.writeValuePretty(first, into: &bytes, depth: depth + 1)
                 }
-                //while let item = iterator.next() { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-                while true { if let item = iterator.next() {
+                while let item = iterator.next() {
                     bytes.append(contentsOf: [UInt8_comma, UInt8_newline])
                     self.addInset(to: &bytes, depth: depth + 1)
                     self.writeValuePretty(item, into: &bytes, depth: depth + 1)
-                } else { break } }
+                }
                 bytes.append(UInt8_newline)
                 self.addInset(to: &bytes, depth: depth)
                 bytes.append(UInt8_closebracket)
@@ -1182,9 +1174,7 @@ extension JSONValue {
                 bytes.append(contentsOf: [UInt8_space, UInt8_colon, UInt8_space])
                 self.writeValuePretty(value, into: &bytes, depth: depth + 1)
             }
-            //while let (key, value) = iterator.next() { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-            while true { if let (key, value) = iterator.next() {
-
+            while let (key, value) = iterator.next() {
                 bytes.append(contentsOf: [UInt8_comma, UInt8_newline])
                 self.addInset(to: &bytes, depth: depth + 1)
                 // key
@@ -1192,7 +1182,7 @@ extension JSONValue {
                 bytes.append(contentsOf: [UInt8_space, UInt8_colon, UInt8_space])
                 // value
                 self.writeValuePretty(value, into: &bytes, depth: depth + 1)
-            } else { break } }
+            }
             bytes.append(UInt8_newline)
             self.addInset(to: &bytes, depth: depth)
             bytes.append(UInt8_closebrace)
