@@ -1032,14 +1032,6 @@ extension JSONSingleValueEncodingContainer {
 }
 
 extension JSONValue {
-    // SKIP REPLACE: // SKIP TODO: _null
-    static let _null = [UInt8(ascii: "n"), UInt8(ascii: "u"), UInt8(ascii: "l"), UInt8(ascii: "l")]
-    // SKIP REPLACE: // SKIP TODO: _true
-    static let _true = [UInt8(ascii: "t"), UInt8(ascii: "r"), UInt8(ascii: "u"), UInt8(ascii: "e")]
-    // SKIP REPLACE: // SKIP TODO: _false
-    static let _false = [UInt8(ascii: "f"), UInt8(ascii: "a"), UInt8(ascii: "l"), UInt8(ascii: "s"), UInt8(ascii: "e")]
-
-
     fileprivate struct Writer {
         let options: JSONEncoder.OutputFormatting
 
@@ -1086,11 +1078,7 @@ extension JSONValue {
                 bytes.append(UInt8_closebracket)
             case JSONValue.object(let dict):
                 if #available(macOS 10.13, *), options.contains(JSONEncoder.OutputFormatting.sortedKeys) {
-                    #if !SKIP
-                    let sorted = dict.sorted { $0.key < $1.key }
-                    #else
                     let sorted = Array(dict).sorted { $0.key < $1.key }
-                    #endif
                     self.writeObject(sorted, into: &bytes)
                 } else {
                     self.writeObject(Array(dict), into: &bytes)
@@ -1120,19 +1108,26 @@ extension JSONValue {
         }
 
         private func addInset(to bytes: inout [UInt8], depth: Int) {
-            // SKIP REPLACE: fatalError("SKIP TODO: addInset")
+            #if !SKIP
             bytes.append(contentsOf: [UInt8](repeating: UInt8_space, count: depth * 2))
+            #else
+            for _ in (0..<depth) {
+                bytes.append(UInt8_space)
+                bytes.append(UInt8_space)
+            }
+            #endif
         }
 
         private func writeValuePretty(_ value: JSONValue, into bytes: inout [UInt8], depth: Int = 0) {
-            // SKIP REPLACE: fatalError("SKIP TODO: writeValuePretty")
             switch value {
             case .null:
-                bytes.append(contentsOf: _null)
-            case .bool(true):
-                bytes.append(contentsOf: _true)
-            case .bool(false):
-                bytes.append(contentsOf: _false)
+                bytes.append(contentsOf: UInt8Array_null)
+            case .bool(let b):
+                if b == true {
+                    bytes.append(contentsOf: UInt8Array_true)
+                } else {
+                    bytes.append(contentsOf: UInt8Array_false)
+                }
             case .string(let string):
                 self.encodeString(string, to: &bytes)
             case .number(let string):
@@ -1154,18 +1149,15 @@ extension JSONValue {
                 bytes.append(UInt8_closebracket)
             case .object(let dict):
                 if #available(macOS 10.13, *), options.contains(JSONEncoder.OutputFormatting.sortedKeys) {
-                    let sorted = dict.sorted { $0.key < $1.key }
+                    let sorted = Array(dict).sorted { $0.key < $1.key }
                     self.writePrettyObject(sorted, into: &bytes, depth: depth)
                 } else {
-                    self.writePrettyObject(dict, into: &bytes, depth: depth)
+                    self.writePrettyObject(Array(dict), into: &bytes, depth: depth)
                 }
             }
         }
 
-        #if !SKIP
-        private func writePrettyObject<Object: Sequence>(_ object: Object, into bytes: inout [UInt8], depth: Int = 0)
-            where Object.Element == (key: String, value: JSONValue)
-        {
+        private func writePrettyObject(_ object: [(key: String, value: JSONValue)], into bytes: inout [UInt8], depth: Int = 0) {
             var iterator = object.makeIterator()
             bytes.append(contentsOf: [UInt8_openbrace, UInt8_newline])
             if let (key, value) = iterator.next() {
@@ -1174,7 +1166,8 @@ extension JSONValue {
                 bytes.append(contentsOf: [UInt8_space, UInt8_colon, UInt8_space])
                 self.writeValuePretty(value, into: &bytes, depth: depth + 1)
             }
-            while let (key, value) = iterator.next() {
+            // while let (key, value) = iterator.next() { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
+            while true { if  let (key, value) = iterator.next() {
                 bytes.append(contentsOf: [UInt8_comma, UInt8_newline])
                 self.addInset(to: &bytes, depth: depth + 1)
                 // key
@@ -1182,16 +1175,11 @@ extension JSONValue {
                 bytes.append(contentsOf: [UInt8_space, UInt8_colon, UInt8_space])
                 // value
                 self.writeValuePretty(value, into: &bytes, depth: depth + 1)
-            }
+            } else { break } }
             bytes.append(UInt8_newline)
             self.addInset(to: &bytes, depth: depth)
             bytes.append(UInt8_closebrace)
         }
-        #else
-        private func writePrettyObject(_ object: Any, into bytes: inout [UInt8], depth: Int = 0) {
-            fatalError("SKIP TODO: writePrettyObject unsupported where Object.Element == (key: String, value: JSONValue)")
-        }
-        #endif
 
         private func encodeString(_ string: String, to bytes: inout [UInt8]) {
             bytes.append(UInt8(ascii: "\""))

@@ -350,8 +350,7 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
     }
 
     public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: CodingKey) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-        //return _box.nestedContainer(keyedBy: NestedKey.self, forKey: key)
-        fatalError("SKIP TODO: KeyedEncodingContainer.nestedContainer NestedKey  \(key)")
+        return _box.nestedContainer(keyedBy: keyType, forKey: key)
     }
 
     public mutating func nestedUnkeyedContainer(forKey key: CodingKey) -> UnkeyedEncodingContainer {
@@ -369,8 +368,8 @@ public struct KeyedEncodingContainer<Key: CodingKey> : KeyedEncodingContainerPro
 
 extension KeyedEncodingContainerProtocol {
     mutating func encode<T, U>(_ value: Dictionary<T, U>, forKey key: CodingKey) throws {
-        fatalError("SKIP TODO: KeyedEncodingContainerProtocol.encode dictionary")
-        //var container = nestedContainer(keyedBy: CodingKey.self, forKey: key)
+        //fatalError("SKIP TODO: KeyedEncodingContainerProtocol.encode dictionary")
+//        var container = nestedContainer(keyedBy: CodingKey.self, forKey: key)
         //try container.encode(contentsOf: value)
     }
 
@@ -419,12 +418,13 @@ public protocol UnkeyedEncodingContainer {
     mutating func encode<T>(contentsOf sequence: T) throws where T : Sequence, T.Element == UInt32
     mutating func encode<T>(contentsOf sequence: T) throws where T : Sequence, T.Element == UInt64
     mutating func encode<T>(contentsOf sequence: T) throws where T : Sequence, T.Element : Encodable
-    mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey>
     #endif
 
-    mutating func encode<T>(contentsOf sequence: any Sequence<T>) throws
+    mutating func nestedContainer<NestedKey: CodingKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> 
     mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer
     mutating func superEncoder() -> Encoder
+
+    mutating func encode<T>(contentsOf sequence: any Sequence<T>) throws
 }
 
 extension UnkeyedEncodingContainer {
@@ -779,13 +779,12 @@ internal class _KeyedEncodingContainerBase {
     fatalError("_KeyedEncodingContainerBase cannot be used directly.")
   }
 
-//  // SKIP DECLARE: internal open inline fun <reified NestedKey> nestedContainer(keyedBy: KClass<NestedKey>, forKey: CodingKey): KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey
-//  internal func nestedContainer<NestedKey: CodingKey>(
-//    keyedBy keyType: NestedKey.Type,
-//    forKey key: CodingKey
-//  ) -> KeyedEncodingContainer<NestedKey> {
-//    fatalError("_KeyedEncodingContainerBase cannot be used directly.")
-//  }
+  internal func nestedContainer<NestedKey: CodingKey>(
+    keyedBy keyType: NestedKey.Type,
+    forKey key: CodingKey
+  ) -> KeyedEncodingContainer<NestedKey> {
+    fatalError("_KeyedEncodingContainerBase cannot be used directly.")
+  }
 
   internal func nestedUnkeyedContainer<K: CodingKey>(
     forKey key: K

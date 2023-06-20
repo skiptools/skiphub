@@ -159,6 +159,22 @@ class TestJSON : XCTestCase {
         var departmentMembers: [String: [Person]]
     }
 
+    struct ManualPerson: Encodable {
+        let name: String
+        let age: Int
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(name, forKey: CodingKeys.nameX)
+            try container.encode(age, forKey: CodingKeys.ageX)
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case nameX
+            case ageX
+        }
+    }
+
     func testJSONCodable() throws {
         func enc<T: Encodable>(_ value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String {
             let encoder = JSONEncoder()
@@ -220,19 +236,102 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"boolArrayArrayField":[[false,true]]}"#, try enc(BoolArrayArrayField(boolArrayArrayField: [[false,true]])))
         XCTAssertEqual(#"{"boolArrayArrayArrayField":[[[false,true],[false,true]],[[false,true],[false,true]]]}"#, try enc(BoolArrayArrayArrayField(boolArrayArrayArrayField: [[[false,true],[false,true]],[[false,true],[false,true]]])))
 
+        XCTAssertEqual(#"{"ageX":123,"nameX":"ABC"}"#, try enc(ManualPerson(name: "ABC", age: 123)))
+
         let p1 = Person(firstName: "Jon", lastName: "Doe", height: 180.5)
         let p2 = Person(firstName: "Jan", lastName: "Noe", height: 170.0)
         let p3 = Person(firstName: "Jim", lastName: "Bro", height: 190.0)
 
         XCTAssertEqual(#"{"firstName":"Jon","height":180.5,"lastName":"Doe"}"#, try enc(p1))
+        XCTAssertEqual("""
+        {
+          "firstName" : "Jon",
+          "height" : 180.5,
+          "lastName" : "Doe"
+        }
+        """, try enc(p1, fmt: [.prettyPrinted, .sortedKeys] as JSONEncoder.OutputFormatting))
 
         let org = Org(head: p2, people: [p1, p3], departmentHeads: ["X":p2, "Y": p3], departmentMembers: ["Y":[p1], "X": [p2, p1]])
         #if !SKIP
-        XCTAssertEqual(#"{"departmentHeads":{"X":{"firstName":"Jan","height":170,"lastName":"Noe"},"Y":{"firstName":"Jim","height":190,"lastName":"Bro"}},"departmentMembers":{"X":[{"firstName":"Jan","height":170,"lastName":"Noe"},{"firstName":"Jon","height":180.5,"lastName":"Doe"}],"Y":[{"firstName":"Jon","height":180.5,"lastName":"Doe"}]},"head":{"firstName":"Jan","height":170,"lastName":"Noe"},"people":[{"firstName":"Jon","height":180.5,"lastName":"Doe"},{"firstName":"Jim","height":190,"lastName":"Bro"}]}"#, try enc(org))
+        XCTAssertEqual("""
+            {
+              "departmentHeads" : {
+                "X" : {
+                  "firstName" : "Jan",
+                  "height" : 170,
+                  "lastName" : "Noe"
+                },
+                "Y" : {
+                  "firstName" : "Jim",
+                  "height" : 190,
+                  "lastName" : "Bro"
+                }
+              },
+              "departmentMembers" : {
+                "X" : [
+                  {
+                    "firstName" : "Jan",
+                    "height" : 170,
+                    "lastName" : "Noe"
+                  },
+                  {
+                    "firstName" : "Jon",
+                    "height" : 180.5,
+                    "lastName" : "Doe"
+                  }
+                ],
+                "Y" : [
+                  {
+                    "firstName" : "Jon",
+                    "height" : 180.5,
+                    "lastName" : "Doe"
+                  }
+                ]
+              },
+              "head" : {
+                "firstName" : "Jan",
+                "height" : 170,
+                "lastName" : "Noe"
+              },
+              "people" : [
+                {
+                  "firstName" : "Jon",
+                  "height" : 180.5,
+                  "lastName" : "Doe"
+                },
+                {
+                  "firstName" : "Jim",
+                  "height" : 190,
+                  "lastName" : "Bro"
+                }
+              ]
+            }
+            """, try enc(org, fmt: [.prettyPrinted, .sortedKeys] as JSONEncoder.OutputFormatting))
         #else
-        // TODO: Skip object handling: java.lang.IllegalStateException: KeyedEncodingContainerProtocol: unhandled encode for Tuple2(_e0=X, _e1=skip.foundation.TestJSON$Person@75bb374e)
-        //XCTAssertEqual(#""#, try enc(org))
+        // SKIP TODO: fix dictionary serialization
+        XCTAssertEqual("""
+            {
+              "head" : {
+                "firstName" : "Jan",
+                "height" : 170,
+                "lastName" : "Noe"
+              },
+              "people" : [
+                {
+                  "firstName" : "Jon",
+                  "height" : 180.5,
+                  "lastName" : "Doe"
+                },
+                {
+                  "firstName" : "Jim",
+                  "height" : 190,
+                  "lastName" : "Bro"
+                }
+              ]
+            }
+            """, try enc(org, fmt: [.prettyPrinted, .sortedKeys] as JSONEncoder.OutputFormatting))
         #endif
+
 
         #if !SKIP
         // TODO: convertToSnakeCase
