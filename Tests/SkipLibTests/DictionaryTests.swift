@@ -107,6 +107,16 @@ final class DictionaryTests: XCTestCase {
         }
         XCTAssertEqual(keys.sorted(), ["a", "b", "c"])
         XCTAssertEqual(values.sorted(), [1, 2, 3])
+
+        keys.removeAll()
+        values.removeAll()
+        var itr = dict.makeIterator()
+        while let (key, value) = itr.next() {
+            keys.append(key)
+            values.append(value)
+        }
+        XCTAssertEqual(keys.sorted(), ["a", "b", "c"])
+        XCTAssertEqual(values.sorted(), [1, 2, 3])
     }
 
     func testKeysValues() {

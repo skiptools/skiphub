@@ -119,9 +119,8 @@ extension Bundle {
         if callingClassName.hasSuffix("Kt") {
             callingClassName = callingClassName.dropLast(2)
         }
-        //~~~ TODO: Changing 'c' to 'callingClass' here results in it being transpiled to Bundle(calling.class.kotlin ...). Figure out why
-        let c = Class.forName(callingClassName)
-        return Bundle(c.kotlin as AnyClass)
+        let callingClass = Class.forName(callingClassName)
+        return Bundle(callingClass.kotlin as AnyClass)
     }
 
     /// Creates a relative path to the given bundle URL
