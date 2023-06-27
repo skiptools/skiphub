@@ -181,7 +181,7 @@ final class SkipUITests: XCTestCase {
 
         XCTAssertEqual(rule.onRoot().fetchSemanticsNode().treeString(), """
         Node:
-          Node:Text=[ABC] GetTextLayoutResult=AccessibilityAction(label=null, action=Function1<java.util.List<androidx.compose.ui.text.TextLayoutResult>, java.lang.Boolean>)
+          Node:Text=[ABC] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
         """)
         #endif
     }
@@ -202,8 +202,8 @@ final class SkipUITests: XCTestCase {
 
         XCTAssertEqual(rule.onRoot().fetchSemanticsNode().treeString(), """
         Node:
-          Node:TestTag=Counter Text=[0] GetTextLayoutResult=AccessibilityAction(label=null, action=Function1<java.util.List<androidx.compose.ui.text.TextLayoutResult>, java.lang.Boolean>)
-          Node:Role=Button OnClick=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Focused=false RequestFocus=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Text=[Increment] GetTextLayoutResult=AccessibilityAction(label=null, action=Function1<java.util.List<androidx.compose.ui.text.TextLayoutResult>, java.lang.Boolean>)
+          Node:TestTag=Counter Text=[0] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+          Node:Role=Button OnClick=AccessibilityAction(label=null, action=() -> kotlin.Boolean) Focused=false RequestFocus=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Text=[Increment] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
         """)
 
         rule
@@ -218,8 +218,8 @@ final class SkipUITests: XCTestCase {
 
         XCTAssertEqual(rule.onRoot().fetchSemanticsNode().treeString(), """
         Node:
-          Node:TestTag=Counter Text=[1] GetTextLayoutResult=AccessibilityAction(label=null, action=Function1<java.util.List<androidx.compose.ui.text.TextLayoutResult>, java.lang.Boolean>)
-          Node:Role=Button OnClick=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Focused=false RequestFocus=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Text=[Increment] GetTextLayoutResult=AccessibilityAction(label=null, action=Function1<java.util.List<androidx.compose.ui.text.TextLayoutResult>, java.lang.Boolean>)
+          Node:TestTag=Counter Text=[1] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
+          Node:Role=Button OnClick=AccessibilityAction(label=null, action=() -> kotlin.Boolean) Focused=false RequestFocus=AccessibilityAction(label=null, action=Function0<java.lang.Boolean>) Text=[Increment] GetTextLayoutResult=AccessibilityAction(label=null, action=(kotlin.collections.MutableList<androidx.compose.ui.text.TextLayoutResult>) -> kotlin.Boolean)
         """)
 
         #endif
