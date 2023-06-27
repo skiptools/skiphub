@@ -60,23 +60,25 @@ final class URLTests: XCTestCase {
         XCTAssertEqual(false, config.shouldUseExtendedBackgroundIdleMode)
     }
 
-    let testURL = URL(string: "https://jsonplaceholder.typicode.com/todos/1")!
+    let testURL = URL(string: "https://raw.githubusercontent.com/w3c/activitypub/1a6e82e77da5f36a17e3ebd4be3f7b42a33f82da/w3c.json")!
 
     func testFetchURLAsync() async throws {
         let (data, response) = try await URLSession.shared.data(from: testURL)
 
         let HTTPResponse = try XCTUnwrap(response as? HTTPURLResponse)
-        XCTAssertEqual("application/json", HTTPResponse.mimeType)
+        XCTAssertEqual("text/plain", HTTPResponse.mimeType)
         XCTAssertEqual("utf-8", HTTPResponse.textEncodingName)
-        XCTAssertEqual(83, HTTPResponse.expectedContentLength)
+        XCTAssertEqual(104, HTTPResponse.expectedContentLength)
 
-        XCTAssertEqual(83, data.count)
+        XCTAssertEqual(104, data.count)
         XCTAssertEqual(String(data: data, encoding: String.Encoding.utf8), """
         {
-          "userId": 1,
-          "id": 1,
-          "title": "delectus aut autem",
-          "completed": false
+          "group": 72531,
+          "contacts": [
+            "plehegar"
+          ],
+          "policy": "open",
+          "repo-type": "rec-track"
         }
         """)
     }
@@ -84,18 +86,20 @@ final class URLTests: XCTestCase {
     func testDownloadURLAsync() async throws {
         let (localURL, response) = try await URLSession.shared.download(from: testURL)
         let HTTPResponse = try XCTUnwrap(response as? HTTPURLResponse)
-        XCTAssertEqual("application/json", HTTPResponse.mimeType)
+        XCTAssertEqual("text/plain", HTTPResponse.mimeType)
         XCTAssertEqual("utf-8", HTTPResponse.textEncodingName)
-        XCTAssertEqual(83, HTTPResponse.expectedContentLength)
+        XCTAssertEqual(104, HTTPResponse.expectedContentLength)
 
         let data = try Data(contentsOf: localURL)
-        XCTAssertEqual(83, data.count)
+        XCTAssertEqual(104, data.count)
         XCTAssertEqual(String(data: data, encoding: String.Encoding.utf8), """
         {
-          "userId": 1,
-          "id": 1,
-          "title": "delectus aut autem",
-          "completed": false
+          "group": 72531,
+          "contacts": [
+            "plehegar"
+          ],
+          "policy": "open",
+          "repo-type": "rec-track"
         }
         """)
     }
@@ -103,22 +107,24 @@ final class URLTests: XCTestCase {
     func testAsyncBytes() async throws {
         let (bytes, response) = try await URLSession.shared.bytes(from: testURL)
         let HTTPResponse = try XCTUnwrap(response as? HTTPURLResponse)
-        XCTAssertEqual("application/json", HTTPResponse.mimeType)
+        XCTAssertEqual("text/plain", HTTPResponse.mimeType)
         XCTAssertEqual("utf-8", HTTPResponse.textEncodingName)
-        XCTAssertEqual(83, HTTPResponse.expectedContentLength)
+        XCTAssertEqual(104, HTTPResponse.expectedContentLength)
 
-        // SKIP FIXME: error without inout handling
-        //let data = try await bytes.reduce(into: Data(capacity: Int(HTTPResponse.expectedContentLength)), { dat, byte in
-        //    let bytes: Array<UInt8> = [byte]
-        //    dat.append(contentsOf: bytes)
+        //let data = try await bytes.reduce(into: Data(), { dat, byte in
+        //    var d: Data = dat // Unresolved reference with inout
+        //    var b: [UInt8] = [byte]
+        //    dat.append(contentsOf: [byte])
         //})
 
         //XCTAssertEqual(String(data: data, encoding: String.Encoding.utf8), """
         //{
-        //  "userId": 1,
-        //  "id": 1,
-        //  "title": "delectus aut autem",
-        //  "completed": false
+        //  "group": 72531,
+        //  "contacts": [
+        //    "plehegar"
+        //  ],
+        //  "policy": "open",
+        //  "repo-type": "rec-track"
         //}
         //""")
     }

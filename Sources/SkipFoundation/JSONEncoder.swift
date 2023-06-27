@@ -138,7 +138,7 @@ open class JSONEncoder {
             guard !stringKey.isEmpty else { return stringKey }
 
             #if SKIP // unavailable API
-            fatalError("SKIP TODO: _convertToSnakeCase")
+            fatalError("SKIP TODO: JSON snakeCase")
             #else
             var words: [Range<String.Index>] = []
             // The general idea of this algorithm is to split words on transition from lower to upper case, then on transition of >1 upper case characters to lowercase

@@ -26,17 +26,8 @@ func SkipCrash<T>(_ reason: String) -> T {
 public typealias AnyClass = kotlin.reflect.KClass<Any>
 public typealias NSObject = java.lang.Object
 public typealias NSString = kotlin.String
-#endif
 
-#if SKIP
 public protocol NSObjectProtocol {
-}
-
-// SKIP TODO: synthesize DecodableCompanion
-public class DecodableCompanion {
-    init(from: Decoder) {
-        fatalError("SKIP TODO: Decoder")
-    }
 }
 #endif
 

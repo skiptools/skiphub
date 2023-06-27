@@ -8,16 +8,6 @@ public protocol Encodable {
     func encode(to encoder: Encoder) throws
 }
 
-public protocol Decodable {
-
-    #if SKIP // Kotlin does not support constructors in protocols
-    // SKIP DECLARE: fun init(from: Decoder): Decodable?
-    // static func `init`(from decoder: Decoder) throws -> Decodable
-    #else
-    init(from decoder: Decoder) throws
-    #endif
-}
-
 #if !SKIP // Kotlin has no composite protocols
 public typealias Codable = Decodable & Encodable
 #else
@@ -74,14 +64,6 @@ public protocol Encoder {
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey
     func unkeyedContainer() -> UnkeyedEncodingContainer
     func singleValueContainer() -> SingleValueEncodingContainer
-}
-
-public protocol Decoder {
-    var codingPath: [CodingKey] { get }
-    var userInfo: [CodingUserInfoKey : Any] { get }
-    //func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey
-    //func unkeyedContainer() throws -> UnkeyedDecodingContainer
-    //func singleValueContainer() throws -> SingleValueDecodingContainer
 }
 
 public protocol KeyedEncodingContainerProtocol {

@@ -4,6 +4,55 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
+#if SKIP
+internal class JSONParser {
+    var reader: org.json.JSONTokener
+
+    init(bytes: [UInt8]) {
+        self.reader = org.json.JSONTokener(String(data: Data(bytes), encoding: .utf8) ?? "")
+    }
+
+    public func parse() throws -> JSONValue {
+        createJSONValue(from: reader.nextValue())
+    }
+
+    /// https://developer.android.com/reference/org/json/JSONTokener#nextValue()
+    /// a JSONObject, JSONArray, String, Boolean, Integer, Long, Double or JSONObject#NULL.
+    func createJSONValue(from token: Any) -> JSONValue {
+        if token === nil || token === org.json.JSONObject.NULL {
+            return JSONValue.null
+        } else {
+            switch token {
+            case let str as String:
+                return JSONValue.string(str)
+            case let lng as Long:
+                return JSONValue.number(lng.toString())
+            case let int as Integer:
+                return JSONValue.number(int.toString())
+            case let dbl as Double:
+                return JSONValue.number(dbl.toString())
+            case let bol as Boolean:
+                return JSONValue.bool(bol)
+            case let obj as org.json.JSONObject:
+                var dict = Dictionary<String, JSONValue>()
+                for key in obj.keys() {
+                    dict[key] = createJSONValue(from: obj.get(key))
+                }
+                return JSONValue.object(dict)
+            case let arr as org.json.JSONArray:
+                var array = Array<JSONValue>()
+                for i in 0..<arr.length() {
+                    array.append(createJSONValue(from: arr.get(i)))
+                }
+                return JSONValue.array(array)
+            default:
+                fatalError("Unhandled JSON type: \(type(of: token))")
+            }
+        }
+    }
+}
+#endif
+
 #if !SKIP // TODO: Skipify JSON
 
 // This code is adapted from https://github.com/apple/swift-corelibs-foundation/blob/main/Tests/Foundation/Tests which has the following license:
@@ -43,8 +92,7 @@ internal struct JSONParser {
 
         // ensure only white space is remaining
         var whitespace = 0
-        //while let next = reader.peek(offset: whitespace) { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-        while true { if let next = reader.peek(offset: whitespace) {
+        while let next = reader.peek(offset: whitespace) {
             switch next {
             case UInt8_space, UInt8_tab, UInt8_return, UInt8_newline:
                 whitespace += 1
@@ -52,7 +100,7 @@ internal struct JSONParser {
             default:
                 throw JSONError.unexpectedCharacter(ascii: next, characterIndex: reader.readerIndex + whitespace)
             }
-        } else { break } }
+        }
 
         return value
     }
@@ -61,8 +109,7 @@ internal struct JSONParser {
 
     mutating func parseValue() throws -> JSONValue {
         var whitespace = 0
-        // while let byte = reader.peek(offset: whitespace) { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-        while true { if let byte = reader.peek(offset: whitespace) {
+        while let byte = reader.peek(offset: whitespace) {
             switch byte {
             case UInt8(ascii: "\""):
                 reader.moveReaderIndex(forwardBy: whitespace)
@@ -93,7 +140,7 @@ internal struct JSONParser {
             default:
                 throw JSONError.unexpectedCharacter(ascii: byte, characterIndex: self.reader.readerIndex)
             }
-        } else { break } }
+        }
 
         throw JSONError.unexpectedEndOfFile
     }
@@ -265,8 +312,7 @@ extension JSONParser {
         @discardableResult
         mutating func consumeWhitespace() throws -> UInt8 {
             var whitespace = 0
-            //while let ascii = self.peek(offset: whitespace) { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-            while true { if let ascii = self.peek(offset: whitespace) {
+            while let ascii = self.peek(offset: whitespace) {
                 switch ascii {
                 case UInt8_space, UInt8_return, UInt8_newline, UInt8_tab:
                     whitespace += 1
@@ -275,7 +321,7 @@ extension JSONParser {
                     self.moveReaderIndex(forwardBy: whitespace)
                     return ascii
                 }
-            } else { break } }
+            }
 
             throw JSONError.unexpectedEndOfFile
         }
@@ -354,8 +400,7 @@ extension JSONParser {
             var copy = 0
             var output: String?
 
-            //while let byte = peek(offset: copy) { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-            while true { if let byte = peek(offset: copy) {
+            while let byte = peek(offset: copy) {
                 switch byte {
                 case UInt8(ascii: "\""):
                     self.moveReaderIndex(forwardBy: copy + 1)
@@ -409,7 +454,7 @@ extension JSONParser {
                     copy += 1
                     continue
                 }
-            } else { break } }
+            }
 
             throw JSONError.unexpectedEndOfFile
         }
@@ -429,15 +474,15 @@ extension JSONParser {
             }
 
             switch ascii {
-            case 0x22: return "\""
-            case 0x5C: return "\\"
-            case 0x2F: return "/"
-            case 0x62: return "\u{08}" // \b
-            case 0x66: return "\u{0C}" // \f
-            case 0x6E: return "\u{0A}" // \n
-            case 0x72: return "\u{0D}" // \r
-            case 0x74: return "\u{09}" // \t
-            case 0x75:
+            case UInt8(0x22): return "\""
+            case UInt8(0x5C): return "\\"
+            case UInt8(0x2F): return "/"
+            case UInt8(0x62): return "\u{08}" // \b
+            case UInt8(0x66): return "\u{0C}" // \f
+            case UInt8(0x6E): return "\u{0A}" // \n
+            case UInt8(0x72): return "\u{0D}" // \r
+            case UInt8(0x74): return "\u{09}" // \t
+            case UInt8(0x75):
                 let character = try parseUnicodeSequence()
                 return String(character)
             default:
@@ -529,14 +574,14 @@ extension JSONParser {
 
         private static func hexAsciiTo4Bits(_ ascii: UInt8) -> UInt8? {
             switch ascii {
-            case 48 ... 57:
-                return ascii - 48
-            case 65 ... 70:
+            case UInt8(48) ... UInt8(57):
+                return ascii - UInt8(48) as UInt8?
+            case UInt8(65) ... UInt8(70):
                 // uppercase letters
-                return ascii - 55
-            case 97 ... 102:
+                return ascii - UInt8(55) as UInt8?
+            case UInt8(97) ... UInt8(102):
                 // lowercase letters
-                return ascii - 87
+                return ascii - UInt8(87) as UInt8?
             default:
                 return nil
             }
@@ -553,7 +598,7 @@ extension JSONParser {
 
         private mutating func parseNumber() throws -> String {
             var pastControlChar: ControlCharacter = .operand
-            var numbersSinceControlChar: UInt = 0
+            var numbersSinceControlChar = 0
             var hasLeadingZero = false
 
             // parse first character
@@ -579,8 +624,7 @@ extension JSONParser {
             var numberchars = 1
 
             // parse everything else
-            // while let byte = self.peek(offset: numberchars) { // Kotlin does not support optional bindings in loop conditions. Consider using an if statement before or within your loop
-            while true { if let byte = self.peek(offset: numberchars) {
+            while let byte = self.peek(offset: numberchars) {
                 switch byte {
                 case UInt8(ascii: "0"):
                     if hasLeadingZero {
@@ -642,18 +686,16 @@ extension JSONParser {
                 default:
                     throw JSONError.unexpectedCharacter(ascii: byte, characterIndex: readerIndex + numberchars)
                 }
-            } else { break } }
+            }
 
             guard numbersSinceControlChar > 0 else {
                 throw JSONError.unexpectedEndOfFile
             }
 
             defer { self.readerIndex = self.array.endIndex }
-            #if !JSON_NOSKIP // Initializer 'init(decoding:as:)' requires the types 'UInt8' and 'Unicode.UTF8.CodeUnit' be equivalent
+
             fatalError("TODO: String(decoding:)")
-            #else
-            return String(decoding: self.array.suffix(from: readerIndex), as: Unicode.UTF8.self)
-            #endif
+            //return String(decoding: self.array.suffix(from: readerIndex), as: Swift.Unicode.UTF8.self)
         }
     }
 }

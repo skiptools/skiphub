@@ -31,23 +31,23 @@ import class Foundation.DateFormatter
 class TestJSON : XCTestCase {
     fileprivate let logger: Logger = Logger(subsystem: "test", category: "TestJSON")
 
-    struct StringField : Equatable, Encodable {
+    struct StringField : Equatable, Codable {
         var stringField: String
     }
 
-    struct IntField : Equatable, Encodable {
+    struct IntField : Equatable, Codable {
         var intField: Int
     }
 
-    struct BoolField : Equatable, Encodable {
+    struct BoolField : Equatable, Codable {
         var boolField: Bool
     }
 
-    struct FloatField : Equatable, Encodable {
+    struct FloatField : Equatable, Codable {
         var floatField: Float
     }
 
-    struct DoubleField : Equatable, Encodable {
+    struct DoubleField : Equatable, Codable {
         var doubleField: Double
     }
 
@@ -138,12 +138,12 @@ class TestJSON : XCTestCase {
 
     #if !SKIP
     // SKIP TODO: implement container.encode(stringArrayField, forKey = CodingKeys.stringArrayField)
-    struct StringSetField : Equatable, Encodable {
+    struct StringSetField : Equatable, Codable {
         var stringSetField: Set<String>
     }
     #endif
 
-    struct Person : Equatable, Encodable {
+    struct Person : Equatable, Codable {
         var firstName: String
         var lastName: String
         var age: Int?
@@ -159,6 +159,8 @@ class TestJSON : XCTestCase {
         var departmentMembers: [String: [Person]]
     }
 
+    // TODO: Type 'TestJSON.ManualPerson' does not conform to protocol 'Decodable'
+    // Unable to locate the property for this coding key
     struct ManualPerson: Encodable {
         let name: String
         let age: Int
@@ -173,6 +175,26 @@ class TestJSON : XCTestCase {
             case nameX
             case ageX
         }
+    }
+
+    struct MyTestData: Encodable, Equatable {
+        let thisIsAString: String
+        let thisIsABool: Bool
+        let thisIsAnInt: Int
+        let thisIsAnInt8: Int8
+        let thisIsAnInt16: Int16
+        let thisIsAnInt32: Int32
+        let thisIsAnInt64: Int64
+        let thisIsAUint: UInt
+        let thisIsAUint8: UInt8
+        let thisIsAUint16: UInt16
+        let thisIsAUint32: UInt32
+        let thisIsAUint64: UInt64
+        let thisIsAFloat: Float
+        let thisIsADouble: Double
+        let thisIsADate: Date
+        let thisIsAnArray: Array<Int>
+        let thisIsADictionary: Dictionary<String, Bool>
     }
 
     func testJSONCodable() throws {
@@ -197,7 +219,18 @@ class TestJSON : XCTestCase {
             return String(data: data, encoding: .utf8) ?? ""
         }
 
-        XCTAssertEqual(#"{"intField":1}"#, try enc(IntField(intField: Int(1))))
+        func rt<T>(type: T.Type, value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String where T : Encodable, T : Decodable, T : Equatable {
+            let json = try enc(value, fmt: fmt, data: data, date: date, floats: floats, keys: keys)
+            let decoder = JSONDecoder()
+
+            let value2 = try decoder.decode(type, from: json.data(using: .utf8)!)
+            XCTAssertEqual(value, value2)
+            
+            return json
+        }
+
+        //XCTAssertEqual(#"{"intField":1}"#, try rt(type: IntField.self, value: IntField(intField: Int(1))))
+
         // difference between ObjC and native Swift JSONEncoder
         //XCTAssertEqual(#"{"floatField":1.1000000238418579}"#, try enc(FloatField(floatField: Float(1.1))))
         XCTAssertEqual(#"{"floatField":1.5}"#, try enc(FloatField(floatField: Float(1.5))))
@@ -236,6 +269,68 @@ class TestJSON : XCTestCase {
         XCTAssertEqual(#"{"boolArrayArrayField":[[false,true]]}"#, try enc(BoolArrayArrayField(boolArrayArrayField: [[false,true]])))
         XCTAssertEqual(#"{"boolArrayArrayArrayField":[[[false,true],[false,true]],[[false,true],[false,true]]]}"#, try enc(BoolArrayArrayArrayField(boolArrayArrayArrayField: [[[false,true],[false,true]],[[false,true],[false,true]]])))
 
+        let testData = MyTestData(thisIsAString: "ABC", thisIsABool: true, thisIsAnInt: 1, thisIsAnInt8: Int8(2), thisIsAnInt16: Int16(3), thisIsAnInt32: Int32(4), thisIsAnInt64: Int64(5), thisIsAUint: UInt(6), thisIsAUint8: UInt8(7), thisIsAUint16: UInt16(8), thisIsAUint32: UInt32(9), thisIsAUint64: UInt64(10), thisIsAFloat: Float(11.0), thisIsADouble: Double(12.0), thisIsADate: Date(timeIntervalSinceReferenceDate: 12345.0), thisIsAnArray: [-1,0,1], thisIsADictionary: ["X": true, "Y": false])
+
+        #if !SKIP
+        XCTAssertEqual("""
+        {
+          "thisIsABool" : true,
+          "thisIsADate" : 12345,
+          "thisIsADictionary" : {
+            "X" : true,
+            "Y" : false
+          },
+          "thisIsADouble" : 12,
+          "thisIsAFloat" : 11,
+          "thisIsAnArray" : [
+            -1,
+            0,
+            1
+          ],
+          "thisIsAnInt" : 1,
+          "thisIsAnInt8" : 2,
+          "thisIsAnInt16" : 3,
+          "thisIsAnInt32" : 4,
+          "thisIsAnInt64" : 5,
+          "thisIsAString" : "ABC",
+          "thisIsAUint" : 6,
+          "thisIsAUint8" : 7,
+          "thisIsAUint16" : 8,
+          "thisIsAUint32" : 9,
+          "thisIsAUint64" : 10
+        }
+        """, try enc(testData, fmt: [.prettyPrinted, .sortedKeys] as JSONEncoder.OutputFormatting))
+
+        XCTAssertEqual("""
+        {
+          "this_is_a_bool" : true,
+          "this_is_a_date" : 12345,
+          "this_is_a_dictionary" : {
+            "X" : true,
+            "Y" : false
+          },
+          "this_is_a_double" : 12,
+          "this_is_a_float" : 11,
+          "this_is_a_string" : "ABC",
+          "this_is_a_uint" : 6,
+          "this_is_a_uint8" : 7,
+          "this_is_a_uint16" : 8,
+          "this_is_a_uint32" : 9,
+          "this_is_a_uint64" : 10,
+          "this_is_an_array" : [
+            -1,
+            0,
+            1
+          ],
+          "this_is_an_int" : 1,
+          "this_is_an_int8" : 2,
+          "this_is_an_int16" : 3,
+          "this_is_an_int32" : 4,
+          "this_is_an_int64" : 5
+        }
+        """, try enc(testData, fmt: [.prettyPrinted, .sortedKeys] as JSONEncoder.OutputFormatting, keys: .convertToSnakeCase as JSONEncoder.KeyEncodingStrategy))
+        #endif
+        
         XCTAssertEqual(#"{"ageX":123,"nameX":"ABC"}"#, try enc(ManualPerson(name: "ABC", age: 123)))
 
         let p1 = Person(firstName: "Jon", lastName: "Doe", height: 180.5)
