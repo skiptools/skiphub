@@ -32,57 +32,67 @@ fun Byte(number: UByte): Byte = number.toByte()
 fun Byte(number: UShort): Byte = number.toByte()
 fun Byte(number: UInt): Byte = number.toByte()
 fun Byte(number: ULong): Byte = number.toByte()
+fun Byte(string: String): Byte? = try { string.toByte() } catch (e: NumberFormatException) { null }
 
 fun Short(number: Number): Short = number.toShort()
 fun Short(number: UByte): Short = number.toShort()
 fun Short(number: UShort): Short = number.toShort()
 fun Short(number: UInt): Short = number.toShort()
 fun Short(number: ULong): Short = number.toShort()
+fun Short(string: String): Short? = try { string.toShort() } catch (e: NumberFormatException) { null }
 
 fun Int(number: Number): Int = number.toInt()
 fun Int(number: UByte): Int = number.toInt()
 fun Int(number: UShort): Int = number.toInt()
 fun Int(number: UInt): Int = number.toInt()
 fun Int(number: ULong): Int = number.toInt()
+fun Int(string: String): Int? = try { string.toInt() } catch (e: NumberFormatException) { null }
 
 fun Long(number: Number): Long = number.toLong()
 fun Long(number: UByte): Long = number.toLong()
 fun Long(number: UShort): Long = number.toLong()
 fun Long(number: UInt): Long = number.toLong()
 fun Long(number: ULong): Long = number.toLong()
+fun Long(string: String): Long? = try { string.toLong() } catch (e: NumberFormatException) { null }
 
 fun UByte(number: Number): UByte = number.toLong().toUByte()
 fun UByte(number: UByte): UByte = number
 fun UByte(number: UShort): UByte = number.toUByte()
 fun UByte(number: UInt): UByte = number.toUByte()
 fun UByte(number: ULong): UByte = number.toUByte()
+fun UByte(string: String): UByte? = try { string.toUByte() } catch (e: NumberFormatException) { null }
 
 fun UShort(number: Number): UShort = number.toLong().toUShort()
 fun UShort(number: UByte): UShort = number.toUShort()
 fun UShort(number: UShort): UShort = number
 fun UShort(number: UInt): UShort = number.toUShort()
 fun UShort(number: ULong): UShort = number.toUShort()
+fun UShort(string: String): UShort? = try { string.toUShort() } catch (e: NumberFormatException) { null }
 
 fun UInt(number: Number): UInt = number.toLong().toUInt()
 fun UInt(number: UByte): UInt = number.toUInt()
 fun UInt(number: UShort): UInt = number.toUInt()
 fun UInt(number: UInt): UInt = number
 fun UInt(number: ULong): UInt = number.toUInt()
+fun UInt(string: String): UInt? = try { string.toUInt() } catch (e: NumberFormatException) { null }
 
 fun ULong(number: Number): ULong = number.toLong().toULong()
 fun ULong(number: UByte): ULong = number.toULong()
 fun ULong(number: UShort): ULong = number.toULong()
 fun ULong(number: UInt): ULong = number.toULong()
 fun ULong(number: ULong): ULong = number
+fun ULong(string: String): ULong? = try { string.toULong() } catch (e: NumberFormatException) { null }
 
 fun Float(number: Number): Float = number.toFloat()
 fun Float(number: UByte): Float = number.toFloat()
 fun Float(number: UShort): Float = number.toFloat()
 fun Float(number: UInt): Float = number.toFloat()
 fun Float(number: ULong): Float = number.toFloat()
+fun Float(string: String): Float? = try { string.toFloat() } catch (e: NumberFormatException) { null }
 
 fun Double(number: Number): Double = number.toDouble()
 fun Double(number: UByte): Double = number.toDouble()
 fun Double(number: UShort): Double = number.toDouble()
 fun Double(number: UInt): Double = number.toDouble()
 fun Double(number: ULong): Double = number.toDouble()
+fun Double(string: String): Double? = try { string.toDouble() } catch (e: NumberFormatException) { null }

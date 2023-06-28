@@ -66,6 +66,15 @@ public protocol Encoder {
     func singleValueContainer() -> SingleValueEncodingContainer
 }
 
+/// A type that provides a view into an encoder's storage and is used to hold
+/// the encoded properties of an encodable type in a keyed manner.
+///
+/// Encoders should provide types conforming to
+/// `KeyedEncodingContainerProtocol` for their format.
+///
+/// Note that this type differs from `Swift.KeyedEncodingContainerProtocol`
+/// in that is does not declare `associatedtype Key : CodingKey`,
+/// as it is not currently supported in Skip.
 public protocol KeyedEncodingContainerProtocol {
     var codingPath: [CodingKey] { get }
     mutating func encodeNil(forKey key: CodingKey) throws
@@ -783,16 +792,14 @@ internal class _KeyedEncodingContainerBase {
   }
 }
 
-internal typealias Concrete = KeyedEncodingContainerProtocol
-
 
 // internal final class _KeyedEncodingContainerBox<Concrete: KeyedEncodingContainerProtocol>: _KeyedEncodingContainerBase {
 internal final class _KeyedEncodingContainerBox: _KeyedEncodingContainerBase {
   //typealias Key = Concrete.Key
 
-  internal var concrete: Concrete
+  internal var concrete: KeyedEncodingContainerProtocol
 
-  internal init(_ container: Concrete) {
+  internal init(_ container: KeyedEncodingContainerProtocol) {
     concrete = container
   }
 

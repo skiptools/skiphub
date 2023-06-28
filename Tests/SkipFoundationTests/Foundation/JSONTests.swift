@@ -229,13 +229,13 @@ class TestJSON : XCTestCase {
             return json
         }
 
-        //XCTAssertEqual(#"{"intField":1}"#, try rt(type: IntField.self, value: IntField(intField: Int(1))))
+        XCTAssertEqual(#"{"intField":1}"#, try rt(type: IntField.self, value: IntField(intField: Int(1))))
 
         // difference between ObjC and native Swift JSONEncoder
         //XCTAssertEqual(#"{"floatField":1.1000000238418579}"#, try enc(FloatField(floatField: Float(1.1))))
-        XCTAssertEqual(#"{"floatField":1.5}"#, try enc(FloatField(floatField: Float(1.5))))
-        XCTAssertEqual(#"{"stringField":"ABC"}"#, try enc(StringField(stringField: "ABC")))
-        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try enc(StringField(stringField: "ABC/XYZ")))
+        XCTAssertEqual(#"{"floatField":1.5}"#, try rt(type: FloatField.self, value: FloatField(floatField: Float(1.5))))
+        XCTAssertEqual(#"{"stringField":"ABC"}"#, try rt(type: StringField.self, value: StringField(stringField: "ABC")))
+        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try rt(type: StringField.self, value: StringField(stringField: "ABC/XYZ")))
 
         XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)]))))
         XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .base64 as JSONEncoder.DataEncodingStrategy))

@@ -36,297 +36,288 @@ public protocol Decoder {
 ///
 /// Decoders should provide types conforming to `UnkeyedDecodingContainer` for
 /// their format.
+///
+/// Note that this type differs from `Swift.KeyedDecodingContainerProtocol`
+/// in that is does not declare `associatedtype Key : CodingKey`,
+/// as it is not currently supported in Skip.
 public protocol KeyedDecodingContainerProtocol {
-
-    associatedtype Key : CodingKey
-    
     var codingPath: [CodingKey] { get }
-    var allKeys: [Key] { get }
-    func contains(_ key: Key) -> Bool
-    func decodeNil(forKey key: Key) throws -> Bool
-    func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool
-    func decode(_ type: String.Type, forKey key: Key) throws -> String
-    func decode(_ type: Double.Type, forKey key: Key) throws -> Double
-    func decode(_ type: Float.Type, forKey key: Key) throws -> Float
-    func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8
-    func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16
-    func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32
-    func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64
+    var allKeys: [CodingKey] { get }
+    func contains(_ key: CodingKey) -> Bool
+    func decodeNil(forKey key: CodingKey) throws -> Bool
+    func decode(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool
+    func decode(_ type: String.Type, forKey key: CodingKey) throws -> String
+    func decode(_ type: Double.Type, forKey key: CodingKey) throws -> Double
+    func decode(_ type: Float.Type, forKey key: CodingKey) throws -> Float
+    func decode(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8
+    func decode(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16
+    func decode(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32
+    func decode(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64
     #if !SKIP
-    func decode(_ type: Int.Type, forKey key: Key) throws -> Int
-    func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt
+    func decode(_ type: Int.Type, forKey key: CodingKey) throws -> Int
+    func decode(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt
     #endif
-    func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8
-    func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16
-    func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32
-    func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64
-    func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable
-    func decodeIfPresent(_ type: Bool.Type, forKey key: Key) throws -> Bool?
-    func decodeIfPresent(_ type: String.Type, forKey key: Key) throws -> String?
-    func decodeIfPresent(_ type: Double.Type, forKey key: Key) throws -> Double?
-    func decodeIfPresent(_ type: Float.Type, forKey key: Key) throws -> Float?
-    func decodeIfPresent(_ type: Int8.Type, forKey key: Key) throws -> Int8?
-    func decodeIfPresent(_ type: Int16.Type, forKey key: Key) throws -> Int16?
-    func decodeIfPresent(_ type: Int32.Type, forKey key: Key) throws -> Int32?
-    func decodeIfPresent(_ type: Int64.Type, forKey key: Key) throws -> Int64?
+    func decode(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8
+    func decode(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16
+    func decode(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32
+    func decode(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64
+    func decode<T>(_ type: T.Type, forKey key: CodingKey) throws -> T where T : Decodable
+    func decodeIfPresent(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool?
+    func decodeIfPresent(_ type: String.Type, forKey key: CodingKey) throws -> String?
+    func decodeIfPresent(_ type: Double.Type, forKey key: CodingKey) throws -> Double?
+    func decodeIfPresent(_ type: Float.Type, forKey key: CodingKey) throws -> Float?
+    func decodeIfPresent(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8?
+    func decodeIfPresent(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16?
+    func decodeIfPresent(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32?
+    func decodeIfPresent(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64?
     #if !SKIP
-    func decodeIfPresent(_ type: Int.Type, forKey key: Key) throws -> Int?
-    func decodeIfPresent(_ type: UInt.Type, forKey key: Key) throws -> UInt?
+    func decodeIfPresent(_ type: Int.Type, forKey key: CodingKey) throws -> Int?
+    func decodeIfPresent(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt?
     #endif
-    func decodeIfPresent(_ type: UInt8.Type, forKey key: Key) throws -> UInt8?
-    func decodeIfPresent(_ type: UInt16.Type, forKey key: Key) throws -> UInt16?
-    func decodeIfPresent(_ type: UInt32.Type, forKey key: Key) throws -> UInt32?
-    func decodeIfPresent(_ type: UInt64.Type, forKey key: Key) throws -> UInt64?
-    func decodeIfPresent<T>(_ type: T.Type, forKey key: Key) throws -> T? where T : Decodable
-    func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey
-    func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer
+    func decodeIfPresent(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8?
+    func decodeIfPresent(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16?
+    func decodeIfPresent(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32?
+    func decodeIfPresent(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64?
+    func decodeIfPresent<T>(_ type: T.Type, forKey key: CodingKey) throws -> T? where T : Decodable
+    func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: CodingKey) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey
+    func nestedUnkeyedContainer(forKey key: CodingKey) throws -> UnkeyedDecodingContainer
     func superDecoder() throws -> Decoder
-    func superDecoder(forKey key: Key) throws -> Decoder
+    func superDecoder(forKey key: CodingKey) throws -> Decoder
 }
 
 extension KeyedDecodingContainerProtocol {
-    public func decodeIfPresent(_ type: Bool.Type, forKey key: Key) throws -> Bool? {
+    public func decodeIfPresent(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: String.Type, forKey key: Key) throws -> String? {
+    public func decodeIfPresent(_ type: String.Type, forKey key: CodingKey) throws -> String? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: Double.Type, forKey key: Key) throws -> Double? {
+    public func decodeIfPresent(_ type: Double.Type, forKey key: CodingKey) throws -> Double? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: Float.Type, forKey key: Key) throws -> Float? {
+    public func decodeIfPresent(_ type: Float.Type, forKey key: CodingKey) throws -> Float? {
         fatalError("SKIP DECODING TODO")
     }
 
-    //public func decodeIfPresent(_ type: Int.Type, forKey key: Key) throws -> Int? {
+    //public func decodeIfPresent(_ type: Int.Type, forKey key: CodingKey) throws -> Int? {
     //    fatalError("SKIP DECODING TODO")
     //}
 
-    public func decodeIfPresent(_ type: Int8.Type, forKey key: Key) throws -> Int8? {
+    public func decodeIfPresent(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: Int16.Type, forKey key: Key) throws -> Int16? {
+    public func decodeIfPresent(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: Int32.Type, forKey key: Key) throws -> Int32? {
+    public func decodeIfPresent(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: Int64.Type, forKey key: Key) throws -> Int64? {
+    public func decodeIfPresent(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64? {
         fatalError("SKIP DECODING TODO")
     }
 
-    //public func decodeIfPresent(_ type: UInt.Type, forKey key: Key) throws -> UInt? {
+    //public func decodeIfPresent(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt? {
     //    fatalError("SKIP DECODING TODO")
     //}
 
-    public func decodeIfPresent(_ type: UInt8.Type, forKey key: Key) throws -> UInt8? {
+    public func decodeIfPresent(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: UInt16.Type, forKey key: Key) throws -> UInt16? {
+    public func decodeIfPresent(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: UInt32.Type, forKey key: Key) throws -> UInt32? {
+    public func decodeIfPresent(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent(_ type: UInt64.Type, forKey key: Key) throws -> UInt64? {
+    public func decodeIfPresent(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64? {
         fatalError("SKIP DECODING TODO")
     }
 
-    public func decodeIfPresent<T>(_ type: T.Type, forKey key: Key) throws -> T? where T : Decodable {
+    public func decodeIfPresent<T>(_ type: T.Type, forKey key: CodingKey) throws -> T? where T : Decodable {
         fatalError("SKIP DECODING TODO")
     }
 }
 
-#if SKIP
-typealias DecodingContainerKey = CodingKey
-#endif
-
 /// A concrete container that provides a view into a decoder's storage, making
 /// the encoded properties of a decodable type accessible by keys.
-public struct KeyedDecodingContainer<K> : KeyedDecodingContainerProtocol where K : CodingKey {
-    #if !SKIP
-    public typealias Key = K
-    public typealias DecodingContainerKey = Key
-    #endif
+public struct KeyedDecodingContainer<Key: CodingKey> : KeyedDecodingContainerProtocol {
 
-    #if !SKIP
-    /// Creates a new instance with the given container.
-    ///
-    /// - parameter container: The container to hold.
-    public init<Container>(_ container: Container) where K == Container.Key, Container : KeyedDecodingContainerProtocol {
-        fatalError("SKIP DECODING TODO")
+    internal var _box: _KeyedDecodingContainerBase
+
+    public init(_ container: any KeyedDecodingContainerProtocol) {
+        self._box = _KeyedDecodingContainerBox(container)
     }
-    #else
-    public init(_ container: Any) {
-    }
-    #endif
 
     /// The path of coding keys taken to get to this point in decoding.
-    public var codingPath: [CodingKey] = []
-
-    public var allKeys: [DecodingContainerKey] = []
-
-    public func contains(_ key: DecodingContainerKey) -> Bool {
-        fatalError("SKIP DECODING TODO")
+    public var codingPath: [CodingKey] {
+        return _box.codingPath
     }
 
-    public func decodeNil(forKey key: DecodingContainerKey) throws -> Bool {
-        fatalError("SKIP DECODING TODO")
+    public var allKeys: [CodingKey] {
+        return _box.allKeys
     }
 
-    public func decode(_ type: Bool.Type, forKey key: DecodingContainerKey) throws -> Bool {
-        fatalError("SKIP DECODING TODO")
+    public func contains(_ key: CodingKey) -> Bool {
+        return _box.contains(key)
     }
 
-    public func decode(_ type: String.Type, forKey key: DecodingContainerKey) throws -> String {
-        fatalError("SKIP DECODING TODO")
+    public func decodeNil(forKey key: CodingKey) throws -> Bool {
+        return try _box.decodeNil(forKey: key)
     }
 
-    public func decode(_ type: Double.Type, forKey key: DecodingContainerKey) throws -> Double {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decode(_ type: Float.Type, forKey key: DecodingContainerKey) throws -> Float {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: String.Type, forKey key: CodingKey) throws -> String {
+        return try _box.decode(type, forKey: key)
     }
 
-    #if !SKIP
-    public func decode(_ type: Int.Type, forKey key: DecodingContainerKey) throws -> Int {
-        fatalError("SKIP DECODING TODO")
-    }
-    #endif
-
-    public func decode(_ type: Int8.Type, forKey key: DecodingContainerKey) throws -> Int8 {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Double.Type, forKey key: CodingKey) throws -> Double {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decode(_ type: Int16.Type, forKey key: DecodingContainerKey) throws -> Int16 {
-        fatalError("SKIP DECODING TODO")
-    }
-
-    public func decode(_ type: Int32.Type, forKey key: DecodingContainerKey) throws -> Int32 {
-        fatalError("SKIP DECODING TODO")
-    }
-
-    public func decode(_ type: Int64.Type, forKey key: DecodingContainerKey) throws -> Int64 {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Float.Type, forKey key: CodingKey) throws -> Float {
+        return try _box.decode(type, forKey: key)
     }
 
     #if !SKIP
-    public func decode(_ type: UInt.Type, forKey key: DecodingContainerKey) throws -> UInt {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Int.Type, forKey key: CodingKey) throws -> Int {
+        return try _box.decode(type, forKey: key)
     }
     #endif
 
-    public func decode(_ type: UInt8.Type, forKey key: DecodingContainerKey) throws -> UInt8 {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decode(_ type: UInt16.Type, forKey key: DecodingContainerKey) throws -> UInt16 {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decode(_ type: UInt32.Type, forKey key: DecodingContainerKey) throws -> UInt32 {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decode(_ type: UInt64.Type, forKey key: DecodingContainerKey) throws -> UInt64 {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decode<T>(_ type: T.Type, forKey key: DecodingContainerKey) throws -> T where T : Decodable {
-        fatalError("SKIP DECODING TODO")
+    #if !SKIP
+    public func decode(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt {
+        return try _box.decode(type, forKey: key)
+    }
+    #endif
+
+    public func decode(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: Bool.Type, forKey key: DecodingContainerKey) throws -> Bool? {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: String.Type, forKey key: DecodingContainerKey) throws -> String? {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: Double.Type, forKey key: DecodingContainerKey) throws -> Double? {
-        fatalError("SKIP DECODING TODO")
+    public func decode(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64 {
+        return try _box.decode(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: Float.Type, forKey key: DecodingContainerKey) throws -> Float? {
-        fatalError("SKIP DECODING TODO")
+    public func decode<T>(_ type: T.Type, forKey key: CodingKey) throws -> T where T : Decodable {
+        return try _box.decode(type, forKey: key)
     }
 
-    //public func decodeIfPresent(_ type: Int.Type, forKey key: DecodingContainerKey) throws -> Int? {
-    //    fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: Bool.Type, forKey key: CodingKey) throws -> Bool? {
+        return try _box.decodeIfPresent(type, forKey: key)
+    }
+
+    public func decodeIfPresent(_ type: String.Type, forKey key: CodingKey) throws -> String? {
+        return try _box.decodeIfPresent(type, forKey: key)
+    }
+
+    public func decodeIfPresent(_ type: Double.Type, forKey key: CodingKey) throws -> Double? {
+        return try _box.decodeIfPresent(type, forKey: key)
+    }
+
+    public func decodeIfPresent(_ type: Float.Type, forKey key: CodingKey) throws -> Float? {
+        return try _box.decodeIfPresent(type, forKey: key)
+    }
+
+    //public func decodeIfPresent(_ type: Int.Type, forKey key: CodingKey) throws -> Int? {
+    //    return try _box.decodeIfPresent(type, forKey: key)
     //}
 
-    public func decodeIfPresent(_ type: Int8.Type, forKey key: DecodingContainerKey) throws -> Int8? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: Int8.Type, forKey key: CodingKey) throws -> Int8? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: Int16.Type, forKey key: DecodingContainerKey) throws -> Int16? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: Int16.Type, forKey key: CodingKey) throws -> Int16? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: Int32.Type, forKey key: DecodingContainerKey) throws -> Int32? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: Int32.Type, forKey key: CodingKey) throws -> Int32? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: Int64.Type, forKey key: DecodingContainerKey) throws -> Int64? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: Int64.Type, forKey key: CodingKey) throws -> Int64? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
     #if !SKIP
-    public func decodeIfPresent(_ type: Int.Type, forKey key: DecodingContainerKey) throws -> Int? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: Int.Type, forKey key: CodingKey) throws -> Int? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: UInt.Type, forKey key: DecodingContainerKey) throws -> UInt? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: UInt.Type, forKey key: CodingKey) throws -> UInt? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
     #endif
 
-    public func decodeIfPresent(_ type: UInt8.Type, forKey key: DecodingContainerKey) throws -> UInt8? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: UInt8.Type, forKey key: CodingKey) throws -> UInt8? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: UInt16.Type, forKey key: DecodingContainerKey) throws -> UInt16? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: UInt16.Type, forKey key: CodingKey) throws -> UInt16? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: UInt32.Type, forKey key: DecodingContainerKey) throws -> UInt32? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: UInt32.Type, forKey key: CodingKey) throws -> UInt32? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent(_ type: UInt64.Type, forKey key: DecodingContainerKey) throws -> UInt64? {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent(_ type: UInt64.Type, forKey key: CodingKey) throws -> UInt64? {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func decodeIfPresent<T>(_ type: T.Type, forKey key: DecodingContainerKey) throws -> T? where T : Decodable {
-        fatalError("SKIP DECODING TODO")
+    public func decodeIfPresent<T>(_ type: T.Type, forKey key: CodingKey) throws -> T? where T : Decodable {
+        return try _box.decodeIfPresent(type, forKey: key)
     }
 
-    public func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: DecodingContainerKey) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-        fatalError("SKIP DECODING TODO")
+    public func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: CodingKey) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+        return try _box.nestedContainer(keyedBy: type, forKey: key)
     }
 
-    public func nestedUnkeyedContainer(forKey key: DecodingContainerKey) throws -> UnkeyedDecodingContainer {
-        fatalError("SKIP DECODING TODO")
+    public func nestedUnkeyedContainer(forKey key: CodingKey) throws -> UnkeyedDecodingContainer {
+        return try _box.nestedUnkeyedContainer(forKey: key)
     }
 
     public func superDecoder() throws -> Decoder {
-        fatalError("SKIP DECODING TODO")
+        return try _box.superDecoder()
     }
 
-    public func superDecoder(forKey key: DecodingContainerKey) throws -> Decoder {
-        fatalError("SKIP DECODING TODO")
+    public func superDecoder(forKey key: CodingKey) throws -> Decoder {
+        return try _box.superDecoder(forKey: key)
     }
 }
 
@@ -399,65 +390,65 @@ public protocol UnkeyedDecodingContainer {
 
 extension UnkeyedDecodingContainer {
     public mutating func decodeIfPresent(_ type: Bool.Type) throws -> Bool? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Bool")
     }
 
     public mutating func decodeIfPresent(_ type: String.Type) throws -> String? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent String")
     }
 
     public mutating func decodeIfPresent(_ type: Double.Type) throws -> Double? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Double")
     }
 
     public mutating func decodeIfPresent(_ type: Float.Type) throws -> Float? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Float")
     }
 
     public mutating func decodeIfPresent(_ type: Int8.Type) throws -> Int8? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Int8")
     }
 
     public mutating func decodeIfPresent(_ type: Int16.Type) throws -> Int16? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Int16")
     }
 
     public mutating func decodeIfPresent(_ type: Int32.Type) throws -> Int32? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Int32")
     }
 
     public mutating func decodeIfPresent(_ type: Int64.Type) throws -> Int64? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Int64")
     }
 
     #if !SKIP
     public mutating func decodeIfPresent(_ type: Int.Type) throws -> Int? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent Int")
     }
 
     public mutating func decodeIfPresent(_ type: UInt.Type) throws -> UInt? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent UInt")
     }
     #endif
 
     public mutating func decodeIfPresent(_ type: UInt8.Type) throws -> UInt8? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent")
     }
 
     public mutating func decodeIfPresent(_ type: UInt16.Type) throws -> UInt16? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent")
     }
 
     public mutating func decodeIfPresent(_ type: UInt32.Type) throws -> UInt32? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent")
     }
 
     public mutating func decodeIfPresent(_ type: UInt64.Type) throws -> UInt64? {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent")
     }
 
     public mutating func decodeIfPresent<T>(_ type: T.Type) throws -> T? where T : Decodable {
-        fatalError("SKIP DECODING TODO")
+        fatalError("SKIP TODO: decodeIfPresent")
     }
 }
 
@@ -559,3 +550,603 @@ public enum DecodingError : Error {
         fatalError("SKIP DECODING TODO")
     }
 }
+
+internal class _KeyedDecodingContainerBase {
+  internal init(){}
+
+  deinit {}
+
+  internal var codingPath: [CodingKey] {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal var allKeys: [CodingKey] {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func contains<K: CodingKey>(_ key: K) -> Bool {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeNil<K: CodingKey>(forKey key: K) throws -> Bool {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: Bool.Type,
+    forKey key: K
+  ) throws -> Bool {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: String.Type,
+    forKey key: K
+  ) throws -> String {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: Double.Type,
+    forKey key: K
+  ) throws -> Double {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: Float.Type,
+    forKey key: K
+  ) throws -> Float {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  #if !SKIP // Int = Int32 in Kotlin
+  internal func decode<K: CodingKey>(
+    _ type: Int.Type,
+    forKey key: K
+  ) throws -> Int {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+  #endif
+
+  internal func decode<K: CodingKey>(
+    _ type: Int8.Type,
+    forKey key: K
+  ) throws -> Int8 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: Int16.Type,
+    forKey key: K
+  ) throws -> Int16 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: Int32.Type,
+    forKey key: K
+  ) throws -> Int32 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: Int64.Type,
+    forKey key: K
+  ) throws -> Int64 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  #if !SKIP // UInt = UInt32 in Kotlin
+  internal func decode<K: CodingKey>(
+    _ type: UInt.Type,
+    forKey key: K
+  ) throws -> UInt {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+  #endif
+
+  internal func decode<K: CodingKey>(
+    _ type: UInt8.Type,
+    forKey key: K
+  ) throws -> UInt8 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: UInt16.Type,
+    forKey key: K
+  ) throws -> UInt16 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: UInt32.Type,
+    forKey key: K
+  ) throws -> UInt32 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<K: CodingKey>(
+    _ type: UInt64.Type,
+    forKey key: K
+  ) throws -> UInt64 {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decode<T: Decodable, K: CodingKey>(
+    _ type: T.Type,
+    forKey key: K
+  ) throws -> T {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Bool.Type,
+    forKey key: K
+  ) throws -> Bool? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: String.Type,
+    forKey key: K
+  ) throws -> String? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Double.Type,
+    forKey key: K
+  ) throws -> Double? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Float.Type,
+    forKey key: K
+  ) throws -> Float? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  #if !SKIP // Int = Int32 in Kotlin
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int.Type,
+    forKey key: K
+  ) throws -> Int? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+  #endif
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int8.Type,
+    forKey key: K
+  ) throws -> Int8? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int16.Type,
+    forKey key: K
+  ) throws -> Int16? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int32.Type,
+    forKey key: K
+  ) throws -> Int32? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int64.Type,
+    forKey key: K
+  ) throws -> Int64? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  #if !SKIP // UInt = UInt32 in Kotlin
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt.Type,
+    forKey key: K
+  ) throws -> UInt? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+  #endif
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt8.Type,
+    forKey key: K
+  ) throws -> UInt8? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt16.Type,
+    forKey key: K
+  ) throws -> UInt16? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt32.Type,
+    forKey key: K
+  ) throws -> UInt32? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt64.Type,
+    forKey key: K
+  ) throws -> UInt64? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func decodeIfPresent<T: Decodable, K: CodingKey>(
+    _ type: T.Type,
+    forKey key: K
+  ) throws -> T? {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+
+  internal func nestedContainer<NestedKey: CodingKey>(
+    keyedBy type: NestedKey.Type,
+    forKey key: CodingKey
+  ) throws -> KeyedDecodingContainer<NestedKey> {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func nestedUnkeyedContainer<K: CodingKey>(
+    forKey key: K
+  ) throws -> UnkeyedDecodingContainer {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func superDecoder() throws -> Decoder {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+
+  internal func superDecoder<K: CodingKey>(forKey key: K) throws -> Decoder {
+    fatalError("_KeyedDecodingContainerBase cannot be used directly.")
+  }
+}
+
+
+// internal final class _KeyedDecodingContainerBox<Concrete: KeyedDecodingContainerProtocol>: _KeyedDecodingContainerBase {
+internal final class _KeyedDecodingContainerBox: _KeyedDecodingContainerBase {
+  //typealias Key = Concrete.Key
+
+  internal var concrete: KeyedDecodingContainerProtocol
+
+  internal init(_ container: KeyedDecodingContainerProtocol) {
+    concrete = container
+  }
+
+  override var codingPath: [CodingKey] {
+    return concrete.codingPath
+  }
+
+  override var allKeys: [CodingKey] {
+    return concrete.allKeys
+  }
+
+  override internal func contains<K: CodingKey>(_ key: K) -> Bool {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return concrete.contains(key)
+  }
+
+  override internal func decodeNil<K: CodingKey>(forKey key: K) throws -> Bool {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeNil(forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: Bool.Type,
+    forKey key: K
+  ) throws -> Bool {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Bool.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: String.Type,
+    forKey key: K
+  ) throws -> String {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(String.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: Double.Type,
+    forKey key: K
+  ) throws -> Double {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Double.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: Float.Type,
+    forKey key: K
+  ) throws -> Float {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Float.self, forKey: key)
+  }
+
+  #if !SKIP // Int = Int32 in Kotlin
+  override internal func decode<K: CodingKey>(
+    _ type: Int.Type,
+    forKey key: K
+  ) throws -> Int {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Int.self, forKey: key)
+  }
+  #endif
+
+  override internal func decode<K: CodingKey>(
+    _ type: Int8.Type,
+    forKey key: K
+  ) throws -> Int8 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Int8.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: Int16.Type,
+    forKey key: K
+  ) throws -> Int16 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Int16.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: Int32.Type,
+    forKey key: K
+  ) throws -> Int32 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Int32.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: Int64.Type,
+    forKey key: K
+  ) throws -> Int64 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(Int64.self, forKey: key)
+  }
+
+  #if !SKIP // Int = Int32 in Kotlin
+  override internal func decode<K: CodingKey>(
+    _ type: UInt.Type,
+    forKey key: K
+  ) throws -> UInt {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(UInt.self, forKey: key)
+  }
+  #endif
+
+  override internal func decode<K: CodingKey>(
+    _ type: UInt8.Type,
+    forKey key: K
+  ) throws -> UInt8 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(UInt8.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: UInt16.Type,
+    forKey key: K
+  ) throws -> UInt16 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(UInt16.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: UInt32.Type,
+    forKey key: K
+  ) throws -> UInt32 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(UInt32.self, forKey: key)
+  }
+
+  override internal func decode<K: CodingKey>(
+    _ type: UInt64.Type,
+    forKey key: K
+  ) throws -> UInt64 {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(UInt64.self, forKey: key)
+  }
+
+  override internal func decode<T: Decodable, K: CodingKey>(
+    _ type: T.Type,
+    forKey key: K
+  ) throws -> T {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decode(type, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Bool.Type,
+    forKey key: K
+  ) throws -> Bool? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Bool.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: String.Type,
+    forKey key: K
+  ) throws -> String? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(String.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Double.Type,
+    forKey key: K
+  ) throws -> Double? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Double.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Float.Type,
+    forKey key: K
+  ) throws -> Float? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Float.self, forKey: key)
+  }
+
+  #if !SKIP // Int = Int32 in Kotlin
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int.Type,
+    forKey key: K
+  ) throws -> Int? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Int.self, forKey: key)
+  }
+  #endif
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int8.Type,
+    forKey key: K
+  ) throws -> Int8? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Int8.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int16.Type,
+    forKey key: K
+  ) throws -> Int16? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Int16.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int32.Type,
+    forKey key: K
+  ) throws -> Int32? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Int32.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: Int64.Type,
+    forKey key: K
+  ) throws -> Int64? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(Int64.self, forKey: key)
+  }
+
+  #if !SKIP // UInt = UInt32 in Kotlin
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt.Type,
+    forKey key: K
+  ) throws -> UInt? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(UInt.self, forKey: key)
+  }
+  #endif
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt8.Type,
+    forKey key: K
+  ) throws -> UInt8? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(UInt8.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt16.Type,
+    forKey key: K
+  ) throws -> UInt16? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(UInt16.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt32.Type,
+    forKey key: K
+  ) throws -> UInt32? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(UInt32.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<K: CodingKey>(
+    _ type: UInt64.Type,
+    forKey key: K
+  ) throws -> UInt64? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(UInt64.self, forKey: key)
+  }
+
+  override internal func decodeIfPresent<T: Decodable, K: CodingKey>(
+    _ type: T.Type,
+    forKey key: K
+  ) throws -> T? {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.decodeIfPresent(type, forKey: key)
+  }
+
+//  override internal func nestedContainer<NestedKey, K: CodingKey>(
+//    keyedBy type: NestedKey.Type,
+//    forKey key: K
+//  ) throws -> KeyedDecodingContainer<NestedKey> {
+//    //_internalInvariant(K.self == Key.self)
+//    //let key = unsafeBitCast(key, to: Key.self)
+//    return try concrete.nestedContainer(keyedBy: NestedKey.self, forKey: key)
+//  }
+
+  override internal func nestedUnkeyedContainer<K: CodingKey>(
+    forKey key: K
+  ) throws -> UnkeyedDecodingContainer {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.nestedUnkeyedContainer(forKey: key)
+  }
+
+  override internal func superDecoder() throws -> Decoder {
+    return try concrete.superDecoder()
+  }
+
+  override internal func superDecoder<K: CodingKey>(forKey key: K) throws -> Decoder {
+    //_internalInvariant(K.self == Key.self)
+    //let key = unsafeBitCast(key, to: Key.self)
+    return try concrete.superDecoder(forKey: key)
+  }
+}
+
