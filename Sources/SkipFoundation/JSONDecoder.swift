@@ -805,7 +805,7 @@ fileprivate struct JSONKeyedDecodingContainer<Key : CodingKey>: KeyedDecodingCon
         return decoderForKeyNoThrow(key)
     }
 
-    private func decoderForKey<LocalKey: CodingKey>(_ key: LocalKey) throws -> JSONDecoderImpl {
+    @inline(__always) private func decoderForKey<LocalKey: CodingKey>(_ key: LocalKey) throws -> JSONDecoderImpl {
         let value = try getValue(forKey: key)
         var newPath = self.codingPath
         newPath.append(key)
@@ -818,7 +818,7 @@ fileprivate struct JSONKeyedDecodingContainer<Key : CodingKey>: KeyedDecodingCon
         )
     }
 
-    private func decoderForKeyNoThrow<LocalKey: CodingKey>(_ key: LocalKey) -> JSONDecoderImpl {
+    @inline(__always) private func decoderForKeyNoThrow<LocalKey: CodingKey>(_ key: LocalKey) -> JSONDecoderImpl {
         var value: JSONValue
         do {
             value = try getValue(forKey: key)

@@ -197,45 +197,47 @@ class TestJSON : XCTestCase {
         let thisIsADictionary: Dictionary<String, Bool>
     }
 
+    @inline(__always) private func enc<T: Encodable>(_ value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String {
+        let encoder = JSONEncoder()
+        if let fmt = fmt {
+            encoder.outputFormatting = fmt
+        }
+        if let data = data {
+            encoder.dataEncodingStrategy = data
+        }
+        if let date = date {
+            encoder.dateEncodingStrategy = date
+        }
+        if let floats = floats {
+            encoder.nonConformingFloatEncodingStrategy = floats
+        }
+        if let keys = keys {
+            encoder.keyEncodingStrategy = keys
+        }
+        let data = try encoder.encode(value)
+        return String(data: data, encoding: .utf8) ?? ""
+    }
+
+    /// Round-trip a type
+    @inline(__always) private func roundtrip<T>(value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String where T : Encodable, T : Decodable, T : Equatable {
+        let json = try enc(value, fmt: fmt, data: data, date: date, floats: floats, keys: keys)
+        let decoder = JSONDecoder()
+
+        let value2 = try decoder.decode(T.self, from: json.data(using: String.Encoding.utf8)!)
+        XCTAssertEqual(value, value2)
+
+        return json
+    }
+
     func testJSONCodable() throws {
-        func enc<T: Encodable>(_ value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String {
-            let encoder = JSONEncoder()
-            if let fmt = fmt {
-                encoder.outputFormatting = fmt
-            }
-            if let data = data {
-                encoder.dataEncodingStrategy = data
-            }
-            if let date = date {
-                encoder.dateEncodingStrategy = date
-            }
-            if let floats = floats {
-                encoder.nonConformingFloatEncodingStrategy = floats
-            }
-            if let keys = keys {
-                encoder.keyEncodingStrategy = keys
-            }
-            let data = try encoder.encode(value)
-            return String(data: data, encoding: .utf8) ?? ""
-        }
 
-        func rt<T>(type: T.Type, value: T, fmt: JSONEncoder.OutputFormatting? = .sortedKeys, data: JSONEncoder.DataEncodingStrategy? = nil, date: JSONEncoder.DateEncodingStrategy? = nil, floats: JSONEncoder.NonConformingFloatEncodingStrategy? = nil, keys: JSONEncoder.KeyEncodingStrategy? = nil) throws -> String where T : Encodable, T : Decodable, T : Equatable {
-            let json = try enc(value, fmt: fmt, data: data, date: date, floats: floats, keys: keys)
-            let decoder = JSONDecoder()
-
-            let value2 = try decoder.decode(type, from: json.data(using: .utf8)!)
-            XCTAssertEqual(value, value2)
-            
-            return json
-        }
-
-        XCTAssertEqual(#"{"intField":1}"#, try rt(type: IntField.self, value: IntField(intField: Int(1))))
+        XCTAssertEqual(#"{"intField":1}"#, try roundtrip(value: IntField(intField: Int(1))))
 
         // difference between ObjC and native Swift JSONEncoder
         //XCTAssertEqual(#"{"floatField":1.1000000238418579}"#, try enc(FloatField(floatField: Float(1.1))))
-        XCTAssertEqual(#"{"floatField":1.5}"#, try rt(type: FloatField.self, value: FloatField(floatField: Float(1.5))))
-        XCTAssertEqual(#"{"stringField":"ABC"}"#, try rt(type: StringField.self, value: StringField(stringField: "ABC")))
-        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try rt(type: StringField.self, value: StringField(stringField: "ABC/XYZ")))
+        XCTAssertEqual(#"{"floatField":1.5}"#, try roundtrip(value: FloatField(floatField: Float(1.5))))
+        XCTAssertEqual(#"{"stringField":"ABC"}"#, try roundtrip(value: StringField(stringField: "ABC")))
+        XCTAssertEqual(#"{"stringField":"ABC\/XYZ"}"#, try roundtrip(value: StringField(stringField: "ABC/XYZ")))
 
         XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)]))))
         XCTAssertEqual(#"{"dataField":"AQI="}"#, try enc(DataField(dataField: Data([UInt8(0x01), UInt8(0x02)])), data: .base64 as JSONEncoder.DataEncodingStrategy))
