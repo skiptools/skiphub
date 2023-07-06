@@ -14,9 +14,6 @@ fun <Element> setOf(vararg elements: Element): Set<Element> {
     return Set(storage, nocopy = true)
 }
 
-// Transpiler converts Set.Index to SetIndex
-typealias SetIndex = Int
-
 class Set<Element>: Collection<Element>, SetAlgebra<Set<Element>, Element>, MutableStruct {
     // We attempt to avoid copying when possible. This may involve sharing storage. When storage is
     // shared, we copy on write and rely on our sharing partners to do the same

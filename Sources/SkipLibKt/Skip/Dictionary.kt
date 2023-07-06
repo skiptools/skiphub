@@ -16,9 +16,6 @@ fun <K, V> dictionaryOf(vararg entries: Tuple2<K, V>): Dictionary<K, V> {
     return dictionary
 }
 
-// Transpiler converts Dictionary.Index to DictionaryIndex
-typealias DictionaryIndex = Int
-
 class Dictionary<K, V>: Collection<Tuple2<K, V>>, MutableStruct {
     // We attempt to avoid copying when possible. This may involve sharing storage. When storage is
     // shared, we copy on write and rely on our sharing partners to do the same. We may also maintain

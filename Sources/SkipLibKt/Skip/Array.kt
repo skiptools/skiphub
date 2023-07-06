@@ -14,9 +14,6 @@ fun <Element> arrayOf(vararg elements: Element): Array<Element> {
     return Array(storage, nocopy = true)
 }
 
-// Transpiler converts Array.Index to ArrayIndex
-typealias ArrayIndex = Int
-
 class Array<Element>: RandomAccessCollection<Element>, RangeReplaceableCollection<Element>, MutableCollection<Element>, MutableStruct {
     // We attempt to avoid copying when possible. This may involve sharing storage. When storage is
     // shared, we copy on write and rely on our sharing partners to do the same. We may also maintain

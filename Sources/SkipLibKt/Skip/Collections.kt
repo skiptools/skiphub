@@ -177,9 +177,6 @@ fun <Element> Sequence<Element>.filter(isIncluded: (Element) -> Boolean): Array<
     return Array(iterable.filter(isIncluded), nocopy = true)
 }
 
-// Transpiler converts Collection.Index to CollectionIndex
-typealias CollectionIndex = Int
-
 interface Collection<Element>: Sequence<Element>, CollectionStorage<Element> {
     val startIndex: Int
         get() = storageStartIndex

@@ -10,6 +10,7 @@
 #if SKIP
 
 public struct Dictionary<Key, Value>: Collection {
+    public typealias Index = Int
     public typealias Element = (key: Key, value: Value)
 
     public init() {

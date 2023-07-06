@@ -9,6 +9,8 @@
 #if SKIP
 
 public struct Set<Element>: Collection, SetAlgebra {
+    public typealias Index = Int
+    
     public init() {
     }
 

@@ -9,6 +9,8 @@
 #if SKIP
 
 public struct Array<Element>: RandomAccessCollection, RangeReplaceableCollection, MutableCollection {
+    public typealias Index = Int
+
     public init() {
     }
 
