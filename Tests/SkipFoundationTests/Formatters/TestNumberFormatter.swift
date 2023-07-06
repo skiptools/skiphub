@@ -132,7 +132,8 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
 //        XCTAssertEqual(numberFormatter.format, "#,##0%;0%;#,##0%")
 //        XCTAssertEqual(numberFormatter.positiveFormat, "#,##0%")
 //        XCTAssertEqual(numberFormatter.negativeFormat, "#,##0%")
-        XCTAssertEqual(numberFormatter.multiplier, NSNumber(100))
+        //~~~ remove value: label
+        XCTAssertEqual(numberFormatter.multiplier, NSNumber(value: 100))
         XCTAssertTrue(numberFormatter.usesGroupingSeparator)
         XCTAssertEqual(numberFormatter.groupingSize, 3)
     }
@@ -1345,17 +1346,20 @@ XCTAssertEqual(numberFormatter.maximumIntegerDigits, 2_000_000_000)
         XCTAssertNil(formatter.multiplier)
         #endif
         formatter.numberStyle = NumberFormatter.Style.percent
-        XCTAssertEqual(formatter.multiplier, NSNumber(100))
+        //~~~ remove value: label
+        XCTAssertEqual(formatter.multiplier, NSNumber(value: 100))
         formatter.numberStyle = NumberFormatter.Style.decimal
         #if !SKIP
         XCTAssertNil(formatter.multiplier)
         #endif
-        formatter.multiplier = NSNumber(1)
+        //~~~ remove value: label
+        formatter.multiplier = NSNumber(value: 1)
         formatter.numberStyle = NumberFormatter.Style.percent
         #if !SKIP
         XCTAssertEqual(formatter.multiplier, NSNumber(1))
         #endif
-        formatter.multiplier = NSNumber(27)
+        //~~~ remove value: label
+        formatter.multiplier = NSNumber(value: 27)
         formatter.numberStyle = NumberFormatter.Style.decimal
         #if !SKIP
         XCTAssertEqual(formatter.multiplier, NSNumber(27))

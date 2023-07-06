@@ -16,7 +16,7 @@ public typealias PlatformCalendarIdentifier = Calendar.Identifier
 #endif
 
 // seems to be needed to expose java.util.Calendar.clone()
-// SKIP INSERT: fun PlatformCalendar.clone(): PlatformCalendar { return this.clone() as PlatformCalendar }
+// SKIP INSERT: fun java.util.Calendar.clone(): java.util.Calendar { return this.clone() as java.util.Calendar }
 
 /// A definition of the relationships between calendar units and absolute points in time, providing features for calculation and comparison of dates.
 public struct Calendar : Hashable, CustomStringConvertible {

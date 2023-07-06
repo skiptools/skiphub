@@ -205,5 +205,5 @@ extension Bundle {
 
 #endif
 
-// SKIP REPLACE: internal val _SkipFoundationBundle = Bundle(for_ = Bundle::class as AnyClass)
+// SKIP REPLACE: internal val _SkipFoundationBundle = Bundle(for_ = Bundle::class as kotlin.reflect.KClass<Any>)
 //let _SkipFoundationBundle = Bundle.module

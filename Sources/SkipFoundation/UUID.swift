@@ -110,7 +110,7 @@ extension UUID {
 
 #else
 
-// SKIP INSERT: public fun UUID(mostSigBits: Long, leastSigBits: Long): UUID { return UUID(PlatformUUID(mostSigBits, leastSigBits)) }
+// SKIP INSERT: public fun UUID(mostSigBits: Long, leastSigBits: Long): UUID { return UUID(java.util.UUID(mostSigBits, leastSigBits)) }
 
 extension UUID {
 
