@@ -59,13 +59,11 @@ internal typealias NSDecimalNumber = Decimal
 public typealias Decimal = java.math.BigDecimal
 public typealias NSDecimalNumber = java.math.BigDecimal
 
-extension Decimal {
-    init?(string: String) {
-        if let decimal = Decimal(string) {
-            self = decimal
-        } else {
-            return nil
-        }
+public func Decimal(string: String) -> Decimal? {
+    if let decimal = java.math.BigDecimal(string) {
+        return decimal
+    } else {
+        return nil
     }
 }
 #endif
@@ -143,6 +141,17 @@ public func NSNumber(value: UInt32) -> NSNumber { value as NSNumber }
 public func NSNumber(value: UInt64) -> NSNumber { value as NSNumber }
 public func NSNumber(value: Float) -> NSNumber { value as NSNumber }
 public func NSNumber(value: Double) -> NSNumber { value as NSNumber }
+/// NSNumber also accepts unlabeled values. Add an additional unused argument to satisfy the Kotlin compiler that they are different functions.
+public func NSNumber(_ v: Int8, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: Int16, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: Int32, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: Int64, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: UInt8, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: UInt16, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: UInt32, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: UInt64, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: Float, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
+public func NSNumber(_ v: Double, unusedp: ()? = nil) -> NSNumber { v as NSNumber }
 
 public func abs(_ number: Double) -> Double { Math.abs(number) }
 public func sqrt(_ number: Double) -> Double { Math.sqrt(number) }
