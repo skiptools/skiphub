@@ -18,6 +18,8 @@ import SQLite3
 import CryptoKit
 import struct Foundation.Data // explicit to not overlap with SQLite3
 import struct Foundation.URL
+#else
+import Foundation
 #endif
 
 /// A context for evaluating SQL Statements against a SQLite database.
