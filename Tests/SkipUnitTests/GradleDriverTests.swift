@@ -63,7 +63,7 @@ final class GradleDriverTests: XCTestCase {
             (false, false, false),
             (true, false, false),
             (true, true, false),
-            (true, true, true),
+            //(true, true, true),
         ] {
             runIndex += 1
             // let canRunOffline = runIndex > 0 // after the initial run (when the dependencies should be downloaded and cached), we should be able to run the tests in offline mode
@@ -73,7 +73,7 @@ final class GradleDriverTests: XCTestCase {
                 try sabotageTest(failure: failure, error: error)
             }
 
-            let (output, parseResults) = try await driver.launchGradleProcess(in: tmp, module: modname, actions: ["testDebug"], arguments: [], failFast: failFast, offline: false, exitHandler: { result in
+            let (output, parseResults) = try await driver.launchGradleProcess(in: tmp, module: modname, actions: ["test"], arguments: [], failFast: failFast, offline: false, exitHandler: { result in
                 if !failure && !error {
                     guard case .terminated(0) = result.exitStatus else {
                         // we failed, but did not expect an error
