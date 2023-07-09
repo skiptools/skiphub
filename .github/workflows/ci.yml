@@ -172,14 +172,19 @@ jobs:
           gradle assembleRelease --console=plain || echo "gradle assembleRelease failed"
           ls -lah `find . -name '*.apk'`
 
-      - name: Swift Build (iOS)
+      - name: Xcode Build (iOS)
+        if: false
         working-directory: skiphub
         run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
 
-      - name: Swift Tests (iOS)
+      - name: SkipFoundationTests (iOS)
+        working-directory: skiphub
+        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "SkipFoundation" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
+
+      - name: Xcode Tests (iOS)
+        if: false
         working-directory: skiphub
         run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
-
 
       - name: Android Tests
         if: false

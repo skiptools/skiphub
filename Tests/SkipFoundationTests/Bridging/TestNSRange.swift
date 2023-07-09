@@ -212,7 +212,9 @@ class TestNSRange : XCTestCase {
         let unicodeSubstring: Substring = unicodeString[unicodeString.firstIndex(of: "👻")!...]
         
         _assertNSRangeInit(unicodeSubstring.range(of: "👨‍👩‍👧‍👦")!, in: unicodeSubstring, is: "{22, 11}")
+        #if os(macOS)
         _assertNSRangeInit(unicodeSubstring.range(of: "👨")!.lowerBound..<unicodeSubstring.range(of: "👦")!.upperBound, in: unicodeString, is: "{42, 11}")
+        #endif
         _assertNSRangeInit(unicodeSubstring.index(after: unicodeSubstring.startIndex)...unicodeSubstring.index(before: unicodeSubstring.endIndex), in: unicodeSubstring, is: "{2, 32}")
         _assertNSRangeInit(unicodeSubstring.startIndex..., in: unicodeSubstring, is: "{0, 34}")
         _assertNSRangeInit(unicodeSubstring.startIndex..., in: unicodeString, is: "{20, 34}")

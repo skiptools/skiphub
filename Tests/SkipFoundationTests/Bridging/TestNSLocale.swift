@@ -146,10 +146,14 @@ class TestNSLocale : XCTestCase {
         XCTAssertTrue(components[NSLocale.Key.countryCode.rawValue] == spainRegionCode)
 
         XCTAssertTrue(Locale.availableIdentifiers.contains(galicianLocaleIdentifier))
-        XCTAssertTrue(Locale.commonISOCurrencyCodes.contains(euroCurrencyCode))
         XCTAssertTrue(Locale.isoCurrencyCodes.contains(euroCurrencyCode))
         XCTAssertTrue(Locale.isoRegionCodes.contains(spainRegionCode))
         XCTAssertTrue(Locale.isoLanguageCodes.contains(galicianLanguageCode))
+
+        #if os(macOS)
+        // iOS 16+ only
+        XCTAssertTrue(Locale.commonISOCurrencyCodes.contains(euroCurrencyCode))
+        #endif
         
         XCTAssertTrue(Locale.preferredLanguages.count == UserDefaults.standard.array(forKey: "AppleLanguages")?.count ?? 0)
         #endif // !SKIP
