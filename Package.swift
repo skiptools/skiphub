@@ -5,7 +5,7 @@ let package = Package(
     name: "Skip Package Hub",
     defaultLocalization: "en",
     products: [
-        .executable(name: "skipdroid", targets: ["SkipDroid"]),
+        //.executable(name: "skipdroid", targets: ["SkipDroid"]),
         .library(name: "SkipDrive", targets: ["SkipDrive"]),
 
         .library(name: "SkipUnit", targets: ["SkipUnit"]),
@@ -34,7 +34,7 @@ let package = Package(
     ],
     targets: [
         // The launcher executable for the transpiled Android APK
-        .executableTarget(name: "SkipDroid", dependencies: [.target(name: "SkipDrive", condition: .when(platforms: [.android, .linux, .windows, .macOS, .macCatalyst]))]),
+        //.executableTarget(name: "SkipDroid", dependencies: [.target(name: "SkipDrive", condition: .when(platforms: [.android, .linux, .windows, .macOS, .macCatalyst]))]),
 
         // The Gradle driver for building and testing skip-transpiled projects
         .target(name: "SkipDrive", dependencies: []),

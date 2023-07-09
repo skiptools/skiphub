@@ -20,6 +20,9 @@ public protocol XCGradleHarness : GradleHarness {
 }
 
 @available(macOS 13, macCatalyst 16, *)
+@available(iOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(watchOS, unavailable, message: "Gradle tests can only be run on macOS")
+@available(tvOS, unavailable, message: "Gradle tests can only be run on macOS")
 extension XCGradleHarness where Self : XCTestCase {
 
     /// Invokes the `gradle` process with the specified arguments.
@@ -32,7 +35,7 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - moduleSuffix: the expected module name for automatic test determination
     ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
-    @available(macOS 13, macCatalyst 16, *)
+    @available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
     public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
 
         var actions = actions
@@ -52,6 +55,7 @@ extension XCGradleHarness where Self : XCTestCase {
         if #unavailable(macOS 13, macCatalyst 16) {
             fatalError("unsupported platform")
         } else {
+            #if os(macOS)
             // only run in subclasses, not in the base test
             if self.className == "SkipUnit.XCGradleHarness" {
                 // TODO: add a general system gradle checkup test here
@@ -108,6 +112,7 @@ extension XCGradleHarness where Self : XCTestCase {
                     throw GradleBuildError(errorDescription: "Gradle failed with result: \(testProcessResult?.description ?? "")")
                 }
             }
+            #endif
         }
     }
 

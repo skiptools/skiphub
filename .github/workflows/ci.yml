@@ -174,11 +174,11 @@ jobs:
 
       - name: Swift Build (iOS)
         working-directory: skiphub
-        run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+        run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
-        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
+        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
 
 
       - name: Android Tests
