@@ -107,8 +107,7 @@ public struct GradleDriver {
         for (key, value) in env {
             penv[key] = value
         }
-        // note that we don't pass workingDirectory through because it is not supported on macCatalyst
-        return Process.streamLines(command: gradleArgs + args, environment: penv, onExit: onExit)
+        return Process.streamLines(command: gradleArgs + args, environment: penv, workingDirectory: workingDirectory, onExit: onExit)
     }
 
     /// Invokes the tests for the given gradle project.
