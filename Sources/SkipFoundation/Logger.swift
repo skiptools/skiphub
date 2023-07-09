@@ -4,6 +4,10 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 #if SKIP
+
+// make an actual Kotlin typealias that references Logger so Kotlin code can access it directly
+// SKIP INSERT: public typealias Logger = SkipLogger
+
 /// Skip `Logger` aliases to `SkipLogger` type and wraps `java.util.logging.Logger`
 public typealias Logger = SkipLogger
 public typealias LogMessage = String
