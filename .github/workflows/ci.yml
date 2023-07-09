@@ -94,69 +94,68 @@ jobs:
       - name: Build ${{ matrix.target }}
         working-directory: skiphub
         run: |
-          swift build --jobs 1
+          swift build
 
       - name: SkipLib Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipLibTests
+        run: swift test -c ${CONFIG} --filter SkipLibTests
       - name: SkipLib Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipLibKtTests
+        run: swift test -c ${CONFIG} --filter SkipLibKtTests
 
       - name: SkipFoundation Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipFoundationTests
+        run: swift test -c ${CONFIG} --filter SkipFoundationTests
       - name: SkipFoundation Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipFoundationKtTests
+        run: swift test -c ${CONFIG} --filter SkipFoundationKtTests
 
       - name: SkipKit Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipKitTests
+        run: swift test -c ${CONFIG} --filter SkipKitTests
       - name: SkipKit Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipKitKtTests
+        run: swift test -c ${CONFIG} --filter SkipKitKtTests
 
       - name: SkipUI Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipUITests
+        run: swift test -c ${CONFIG} --filter SkipUITests
       - name: SkipUI Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter SkipUIKtTests
+        run: swift test -c ${CONFIG} --filter SkipUIKtTests
 
       - name: ExampleLib Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleLibTests
+        run: swift test -c ${CONFIG} --filter ExampleLibTests
       - name: ExampleLib Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleLibKtTests
+        run: swift test -c ${CONFIG} --filter ExampleLibKtTests
 
       - name: ExampleApp Swift Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleAppTests
+        run: swift test -c ${CONFIG} --filter ExampleAppTests
       - name: ExampleApp Kotlin Tests
         working-directory: skiphub
-        run: swift test -c ${CONFIG} --jobs 1 --filter ExampleAppKtTests
+        run: swift test -c ${CONFIG} --filter ExampleAppKtTests
 
       #- name: Debug Tests (Serial)
       #  if: false
       #  working-directory: skiphub
-      #  run: swift test --jobs 1 -c debug
+      #  run: swift test -c debug
 
-      #- name: Debug Tests (Parallel)
-      #  if: false
-      #  working-directory: skiphub
-      #  run: swift test --parallel -c debug
+      - name: Debug Tests (Parallel)
+        working-directory: skiphub
+        run: swift test --parallel -c debug
 
       #- name: Release Tests (Serial)
       #  if: false
       #  working-directory: skiphub
-      #  run: swift test --jobs 1 -c release
+      #  run: swift test -c release
 
-      #- name: Release Tests (Parallel)
-      #  if: false
-      #  working-directory: skiphub
-      #  run: swift test --parallel -c release
+      - name: Release Tests (Parallel)
+        if: false
+        working-directory: skiphub
+        run: swift test --parallel -c release
 
       - name: Gradle Build (Android)
         # folder links in Packages/Skip/ should have been created by tests
@@ -205,8 +204,8 @@ jobs:
           # so we test against the current version
           cat Package.swift.old | sed 's/from: "0.0.0"/branch: "main"/g' > Package.swift
 
-          swift build --jobs 1
-          swift test --jobs 1
+          swift build
+          swift test
           ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/release/AppDemo-release-unsigned.apk
           ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
           xcodebuild archive -jobs 1 -skipPackagePluginValidation -archivePath ".build/skipapp.xcarchive" -configuration "Release" -scheme 'Demo App' -sdk "iphoneos" -destination "generic/platform=iOS" CODE_SIGNING_ALLOWED=NO || echo IOS DEMO APP BUILD FAILED

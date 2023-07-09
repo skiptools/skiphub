@@ -35,12 +35,12 @@ class TestUserDefaults : XCTestCase {
         #else
 		let defaults = UserDefaults.standard
 		
-		defaults.register(defaults: ["key1": NSNumber(value: Int(5))])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem": NSNumber(value: Int(5))])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.integer(forKey: "key1"), 5)
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem")
+
+		XCTAssertEqual(defaults.integer(forKey: "test_getRegisteredDefaultItem"), 5)
         #endif
 	}
 	
@@ -51,12 +51,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a NSString value. UserDefaults.string(forKey:) is supposed to return the NSString as a String
-		defaults.register(defaults: ["key1": "hello" as NSString])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_NSString": "hello" as NSString])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_NSString")
+
+		XCTAssertEqual(defaults.string(forKey: "test_getRegisteredDefaultItem_NSString"), "hello")
         #endif
 	}
 
@@ -67,12 +67,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a String value. UserDefaults.string(forKey:) is supposed to return the String
-		defaults.register(defaults: ["key1": "hello"])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_String": "hello"])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_String")
+
+		XCTAssertEqual(defaults.string(forKey: "test_getRegisteredDefaultItem_String"), "hello")
         #endif
 	}
 
@@ -83,12 +83,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register an NSURL value. UserDefaults.url(forKey:) is supposed to return the URL
-		defaults.register(defaults: ["key1": NSURL(fileURLWithPath: "/hello/world")])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_NSURL": NSURL(fileURLWithPath: "/hello/world")])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_NSURL")
+
+		XCTAssertEqual(defaults.url(forKey: "test_getRegisteredDefaultItem_NSURL"), URL(fileURLWithPath: "/hello/world"))
         #endif
 	}
 
@@ -99,12 +99,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register an URL value. UserDefaults.url(forKey:) is supposed to return the URL
-		defaults.register(defaults: ["key1": URL(fileURLWithPath: "/hello/world")])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_URL": URL(fileURLWithPath: "/hello/world")])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_URL")
+
+		XCTAssertEqual(defaults.url(forKey: "test_getRegisteredDefaultItem_URL"), URL(fileURLWithPath: "/hello/world"))
         #endif
 	}
 
@@ -116,12 +116,12 @@ class TestUserDefaults : XCTestCase {
 		let bytes = [0, 1, 2, 3, 4] as [UInt8]
 		
 		// Register an NSData value. UserDefaults.data(forKey:) is supposed to return the Data
-		defaults.register(defaults: ["key1": NSData(bytes: bytes, length: bytes.count)])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_NSData": NSData(bytes: bytes, length: bytes.count)])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_NSData")
+
+		XCTAssertEqual(defaults.data(forKey: "test_getRegisteredDefaultItem_NSData"), Data(bytes))
         #endif
 	}
 	
@@ -133,12 +133,12 @@ class TestUserDefaults : XCTestCase {
 		let bytes = [0, 1, 2, 3, 4] as [UInt8]
 		
 		// Register a Data value. UserDefaults.data(forKey:) is supposed to return the Data
-		defaults.register(defaults: ["key1": Data(bytes)])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_Data": Data(bytes)])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_Data")
+
+		XCTAssertEqual(defaults.data(forKey: "test_getRegisteredDefaultItem_Data"), Data(bytes))
         #endif
 	}
 
@@ -149,12 +149,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a boolean default value as a string. UserDefaults.bool(forKey:) is supposed to return the parsed Bool value
-		defaults.register(defaults: ["key1": "YES"])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_BoolFromString": "YES"])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.bool(forKey: "key1"), true)
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_BoolFromString")
+
+		XCTAssertEqual(defaults.bool(forKey: "test_getRegisteredDefaultItem_BoolFromString"), true)
         #endif
 	}
 	
@@ -165,12 +165,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register an int default value as a string. UserDefaults.integer(forKey:) is supposed to return the parsed Int value
-		defaults.register(defaults: ["key1": "1234"])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_IntFromString": "1234"])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.integer(forKey: "key1"), 1234)
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_IntFromString")
+
+		XCTAssertEqual(defaults.integer(forKey: "test_getRegisteredDefaultItem_IntFromString"), 1234)
         #endif
 	}
 	
@@ -181,12 +181,12 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a double default value as a string. UserDefaults.double(forKey:) is supposed to return the parsed Double value
-		defaults.register(defaults: ["key1": "12.34"])
-		
+		defaults.register(defaults: ["test_getRegisteredDefaultItem_DoubleFromString": "12.34"])
+
 		//make sure we don't have anything in the saved plist.
-		defaults.removeObject(forKey: "key1")
-		
-		XCTAssertEqual(defaults.double(forKey: "key1"), 12.34)
+		defaults.removeObject(forKey: "test_getRegisteredDefaultItem_DoubleFromString")
+
+		XCTAssertEqual(defaults.double(forKey: "test_getRegisteredDefaultItem_DoubleFromString"), 12.34)
         #endif
 	}
 	
@@ -197,9 +197,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Set a NSString value. UserDefaults.string(forKey:) is supposed to return the NSString as a String
-		defaults.set("hello" as NSString, forKey: "key1")
-		
-		XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
+		defaults.set("hello" as NSString, forKey: "test_setValue_NSString")
+
+		XCTAssertEqual(defaults.string(forKey: "test_setValue_NSString"), "hello")
         #endif
 	}
 	
@@ -210,9 +210,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a String value. UserDefaults.string(forKey:) is supposed to return the String
-		defaults.set("hello", forKey: "key1")
-		
-		XCTAssertEqual(defaults.string(forKey: "key1"), "hello")
+		defaults.set("hello", forKey: "test_setValue_String")
+
+		XCTAssertEqual(defaults.string(forKey: "test_setValue_String"), "hello")
         #endif
 	}
 
@@ -223,9 +223,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Set a NSURL value. UserDefaults.url(forKey:) is supposed to return the NSURL as a URL
-//		defaults.set(NSURL(fileURLWithPath: "/hello/world"), forKey: "key1")
-		
-//		XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
+//		defaults.set(NSURL(fileURLWithPath: "/hello/world"), forKey: "test_setValue_NSURL")
+
+//		XCTAssertEqual(defaults.url(forKey: "test_setValue_NSURL"), URL(fileURLWithPath: "/hello/world"))
         #endif
 	}
 
@@ -236,9 +236,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Set a URL value. UserDefaults.url(forKey:) is supposed to return the URL
-		defaults.set(URL(fileURLWithPath: "/hello/world"), forKey: "key1")
-		
-		XCTAssertEqual(defaults.url(forKey: "key1"), URL(fileURLWithPath: "/hello/world"))
+		defaults.set(URL(fileURLWithPath: "/hello/world"), forKey: "test_setValue_URL")
+
+		XCTAssertEqual(defaults.url(forKey: "test_setValue_URL"), URL(fileURLWithPath: "/hello/world"))
         #endif
 	}
 
@@ -250,9 +250,9 @@ class TestUserDefaults : XCTestCase {
 		let bytes = [0, 1, 2, 3, 4] as [UInt8]
 		
 		// Set a NSData value. UserDefaults.data(forKey:) is supposed to return the Data
-		defaults.set(NSData(bytes: bytes, length: bytes.count), forKey: "key1")
-		
-		XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
+		defaults.set(NSData(bytes: bytes, length: bytes.count), forKey: "test_setValue_NSData")
+
+		XCTAssertEqual(defaults.data(forKey: "test_setValue_NSData"), Data(bytes))
         #endif
 	}
 	
@@ -264,9 +264,9 @@ class TestUserDefaults : XCTestCase {
 		let bytes = [0, 1, 2, 3, 4] as [UInt8]
 		
 		// Set a Data value. UserDefaults.data(forKey:) is supposed to return the Data
-		defaults.set(Data(bytes), forKey: "key1")
-		
-		XCTAssertEqual(defaults.data(forKey: "key1"), Data(bytes))
+		defaults.set(Data(bytes), forKey: "test_setValue_Data")
+
+		XCTAssertEqual(defaults.data(forKey: "test_setValue_Data"), Data(bytes))
         #endif
 	}
 
@@ -277,9 +277,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a boolean default value as a string. UserDefaults.bool(forKey:) is supposed to return the parsed Bool value
-		defaults.set("YES", forKey: "key1")
-		
-		XCTAssertEqual(defaults.bool(forKey: "key1"), true)
+		defaults.set("YES", forKey: "test_setValue_BoolFromString")
+
+		XCTAssertEqual(defaults.bool(forKey: "test_setValue_BoolFromString"), true)
         #endif
 	}
 	
@@ -290,9 +290,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register an int default value as a string. UserDefaults.integer(forKey:) is supposed to return the parsed Int value
-		defaults.set("1234", forKey: "key1")
-		
-		XCTAssertEqual(defaults.integer(forKey: "key1"), 1234)
+		defaults.set("1234", forKey: "test_setValue_IntFromString")
+
+		XCTAssertEqual(defaults.integer(forKey: "test_setValue_IntFromString"), 1234)
         #endif
 	}
 	
@@ -303,9 +303,9 @@ class TestUserDefaults : XCTestCase {
 		let defaults = UserDefaults.standard
 		
 		// Register a double default value as a string. UserDefaults.double(forKey:) is supposed to return the parsed Double value
-		defaults.set("12.34", forKey: "key1")
-		
-		XCTAssertEqual(defaults.double(forKey: "key1"), 12.34)
+		defaults.set("12.34", forKey: "test_setValue_DoubleFromString")
+
+		XCTAssertEqual(defaults.double(forKey: "test_setValue_DoubleFromString"), 12.34)
         #endif
 	}
 	
