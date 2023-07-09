@@ -11,6 +11,7 @@ internal typealias PlatformDataProtocol = Foundation.DataProtocol
 public typealias StringProtocol = Swift.StringProtocol
 #else
 public typealias PlatformData = kotlin.ByteArray
+// SKIP INSERT: public typealias StringProtocol = kotlin.CharSequence
 public typealias StringProtocol = kotlin.CharSequence
 internal typealias PlatformDataProtocol = kotlin.ByteArray
 #endif
