@@ -93,8 +93,7 @@ jobs:
       # Pre-build to work around concurrency issues
       - name: Build ${{ matrix.target }}
         working-directory: skiphub
-        run: |
-          swift build
+        run: swift build --jobs 1
 
       - name: SkipLib Swift Tests
         working-directory: skiphub
@@ -175,11 +174,11 @@ jobs:
 
       - name: Swift Build (iOS)
         working-directory: skiphub
-        run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo IOS BUILD FAILED
+        run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
 
       - name: Swift Tests (iOS)
         working-directory: skiphub
-        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator16.4" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES || echo IOS TESTS FAILED
+        run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES
 
 
       - name: Android Tests
