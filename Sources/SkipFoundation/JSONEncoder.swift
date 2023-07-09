@@ -765,7 +765,7 @@ private struct JSONKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContaine
     }
 
     mutating func superEncoder() -> Encoder {
-        let newEncoder = self.getEncoder(for: _JSONKey._super)
+        let newEncoder: JSONEncoderImpl = self.getEncoder(for: _JSONKey._super)
         self.object.set(newEncoder, for: _JSONKey._super.stringValue)
         return newEncoder
     }
@@ -884,7 +884,7 @@ private struct JSONUnkeyedEncodingContainer: UnkeyedEncodingContainer, _SpecialT
     mutating func encode<T>(_ value: T) throws where T: Encodable {
         let key = _JSONKey(stringValue: "Index \(self.count)", intValue: self.count)
         let encoded = try self.wrapEncodable(value, for: key)
-        self.array.append(encoded ?? .object([:]))
+        self.array.append(encoded ?? JSONValue.object([:]))
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy nestedKeyType: NestedKey.Type) ->
@@ -908,7 +908,7 @@ private struct JSONUnkeyedEncodingContainer: UnkeyedEncodingContainer, _SpecialT
     }
 
     mutating func superEncoder() -> Encoder {
-        let encoder = self.getEncoder(for: _JSONKey(index: self.count))
+        let encoder: JSONEncoderImpl = self.getEncoder(for: _JSONKey(index: self.count))
         self.array.append(encoder)
         return encoder
     }
@@ -920,7 +920,7 @@ extension JSONUnkeyedEncodingContainer {
     }
 
     @inline(__always) private mutating func encodeFloatingPoint<F: FloatingPoint & CustomStringConvertible>(_ float: F) throws {
-        let value = try self.wrapFloat(float, for: _JSONKey(index: self.count))
+        let value: JSONValue = try self.wrapFloat(float, for: _JSONKey(index: self.count))
         self.array.append(value)
     }
 }
