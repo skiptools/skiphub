@@ -178,6 +178,9 @@ jobs:
         run: xcodebuild build -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "Skip Package Hub-Package" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
 
       - name: SkipFoundationTests (iOS)
+        # works locally, but on CI:
+        # xcodebuild: error: Scheme SkipFoundation is not currently configured for the test action
+        if: false
         working-directory: skiphub
         run: xcodebuild test -skipPackagePluginValidation -configuration "Debug" -sdk "iphonesimulator17.0" -destination "platform=iOS Simulator,name=iPhone 14" -scheme "SkipFoundation" ENABLE_TESTABILITY=YES CODE_SIGNING_ALLOWED=NO
 
