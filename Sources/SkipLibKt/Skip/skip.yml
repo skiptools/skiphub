@@ -53,13 +53,6 @@ build:
             - 'getByName("test").java.srcDirs("src/test/kotlin")'
             - 'getByName("androidTest").java.srcDirs("src/test/kotlin")'
 
-        - block: 'buildTypes'
-          contents:
-            - block: 'getByName("release")'
-              contents:
-                - 'isMinifyEnabled = true'
-                - 'proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")'
-
     - block: 'dependencies'
       contents:
         - 'testImplementation("org.robolectric:robolectric:4.10.2")'

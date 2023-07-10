@@ -51,7 +51,7 @@ extension GradleHarness {
         func findModuleFolder(in pluginOutputFolder: URL, extension pathExtension: String) throws -> URL {
             for outputFolder in try FileManager.default.contentsOfDirectory(at: pluginOutputFolder, includingPropertiesForKeys: [.isDirectoryKey]) {
                 if !pathExtension.isEmpty && !outputFolder.lastPathComponent.hasSuffix("." + pathExtension) {
-                    continue // only check known path extensions (e.g., ".output")
+                    continue // only check known path extensions (e.g., ".output" with running from Xcode, and no extension from SPM)
                 }
 
                 let pluginModuleOutputFolder = URL(fileURLWithPath: moduleTranspilerFolder, isDirectory: true, relativeTo: outputFolder)
@@ -84,6 +84,17 @@ extension GradleHarness {
             }
             throw NoModuleFolder(errorDescription: "Unable to find module folders in \(pluginOutputFolder.path)")
         }
+    }
+
+    public func linkFolder(from linkFolderBase: String? = "Packages/Skip", forSourceFile sourcePath: StaticString?) -> URL? {
+        // walk up from the test case swift file until we find the folder that contains "Package.swift", which we treat as the package root
+        if let sourcePath = sourcePath, let linkFolderBase = linkFolderBase {
+            if let packageRootURL = packageBaseFolder(forSourceFile: sourcePath) {
+                return packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
+            }
+        }
+
+        return nil
     }
 
     /// For any given source file, find the nearest parent folder that contains a `Package.swift` file.

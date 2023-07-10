@@ -33,10 +33,9 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - arguments: and additional arguments
     ///   - outputPrefix: the prefix for funneling Gradle output messages to the console, or `nil` to mute the console
     ///   - moduleSuffix: the expected module name for automatic test determination
-    ///   - linkFolderBase: the local Packages folder within which links should be created to the transpiled project
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
     @available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
-    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", linkFolderBase: String? = "Packages/Skip", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
 
         var actions = actions
         let isTestAction = actions.contains(where: { $0.hasPrefix("test") })
@@ -67,15 +66,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 }
                 let driver = try await GradleDriver()
 
-                // walk up from the test case swift file until we find the folder that contains "Package.swift", which we treat as the package root
-                var linkFolder: URL? = nil
-                if let sourcePath = sourcePath, let linkFolderBase = linkFolderBase {
-                    if let packageRootURL = packageBaseFolder(forSourceFile: sourcePath) {
-                        linkFolder = packageRootURL.appendingPathComponent(linkFolderBase, isDirectory: true)
-                    }
-                }
-
-                let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder)
+                let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder(forSourceFile: sourcePath))
 
                 // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
                 let baseModuleName = moduleName.dropLast(testModuleSuffix.count).description
