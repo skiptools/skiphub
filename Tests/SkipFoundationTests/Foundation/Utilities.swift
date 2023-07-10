@@ -798,7 +798,7 @@ extension XCTestCase {
                     // all ten attempts, unless the type's hash encoding is not unique,
                     // or unless the hash equality oracle is wrong.
                     XCTAssertNotNil(
-                        (0..<10).first(where: { hash(x, salt: $0) != hash(y, salt: $0) }),
+                        Array(0..<10).first(where: { hash(x, salt: $0) != hash(y, salt: $0) }),
                         """
                         hash(into:) expected to differ, found to match
                         lhs (at index \(i)): \(x)
