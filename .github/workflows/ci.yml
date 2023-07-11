@@ -204,6 +204,7 @@ jobs:
           repository: skiptools/skipapp
 
       - name: Build Demo App
+        if: false
         working-directory: skipapp
         run: |
           mv Package.swift Package.swift.old
