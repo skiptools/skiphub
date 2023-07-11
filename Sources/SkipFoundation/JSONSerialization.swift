@@ -498,6 +498,7 @@ private struct JSONWriter {
             writer(num.description)
         case let num as UInt64:
             writer(num.description)
+<<<<<<< HEAD
         // SKIP TODO: Cannot check for instance of erased type: Array<Any?>
         #if !SKIP
         case let array as Array<Any?>:
@@ -505,6 +506,12 @@ private struct JSONWriter {
         case let dict as Dictionary<AnyHashable, Any?>:
             try serializeDictionary(dict)
         #endif
+//        #if !SKIP // SKIP TODO: Cannot check for instance of erased type: Array<Any?>
+//        case let array as Array<Any?>:
+//            try serializeArray(array)
+//        case let dict as Dictionary<AnyHashable, Any?>:
+//            try serializeDictionary(dict)
+//        #endif
         case let num as Float:
             try serializeFloat(num)
         case let num as Double:
