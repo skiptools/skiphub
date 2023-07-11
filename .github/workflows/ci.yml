@@ -200,11 +200,11 @@ jobs:
       - name: Checkout skipapp
         uses: actions/checkout@v3
         with:
-          path: skipapp.swiftpm
-          repository: skiptools/skipapp.swiftpm
+          path: skipapp
+          repository: skiptools/skipapp
 
       - name: Build Demo App
-        working-directory: skipapp.swiftpm
+        working-directory: skipapp
         run: |
           mv Package.swift Package.swift.old
           # switch the sample app's dependency to the main skiphub branch
@@ -213,7 +213,7 @@ jobs:
 
           swift build
           swift test
-          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/release/AppDemo-release-unsigned.apk
-          ls -lah Packages/Skip/skipapp.swiftpm/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
+          ls -lah Packages/Skip/skipapp/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/release/AppDemo-release-unsigned.apk
+          ls -lah Packages/Skip/skipapp/AppDemoKtTests/skip-transpiler/AppDemo/.build/AppDemo/outputs/apk/debug/AppDemo-debug.apk
           xcodebuild archive -jobs 1 -skipPackagePluginValidation -archivePath ".build/skipapp.xcarchive" -configuration "Release" -scheme 'Demo App' -sdk "iphoneos" -destination "generic/platform=iOS" CODE_SIGNING_ALLOWED=NO || echo IOS DEMO APP BUILD FAILED
 

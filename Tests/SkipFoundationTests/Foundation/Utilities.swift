@@ -68,7 +68,9 @@ func checkHashing_ValueType<Item: Hashable, S: Sequence>(
     line: UInt = #line
 ) {
     // hashing assumptions don't work across platforms
-    return ;
+    if ({ true }()) {
+        return
+    }
 
     _checkHashing(
         ofType: Item.self,
@@ -89,7 +91,9 @@ func checkHashing_NSCopying<Item: NSObject & NSCopying, S: Sequence>(
     line: UInt = #line
 ) {
     // hashing assumptions don't work across platforms
-    return ;
+    if ({ true }()) {
+        return
+    }
 
 
     _checkHashing(
