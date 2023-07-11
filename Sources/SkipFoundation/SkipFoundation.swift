@@ -58,14 +58,6 @@ internal typealias NSDecimalNumber = Decimal
 #else
 public typealias Decimal = java.math.BigDecimal
 public typealias NSDecimalNumber = java.math.BigDecimal
-
-public func Decimal(string: String) -> Decimal? {
-    if let decimal = java.math.BigDecimal(string) {
-        return decimal
-    } else {
-        return nil
-    }
-}
 #endif
 
 

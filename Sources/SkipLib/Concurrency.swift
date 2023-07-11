@@ -36,6 +36,7 @@ public struct Task<Success, Failure> where Failure: Error {
     public init(priority: TaskPriority? = nil, operation: @escaping () async throws -> Success) {
     }
 
+    // SKIP NOWARN
     public static func detached(priority: TaskPriority? = nil, operation: @escaping () async -> Success) -> Task<Success, Failure> {
         fatalError()
     }
